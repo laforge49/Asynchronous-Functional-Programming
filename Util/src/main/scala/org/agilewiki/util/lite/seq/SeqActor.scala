@@ -30,7 +30,7 @@ import java.util.Comparator
 
 abstract class SeqActor[T, V](reactor: LiteReactor)
   extends LiteActor(reactor) {
-  private val c = new Comparator[T] {
+  private lazy val c = new Comparator[T] {
         override def compare(a: T, b: T) = a.asInstanceOf[Comparable[T]].compareTo(b)
       }
 
@@ -39,7 +39,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
 
 case class SeqCurrentReq[T](key: T)
 
-object SeqCurrentReq {
+object SeqFirstReq {
   def apply(): SeqCurrentReq[Any] = SeqCurrentReq(null)
 }
 

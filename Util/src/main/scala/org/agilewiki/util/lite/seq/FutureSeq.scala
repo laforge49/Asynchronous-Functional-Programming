@@ -30,7 +30,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   extends LiteFuture {
 
   def isEmpty: Boolean = {
-    send(actor, SeqCurrentReq(), new LiteReactor)
+    send(actor, SeqFirstReq(), new LiteReactor)
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return true
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) return false
@@ -38,7 +38,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def firstKey: T = {
-    send(actor, SeqCurrentReq(), new LiteReactor)
+    send(actor, SeqFirstReq(), new LiteReactor)
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return null.asInstanceOf[T]
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) return rsp.asInstanceOf[SeqResultRsp[T, V]].key
@@ -46,7 +46,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def first: V = {
-    send(actor, SeqCurrentReq(), new LiteReactor)
+    send(actor, SeqFirstReq(), new LiteReactor)
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return null.asInstanceOf[V]
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) return rsp.asInstanceOf[SeqResultRsp[T, V]].value
