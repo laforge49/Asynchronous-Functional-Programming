@@ -1,0 +1,98 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="isSubRole query" />
+  <body>
+    <aw:include path="../../header.xml" setcon.heading="The isSubRole Query Command" />
+        <div class="content">
+	   		<section class="main-content">		
+				<h2>The isSubRole Query Command</h2>
+				<nav  class="breadcrumbs">
+			   	   	<ul>
+			   	   		<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+			   	   		<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/">Templates</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/query/">AW5 Queries</a></li>
+
+				   	</ul>
+				</nav>
+    <p>
+      The <code>isSubRole</code> query command determines if one role is a sub-role of another role.
+    </p>
+    <h3>
+      Attributes
+    </h3>
+    <p>
+      The <code>cmd</code> attribute on the <code>aw:query</code> element is required to invoke this command:
+    </p>
+<pre>cmd="isSubRole"</pre>
+    <h3>
+      Parameters
+    </h3>
+    <p>
+      This command uses two parameters:
+    </p>
+	<dl>
+      <dt>The <code>role1</code> parameter</dt><dd> provides the name of a role. 
+      This is a required parameter and must be present in the context map.</dd>
+      <dt>The <code>role2</code> parameter</dt><dd> provides the name of a role. 
+      This is a required parameter and must be present in the context map.</dd>
+    </dl>
+    <h3>
+      Results
+    </h3>
+    <p>
+      If <code>role1</code> is a sub-role of <code>role2</code>, then the constant <code>isSubRole</code> is set to <code>"true"</code>.
+    </p>
+    <h3>
+      Example
+    </h3>
+    <p>
+      Here is a sample usage of isSubRole:
+    </p>
+<pre>    &lt;p&gt;
+    &lt;aw:query cmd="isSubRole" role1="user" role2="qualifier"&gt;
+      user is
+      &lt;aw:nis name="isSubRole"&gt;
+        not
+      &lt;/aw:nis&gt;
+      a sub-role of qualifier.
+    &lt;/aw:query&gt;
+    &lt;/p&gt;&lt;p&gt;
+    &lt;aw:query cmd="isSubRole" role1="qualifier" role2="user"&gt;
+      qualifier is 
+      &lt;aw:nis name="isSubRole"&gt;
+        not
+      &lt;/aw:nis&gt;
+      a sub-role of user.
+    &lt;/aw:query&gt;
+    &lt;/p&gt;
+
+</pre>
+    <p>
+      And here's the result:
+    </p>
+    <p>
+    <aw:query cmd="isSubRole" role1="user" role2="qualifier">
+      user is
+      <aw:nis name="isSubRole">
+        not
+      </aw:nis>
+      a sub-role of qualifier.
+    </aw:query>
+    </p><p>
+    <aw:query cmd="isSubRole" role1="qualifier" role2="user">
+      qualifier is 
+      <aw:nis name="isSubRole">
+        not
+      </aw:nis>
+      a sub-role of user.
+    </aw:query>
+    </p>
+               </section>
+    <aside> </aside>
+    </div>
+    <aw:include path="../../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

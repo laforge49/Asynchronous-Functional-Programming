@@ -1,0 +1,12 @@
+<aw:nis name="_.past" aw:newvar.url="activeTemplateDirectory" aw:newvar.versionId="user.timestamp">
+  <aw:query cmd="append" name="versionId" value="|" />
+  <aw:query cmd="append" name="versionId" aw:value="user.uuid" />
+  <aw:query cmd="equal" aw.versionId:a="name" b="Anonymous">
+    <aw:nis name="equal">
+      <aw:query cmd="append" name="url" value="/breadcrumbs.html"/>
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="user.uuid"/>
+      <aw:query cmd="urlAppend" name="timestamp" aw:value="user.timestamp"/>
+      <a aw:href="url" target="lists">Breadcrumbs</a>
+    </aw:nis>
+  </aw:query>
+</aw:nis>

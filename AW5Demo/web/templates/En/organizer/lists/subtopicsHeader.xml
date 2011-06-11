@@ -1,0 +1,25 @@
+<aw:nis name="_.past">
+  <aw:query cmd="hasPrivilege" privilege="writer">
+    <aw:is name="hasPrivilege">
+      <div style="text-align:center" aw:newvar.uVersionId="user.timestamp">
+        <aw:query cmd="append" name="uVersionId" value="|" />
+        <aw:query cmd="append" name="uVersionId" aw:value="user.uuid" />
+        <aw:query cmd="equal" aw.uVersionId:a="name" b="Anonymous">
+          <aw:nis name="equal" aw:newvar.commands="expandedType">
+            <aw:noop aw:newvar.url="activeTemplateDirectory">
+              <aw:query cmd="append" name="url" value="/editSubtopics.html"/>
+              <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+              <a aw:href="url" target="_top"><span style="color:green; font-style:italic">edit</span></a>
+            </aw:noop>  
+            <aw:noop aw:newvar.url="activeTemplateDirectory">
+              <aw:query cmd="append" name="url" value="/order.html"/>
+              <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+              <aw:query cmd="urlAppend" name="rel" value="subtopic"/>
+              <a aw:href="url" target="_top"><span style="color:green; font-style:italic">order</span></a>
+            </aw:noop>  
+          </aw:nis>
+        </aw:query>
+      </div>
+    </aw:is>
+  </aw:query>
+</aw:nis>

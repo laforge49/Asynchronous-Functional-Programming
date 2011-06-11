@@ -1,0 +1,11 @@
+<aw:query cmd="rolon" rolonUuid="cp20_cp20" aw:newvar.url="activeTemplateDirectory">
+  <aw:query cmd="hasPrivilege" rolonUuid="cp20_cp20" privilege="writer">
+    <aw:is name="hasPrivilege" aw:newvar.url="activeTemplateDirectory">
+      <aw:query cmd="append" name="url" value="/newUser.html" />
+      <aw:query cmd="urlAppend" name="oldRequest" aw:value="currentRequest" />
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid" />
+      <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past"/>
+      <a aw:href="url" target="_top"><span style="color:green; font-style:italic">new user</span></a>
+    </aw:is>
+  </aw:query>
+</aw:query>

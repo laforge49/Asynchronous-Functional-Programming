@@ -1,0 +1,13 @@
+<aw:query cmd="singletonUuid" role="users" newvar.duplicate="">
+  <aw:loop cmd="subjectUuids" limit="1" relType="parent" aw:value="_.newUserName">
+    <aw:noop aw:setvar.duplicate="uuid"/>
+  </aw:loop>
+  <aw:is name="duplicate">
+    <aw:include path="newUser.xml" />
+  </aw:is>
+  <aw:nis name="duplicate">
+    <aw:update cmd="newUser">
+      <aw:include path="newUser.xml" />
+    </aw:update>
+  </aw:nis>
+</aw:query>

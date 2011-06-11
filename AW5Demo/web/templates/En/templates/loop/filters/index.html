@@ -1,0 +1,43 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="filter commands" />
+  <body>
+    <aw:include path="../../../header.xml" setcon.heading="The Filter Commands" />
+        
+    <div class="content">
+      <section class="main-content">
+        <h2>The Filter Commands</h2>
+        <nav  class="breadcrumbs">
+          <ul>
+	    <li><a href="/templates/En/">Home</a></li>
+            <li><span>&#8250;</span></li>
+            <li><a href="/templates/En/docs.html">Docs</a></li>
+            <li><span>&#8250;</span></li>
+            <li><a href="/templates/En/templates">Templates</a></li>
+                        <li><span>&#8250;</span></li>
+            <li><a href="/templates/En/templates/loop/">AW5 Loops</a></li>
+          </ul>
+        </nav>
+    <p>
+      Filters are used when processing the <code>aw:loop</code> element to prevent further processing of selected keys.
+      They are also used by the <code>contextFilterSequence</code>. 
+      (See the <a href="/templates/En/api/extendedContext.html">extended context</a>.)
+    </p>
+    <p>
+      Filters work by assigning a non-empty string to the ignore variable for items in the sequence to be ignored.
+      Filters can also add additional values to the context map, as is the case in the children sequence command.
+    </p><p>
+      An advance use of filters is to extend the key. This feature is only available when
+      the contextFilterSequnce is invoked with a delimiter. In this case, the extension to the key is assigned to the
+      extension variable.
+    </p><p>
+      Note that both the ignore and the extension variable names will be prepended by the value of loopPrefix, when present.
+    </p>
+    <h3>
+     Contents
+    </h3>
+    <aw:include path="../../../contents.xml" />
+                </section>
+    </div>
+    <aw:include path="../../../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

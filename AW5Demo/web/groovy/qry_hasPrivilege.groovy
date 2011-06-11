@@ -1,0 +1,6 @@
+def extendedContext = context.getSpecial(".extendedContext")
+def privilege = context.get("privilege")
+def rolonUuid = context.get("rolonUuid")
+def has = extendedContext.hasPrivilege(context, rolonUuid, privilege)
+if (has) context.setCon("hasPrivilege", "true")
+else context.setCon("hasPrivilege", "")

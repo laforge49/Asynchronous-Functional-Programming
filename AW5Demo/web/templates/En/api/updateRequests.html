@@ -1,0 +1,37 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Update Requests" />
+  <body>
+    <aw:include path="../header.xml" />
+       <div class="content">
+   			<section class="main-content">		
+	    		<h2>Update Requests</h2>
+				<nav  class="breadcrumbs">
+		   	   		<ul>
+		   	   			<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+		   	   			<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/api/">API</a></li>
+			   		</ul>
+				</nav>
+			    <p>
+			    UpdateRequests is simply a list of <code>UpdateRequest</code> objects.
+			    This list is accessible via the <aw:a href="extendedContext.html">Extended Context</aw:a>.
+			    <aw:a href="../updates.html">Updates</aw:a> to the database are defined by a template,
+			    which composes one or more update requests and adds them to the updateRequests list.
+			    This list is subsequently applied against one or more databases on completion of template processing.
+			    </p><p>
+			    Each update request applies to a single database and is processed atomically as a single transaction.
+			    </p><p>
+			    At this time, <b>only a single update request can be added to the updateRequests list</b>.
+			    Before we can process multiple requests, a locking system needs to be put in place,
+			    locking the appropriate Rolons in UUID order prior to processing any update requests.
+			    Request processing will also need to be made persistent and resumed on restart.
+			    <b>Otherwise there is a significant risk of partial failure.</b>
+			    </p>
+                        </section>
+		<aside> </aside>
+	</div>
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

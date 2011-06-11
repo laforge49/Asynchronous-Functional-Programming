@@ -1,0 +1,63 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="About" />
+  <body>
+    <aw:include path="header.xml" />
+  
+	<div class="content">
+	<section class="main-content">
+	  <h2>About</h2>
+    <p>
+      The AgileWiki project is the result of my efforts to 
+      develop a programming practice based on Norman Kashdan's Rolonics Theory,
+      and has progressed significantly over the years. 
+      The focus of this site then is on AgileWiki 5, which benefits both from
+      a larger group effort and a corporate sponsor, <a href="http://www.tasaheelglobal.com/">Tasaheel Information &amp; Electronic Co.</a>
+    </p>
+    <h3>New in AgileWiki 5</h3>
+    <p>
+      AgileWiki 5 is still in early alpha, 
+      which means that a lot of things--like wiki pages--have not yet been implemented.
+      But the basic framework is complete, and there are a few things well worth looking at.
+    </p>
+    <p>
+      A powerful <b>template engine</b> has been introduced.
+      Templates preserve a clean separation of concerns, 
+      but AgileWiki 5 templates go a bit further as they
+      provide the front-end developer with the tools needed to
+      create complete applications.
+    </p><p>
+      Application logic is implemented with a collection of <b>Groovy scripts</b>,
+      which are weaved together with the AgileWiki 5 templates.
+    </p><p>
+      The greatest effort in the development of AgileWiki 5 has been in making sure that
+      everything will scale nicely. 
+      Indeed, we expect applications to easily scale to a few hundred servers.
+      A lot of work remains in this area, especially testing and the development of
+      configuration and support tools for managing a server farm.
+      Our approch is to make scaling up a matter of configuration, independent of the application.
+      AgileWiki 5 then may well be the first of a kind, a
+      <b>fully scalable application platform</b>.
+    </p>
+      <p>
+      <a href="mailto:laforge49@gmail.com">Bill La Forge</a>, Project Lead
+    </p>
+    </section>
+    <aside class="blue">
+     <h1>License</h1>
+    <p>
+      AgileWiki 5 is available under the LGPL license,
+      which covers the Scala source code and JavaScript files.
+    </p>
+      <h1>A Bright Future</h1>
+    <p>
+      Our corporate sponsor, <a href="http://www.tasaheelglobal.com/">Tasaheel Information &amp; Electronic Co.</a>, is building up their development team,
+      which will work on propriatary products built on AgileWiki 5 
+      as well as contribute to the Open Source AgileWiki platform.
+      Your participation is also welcome.
+    </p>
+
+    </aside>
+	</div>
+    <aw:include path="footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

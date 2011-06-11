@@ -1,0 +1,17 @@
+loop.html = An Introduction to AW5 Loops
+loop.html.link = loop/
+query.html = An Introduction to AW5 Queries
+query.html.link = query/
+a.html = The aw:a Element
+attributeNotation.html = Attribute Notation
+contents.html = The aw:contents Element
+encodedContents.html = The aw:encodedContents Element
+include.html = The aw:include Element
+is.html = The aw:is and aw:nis Elements
+update.html = An Introduction to AW5 Updates
+update.html.link = update/
+noop.html = The aw:noop Element
+view.html = The aw:view Element
+rolon.html = The aw:rolon Element
+script.html = The aw:script Element
+capture.html = The aw:capture Element

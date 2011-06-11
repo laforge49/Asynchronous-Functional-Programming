@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta charset="utf-8" />
+		<meta name="robots" content="all" />
+    <title>Group Access</title>
+  </head>
+  <body>
+    <aw:query cmd="rolon" aw:setcon.rolonUuid="_.rolonUuid">
+      <aw:query cmd="versionId" aw:uuid="rolonUuid">
+      	<aw:query cmd="expandedType" aw.versionId:type="role">
+          <table width ="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0" bgcolor="C0FFFF" newvar.header="../layout/">
+            <aw:include path="../layout/mainHeader.xml" />
+            <aw:query cmd="append" name="header" aw:value="expandedType"/>
+            <aw:query cmd="append" name="header" value="/header.xml"/>
+            <aw:include aw:path="header" />
+            <aw:include path="../layout/commands.xml" />
+            <tr>
+              <td colspan="2" bgcolor="FFFFC0" valign="top">
+                <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0">
+                  <tr>
+                    <td>
+                      <aw:query cmd="hasPrivilege" privilege="writer">
+                        <aw:nis name="hasPrivilege">
+                          <h2>Priviledged Operation</h2>
+                        </aw:nis>
+                        <aw:is name="hasPrivilege">
+                          <h2>Edit Group Permissions</h2>
+                          <aw:is name="_.upd">
+                            <aw:update cmd="updateGroupAccess" />
+                          </aw:is>
+                          <p>
+                            <aw:include path="/templates/En/error.xml" />
+                          </p>
+                          <p>
+                            <aw:query cmd="rolon" aw:setcon.rolonUuid="user.uuid">
+                              <table border="0" setcon.filterRole="myGroup">
+                                <aw:loop cmd="breadcrumbs" filter="role">
+                                  <aw:query cmd="versionId">
+                                    <form aw:action="currentRequest" method="post">
+                                      <aw:include path="/templates/hiddenView.xml" />
+                                      <input type="hidden" name="uuid" aw:value="uuid" />
+                                      <input type="hidden" name="upd" value="true" />
+                                      <tr aw:class="stripeClass">
+                                      <td aw:newvar.url="activeTemplateDirectory">
+                                        <aw:query cmd="append" name="url" value="/../" />
+  		                                  <aw:query cmd="urlAppend" name="rolonUuid" aw:value="uuid" />
+                                        <aw:query cmd="urlAppend" name="timestamp" aw:setcon.value="_.past" />
+                                        <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past" />
+                                        <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+                                        <aw:loop cmd="objects" loopPrefix="r" r.relType="realm" aw:r.rolonUuid="uuid">
+                                          <aw:query cmd="versionId" aw:uuid="r.uuid">
+                                            <aw:contents aw.versionId:value="name" />:
+                                          </aw:query>
+                                        </aw:loop>
+                                        <a aw:href="url" target="_top"><aw:contents aw.versionId:value="name" /></a>
+                                        <aw:is aw.versionId:value="att.tagLine">
+                                          -
+                                          <aw:contents aw.versionId:value="att.tagLine" />
+                                        </aw:is>
+                                      </td>
+                                      <aw:query cmd="relationshipValue" relType="access" aw:objUuid="uuid" aw:uuid="_.rolonUuid">
+                                        <td>
+                                          <aw:is name="relationshipValue">
+                                            <input type="submit" name="access" value="none" />
+                                          </aw:is>
+                                          <aw:nis name="relationshipValue">
+                                            none
+                                          </aw:nis>
+                                        </td>
+                                        <td>
+                                          <aw:query cmd="equal" aw:a="relationshipValue" b="reader">
+                                            <aw:is name="equal">
+                                              reader
+                                            </aw:is>
+                                            <aw:nis name="equal">
+                                              <input type="submit" name="access" value="reader" />
+                                            </aw:nis>
+                                          </aw:query>
+                                        </td>
+                                        <td>
+                                          <aw:query cmd="equal" aw:a="relationshipValue" b="writer">
+                                            <aw:is name="equal">
+                                              writer
+                                            </aw:is>
+                                            <aw:nis name="equal">
+                                              <input type="submit" name="access" value="writer" />
+                                            </aw:nis>
+                                          </aw:query>
+                                        </td>
+                                        <td>
+                                          <aw:query cmd="equal" aw:a="relationshipValue" b="owner">
+                                            <aw:is name="equal">
+                                              owner
+                                            </aw:is>
+                                            <aw:nis name="equal">
+                                              <input type="submit" name="access" value="owner" />
+                                            </aw:nis>
+                                          </aw:query>
+                                        </td>
+                                      </aw:query>
+                                    </tr>
+                                  </form>
+                                </aw:query>
+                              </aw:loop>
+                            </table>
+                          </aw:query>
+                        </p>
+                        (Before you can edit a group's permissions, you must visit the group's page.)
+                        </aw:is>
+                      </aw:query>
+                    </td>
+                  </tr>
+                  <tr bgcolor="FFFFFF">
+                    <td>
+                      <aw:include path="accessControlUpdate.xml" />
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td>
+                <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0">
+                  <tr>
+                    <aw:include path="../commands/changes.xml" />
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </aw:query>
+      </aw:query>
+    </aw:query>
+  </body>
+</html>

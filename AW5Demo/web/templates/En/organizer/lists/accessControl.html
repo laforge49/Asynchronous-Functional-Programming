@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta charset="utf-8" />
+		<meta name="robots" content="all" />
+		<link type="text/css" rel="stylesheet" href="/css/awol.css" />
+  </head>
+  <body aw:setcon.rolonUuid="_.rolonUuid" aw:setcon.timestamp="_.timestamp">
+    <aw:query cmd="rolon">
+      <div style="text-align:center"><strong>Share</strong></div>
+      <table border="0" width ="100%">
+        <aw:loop cmd="objects" relType="access">
+          <aw:query cmd="versionId">
+            <tr aw:class="stripeClass">
+              <td aw:newvar.url="activeTemplateDirectory">
+                <aw:query cmd="append" name="url" value="/../" />
+		            <aw:query cmd="urlAppend" name="rolonUuid" aw:value="uuid"/>
+                <aw:query cmd="urlAppend" name="timestamp" aw:setcon.value="_.past"/>
+                <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past"/>
+                <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+                <aw:loop cmd="objects" loopPrefix="r" r.relType="realm" aw:r.rolonUuid="uuid">
+                  <aw:query cmd="versionId" aw:uuid="r.uuid">
+                    <aw:contents aw.versionId:value="name" />:
+                  </aw:query>
+                </aw:loop>
+                <a aw:href="url" target="_top"><aw:contents aw.versionId:value="name"/></a>
+                <aw:query cmd="expandedType" aw.versionId:type="role">
+                  (<aw:contents name="expandedType" />)
+                </aw:query>
+                <aw:is aw.versionId:value="att.tagLine">
+                  -
+                  <aw:contents aw.versionId:value="att.tagLine" />
+                  -
+                </aw:is>
+                <aw:contents name="value" />
+              </td>
+            </tr>
+          </aw:query>
+        </aw:loop>
+      </table>
+      <br />
+      <div style="text-align:center"><strong>User Limits</strong></div>
+      <table border="0" width ="100%">
+        <aw:loop cmd="objects" relType="limit">
+          <aw:query cmd="versionId">
+            <tr aw:class="stripeClass">
+              <td aw:newvar.url="activeTemplateDirectory">
+                <aw:query cmd="append" name="url" value="/../" />
+		            <aw:query cmd="urlAppend" name="rolonUuid" aw:value="uuid"/>
+                <aw:query cmd="urlAppend" name="timestamp" aw:setcon.value="_.past"/>
+                <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past"/>
+                <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+                <a aw:href="url" target="_top"><aw:contents aw.versionId:value="name"/></a>
+                <aw:is aw.versionId:value="att.tagLine">
+                  -
+                  <aw:contents aw.versionId:value="att.tagLine" />
+                  -
+                </aw:is>
+                <aw:contents name="value" />
+              </td>
+            </tr>
+          </aw:query>
+        </aw:loop>
+      </table>
+    </aw:query>
+  </body>
+</html>

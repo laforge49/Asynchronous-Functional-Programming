@@ -1,0 +1,4 @@
+<aw:noop setvar.json='{
+  "message": "RefreshDesktop",
+  "broadcast": true
+}'/>

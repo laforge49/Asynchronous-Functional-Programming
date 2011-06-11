@@ -1,0 +1,8 @@
+<aw:noop>
+  <aw:include path="../../commands/deleteLink.xml" />
+  <aw:include path="../../commands/passwordLink.xml" />
+  <aw:include path="../../commands/renameLink.xml" />
+  <aw:include path="../../commands/tagLineLink.xml" />
+  <aw:include path="../../commands/textLink.xml" />
+  <aw:include path="../../commands/timezoneLink.xml" />
+</aw:noop>

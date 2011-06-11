@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta charset="utf-8" />
+		<meta name="robots" content="all" />
+  </head>
+  <body aw:setcon.rolonUuid="_.rolonUuid" aw:setcon.timestamp="_.timestamp">
+    <aw:query cmd="rolon">
+      <aw:include path="../text.xml" />
+      <aw:query cmd="versionId" aw:uuid="rolonUuid">
+        <aw:is aw.versionId:value="att.timezone">
+          <span style="color:blue">
+            timezone:
+          </span>
+          <aw:contents aw.versionId:value="att.timezone" />
+          <br />
+        </aw:is>
+      </aw:query>
+      <aw:include path="../next.xml" />
+    </aw:query>
+  </body>
+</html>

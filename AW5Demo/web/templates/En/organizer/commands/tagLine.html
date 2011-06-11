@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="robots" content="all"/>
+    <title>Tagline</title>
+</head>
+<body>
+<aw:query cmd="rolon" aw:setcon.rolonUuid="_.rolonUuid">
+    <aw:query cmd="versionId" aw:uuid="rolonUuid">
+        <aw:query cmd="expandedType" aw.versionId:type="role">
+            <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0" bgcolor="C0FFFF"
+                   newvar.header="../layout/">
+                <aw:include path="../layout/mainHeader.xml"/>
+                <aw:is name="expandedType">
+                    <aw:query cmd="append" name="header" aw:value="expandedType"/>
+                    <aw:query cmd="append" name="header" value="/header.xml"/>
+                    <aw:include aw:path="header"/>
+                    <aw:include path="../layout/commands.xml"/>
+                    <tr>
+                        <td colspan="2" bgcolor="FFFFC0" valign="top">
+                            <aw:query cmd="hasPrivilege" privilege="writer">
+                                <aw:nis name="hasPrivilege">
+                                    <h2>Priviledged Operation</h2>
+                                </aw:nis>
+                                <aw:is name="hasPrivilege">
+                                    <h2>Update Tagline</h2>
+                                    <aw:update cmd="tagLine"/>
+                                    <p>
+                                        <aw:include path="/templates/En/error.xml"/>
+                                    </p>
+                                    <p>
+
+                                    <form aw:action="currentRequest" method="post">
+                                        <aw:include path="/templates/hiddenView.xml"/>
+                                        <table>
+                                            <tr>
+                                                <td>
+            <span style="color:blue">
+              Tag Line:
+            </span>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="tagLine" aw.versionId:value="att.tagLine" autofocus="autofocus"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                </td>
+                                                <td>
+                                                    <input type="hidden" name="upd" value="true"/>
+                                                    <input type="submit" value="Update"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </form>
+                                    </p>
+                                </aw:is>
+                            </aw:query>
+                        </td>
+                        <td>
+                            <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0">
+                                <tr>
+                                    <aw:include path="changes.xml"/>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </aw:is>
+            </table>
+        </aw:query>
+    </aw:query>
+</aw:query>
+</body>
+</html>

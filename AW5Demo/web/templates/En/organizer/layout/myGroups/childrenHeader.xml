@@ -1,0 +1,3 @@
+<aw:noop>
+  <aw:include path="../../commands/myGroupLink.xml" />
+</aw:noop>

@@ -1,0 +1,7 @@
+<aw:noop aw:newvar.url="activeTemplateDirectory">
+  <aw:query cmd="append" name="url" value="/command.html"/>
+  <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+  <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+  <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+  <iframe name="changes" aw:src="url" width="100%" height="400" frameborder="0" style="border:0"> </iframe>
+</aw:noop>

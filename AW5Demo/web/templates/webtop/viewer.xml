@@ -1,0 +1,15 @@
+    <aw:query cmd="rolon" aw:rolonUuid="_.rolonUuid" newvar.url="/templates/loadContent.html">
+      <aw:query cmd="urlAppend" name="xml" value="/templates/webtop/views.xml" />
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+      <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+      <div align="right">
+        <a aw:href="url">Menu</a>
+        <aw:rolon aw:setcon.uuid="_.rolonUuid">
+          <aw:query cmd="formatTimestamp">
+            <aw:contents name="formatTimestamp" />
+          </aw:query>
+        </aw:rolon>
+      </div>
+      <h3><aw:contents name="_.desc" /></h3>
+      <aw:view aw:path="_.path" />
+    </aw:query>

@@ -1,0 +1,5 @@
+<aw:noop setvar.json='{"message": "Warning","text": "Invalid target: '>
+    <aw:query cmd="append" name="json" aw:value="comet.data.target" />
+    <aw:query cmd="append" name="json" value='"}' />
+    <aw:query cmd="println" aw:value="json" />
+</aw:noop>

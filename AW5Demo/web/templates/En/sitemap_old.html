@@ -1,0 +1,39 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="AgileWiki5 Home Page" />
+  <body>
+    <aw:include path="header.xml" setcon.heading="Welcome to AgileWiki5" />
+	<h2>Sitemap</h2>
+	<div class="content">
+    <table>
+      <tr>
+        <th>
+        </th>
+        <th>
+          Pathname
+        </th>
+        <th>
+          Description
+        </th>
+      </tr>
+      <aw:query cmd="sitemap" setcon.indentClass="site">
+        <aw:loop cmd="context" prefix="sitemap">
+          <tr>
+            <aw:query cmd="sitemapIndent" keyName="key" classPrefix="indent">
+            <td align="right">
+              <aw:contents name="index" />
+            </td>
+            <td>
+              <aw:contents aw:value="className" />
+            </td>
+            <td>
+              <a aw-rmpre:href="key"><aw:contents aw:name="key"/></a>
+            </td>
+            </aw:query>
+          </tr>
+        </aw:loop>
+      </aw:query>
+    </table>
+	</div>
+    <aw:include path="footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

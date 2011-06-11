@@ -1,0 +1,50 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Create New User" />
+  <body>
+    <aw:include path="../header.xml" />
+  	<div class="content">
+			<section class="main-content">
+  	    <h2>Create New User</h2>
+        <p>
+          <aw:include path="/templates/En/error.xml" />
+          <aw:is name="tooShort">
+            <p class="errormsg">Error: Password is less than 6 characters.</p>
+          </aw:is>
+          <aw:is name="noMatch">
+            <p class="errormsg">Error: The new passwords are not equal.</p>
+          </aw:is>
+          <aw:is name="newUser.name">
+            <aw:nis name="updateRequestInError">
+              <p>Welcome <b><aw:contents name="newUser.name" setvar.show="" /></b></p>
+            </aw:nis>
+          </aw:is>
+        </p>
+        <form aw:action="currentRequest" method="post">
+          <fieldset>
+	          <label for="newUserName">User name</label>
+	          <input type="text" name="newUserName" aw:value="_.newUserName"  required="required" />
+            <input type="hidden" name="oldRequest" aw:value="_.oldRequest"/>
+            <input type="hidden" name="rolonUuid" aw:value="_.rolonUuid"/>
+          </fieldset>
+          <fieldset>
+            <label for="np1">User password</label>
+            <input type="password" name="np1" /><!--required="required" pattern="(?=^.{8,}$)" placeholder="minimum 6 characters" />-->
+          </fieldset>
+          <fieldset>
+            <label for="np2">User password <span>(again)</span></label>
+            <input type="password" name="np2" /><!--required="required" />-->
+          </fieldset>
+          <fieldset>
+            <label for="tagLine">Tag Line</label>
+            <input type="text" name="tagLine" aw:value="_.tagLine" />
+          </fieldset>
+          <fieldset>
+            <input type="submit" value="Create" />
+          </fieldset>
+        </form>
+      </section>
+		  <aside> </aside>
+    </div>
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

@@ -1,0 +1,113 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Doc of Groovy script with AW5" />
+  <body>
+    <aw:include path="../header.xml" setcon.heading="Groovy scripts with AW5" />
+    
+    <div class="content">
+      <section class="main-content">
+        <h2>Groovy scripts with AW5</h2>
+        <nav  class="breadcrumbs">
+          <ul>
+	    <li><a href="/templates/En/">Home</a></li>
+            <li><span>&#8250;</span></li>
+            <li><a href="/templates/En/docs.html">Docs</a></li>
+          </ul>
+        </nav>
+        <h3>How to write a groovy script</h3>
+        <p>
+          For detailed information about Groovy please visit the 
+          <a href="http://groovy.codehaus.org" target="_blank">Groovy home page</a>. A good
+          place to begin is the <a href="http://docs.codehaus.org/display/GROOVY/Groovy+as+script" target="_blank">
+          'Groovy as script'</a> article.
+        </p>
+        
+        <h3>Script variables</h3>
+        <p>
+          AgileWiki 5 pre-defines one variable: context. This is the context map. The context variable is 
+          accessible from within any Groovy script. You can find more information about the context class
+          in the <a href="/templates/En/api/context.html">API documentation</a>.
+        </p>
+        
+        <h3>Naming conventions of Groovy files</h3>
+        <p>
+          You can find samples of existing Agilewiki Groovy scripts in the <b>web/groovy</b> directory.
+          The name of the file is derived from the name of the command the script represents.  The following
+          are examples of some of the existing commands in AgileWiki:
+        </p>
+        <table>
+          <!-- column headings -->
+          <tr>
+            <th>
+              Command description    
+            </th>
+            <th>
+              Derived file name
+            </th> 
+            <th>
+              Detailed Command explanation 
+            </th>
+            <th>
+              API documentation
+            </th>
+          </tr>
+          <!-- table body -->
+          <tr>
+            <td>
+              A query command which appends a name-value pair to a URL
+            </td>
+            <td>
+              qry_urlAppend.groovy
+            </td>
+            <td>
+              <a href="doc_qry_urlAppend.html">Click here</a>
+            </td>
+            <td>
+              <a href="/templates/En/templates/query/urlAppend.html">Click here</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              A filter command which adds the name of a variable to ignore to the context map
+            </td>
+            <td>
+              ftr_nContains.groovy
+            </td>
+            <td>
+              <a href="doc_ftr_nContains.html">Click here</a>
+            </td>
+            <td>
+              <a href="/templates/En/templates/loop/filters/nContains.html">Click here</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              An update command which creates a new group
+            </td>
+            <td>
+              upd_newGroup.groovy
+            </td>
+            <td> 
+            </td>
+            <td> 
+            </td>
+          </tr>
+          <tr>
+            <td>
+              A sequence command which returns a list of all variable names currently in the context map
+            </td>
+            <td>
+              seq_context.groovy
+            </td>
+            <td>
+              <a href="doc_seq_context.html">Click here</a>
+            </td>
+            <td>
+              <a href="/templates/En/templates/loop/context.html">Click here</a>
+            </td>
+          </tr>
+        </table>
+      </section>
+    </div>
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

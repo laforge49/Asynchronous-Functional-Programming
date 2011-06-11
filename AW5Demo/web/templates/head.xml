@@ -1,0 +1,27 @@
+	<head>
+		<meta charset="utf-8" />
+		
+	    <title>Agile Wiki : <aw:contents name="title" /></title>
+	    <meta name="description" content="AgileWiki will make you look at that science of building Web Applications in a different way. Built upon the principles of rolonic theory, AgileWiki takes Web Application Development to the next level. Scaling is built 
+in and applications built upon the AgileWiki Framework are immediately suited to life in The Cloud." />
+		<meta name="keywords" content="web application framework, web applications, web application development, the cloud, Scala, Jetty, noSQL, Comet" />
+		<meta name="robots" content="all" />
+		<meta name="author" content="agile wiki" />
+		<link type="text/css" rel="stylesheet" href="/css/aw.css" />
+
+		<!--NOTE comments are not currently processed -->
+
+		<!--HTML5 Shiv for unsupporting browsers -->
+
+		<!--[if lt IE 9]>
+			<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  		<![endif]-->
+
+		<script type="text/javascript" src="/js/html5.js"> </script>
+
+		<style>
+  			article, aside, figure, footer, header, hgroup,
+  			menu, nav, section { display: block; }
+		</style>
+	
+	</head>

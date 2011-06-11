@@ -1,0 +1,24 @@
+<aw:noop>
+  <aw:is name="_.userName">
+    <aw:query cmd="singletonUuid" role="users" newvar.userUuid="">
+      <aw:loop cmd="subjectUuids" limit="1" relType="parent" aw:value="_.userName">
+        <aw:noop aw:setvar.userUuid="uuid"/>
+      </aw:loop>
+      <aw:is name="userUuid">
+        <aw:query cmd="rolon" aw:setcon.rolonUuid="userUuid">
+          <aw:update cmd="login">
+            <aw:is name="invalid">
+              <aw:include path="login.xml" />
+            </aw:is>
+          </aw:update>
+        </aw:query>
+      </aw:is>
+      <aw:nis name="userUuid">
+        <aw:include path="login.xml" setcon.invalid="true"/>
+      </aw:nis>
+    </aw:query>
+  </aw:is>
+  <aw:nis name="_.userName">
+    <aw:include path="login.xml" />
+  </aw:nis>
+</aw:noop>

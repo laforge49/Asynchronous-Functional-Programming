@@ -1,0 +1,1 @@
+mvn scala:run -DmainClass=org.agilewiki.actors.Cotest1

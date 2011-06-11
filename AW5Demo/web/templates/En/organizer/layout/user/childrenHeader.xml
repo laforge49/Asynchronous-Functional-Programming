@@ -1,0 +1,4 @@
+<aw:noop>
+  <aw:include path="../../commands/groupsLink.xml" />
+  <aw:include path="../../commands/subtopicsLink.xml" />
+</aw:noop>

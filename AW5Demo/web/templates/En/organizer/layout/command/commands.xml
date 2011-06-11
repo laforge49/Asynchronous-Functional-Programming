@@ -1,0 +1,4 @@
+<aw:noop>
+  <aw:include path="../../commands/tagLineLink.xml" />
+  <aw:include path="../../commands/textLink.xml" />
+</aw:noop>

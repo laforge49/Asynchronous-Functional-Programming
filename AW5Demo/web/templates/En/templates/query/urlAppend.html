@@ -1,0 +1,73 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Url Append query" />
+  <body>
+    <aw:include path="../../header.xml" setcon.heading="Url Append Query Command" />
+           <div class="content">
+	   		<section class="main-content">		
+				<h2>Url Append Query Command</h2>
+				<nav  class="breadcrumbs">
+			   	   	<ul>
+			   	   		<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+			   	   		<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/">Templates</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/query/">AW5 Queries</a></li>
+
+				   	</ul>
+				</nav> 
+    <p>
+      The Url Append query command appends values of name and value parameters to the url. If url variable
+      is not present in context, or has a zero length,it take the value of currentRequest. The url variable is updated with
+      appended url.
+    </p>
+   <h3>
+     Attributes
+   </h3>
+   <p>
+     The <code>cmd</code> attribute on the aw:query element is required to invoke this command:
+   </p>
+<pre>cmd="urlAppend"</pre>
+   <h3>
+     Parameters
+   </h3>
+   <p>
+     This command uses three parameters, out of which two must be present in the context map and one is
+     optional:
+   </p>
+	<dl>
+     <dt>The <code>url</code> variable</dt><dd> provides the url. This is optional - the variable will be created if necessary, but then the scope is limited.</dd>
+     <dt>The <code>name</code> parameter</dt><dd> provides the name variable in the context map.</dd>
+     <dt>The <code>value</code> parameter</dt><dd> provides the value of name variable.</dd>
+   </dl>
+   <h3>
+     Example
+   </h3>
+   <p>
+     Here is the code to access url append:
+   </p>
+   <pre>
+       &lt;aw:noop newvar.url="xyz"&gt;
+         &lt;aw:query cmd="urlAppend" name="foo" value="bar" /&gt;
+         &lt;aw:query cmd="urlAppend" name="secret" value="plugh" /&gt;
+         url = &lt;aw:contents aw:value="url" /&gt;
+       &lt;/aw:noop&gt;
+       
+   </pre>
+   <p>
+     And here is the result:
+   </p>
+
+    <aw:noop newvar.url="xyz">
+      <aw:query cmd="urlAppend" name="foo" value="bar" />
+      <aw:query cmd="urlAppend" name="secret" value="plugh" />
+      url = <aw:contents aw:value="url" />
+    </aw:noop>
+    </section>
+    <aside> </aside>
+    </div>        
+    
+   <aw:include path="../../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

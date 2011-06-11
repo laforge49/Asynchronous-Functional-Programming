@@ -1,0 +1,36 @@
+<tr bgcolor="FFFFC0">
+  <td width="25%">
+  </td>
+  <td width="50%" align="center">
+    <h3 aw:newvar.url="activeTemplateDirectory">
+      <aw:query cmd="append" name="url" value="/../" />
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+      <aw:query cmd="urlAppend" name="timestamp" aw:setcon.value="_.past" />
+      <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past" />
+      <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+    	<a aw:href="url" target="_top"><aw:contents aw.versionId:value="name" /></a>
+      (<aw:contents name="expandedType" />)
+      <aw:is aw.versionId:value="att.tagLine">
+        -
+        <aw:contents aw.versionId:value="att.tagLine" />
+      </aw:is>
+    </h3>
+  </td>
+  <td width="25%" align="right">
+    <aw:query cmd="formatTimestamp">
+      <aw:is name="_.past">
+        <span style="color:red">
+          <aw:contents name="formatTimestamp" />
+        </span>
+      </aw:is>
+      <aw:nis name="_.past">
+        <aw:contents name="formatTimestamp" />
+      </aw:nis>
+    </aw:query>
+    <aw:noop aw:newvar.url="currentRequest">
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+      <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+      <a aw:href="url">refresh</a>
+    </aw:noop>
+  </td>
+</tr>

@@ -1,0 +1,54 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Noop Update Request" />
+  <body>
+    <aw:include path="../header.xml" />
+      <div class="content">
+   			<section class="main-content">		
+	    		<h2>Noop Update Request</h2>
+				<nav  class="breadcrumbs">
+		   	   		<ul>
+		   	   			<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+		   	   			<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/api/">API</a></li>
+			   		</ul>
+				</nav>
+
+			    <p>
+			    A noop update request is an update request which does not update the database.
+			    This request is helpful for when a template is composing 
+			    <aw:a href="../updates.html">updates</aw:a>
+			    and finds that either the user input is in error or
+			    that the database is in an inappropriate state.
+			    The template can then post an error via the
+			    <aw:a href="updateParameters.html">update parameters</aw:a> map
+			    and the presense of the noop update request in the
+			    <aw:a href="updateRequests.html">update requests</aw:a> list
+			    will cause the requested template, or an alternative, to be processed.
+			    </p><p>
+			    A noop update request is created by calling noopUpdateRequest factory method on the
+			    <aw:a href="extendedContext.html">extended context</aw:a> object,
+			    after which it needs to be added to the update requests list.
+			    </p>
+			    <h3>
+			    Factory Arguments
+			    </h3>
+			    <p>
+			      The factory method in the extended context requires two arguments,
+			      which are common to all update requests:
+			    </p>
+			    <dl>
+			    <dt>String <code>requestName</code></dt><dd>The name of the update request.
+			    Each update request must have a unique request name.
+			    The request name is used as a prefix for any results added to the update parameters map when the request is handled.
+			    (The noop update request, however, adds nothing to the update parameters list - it has no results.)
+			    </dd><dt>
+			    <aw:a href="context.html">Context</aw:a> <code>context</code></dt><dd>the context map.
+			    </dd></dl>
+		   </section>
+		<aside> </aside>
+	</div>
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

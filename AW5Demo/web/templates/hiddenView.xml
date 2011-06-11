@@ -1,0 +1,8 @@
+<aw:noop>
+  <input name="xml" type="hidden" aw:value="_.xml" />
+ 	<input name="window" type="hidden" aw:value="_.window" />
+  <input name="rolonUuid" type="hidden" aw:value="_.rolonUuid" />
+	<input name="path" type="hidden" aw:value="_.path" />
+	<input name="desc" type="hidden" aw:value="_.desc" />
+	<input name="timestamp" type="hidden" aw:value="_.timestamp" />
+</aw:noop>

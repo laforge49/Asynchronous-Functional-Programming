@@ -1,0 +1,89 @@
+/*
+ * Copyright 2010 M.Naji
+ *
+ * This file is part of AgileWiki and is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License (LGPL) as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This code is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * or navigate to the following url http://www.gnu.org/licenses/lgpl-2.1.txt
+ *
+ * Note however that only Scala, Java and JavaScript files are being covered by LGPL.
+ * All other files are covered by the Common Public License (CPL).
+ * A copy of this license is also included and can be
+ * found as well at http://www.opensource.org/licenses/cpl1.0.txt
+ */
+
+package org.agilewiki
+package actors
+package sequences
+package local
+
+import util.actors._
+import util.sequence.SequenceSource
+import res.ClassName
+import kernel.{Kernel, TransactionContext}
+import util.com.{DataOutputStack, DataInputStack}
+import util.com.shrt.ShortReq
+
+protected[sequences] trait SequenceWrapper {
+  this: InternalAddressActor =>
+
+  private var _payload: Option[DataInputStack] = None
+
+  def payload = _payload match {
+    case None => null
+    case Some(x) => x
+  }
+
+  override def messageHandler: PartialFunction[AnyRef, Unit] = {
+    case msg: ShortReq => sendMsg(msg)
+    case msg => unexpectedMsg(msg)
+  }
+
+  def sendMsg(msg: ShortReq) {
+    try {
+      debug(msg)
+      _payload = Some(msg.payload)
+      val flag = payload.readUTF
+      var key = payload.readUTF
+      if (key.length == 0) {
+        key = null
+      }
+      val timestamp = payload.readUTF
+
+      Kernel(localContext).startQuery(timestamp)
+      try {
+        val rspOutput = DataOutputStack()
+        if (flag.equals("current")) {
+          var currentRolon = wrappedSequence.current(key)
+          if (currentRolon == null) currentRolon = ""
+          rspOutput.writeUTF(currentRolon)
+          msg.sendRsp(rspOutput)
+        }
+        else if (flag.equals("next")) {
+          var nextRolon = wrappedSequence.next(key)
+          if (nextRolon == null) nextRolon = ""
+          rspOutput.writeUTF(nextRolon)
+          msg.sendRsp(rspOutput)
+        }
+        else {
+          msg.sendError("unsupported operation", util.Configuration(localContext).localServerName, ClassName(getClass))
+        }
+      } finally {TransactionContext.clear}
+    } catch {
+      case ex: Throwable => error(msg, ex)
+    }
+  }
+
+  def wrappedSequence: SequenceSource
+
+}

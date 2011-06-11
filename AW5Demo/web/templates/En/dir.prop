@@ -1,0 +1,15 @@
+langName = English
+1.html = Getting Started
+1.html.link = gettingStarted/
+2.html = Access Control
+2.html.link = accessControl.html
+3.html = An Introduction to Templates
+3.html.link = templates/
+4.html = Updates
+4.html.link = updates.html
+5.html = API
+5.html.link = api/
+6.html = Groovy
+6.html.link = groovy/
+7.html = Organizer
+7.html.link = organizer/

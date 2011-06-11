@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.agilewiki</groupId>
+    <artifactId>AgileWiki5</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+  
+    <!-- Meta data -->
+    <name>Base</name>
+  
+    <organization>
+        <name>AgileWiki</name>
+  	<url>http://www.agilewiki.org</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <id>bill</id>
+            <name>Bill La Forge</name>
+            <organization>AgileWiki</organization>
+            <organizationUrl>http://agilewiki.org</organizationUrl>
+            <roles>
+                <role>architect</role>
+  		<role>developer</role>
+            </roles>
+  	</developer>
+        <developer>
+            <id>naji</id>
+            <name>Mohamed Naji</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>barrie</id>
+            <name>Barrie McGuire</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>mark</id>
+            <name>Mark Boas</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <!-- Properties -->
+    <properties>
+    	<scala.version>2.8.1</scala.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <!-- Build -->
+    <build>
+        <plugins>
+            <plugin>
+            	<groupId>org.scala-tools</groupId>
+            	<artifactId>maven-scala-plugin</artifactId>
+                <version>2.14.3</version>
+            	<executions>
+            		<execution>
+            			<goals>
+            				<goal>compile</goal>
+            				<goal>testCompile</goal>
+            			</goals>
+            		</execution>
+            	</executions>
+            	<configuration>
+            		<scalaVersion>${scala.version}</scalaVersion>
+<!--
+            		<args>
+						<arg>-deprecation</arg>
+						<arg>-Xmigration</arg>
+						<arg>-Xwarninit</arg>
+						 
+						<arg>-Xwarninit</arg>
+            		</args>
+-->
+            	</configuration>
+            </plugin>            
+<!--			
+            <plugin>			
+                <groupId>com.google.code.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <configuration>
+                    <header>License/header.txt</header>
+                    <includes>
+                        <include>**/*.scala</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/base64/**</exclude>
+                    </excludes>
+                    <mapping>
+                      <java>SLASHSTAR_STYLE</java>
+                    </mapping>
+                    <properties>
+                        <owner>Bill La Forge</owner>
+                        <year>2009</year>
+                    </properties>
+                </configuration>
+            </plugin>
+-->            
+        </plugins>
+    </build>
+
+    <!-- Reporting / Docs -->
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jxr-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+                <version>2.14.3</version>
+                <configuration>
+                    <scalaVersion>2.8.0</scalaVersion>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <!-- Repositories -->
+    <pluginRepositories>
+        <pluginRepository>
+            <id>mc-release</id>
+            <name>Local Maven repository of releases</name>
+            <url>http://mc-repo.googlecode.com/svn/maven2/releases</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
+    
+    <!-- Sub projects -->
+    <modules>
+        <module>Util</module>
+        <module>AW5Kernel</module>
+	    <module>AW5Core</module>
+		<module>AW5Actors</module>
+		<module>AW5Command</module>
+		<module>AW5Web</module>
+		<module>AW5Demo</module>
+    </modules>
+</project>
+

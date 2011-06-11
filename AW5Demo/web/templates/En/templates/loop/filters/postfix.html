@@ -1,0 +1,73 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="postfix filter" />
+  <body>
+    <aw:include path="../../../header.xml" setcon.heading="The Postfix Filter Command" />
+    <div class="content">
+      <section class="main-content">
+        <h2>The Postfix Filter Command</h2>
+        <nav  class="breadcrumbs">
+          <ul>
+	    <li><a href="/templates/En/">Home</a></li>
+            <li><span>&#8250;</span></li>
+            <li><a href="/templates/En/docs.html">Docs</a></li>
+            <li><span>&#8250;</span></li>
+            <li><a href="/templates/En/templates">Templates</a></li>
+            <li><span>&#8250;</span></li>
+            <li><a href="/templates/En/templates/loop/">AW5 Loops</a></li>
+            <li><span>&#8250;</span></li>
+            <li><a href="/templates/En/templates/loop/filters/">Filters</a></li>
+
+          </ul>
+        </nav>   
+    <p>
+      The <code>postfix</code> filter command is used to prevent further processing of keys which do not end with a given postfix.
+    </p>
+    <h3>
+      Attributes
+    </h3>
+    <p>
+      Filters use 2 attributes specified on the <code>aw:loop</code> element:
+    </p>
+    <dl>
+      <dt>The <code>filter</code> attribute on the <code>aw:loop</code> element</dt><dd>is required to invoke this command:
+    	<p><code>filter="postfix"</code></p>
+    </dd>
+      <dt>The <code>loopPrefix</code></dt><dd>when specified as an attribute on the <code>aw:loop</code> element, is pre-pended to the parameters used by the <code>postfix</code> filter command.
+    </dd>
+    </dl>
+    <h3>
+      Properties
+    </h3>
+    <p>
+      The <code>postfix</code> property is used by this command to determine which keys are not to be processed further.
+      Note that the name of this property is modified when a <code>loopPrefix</code> is specified.
+    </p>
+    <h3>
+      Example
+    </h3>
+    <p>
+      The context.xml template uses this command to select properties which end in ".html":
+    </p>
+<pre>&lt;p aw:setcon.path="pagePathname"&gt;
+  &lt;ul&gt;
+    &lt;aw:query cmd="dirProp"&gt;
+      &lt;aw:loop cmd="context" prefix="dir" filter="postfix" postfix="html"&gt;
+        &lt;li&gt;
+          &lt;aw:is aw.key:value="link"&gt;
+            &lt;aw:a aw.key:href="link"&gt;&lt;aw:contents aw:name="key" /&gt;&lt;/aw:a&gt;
+          &lt;/aw:is&gt;
+          &lt;aw:nis aw.key:value="link" aw:newvar.tmp="pageDirectory"&gt;
+            &lt;aw:query cmd="append" name="tmp" value="/" /&gt;
+            &lt;aw:query cmd="append" name="tmp" aw-rmpre:setcon.value="key" /&gt;
+            &lt;aw:a aw:href="tmp"&gt;&lt;aw:contents aw:name="key" /&gt;&lt;/aw:a&gt;
+          &lt;/aw:nis&gt;
+        &lt;/li&gt;
+      &lt;/aw:loop&gt;
+    &lt;/aw:query&gt;
+  &lt;/ul&gt;
+&lt;/p&gt;</pre>
+            </section>
+    </div>
+    <aw:include path="../../../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+<aw:noop aw:newvar.url="activeTemplateDirectory">
+  <aw:query cmd="append" name="url" value="/children.html"/>
+  <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+  <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+  <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past"/>
+  <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+  <a aw:href="url" target="tables">Children</a>
+</aw:noop>

@@ -1,0 +1,80 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="urlAppend query explaination" />
+  <body>
+    <aw:include path="../header.xml" setcon.heading="Explaination of query" />
+        <div class="content">
+      <section class="main-content">
+        <h2>Explaination of query</h2>
+        <nav  class="breadcrumbs">
+          <ul>
+	    <li><a href="/templates/En/">Home</a></li>
+            <li><span>&#8250;</span></li>
+            <li><a href="/templates/En/docs.html">Docs</a></li>
+            <li><span>&#8250;</span></li>
+            <li><a href="/templates/En/groovy/">Groovy</a></li>
+          </ul>
+        </nav>
+    <p>
+        A <code>query</code> command is a <a href="http://groovy.codehaus.org/" target="_blank">groovy</a> script or
+        <a href="http://www.scala-lang.org/node/242" target="_blank">scala actor</a> to perform certain operations.
+        For example, <a href="/templates/En/templates/query/urlAppend.html">urlAppend</a> query
+        command is used to append name-value pair in url. Query command can be invoked using the aw:query element in a
+        template.<br/>
+    </p>
+    <p>The <a href="/templates/En/templates/query/urlAppend.html"><b>urlAppend</b></a>
+       query command appends values of name and value parameters to the url.
+       If url variable is not present in context, or has a zero length, it take the value of currentRequest.
+       The url variable is updated with appended url.
+    </p>
+    <p>Listing of code with line numbers:</p>
+      <pre>
+        1.   if (!context.isVar("url")) context.setVar("url","")
+        2.   def url = context.get("url")
+        3.   if (url.length() ==0)
+        4.      url = context.get("currentRequest")
+        5.   def name = context.get("name")
+        6.   def value = context.get("value")
+        7.   if (url.indexOf('?') == -1) url = url.concat("?")
+        8.   else url = url.concat("&amp;")
+        9.   url = url.concat(name).concat("=").concat(value)
+       10.  context.setVar("url",url)
+      </pre>
+    <p>Detailed explaination how the script works:</p>
+    <ul class="listtypenone">
+    <li><b>1.</b><code> if (!context.isVar("url")) context.setVar("url","")</code>
+    <p> Here, if the value of url doesn't exist in <a href="/templates/En/api/context.html">context</a> map,
+        then set it as empty url in the map. </p></li>
+
+    <li><b>2.</b><code> def url = context.get("url")</code>
+    <p> Get the value of url from the map.</p></li>
+    <li><b>3.</b><code> if (url.length() ==0)</code>
+		<ul class="listtypenone">    
+    		<li><b>4.</b><code> url = context.get("currentRequest")</code>
+    		 <p>This statement checks if url is empty, set the value of "currentRequest" from the
+     <a href="/templates/En/api/context.html">context</a> map to the url.</p></li>
+    	</ul>
+   </li>
+
+    <li><b>5.</b><code> def name = context.get("name")</code>
+    <p>Get the value of name parameter from the <a href="/templates/En/api/context.html">context</a> map. </p></li>
+
+    <li><b>6.</b><code> def value = context.get("value")</code>
+    <p>Get the value of value parameter from the <a href="/templates/En/api/context.html">context</a> map. </p></li>
+
+    <li><b>7.</b><code> if (url.indexOf('?') ==  -1) url = url.concat("?")</code>
+    <p>If "?" doesn't exist in the url, append it with "?".</p></li>
+
+    <li><b>8.</b><code> else url = url.concat("&amp;")</code>
+    <p> Otherwise, append it with "&amp;".</p></li>
+
+    <li><b>9.</b><code> url = url.concat(name).concat("=").concat(value)</code>
+    <p>Now, append value of name parameter, "=" and value of value parameter to the url variable.  </p></li>
+
+    <li><b>10.</b><code> context.setVar("url",url)</code>
+    <p>Reset the url variable with the appended url in the <a href="/templates/En/api/context.html">context</a> map.</p></li>
+    </ul>
+          </section>
+    </div>
+<aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+</body>
+</html>

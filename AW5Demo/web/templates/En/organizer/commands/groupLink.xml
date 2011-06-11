@@ -1,0 +1,5 @@
+<aw:noop aw:newvar.url="activeTemplateDirectory">
+  <aw:query cmd="append" name="url" value="/group.html" />
+  <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+  <a aw:href="url" target="_top"><span style="color:green; font-style:italic">group</span></a>
+</aw:noop>

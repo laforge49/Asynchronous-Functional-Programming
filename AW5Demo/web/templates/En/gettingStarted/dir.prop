@@ -1,0 +1,8 @@
+1.html = Install TortoiseHg and Download the Source
+1.html.link = installingTortoiseHg.html
+2.html = Install Maven 2
+2.html.link = installingMaven2.html
+3.html = Build AgileWiki 5
+3.html.link = buildingAW5.html
+4.html = How to Start and Stop the Demo
+4.html.link = startStop.html

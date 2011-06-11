@@ -1,0 +1,17 @@
+<aw:noop>
+  <aw:is name="_.userName">
+    <aw:query cmd="singletonUuid" role="users">
+      <aw:query cmd="child" aw:childName="_.userName">
+        <aw:is name="childUuid">
+          <aw:update cmd="login" />
+        </aw:is>
+        <aw:nis name="childUuid">
+          <aw:include path="login.xml" />
+        </aw:nis>
+      </aw:query>
+    </aw:query>
+  </aw:is>
+  <aw:nis name="_.userName">
+    <aw:include path="login.xml" />
+  </aw:nis>
+</aw:noop>

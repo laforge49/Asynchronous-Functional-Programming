@@ -1,0 +1,53 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="role property query" />
+  <body>
+    <aw:include path="../../header.xml" setcon.heading="The Role Property Query Command" />
+        <div class="content">
+	   		<section class="main-content">		
+				<h2>The Role Property Query Command</h2>
+				<nav  class="breadcrumbs">
+			   	   	<ul>
+			   	   		<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+			   	   		<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/">Templates</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/query/">AW5 Queries</a></li>
+
+				   	</ul>
+				</nav>
+    <p>
+      The <code>role</code> property query command returns the value of a role property.
+    </p>
+    <h3>
+      Attributes
+    </h3>
+    <p>
+      The <code>cmd</code> attribute on the aw:query element is required to invoke this command:
+    </p>
+<pre>cmd="roleProperty"</pre>
+    <h3>
+      Parameters
+    </h3>
+    <p>
+      This command uses two parameters:
+    </p>
+	<dl>
+      <dt>The <code>role</code> parameter</dt><dd> provides the name of the role.
+      This is a required parameter and must be present in the context map.</dd>
+      <dt>The <code>pname</code> parameter</dt><dd> provides the name of a role property. 
+      This is a required parameter and must be present in the context map.</dd>
+      <dt>The <code>name</code> parameter</dt><dd> provides the name of the return value.
+      This is a required variable and must be present in the context map.
+      The given name is assigned the value of the selected 
+      role property.
+      If the selected property is not present in the role properties map,
+      then no change is made to the context map.</dd>
+      </dl>
+          </section>
+    <aside> </aside>
+    </div>
+    <aw:include path="../../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

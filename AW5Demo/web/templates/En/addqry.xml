@@ -1,0 +1,9 @@
+<p aw:setcon.key="5">
+<p aw:setcon.key1="7">
+  <ul>
+    <aw:query cmd="addqry" name="key" value="key1">
+      <aw:contents name = "key" />
+    </aw:query>
+  </ul>
+</p>
+</p>

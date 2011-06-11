@@ -1,0 +1,7 @@
+<aw:noop aw:newvar.url="activeTemplateDirectory">
+  <aw:query cmd="append" name="url" value="/user.html"/>
+  <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+  <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+  <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+  <a target="changes" aw:href="url">User</a>
+</aw:noop>

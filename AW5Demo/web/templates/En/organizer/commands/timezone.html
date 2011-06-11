@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta charset="utf-8" />
+		<meta name="robots" content="all" />
+    <title>Timezone</title>
+  </head>
+  <body>
+    <aw:query cmd="rolon" aw:setcon.rolonUuid="_.rolonUuid">
+      <aw:query cmd="versionId" aw:uuid="rolonUuid">
+      	<aw:query cmd="expandedType" aw.versionId:type="role">
+          <table width ="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0" bgcolor="C0FFFF" newvar.header="../layout/">
+            <aw:include path="../layout/mainHeader.xml" />
+            <aw:is name="expandedType">
+            <aw:query cmd="append" name="header" aw:value="expandedType"/>
+            <aw:query cmd="append" name="header" value="/header.xml"/>
+            <aw:include aw:path="header" />
+            <aw:include path="../layout/commands.xml" />
+            <tr>
+<td colspan="2" bgcolor="FFFFC0" valign="top">
+       <aw:query cmd="hasPrivilege" privilege="owner">
+        <aw:nis name="hasPrivilege">
+          <h2>Priviledged Operation</h2>
+        </aw:nis>
+        <aw:is name="hasPrivilege">
+  <h2>Change Timezone</h2>
+<aw:update cmd="timezone">
+  <p>
+    <aw:include path="/templates/En/error.xml" />
+  </p>
+  <form aw:action="currentRequest" method="post">
+    <aw:include path="/templates/hiddenView.xml" />
+    
+      <select name="negative">
+        <aw:nis name="_.negative">
+          <option value="" selected="selected">+</option>
+          <option value="M">-</option>
+        </aw:nis>
+        <aw:is name="_.negative">
+          <option value="">+</option>
+          <option value="M" selected="selected">-</option>
+        </aw:is>
+      </select>
+      
+      <select name="hr">
+      
+        <aw:query cmd="equal" aw:a="_.hr" b="00">
+          <aw:is name="equal">
+            <option value="00" selected="selected">00</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="00">00</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.hr" b="01">
+          <aw:is name="equal">
+            <option value="01" selected="selected">01</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="01">01</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.hr" b="02">
+          <aw:is name="equal">
+            <option value="02" selected="selected">02</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="02">02</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.hr" b="03">
+          <aw:is name="equal">
+            <option value="03" selected="selected">03</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="03">03</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.hr" b="04">
+          <aw:is name="equal">
+            <option value="04" selected="selected">04</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="04">04</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.hr" b="05">
+          <aw:is name="equal">
+            <option value="05" selected="selected">05</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="05">05</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.hr" b="06">
+          <aw:is name="equal">
+            <option value="06" selected="selected">06</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="06">06</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.hr" b="07">
+          <aw:is name="equal">
+            <option value="07" selected="selected">07</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="07">07</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.hr" b="08">
+          <aw:is name="equal">
+            <option value="08" selected="selected">08</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="08">08</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.hr" b="09">
+          <aw:is name="equal">
+            <option value="09" selected="selected">09</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="09">09</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.hr" b="10">
+          <aw:is name="equal">
+            <option value="10" selected="selected">10</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="10">10</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.hr" b="11">
+          <aw:is name="equal">
+            <option value="11" selected="selected">11</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="11">11</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.hr" b="12">
+          <aw:is name="equal">
+            <option value="12" selected="selected">12</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="12">12</option>
+          </aw:nis>
+        </aw:query>
+        
+      </select>
+      
+      <b>:</b>
+      
+      <select name="mn">
+      
+        <aw:query cmd="equal" aw:a="_.mn" b="00">
+          <aw:is name="equal">
+            <option value="00" selected="selected">00</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="00">00</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.mn" b="05">
+          <aw:is name="equal">
+            <option value="05" selected="selected">05</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="05">05</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.mn" b="10">
+          <aw:is name="equal">
+            <option value="10" selected="selected">10</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="10">10</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.mn" b="15">
+          <aw:is name="equal">
+            <option value="15" selected="selected">15</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="15">15</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.mn" b="20">
+          <aw:is name="equal">
+            <option value="20" selected="selected">20</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="20">20</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.mn" b="25">
+          <aw:is name="equal">
+            <option value="25" selected="selected">25</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="25">25</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.mn" b="30">
+          <aw:is name="equal">
+            <option value="30" selected="selected">30</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="30">30</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.mn" b="35">
+          <aw:is name="equal">
+            <option value="35" selected="selected">35</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="35">35</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.mn" b="40">
+          <aw:is name="equal">
+            <option value="40" selected="selected">40</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="40">40</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.mn" b="45">
+          <aw:is name="equal">
+            <option value="45" selected="selected">45</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="45">45</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.mn" b="50">
+          <aw:is name="equal">
+            <option value="50" selected="selected">50</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="50">50</option>
+          </aw:nis>
+        </aw:query>
+        
+        <aw:query cmd="equal" aw:a="_.mn" b="55">
+          <aw:is name="equal">
+            <option value="55" selected="selected">55</option>
+          </aw:is>
+          <aw:nis name="equal">
+            <option value="55">55</option>
+          </aw:nis>
+        </aw:query>
+        
+      </select>
+      
+    <input type="submit" value="Update"/>
+            <span style="color:red">
+    Be sure to clear the browser cache after changing the timezone.
+    </span>
+  </form>
+</aw:update>
+        </aw:is>
+       </aw:query>
+</td>
+              <td>
+                <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0">
+                  <tr>
+                    <aw:include path="changes.xml" />
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            </aw:is>
+          </table>
+        </aw:query>
+      </aw:query>
+    </aw:query>
+  </body>
+</html>

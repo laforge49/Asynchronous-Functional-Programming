@@ -1,0 +1,10 @@
+def extendedContext = context.getSpecial(".extendedContext")
+def loopPrefix = context.get("loopPrefix")
+if (loopPrefix.length() > 0)
+  loopPrefix = loopPrefix+"."
+def key = context.get(loopPrefix+"key")
+def i = key.indexOf(5)
+def uuid = key.substring(i+1)
+value = key.substring(0,i)
+context.setCon(loopPrefix + "value", value)
+context.setCon(loopPrefix+"uuid",uuid)

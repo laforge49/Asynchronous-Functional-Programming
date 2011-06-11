@@ -1,0 +1,24 @@
+<html dir="rtl">
+  <aw:is name="_.newUserName">
+    <aw:query cmd="singletonUuid" role="users">
+      <aw:query cmd="rolon">
+        <aw:update cmd="newUser" />
+      </aw:query>
+    </aw:query>
+  </aw:is>
+  <aw:nis name="_newUserName">
+    <aw:include path="/templates/head.xml" setcon.title="إضافة مستخدم جديد" />
+    <body>
+      <aw:include path="../header.xml" setcon.heading="إضافة مستخدم جديد" />
+      <form aw:action="currentRequest" method="post">
+        اسم المستخدم: <input type="text" name="newUserName"/>
+        <input type="submit" value="موافق"/>
+      </form>
+      <aw:is name="newUser.name">
+        <aw:query cmd="welcomeNewUser">
+          <aw:contents name="greeting" />
+        </aw:query>
+      </aw:is>
+    </body>
+  </aw:nis>
+</html>

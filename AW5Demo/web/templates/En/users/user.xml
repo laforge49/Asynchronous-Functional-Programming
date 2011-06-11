@@ -1,0 +1,39 @@
+<aw:noop aw:newvar.versionId="user.timestamp">
+<div id="usermenu">
+  <aw:query cmd="append" name="versionId" value="|" />
+  <aw:query cmd="append" name="versionId" aw:value="user.uuid" />
+  <aw:query cmd="equal" aw.versionId:a="name" b="Anonymous">
+    <aw:nis name="equal">
+      <ul>
+        <li newvar.url="/templates/En/users/logoff.xml">
+          <aw:query cmd="urlAppend" name="oldRequest" aw:value="currentRequest" />
+          <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid" />
+          <a aw:href="url">logoff</a>
+        </li>
+  	    <li newvar.url="/templates/En/organizer/">
+          <aw:query cmd="urlAppend" name="rolonUuid" aw:value="user.uuid" />
+	        <span>Welcome 
+  	        <a aw:href="url">
+	            <aw:contents aw.versionId:value="name" />
+	          </a>
+	        </span>
+  	    </li>
+	    </ul>  
+    </aw:nis>
+    <aw:is name="equal">
+      <ul>
+        <li newvar.url="/templates/En/users/newUser.html">
+          <aw:query cmd="urlAppend" name="oldRequest" aw:value="currentRequest" />
+          <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid" />
+          <a aw:href="url">new user</a>
+        </li>
+        <li newvar.url="/templates/En/users/login.html">
+          <aw:query cmd="urlAppend" name="oldRequest" aw:value="currentRequest" />
+          <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid" />
+          <a aw:href="url">logon</a>
+        </li>
+      </ul>
+    </aw:is>
+  </aw:query>
+</div>
+</aw:noop>

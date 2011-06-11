@@ -1,0 +1,14 @@
+<aw:nis name="_.past">
+  <aw:query cmd="hasPrivilege" privilege="owner">
+    <aw:is name="hasPrivilege">
+      <div style="text-align:center">
+        <aw:noop aw:newvar.url="activeTemplateDirectory">
+          <aw:query cmd="append" name="url" value="/order.html"/>
+          <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+          <aw:query cmd="urlAppend" name="rel" value="member"/>
+          <a aw:href="url" target="_top"><span style="color:green; font-style:italic">order</span></a>
+        </aw:noop>  
+      </div>
+    </aw:is>
+  </aw:query>
+</aw:nis>

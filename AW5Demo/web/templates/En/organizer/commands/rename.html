@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="robots" content="all"/>
+    <title>Rename</title>
+</head>
+<body>
+<aw:query cmd="rolon" aw:setcon.rolonUuid="_.rolonUuid">
+    <aw:query cmd="versionId" aw:uuid="rolonUuid">
+        <aw:query cmd="expandedType" aw.versionId:type="role">
+            <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0" bgcolor="C0FFFF"
+                   newvar.header="../layout/">
+                <aw:include path="../layout/mainHeader.xml"/>
+                <aw:is name="expandedType">
+                    <aw:query cmd="append" name="header" aw:value="expandedType"/>
+                    <aw:query cmd="append" name="header" value="/header.xml"/>
+                    <aw:include aw:path="header"/>
+                    <aw:include path="../layout/commands.xml"/>
+                    <tr>
+                        <td colspan="2" bgcolor="FFFFC0" valign="top">
+                            <aw:query cmd="hasPrivilege" privilege="writer">
+                                <aw:nis name="hasPrivilege">
+                                    <h2>Priviledged Operation</h2>
+                                </aw:nis>
+                                <aw:is name="hasPrivilege">
+                                    <h2>Rename Page</h2>
+
+                                    <p>
+                                        <aw:include path="/templates/En/error.xml"/>
+                                    </p>
+                                    <aw:is name="_.newName">
+                                        <aw:query cmd="singletonUuid" role="users" newvar.duplicate="">
+                                            <aw:loop cmd="subjectUuids" limit="1" relType="parent" aw:value="_.newName">
+                                                <aw:noop aw:setvar.duplicate="uuid"/>
+                                            </aw:loop>
+                                            <aw:is name="duplicate">
+                                                <p>
+                                                    Duplicate Name
+                                                </p>
+                                            </aw:is>
+                                            <aw:nis name="duplicate">
+                                                <aw:update cmd="rename" aw:rolonUuid="_.rolonUuid">
+                                                </aw:update>
+                                            </aw:nis>
+                                        </aw:query>
+                                    </aw:is>
+                                    <form aw:action="currentRequest" method="post">
+                                        <aw:include path="/templates/hiddenView.xml"/>
+                                        <table>
+                                            <tr>
+                                                <td>
+                                                    <span style="color:blue">
+                                                        New Page Name:
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <aw:is name="_.newName">
+                                                        <input type="text" name="newName" aw:value="_.newName" autofocus="autofocus"/>
+                                                    </aw:is>
+                                                    <aw:nis name="_.newName">
+                                                        <input type="text" name="newName" aw.versionId:value="name" autofocus="autofocus"/>
+                                                    </aw:nis>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                </td>
+                                                <td>
+                                                    <input type="submit" value="Change Page Name"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </form>
+                                </aw:is>
+                            </aw:query>
+                        </td>
+                        <td>
+                            <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0">
+                                <tr>
+                                    <aw:include path="changes.xml"/>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </aw:is>
+            </table>
+        </aw:query>
+    </aw:query>
+</aw:query>
+</body>
+</html>

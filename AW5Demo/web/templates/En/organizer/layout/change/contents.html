@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta charset="utf-8" />
+		<meta name="robots" content="all" />
+  </head>
+  <body aw:setcon.rolonUuid="_.rolonUuid" aw:setcon.timestamp="_.timestamp">
+    <aw:query cmd="rolon">
+      <aw:loop cmd="objects" relType="user">
+        <aw:query cmd="versionId" aw:newvar.url="activeTemplateDirectory">
+          <aw:query cmd="append" name="url" value="/../../" />
+          <aw:query cmd="urlAppend" name="rolonUuid" aw:value="uuid"/>
+          <aw:query cmd="urlAppend" name="timestamp" aw:value="_.timestamp"/>
+          <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past"/>
+          <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+          <span style="color:blue">
+            user:
+          </span>
+          <a aw:href="url" target="_top"><aw:contents aw.versionId:value="name" /></a>
+          <aw:is aw.versionId:value="att.tagLine">
+            -
+            <aw:contents aw.versionId:value="att.tagLine" />
+          </aw:is>
+          <br />
+        </aw:query>
+      </aw:loop>
+      <aw:loop cmd="objects" relType="command">
+        <aw:query cmd="versionId" aw:newvar.url="activeTemplateDirectory">
+          <aw:query cmd="append" name="url" value="/../../" />
+          <aw:query cmd="urlAppend" name="rolonUuid" aw:value="uuid"/>
+          <aw:query cmd="urlAppend" name="timestamp" aw:value="_.timestamp"/>
+          <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past"/>
+          <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+          <span style="color:blue">
+            command:
+          </span>
+          <a aw:href="url" target="_top"><aw:contents aw.versionId:value="name" /></a>
+          <aw:is aw.versionId:value="att.tagLine">
+            -
+            <aw:contents aw.versionId:value="att.tagLine" />
+          </aw:is>
+          <br />
+        </aw:query>
+      </aw:loop>
+      <aw:loop cmd="objects" relType="effects">
+        <aw:query cmd="versionId" aw:newvar.url="activeTemplateDirectory">
+          <aw:query cmd="append" name="url" value="/../../" />
+          <aw:query cmd="urlAppend" name="rolonUuid" aw:value="uuid"/>
+          <aw:query cmd="urlAppend" name="timestamp" aw:value="_.timestamp"/>
+          <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past"/>
+          <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+          <span style="color:blue">
+            effected:
+          </span>
+          <aw:loop cmd="objects" loopPrefix="r" r.relType="realm" aw:r.rolonUuid="uuid">
+            <aw:query cmd="versionId" aw:uuid="r.uuid">
+              <aw:contents aw.versionId:value="name" />:
+            </aw:query>
+          </aw:loop>
+          <a aw:href="url" target="_top"><aw:contents aw.versionId:value="name" /></a>
+          <aw:query cmd="expandedType" aw.versionId:type="role">
+            (<aw:contents name="expandedType" />)
+          </aw:query>
+          <aw:is aw.versionId:value="att.tagLine">
+            -
+            <aw:contents aw.versionId:value="att.tagLine" />
+          </aw:is>
+          <br />
+        </aw:query>
+      </aw:loop>
+    </aw:query>
+  </body>
+</html>

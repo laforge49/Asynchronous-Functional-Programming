@@ -1,0 +1,17 @@
+context.html = The Context Sequence Command
+language.html = The Language Sequence Command
+properties.html = The Properties Sequence Command
+children.html = The Children Sequence Command
+parents.html = The Parents Sequence Command
+qualifiers.html = The Qualifiers Sequence Command
+qualified.html = The Qualified Sequence Command
+index.html = Filters
+index.html.link = filters/
+superRoles.html = The SuperRoles Sequence Command
+subRoles.html = The SubRoles Sequence Command
+roleProperties.html = The Role Properties Sequence Command
+views.html = The Views Sequence Command
+attributes.html = The Attributes Sequence Command
+propertyTables.html = The Property Tables Sequence Command
+qualificationAttribute.html = The Qualification Attribute Sequence Command
+qualifiedAttribute.html = The Qualified Attribute Sequence Command

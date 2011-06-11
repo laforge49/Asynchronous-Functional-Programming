@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="robots" content="all"/>
+        <title>Logon</title>
+    </head>
+    <body>
+        <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0" bgcolor="C0FFFF"
+               aw:newvar.header="expandedType">
+            <tr bgcolor="FFFFFF">
+                <td width="25%">
+                    <a href="/">
+                        <img src="/images/AgileWiki-logo.png" alt="AgileWiki"/>
+                    </a>
+                </td>
+                <td width="50%" align="center">
+                    <aw:include path="../topLink.xml"/>
+                </td>
+                <td width="25%">
+                </td>
+            </tr>
+        </table>
+        <div class="content">
+            <section class="main-content">
+                <h2>Logon</h2>
+                <p>
+                    <aw:include path="/templates/En/error.xml"/>
+                    <aw:is name="invalid">
+                        <b>Invalid user name or password.</b>
+                    </aw:is>
+                </p>
+                <form aw:action="currentRequest" method="post">
+                    <div>
+                        <label for="userName" style="color:blue">User Name:</label>
+                        <input type="text" name="userName" aw:value="_.userName" autofocus="autofocus"/>
+                        <input type="hidden" name="oldRequest" aw:value="_.oldRequest"/>
+                        <input type="hidden" name="rolonUuid" aw:value="_.rolonUuid"/>
+                        <input type="hidden" name="past" aw:value="_.past"/>
+                    </div>
+                    <div>
+                        <label for="password" style="color:blue">Password:</label>
+                        <input type="password" name="password"/>
+                    </div>
+                    <div>
+                        <input type="submit" value="Logon"/>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,261 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Access Control" />
+  <body>
+    <aw:include path="header.xml" />
+   	<div class="content">
+   		<section class="main-content">		
+  	    <h2>Access Control</h2>
+	  		<nav  class="breadcrumbs">
+		 	   	<ul>
+		 	   		<li><a href="/templates/En/">Home</a></li>
+		  			<li><span>&#8250;</span></li>
+		     		<li><a href="/templates/En/docs.html">Docs</a></li>
+			   	</ul>
+			  </nav>
+			  <p>
+		  	  Access control determines what is visible to a user,
+		  	  and what operations a user can perform.
+		  	  Access control then is at the heart of the user experience,
+		  	  regardless of which User Interface (UI) is used.
+		  	</p>
+		  	<h3>Access Control Features</h3>
+		  	<p>
+		  	  Agile Wiki 5 (AW5) provides a rich set of conrols for managing user access:
+		  	</p>
+	  	  <ul>
+		 	    <li>User permissions</li>
+		 	    <li>Group permissions</li>
+		 	    <li>User limits</li>
+		 	    <li>Group membership types</li>
+		 	    <li>Sub-groups and</li>
+		 	    <li>Access restrictions based on group membership.</li>
+		  	</ul>
+		  	<h3>The Basics</h3>
+		  	<p>
+		  	  A few basic concepts need to be covered first,
+		  	  before we can get into the details of access control.
+		  	</p>
+		  	<h4>Rolons</h4>
+		  	<p>
+		  	  Think of a Rolon as a user object.
+		  	  Rolons hold content, 
+		  	  and every Rolon has its own user permissions, group permissions and user limits.
+		  	</p>
+		  	<p>
+		  	  Everything the user can access in the database is a Rolon.
+		  	  This includes users, groups, qualifiers and everything else.
+		  	</p>
+		  	<h4>Roles</h4>
+		  	<p>
+		  	  Roles are used to define the behavior of a Rolon.
+		  	  Every Rolon has a role, but roles support inheritance.
+		  	  A role can have any number of sub-roles, 
+		  	  which inherit its behavior.
+		  	  And a role can have any number of super-roles, 
+		  	  from which it inherits behavior.
+		  	</p>
+		  	<h4>Views</h4>
+		  	<p>
+		  	  A view provides a means of accessing or updating a Rolon.
+		  	  Views are implemented using 
+		  	  <aw:a href="templates/">templates</aw:a>.
+		  	  And every view is a part of a single role.
+		  	  The views that can be used with a given Rolon then
+		  	  is determined by a Rolon's role 
+		  	  and all the super-roles of that role, recursively.
+		  	</p>
+		  	<p>
+		  	  A user can not always access all the views of a Rolon.
+		  	  Access is restricted to the permissions that the user has for the given Rolon,
+		  	  and on the permissions granted to various groups 
+		  	  and the type of membership the user has for those groups.
+		  	</p>
+		  	<p>
+		  	  Access to a view can be further restricted to 
+		  	  specific types of memberships for various groups.
+		  	</p>
+		  	<h3>Qualifier Rolons and Qualifications</h3>
+		  	<p>
+		  	  The qualifier role carries with it the ability of a Rolon 
+		  	  to be used to qualify other Rolons.
+		  	  The user, group and access roles are all examples of sub-roles
+		  	  of the qualifier role.
+		  	  This means that user Rolons, group Rolons and the Access Rolon
+		  	  can all serve as qualifiers for other Rolons.
+		  	</p>
+		  	<p>
+		  	  When a Rolon is qualified by a qualifier Rolon, 
+		  	  a qualification is created with a name/value pair,
+		  	  where the name identifies the type of qualification.
+		  	  There can be multiple qualifications on a Rolon for the same
+		  	  qualifier Rolon, but each qualification will be a different type.
+		  	  But for a given qualifier Rolon and a given type of qualification,
+		  	  the qualified Rolon will have only a single value--creating another
+		  	  qualification with the same qualifier Rolon and qualification type simply
+		  	  replaces the old value with a new one.
+		  	</p>
+		  	<p>
+		  	  There are 3 types of qualifications used in the implementation of
+		  	  access control: access, limit and member.
+		  	</p>
+		  	<h4>Degrees of Access</h4>
+		  	<p>
+		  	  There are 4 degrees of access:
+		  	</p>
+		  	<ul>
+		  	  <li><b>none</b> - If a user has no access permission for a Rolon, the Rolon effectively does not exist for that user.</li>
+		  	  <li><b>reader</b> With reader permission, a user can view the content of the Rolon.</li>
+		  	  <li><b>writer</b> - The writer permission is sufficient for a user to perform most updates. It also confers reader permission.</li>
+		  	  <li><b>owner</b> - The owner permission is required for some some updates, like changing a user's password. It also confers writer permission.</li>
+		  	</ul>
+		  	<h4>Access Qualifications</h4>
+		  	<p>
+		  	  Access qualifications are used to assign permissions to users and members of groups. 
+		  	  The qualifier Rolon must have a role which is equal to, or a sub-role of, the roles <b>access</b>, <b>user</b> or <b>group</b>. 
+		  	  Access qualifications can be applied to any Rolon.
+		  	</p>
+		  	<p>
+		  	  The Access singleton is a Rolon with a role of access. 
+		  	  (Any number of Rolons can have the same role, but only one may be the role's singleton. 
+		  	  And singletons are created only when the ark is initialized--never interactively.)
+		  	  When the Access rolon is used as the qualifier of an access qualification,
+		  	  the assigned value (reader, writer or owner) is the permission granted to all users for accessing the qualified Rolon.
+		  	</p>
+		  	<p>
+		  	  User Rolons have a role which is either the user role or a sub-role of the user role. 
+		  	  When a user Rolon is used as the qualifier for an access qualification, 
+		  	  the assigned value for that qualification is the permission granted to the user for 
+		  	  accessing the qualified Rolon.
+		  	</p>
+		  	<p>
+		  	  Group Rolons have a role which is either the group role or a sub-role of the group role. 
+		  	  When a group Rolon is used as the qualifier for an access qualification, 
+		  	  the assigned value for that qualification is the permission granted to the members of the group for 
+		  	  accessing the qualified Rolon.
+		  	</p>
+		  	<h4>Limit Qualifications</h4>
+		  	<p>
+		  	  Limit qualifications are used to restrict the access of a user to the qualified Rolon, 
+		  	  but do not themselves confer any access permission.
+		  	  The qualifier of a limit qualification is always a user Rolon, 
+		  	  and the assigned values are none, reader or writer.
+		  	  Limit qualifications can be applied to any Rolon.
+		  	</p>
+		  	<p>
+		  	  When a user rolon is the qualifier of a limit qualification, 
+		  	  access by the user to the qualified rolon can not exceed the value assigned
+		  	  to the qualification.
+		  	</p>
+		  	<h4>Member Qualifications</h4>
+		  	<p>
+		  	  Member qualifications are used to confer the access permissions granted to a group to a user. 
+		  	  The qualifier of a member qualification is always a group Rolon and the qualifed Rolon is always a user Rolon.
+		  	</p>
+		  	<p>
+		  	  The value of a member qualification is reader, writer or owner,
+		  	  and is used to limit the degree of access being conferred to the user: 
+		  	</p>
+		  	<table>
+		  	  <tr>
+		  	    <th>
+		  	      Group Access
+		  	    </th>
+		  	    <th>
+		  	      Type of Membership
+		  	    </th>
+		  	    <th>
+		  	      Access Conferred to User
+		  	    </th>
+		  	  </tr>
+		  	  <tr>
+		  	    <td>reader</td>
+		  	    <td>reader</td>
+		  	    <td>reader</td>
+		  	  </tr>
+		  	  <tr>
+		  	    <td>reader</td>
+		  	    <td>writer</td>
+		  	    <td>reader</td>
+		  	  </tr>
+		  	  <tr>
+		  	    <td>reader</td>
+		  	    <td>owner</td>
+		  	    <td>reader</td>
+		  	  </tr>
+		  	  <tr>
+		  	    <td>writer</td>
+		  	    <td>reader</td>
+		  	    <td>reader</td>
+		  	  </tr>
+		  	  <tr>
+		  	    <td>writer</td>
+		  	    <td>writer</td>
+		  	    <td>writer</td>
+		  	  </tr>
+		  	  <tr>
+		  	    <td>writer</td>
+		  	    <td>owner</td>
+		  	    <td>writer</td>
+		  	  </tr>
+		  	  <tr>
+		  	    <td>owner</td>
+		  	    <td>reader</td>
+		  	    <td>reader</td>
+		  	  </tr>
+		  	  <tr>
+		  	    <td>owner</td>
+		  	    <td>writer</td>
+		  	    <td>writer</td>
+		  	  </tr>
+		  	  <tr>
+		  	    <td>owner</td>
+		  	    <td>owner</td>
+		  	    <td>owner</td>
+		  	  </tr>
+		  	</table>
+		  	<h3>Sub-groups</h3>
+		  	<p>
+		  	  Groups with a lot of members make it easy to provide access to a large community, but can be difficult to manage.
+		  	  Conversely, groups with few members are easier to manage but having a lot of different groups makes it difficult to provide access to the larger community.
+		  	  The obvious thing is to have a heirarcy of groups, with sub-groups inheriting members from their super-groups.
+		  	</p>
+		  	<p>
+		  	  Membership inheritance for groups is based on the roles of the group Rolons,
+		  	  as this allows for a very fast/light-weight implementation.
+		  	  But the restriction is that super-groups must be singletons.
+		  	  And singleton Rolons are only created when the database is initialized,
+		  	  not interactively.
+		  	  (There may be many group rolons with the same role,
+		  	  but for any given role there can be at most only one singleton.)
+		  	</p>
+		  	<p>
+		  	  The singleton of a group Rolon's role, if there is one, is the super-group of that role.
+		  	  Also, if any of the super-roles of the group Rolon's role have singletons,
+		  	  then those singletons are also super-groups of that group.
+		  	</p>
+		  	<h3>New Rolons</h3>
+		  	<p>
+		  	  After creating a new Rolon, the user may need to add content and confer access privileges to various groups and other users.
+		  	  So the user who creates a Rolon is always given owner access to that Rolon.
+		  	</p>
+		  	<h3>Journal Entries</h3>
+		  	<p>
+		  	  Every update to the database results in the creation of a journal entry Rolon. Indeed, the journal entry is created as part of the update process itself.
+		  	  Journal entries provide accountability, and are used as part of the notification process as well. 
+		  	</p>
+		  	<p>
+		  	  Journal entries, once created, should not generally be changed. 
+		  	  So only reader access is confered to the users and groups which can access the updated Rolon.
+		  	  Limit qualifications on the updated Rolon are also added to the Journal entry.
+		  	</p>
+		  	<h3>Admin User and Admin Group</h3>
+		  	<p>
+		  	  The Admin user and the Admin Group members (subject to the type of membership) are confirred with writer access implicitly.
+		  	  This is essential for the initial configuration of the database and very helpful when problems arise.
+		  	</p>
+		  </section>
+	  	<aside> </aside>
+  	</div>	
+    <aw:include path="footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

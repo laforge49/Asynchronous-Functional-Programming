@@ -1,0 +1,11 @@
+<table width="100%"><tr><td align="right">
+  <aw:include path="users/user.xml" />
+</td><td>
+  <a href="/"><img src="/images/AgileWiki-logo.png" /></a>
+</td></tr><tr><td width="100%" align="center">
+<h1>
+  <aw:contents name="heading" />
+</h1>
+</td><td align="right">
+  <aw:include path="language.xml"/>
+</td></tr></table>

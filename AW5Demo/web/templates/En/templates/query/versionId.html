@@ -1,0 +1,67 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="versionId query" />
+  <body>
+    <aw:include path="../../header.xml" setcon.heading="The versionId Query Command" />
+           <div class="content">
+	   		<section class="main-content">		
+				<h2>The versionId Query Command</h2>
+				<nav  class="breadcrumbs">
+			   	   	<ul>
+			   	   		<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+			   	   		<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/">Templates</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/query/">AW5 Queries</a></li>
+
+				   	</ul>
+				</nav> 
+    <p>
+      The <code>versionId</code> query command creates a version id from the current timestamp and the <code>uuid</code> parameter.
+      This is often needed as the content of a Rolon is stored in the context map using the version id as a prefix.
+    </p>
+    <h3>
+      Attributes
+    </h3>
+    <p>
+      The <code>cmd</code> attribute on the <code>aw:query</code> element is required to invoke this command:
+    </p>
+<pre>cmd="versionId"</pre>
+    <h3>
+      Parameters
+    </h3>
+    <p>
+      This command uses one parameter which must be present in the context map:
+    </p>
+	<dl>
+      <dt>The <code>uuid</code> parameter</dt><dd> provides the uuid to be used in creating the timestamp.</dd>
+	</dl>
+    <h3>Constants</h3>
+    <p>
+    This command adds one constant to the context map: <code>versionId</code>.
+    </p>
+    <h3>Example</h3>
+<pre>    &lt;aw:query cmd="singletonUuid" role="home"&gt;
+      &lt;aw:query cmd="versionId" aw:uuid="rolonUuid"&gt;
+        ark version id = &lt;aw:contents name="versionId" /&gt;
+      &lt;/aw:query&gt;
+    &lt;/aw:query&gt;
+
+</pre>
+    <p>
+    And here's the result:
+    </p><p>
+    <aw:query cmd="singletonUuid" role="home">
+      <aw:query cmd="versionId" aw:uuid="rolonUuid">
+        ark version id = <aw:contents name="versionId" />
+      </aw:query>
+    </aw:query>
+    </p>
+        </section>
+    <aside> </aside>
+    </div>   
+    <aw:include path="../../footer.xml" aw:setcon.template="currentRequest"/>
+
+   </body>
+</html>

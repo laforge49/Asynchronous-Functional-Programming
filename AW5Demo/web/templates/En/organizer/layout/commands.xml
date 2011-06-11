@@ -1,0 +1,14 @@
+<tr bgcolor="FFFFC0">
+<td colspan="3" align="center">
+  <aw:nis name="_.past" aw:newvar.uVersionId="user.timestamp">
+    <aw:query cmd="append" name="uVersionId" value="|" />
+    <aw:query cmd="append" name="uVersionId" aw:value="user.uuid" />
+    <aw:query cmd="equal" aw.uVersionId:a="name" b="Anonymous">
+      <aw:nis name="equal" aw:newvar.commands="expandedType">
+        <aw:query cmd="append" name="commands" value="/commands.xml"/>
+        <aw:include aw:path="commands" />
+      </aw:nis>
+    </aw:query>
+  </aw:nis>
+</td>
+</tr>

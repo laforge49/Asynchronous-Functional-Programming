@@ -1,0 +1,16 @@
+loopPrefix = context.get("loopPrefix")
+if (loopPrefix.length() > 0)
+  loopPrefix = loopPrefix + "."
+filterRoleName = context.get(loopPrefix + "filterRole")
+filterRoleIName = context.typeName(filterRoleName)
+uuid = context.get(loopPrefix + "uuid")
+i = uuid.indexOf("_")
+roleIName = uuid.substring(i+1)
+extendedContext = context.getSpecial(".extendedContext")
+role = extendedContext.role(roleIName)
+if (role == null)
+  context.setCon(loopPrefix + "ignore", "true")
+else if (role.isA(filterRoleIName))
+  context.setCon(loopPrefix + "ignore", "")
+else
+  context.setCon(loopPrefix + "ignore", "true")

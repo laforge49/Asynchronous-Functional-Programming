@@ -1,0 +1,27 @@
+<p>
+  <aw:is  name="_.currentRequest">
+    <aw:update cmd="language" />
+  </aw:is>
+  <aw:nis  name="_.currentRequest">
+    <form aw:action="activeTemplate" method="post">
+      <select name="language">
+        <aw:loop cmd="lang">
+          <aw:query cmd="lang" aw:setcon.langCode="key">
+            <aw:is name="selected">
+              <option aw:value="key" selected="selected">
+                current: <aw:contents name="langName"/>
+              </option>
+            </aw:is>
+            <aw:nis name="selected">
+              <option aw:value="key">
+                <aw:contents name="langName"/>
+              </option>
+            </aw:nis>
+          </aw:query>
+        </aw:loop>
+      </select>
+      <input type="submit" value="إختيار"/>
+      <input type="hidden" name="currentRequest" aw:value="currentRequest"/>
+    </form>
+  </aw:nis>
+</p>

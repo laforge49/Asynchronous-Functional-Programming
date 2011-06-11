@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta charset="utf-8" />
+		<meta name="robots" content="all" />
+		<link type="text/css" rel="stylesheet" href="/css/awo.css" />
+    <!--script type="text/javascript" src="/js/jquery-1.4.2.min.js"> </script>
+    <script type="text/javascript" src="/js/scrollLoadContent.js"> </script-->
+  </head>
+  <body aw:setcon.rolonUuid="_.rolonUuid" aw:setcon.timestamp="_.timestamp" newvar.resetLink="" newvar.previousLink="" newvar.nextLink="" newvar.index="" newvar.key="">
+    <div style="text-align:center"><strong>All Headlines</strong></div>
+    <form aw:action="currentRequest" method="get">
+      <input type="text" name="startsWith" aw:value="_.startsWith" />
+      <input type="submit" value="Starts With" />
+      <input type="hidden" name="rolonUuid" aw:value="_.rolonUuid"/>
+    </form>
+    <aw:query cmd="rolon">
+      <table border="0" width ="100%">
+        <aw:loop cmd="subSubjectKeys" limit="5" relType="allHeadlines" aw:startsWith="_.startsWith">
+          <aw:query cmd="versionId">
+            <tr aw:class="stripeClass">
+              <td aw:newvar.url="activeTemplateDirectory">
+                <aw:query cmd="append" name="url" value="/../" />
+		            <aw:query cmd="urlAppend" name="rolonUuid" aw:value="uuid"/>
+                <aw:query cmd="urlAppend" name="timestamp" aw:setcon.value="_.past"/>
+                <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past"/>
+                <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+                <a aw:href="url" target="_top"><aw:contents name="value" /></a>
+                -
+                <aw:loop cmd="objects" loopPrefix="r" r.relType="realm" aw:r.rolonUuid="uuid">
+                  <aw:query cmd="versionId" aw:uuid="r.uuid">
+                    <aw:contents aw.versionId:value="name" />:
+                  </aw:query>
+                </aw:loop>
+                <aw:contents aw.versionId:value="name" />
+                <aw:query cmd="expandedType" aw.versionId:type="role">
+                  (<aw:contents name="expandedType" />)
+                </aw:query>
+              </td>
+            </tr>
+          </aw:query>
+        </aw:loop>
+      </table>
+    </aw:query>
+    <br />
+    <form>
+      <input id="template" type="hidden" aw:value="_.xml" />
+      <input id="index" type="hidden" aw:value="index" />
+      <input id="key" type="hidden" aw:value="key" />
+    	<input class="param" name="rolonUuid" type="hidden" aw:value="_.rolonUuid" />
+  	  <input class="param" name="timestamp" type="hidden" aw:value="_.timestamp" />
+  	  <input class="param" name="userUuid" type="hidden" aw:value="user.uuid" />
+    </form>
+    <aw:is name="previousLink">
+      <aw:noop aw:newvar.url="resetLink">
+        <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid" />
+        <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+        <aw:query cmd="urlAppend" name="timestamp" aw:value="_.timestamp" />
+        <a aw:href="url">Reset</a>
+      </aw:noop>
+      <aw:noop aw:newvar.url="previousLink">
+  	    <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid" />
+        <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+        <aw:query cmd="urlAppend" name="timestamp" aw:value="_.timestamp" />
+	      <a aw:href="url">Previous</a>
+      </aw:noop>
+    </aw:is>
+    <aw:is name="nextLink">
+      <aw:noop aw:newvar.url="nextLink">
+        <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid" />
+        <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+        <aw:query cmd="urlAppend" name="timestamp" aw:value="_.timestamp" />
+        <a id="nextLink" aw:href="url">Next</a>
+      </aw:noop>
+    </aw:is>
+  </body>
+</html>

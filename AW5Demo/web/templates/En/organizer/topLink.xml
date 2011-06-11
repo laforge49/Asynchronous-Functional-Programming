@@ -1,0 +1,10 @@
+<aw:noop aw:newvar.url="activeTemplateDirectory">
+  <aw:query cmd="append" name="url" value="/" />
+  <aw:query cmd="singletonUuid" role="home">
+    <aw:query cmd="urlAppend" name="url" aw:value="rolonUuid"/>
+    <aw:query cmd="urlAppend" name="timestamp" aw:setcon.value="_.past"/>
+    <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past"/>
+    <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+  </aw:query>
+  <a aw:href="url"><h2>AW Organizer</h2></a>
+</aw:noop>

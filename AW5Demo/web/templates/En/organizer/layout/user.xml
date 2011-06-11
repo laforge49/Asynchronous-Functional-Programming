@@ -1,0 +1,43 @@
+  <td width="25%">
+    <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0" aw:newvar.versionId="user.timestamp">
+      <aw:query cmd="append" name="versionId" value="|" />
+      <aw:query cmd="append" name="versionId" aw:value="user.uuid" />
+      <aw:query cmd="equal" aw.versionId:a="name" b="Anonymous">
+        <aw:nis name="equal">
+          <tr>
+            <td align="right" aw:newvar.url="activeTemplateDirectory">
+              <aw:query cmd="append" name="url" value="/../" />
+              <aw:query cmd="urlAppend" name="rolonUuid" aw:value="user.uuid" />
+              <aw:query cmd="urlAppend" name="timestamp" aw:setcon.value="_.past" />
+              <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past" />
+              <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+              Welcome
+  	          <a aw:href="url">
+	              <aw:contents aw.versionId:value="name" />
+  	          </a>
+            </td>
+          </tr>
+          <tr>
+            <td align="right" newvar.url="/templates/En/users/logoff.xml">
+              <aw:query cmd="urlAppend" name="oldRequest" aw:value="currentRequest" />
+              <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid" />
+              <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past"/>
+              <a aw:href="url"><span style="color:green; font-style:italic">logoff</span></a>
+            </td>
+          </tr>
+        </aw:nis>
+        <aw:is name="equal">
+          <tr>
+            <td align="right">
+              <aw:include path="../commands/LogonLink.xml" />
+            </td>
+          </tr>
+          <tr>
+            <td align="right">
+              <aw:include path="../commands/newUserLink.xml" />
+            </td>
+          </tr>
+        </aw:is>
+      </aw:query>
+    </table>
+  </td>

@@ -1,0 +1,33 @@
+<aw:noop>
+  <form>
+    <input id="template" type="hidden" aw:value="_.xml" />
+    <input id="index" type="hidden" aw:value="index" />
+    <input id="key" type="hidden" aw:value="key" />
+  	<input class="param" name="window" type="hidden" aw:value="_.window" />
+  	<input class="param" name="rolonUuid" type="hidden" aw:value="_.rolonUuid" />
+  	<input class="param" name="path" type="hidden" aw:value="_.path" />
+  	<input class="param" name="timestamp" type="hidden" aw:value="timestamp" />
+  </form>
+  <aw:is name="previousLink">
+    <aw:noop aw:newvar.url="resetLink">
+      <aw:query cmd="urlAppend" name="window" aw:value="_.window" />
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid" />
+      <aw:query cmd="urlAppend" name="path" aw:value="_.path" />
+      <a aw:href="url">Reset</a>
+    </aw:noop>
+    <aw:noop aw:newvar.url="previousLink">
+      <aw:query cmd="urlAppend" name="window" aw:value="_.window" />
+  	  <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid" />
+      <aw:query cmd="urlAppend" name="path" aw:value="_.path" />
+	    <a aw:href="url">Previous</a>
+    </aw:noop>
+  </aw:is>
+  <aw:is name="nextLink">
+    <aw:noop aw:newvar.url="nextLink">
+      <aw:query cmd="urlAppend" name="window" aw:value="_.window" />
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid" />
+      <aw:query cmd="urlAppend" name="path" aw:value="_.path" />
+      <a id="nextLink" aw:href="url">Next</a>
+    </aw:noop>
+  </aw:is>
+</aw:noop>

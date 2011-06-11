@@ -1,0 +1,22 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="AgileWiki5 Home Page" />
+  <body>
+
+    <aw:include path="header.xml" setcon.heading="Welcome to AgileWiki5" />
+    <h2>
+      Sitemap
+    </h2>
+	<div class="content">
+      <aw:query cmd="sitemap">
+        <aw:loop cmd="context" prefix="sitemap">
+          <ul>
+            <li>
+              <a aw-rmpre:href="key"><aw:contents aw:name="key"/></a>
+            </li>
+          </ul>
+        </aw:loop>
+      </aw:query>
+    </div>
+    <aw:include path="footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

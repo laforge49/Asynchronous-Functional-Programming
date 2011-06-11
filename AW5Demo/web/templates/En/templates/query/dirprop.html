@@ -1,0 +1,50 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="dirProp query" />
+  <body>
+    <aw:include path="../../header.xml" setcon.heading="The DirProp Query Command" />
+        <div class="content">
+	   		<section class="main-content">		
+				<h2>The DirProp Query Command</h2>
+				<nav  class="breadcrumbs">
+			   	   	<ul>
+			   	   		<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+			   	   		<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/">Templates</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/query/">AW5 Queries</a></li>
+
+				   	</ul>
+				</nav>
+    <p>
+      The <code>dirProp</code> query command adds the properties from a selected dir.prop file
+      to the context map.
+      If no dir.prop is found, then no updates are made to the context map.
+    </p>
+    <h3>
+      Attributes
+    </h3>
+    <p>
+      The <code>cmd</code> attribute on the <code>aw:query</code> element is required to invoke this command:
+    </p>
+<pre>cmd="dirProp"</pre>
+    <h3>
+      Parameters
+    </h3>
+    <p>
+      This command uses two optional parameters from the context map:
+    </p>
+	<dl>
+      <dt>The <code>path</code> parameter</dt><dd> provides an absolute or relative pathname to the dir.prop file to be processed.
+      If not present, a default value of "." is used.</dd>
+      <dt>The <code>dirPrefix</code> parameter</dt><dd> provides a string which is pre-pended to the names of the properties in the dir.prop file.
+      If not present, a default value of "dir" is used.</dd>
+	</dl>
+	    
+           </section>
+    <aside> </aside>
+    </div>
+    <aw:include path="../../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

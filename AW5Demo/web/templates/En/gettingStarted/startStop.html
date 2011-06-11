@@ -1,0 +1,101 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Start/Stop" />
+  <body>
+    <aw:include path="../header.xml" setcon.heading="How to start and stop the demo" />
+      <div class="content">
+   		<section class="main-content">
+			<h2>How to start and stop the demo</h2>
+		    	<nav  class="breadcrumbs">
+		   	    	<ul>
+		   		   		<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+		   		   		<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+		   		   		<li><a href="/templates/En/gettingStarted/">Getting Started</a></li>
+			    	</ul>
+			    </nav>
+
+	      <p class="overview">
+	        This page describes how to start and stop the Agilewiki demo server. The easist and most
+	        straightfoward way of doing this is by using the <b>DemoApp.bat/.sh</b> and <b>StopDemoApp.bat/.sh</b> 
+	        files.
+	      </p>
+	      <h3>
+	        Starting the server
+	      </h3>
+	      <p>
+	        Before you can begin to use Agilewiki5 locally, you must first start the demo server - this can be
+	        achieved using the following command:
+	      </p>
+	      <p>
+	        <pre>agilewiki\docs\source\AgileWiki5\AW5Demo>mvn scala:run -DmainClass=org.agilewiki.tests.TestApp -DaddArgs="Master|localhost|4444|HelloWorld.aw5db"</pre>
+	      </p>
+	      <p>
+		This instructs Maven to launch an instance of the TestApp application (A bootstrapper for the Agilewiki demo) and keep it running. 
+		A less verbose way of performing the same task however would be to use the DemoApp.bat/.sh file - which lives in the AW5Demo folder.  
+		The <code>-D</code> argument is used to pass parameters to Maven, in the above case we supply the ark name (Master), the address for the server to bind to (loocalhost), the UDP port
+		for ark communication (4444) and the database file to use (HelloWorld.aw5db).
+	      </p>
+	      <p>
+	        Once the server instance has started you can access the Agilewiki demo via a browser. The default address is 
+	        "http://localhost:8080".
+	      </p>
+	      <p>
+	        Agilewiki uses the following ports:
+	        <ul>
+	          <li>
+		    8080 - TCP - dedicated to the HTTP protocol for browser access.
+	          </li>
+	          <li>
+	            4444 - UDP - utilized for communication between arks (configurable).
+	          </li>
+	        </ul>
+	      </p>
+	      <h3>
+	        Server Start-up Failure
+	      </h3>
+	      <p>
+	        There are several common reasons why the server might fail to start. 
+	      </p>
+	      <p>
+	        A build error relating to scala-tools usually indicates that there is a problem with Maven Scala plugin dependencies. 
+	        To resolve this issue first locate your .m2 directory (usually ~/.m2 or %USERPROFILE%/.m2). Navigate to .m2/repository/org/ 
+	        and delete the scala-lang and scala-tools folders, then try starting the server again. This will force Maven to download 
+	        a fresh version of these dependencies.
+	      </p>
+	      <p>
+	        For a more verbose output you can run execute any Maven command with the -e switch, for example mvn scala:run -e.  You can 
+	        also check the demo server's log at {home}/path goes here.log
+	      </p>
+	      <h3>
+	        Stopping the server
+	      </h3>
+	      <p>
+	        In order to stop the server you can invoke the following command:
+	      </p>
+	      <p>
+	        <pre>agilewiki\docs\source\AgileWiki5\AW5Demo>mvn scala:run -DmainClass=org.agilewiki.tests.ShutdownTestApp -DaddArgs="Master|localhost|4444"</pre>
+	      </p>
+	      <p>
+	        Once again -D is used to supply Maven with specific arguments. As with starting the server there is a much easier
+	        way of stopping it - by using the StopDemoApp.bat/.sh file located in the AW5Demo folder.
+	      </p>
+	      <p>In Agilewiki each ark utilizes a different dedicated port, as such when stopping a server it is important that the user supplies 
+	        the UDP port used for communication between arks (e.g. 4444). You can achieve this by using a Maven argument via the -D switch as shown above.
+	      </p>
+	      <p>
+	        Using this command will stop the server gracefully. If however it is necessary to terminate the application by force Windows users can 
+	        kill all the Java processes from within task manager. *nix users can stop the server using 'Ctrl + C' from within the terminal window running
+	        the Agilewiki server, or by killing the process directly by issuing a 'kill -9 $process_id' command - where $process_id is the unique identifer
+	        of the running Java process.
+	      </p>
+	      <p>
+	        To restart the server, issue the same command as we used to start the server (DemoApp.bat/.sh).
+	      </p>
+	      <a href="/templates/En/gettingStarted/">Back to Contents</a>
+    	</section>
+    	<aside> </aside>
+    </div>
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

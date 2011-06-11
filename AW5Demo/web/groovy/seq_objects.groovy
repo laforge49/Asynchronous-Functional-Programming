@@ -1,0 +1,13 @@
+def extendedContext = context.getSpecial(".extendedContext")
+def loopPrefix = context.get("loopPrefix")
+if (loopPrefix.length() > 0)
+  loopPrefix = loopPrefix+"."
+def rolonUuid = context.get(loopPrefix+"rolonUuid")
+def relType = context.relationshipName(context.get(loopPrefix+"relType"))
+def timestamp = context.get("timestamp")
+def relationships = context.getSpecial(timestamp + "|" + rolonUuid+".relationships")
+def objectsSequence = extendedContext.objectsSequence(relationships, relType)
+def contextFilterSequence = extendedContext.contextFilterSequence(context,objectsSequence,"objects")
+def prefixesSequence = extendedContext.prefixesSequence(contextFilterSequence,(char)5)
+context.setSpecial(loopPrefix+"sequence",prefixesSequence)
+context.setCon(loopPrefix+"isUuidSequence","true")

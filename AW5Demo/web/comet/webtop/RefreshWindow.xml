@@ -1,0 +1,10 @@
+<aw:noop setvar.json='{
+  "message": "UpdateWindow",
+  "id": "e32113fd-4e9f-4613-95c1-74e3790948d3",
+  "name": "w*Test43",
+  "timestamp": "2009.09.14-07.05.00-800",
+  "update": "replace",
+  "contentId": "e32113fd-4e9f-4613-95c1-74e3790948d3-content",
+  "content": "This is another test",
+  "broadcast": true
+}'/>

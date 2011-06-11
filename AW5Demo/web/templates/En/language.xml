@@ -1,0 +1,16 @@
+<aw:noop>
+  <aw:is  name="_.currentRequest">
+    <aw:update cmd="language" />
+  </aw:is>
+  <aw:nis  name="_.currentRequest">
+    <ul class="lang">
+      <li><span>English</span></li>
+      <li><span>/</span></li>
+      <li class="arabic" aw:newvar.req="activeTemplate">
+        <aw:query cmd="append" name="req" value="?language=Ar&amp;currentRequest=" />
+        <aw:query cmd="append" name="req" aw:value="currentRequest" />
+        <a aw:href="req">العربية</a>
+      </li>
+    </ul>
+  </aw:nis>
+</aw:noop>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta charset="utf-8" />
+		<meta name="robots" content="all" />
+    <title>AW Organizer</title>
+  </head>
+  <body bgcolor="FFFFFF" aw:newvar._rolonUuid="_.rolonUuid">
+    <aw:nis name="_rolonUuid">
+      <aw:query cmd="singletonUuid" role="home">
+        <aw:noop aw:setvar._rolonUuid="rolonUuid" />
+      </aw:query>
+    </aw:nis>
+    <aw:query cmd="rolon" aw:setcon.rolonUuid="_rolonUuid">
+      <aw:update cmd="breadcrumb" />
+      <aw:query cmd="versionId" aw:uuid="rolonUuid">
+        <aw:is aw.versionId:value="role">
+        	<aw:query cmd="expandedType" aw.versionId:type="role">
+            <aw:include path="layout/layout.xml" />
+          </aw:query>
+        </aw:is>
+        <aw:nis aw.versionId:value="role">
+          <aw:include path="layout/noSuch.xml" />
+        </aw:nis>
+      </aw:query>
+    </aw:query>
+  </body>
+</html>

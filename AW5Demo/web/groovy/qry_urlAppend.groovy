@@ -1,0 +1,12 @@
+if (!context.isVar("url")) context.setVar("url","")
+def url = context.get("url")
+if (url.length() ==0)
+  url = context.get("currentRequest")
+def name = context.get("name")
+def value = context.get("value")
+if (url.indexOf('?') == -1)
+  url = url.concat("?")
+else
+  url = url.concat("&")
+url = url.concat(name).concat("=").concat(value)
+context.setVar("url",url)

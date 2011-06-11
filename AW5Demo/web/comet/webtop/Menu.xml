@@ -1,0 +1,19 @@
+<aw:query cmd="versionId" aw:uuid="target.wrapper.uuid" setvar.json='{"message": "Views","id":"'>
+    <aw:query cmd="append" name="json" aw:value='target.wrapper.uuid'/>
+    <aw:query cmd="append" name="json" value='","name":"'/>
+    <aw:query cmd="append" name="json" aw.versionId:value='name'/>
+    <aw:query cmd="append" name="json" value='","timestamp":"'/>
+    <aw:query cmd="append" name="json" aw:value="timestamp"/>
+    <aw:query cmd="append" name="json" value='","views":['/>
+    <aw:query cmd="rolon" aw.versionId:rolonUuid="att.targetRolonUuid">
+        <aw:loop cmd="views">
+            <aw:query cmd="append" name="json" value='["'/>
+            <aw:query cmd="append" name="json" aw:value="key"/>
+            <aw:query cmd="append" name="json" value='","'/>
+            <aw:query cmd="append" name="json" aw:value="desc"/>
+            <aw:query cmd="append" name="json" value='"],'/>
+        </aw:loop>
+    </aw:query>
+    <aw:query cmd="trim" name="json" back="1" /> 
+    <aw:query cmd="append" name="json" value=']}'/>
+</aw:query>

@@ -1,0 +1,5 @@
+<aw:nis name="webtop.window.newWindow.executed">
+    <aw:query cmd="rolon" aw:rolonUuid="comet.data.userEvent.uuid">
+        <aw:update cmd="webtop/window/newWindow"/>
+    </aw:query>
+</aw:nis>

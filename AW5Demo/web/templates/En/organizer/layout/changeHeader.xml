@@ -1,0 +1,20 @@
+<tr bgcolor="FFFFC0">
+  <td width="25%">
+  </td>
+  <td width="50%" align="center">
+  	<h3>
+      <aw:query cmd="formatTimestamp">
+        <span style="color:red">
+          <aw:contents name="formatTimestamp" />
+        </span>
+      </aw:query>
+      (<aw:contents name="expandedType" />)
+      <aw:is aw.versionId:value="att.tagLine">
+        -
+        <aw:contents aw.versionId:value="att.tagLine" />
+      </aw:is>
+    </h3>
+  </td>
+  <td width="25%" align="right">
+  </td>
+</tr>

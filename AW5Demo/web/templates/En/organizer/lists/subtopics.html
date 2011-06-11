@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta charset="utf-8" />
+		<meta name="robots" content="all" />
+		<link type="text/css" rel="stylesheet" href="/css/awol.css" />
+  </head>
+  <body aw:setcon.rolonUuid="_.rolonUuid" aw:setcon.timestamp="_.timestamp">
+    <div style="text-align:center"><strong>Subtopics</strong></div>
+    <aw:query cmd="rolon">
+      <aw:include path="subtopicsHeader.xml" />
+      <table border="0">
+        <aw:loop cmd="objects" relType="subtopic">
+          <aw:query cmd="versionId">
+            <tr aw:class="stripeClass">
+              <td aw:newvar.url="activeTemplateDirectory">
+                <aw:query cmd="append" name="url" value="/../" />
+		            <aw:query cmd="urlAppend" name="rolonUuid" aw:value="uuid"/>
+                <aw:query cmd="urlAppend" name="timestamp" aw:setcon.value="_.past"/>
+                <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past"/>
+                <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+                <a aw:href="url" target="_top"><aw:contents aw.versionId:value="name"/></a>
+                <aw:contents name="value" />
+              </td>
+              <td>
+                <aw:is aw.versionId:value="att.tagLine">
+                  <aw:contents aw.versionId:value="att.tagLine" />
+                </aw:is>
+              </td>
+            </tr>
+          </aw:query>
+        </aw:loop>
+      </table>
+    </aw:query>
+  </body>
+</html>

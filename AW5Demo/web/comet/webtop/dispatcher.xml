@@ -1,0 +1,45 @@
+<aw:is name="comet.data.userEvent.action" aw:newvar.webtop.path="comet.data.userEvent.action">
+    <aw:is name="target.desktop">
+        <aw:query cmd="userVersionId" setcon.childUuid="" >
+            <aw:query cmd="child" aw.user.versionId:setcon.role="role" aw:childName="target.desktop">
+                <aw:is name="childUuid">
+                    <aw:query cmd="rolon" aw:rolonUuid="childUuid" aw:setcon.target.desktop.uuid="childUuid">
+                        <aw:is name="target.wrapper">
+                            <aw:query cmd="versionId" aw:uuid="target.desktop.uuid" setcon.childUuid="">
+                                <aw:query cmd="child" aw:setcon.rolonUuid="target.desktop.uuid"
+                                          aw.versionId:setcon.role="role" aw:childName="target.wrapper">
+                                    <aw:is name="childUuid">
+                                        <aw:query cmd="rolon" aw:rolonUuid="childUuid"
+                                                  aw:setcon.target.wrapper.uuid="childUuid">
+                                            <aw:query cmd="append" name="webtop.path" value=".xml">
+                                                <aw:include aw:path="webtop.path"/>
+                                            </aw:query>
+                                        </aw:query>
+                                    </aw:is>
+                                    <aw:nis name="childUuid">
+                                        <aw:query cmd="println" value="1" />
+                                        <aw:include path="invalidTarget.xml"/>
+                                    </aw:nis>
+                                </aw:query>
+                            </aw:query>
+                        </aw:is>
+                        <aw:nis name="target.wrapper">
+                            <aw:query cmd="append" name="webtop.path" value=".xml">
+                                <aw:include aw:path="webtop.path"/>
+                            </aw:query>
+                        </aw:nis>
+                    </aw:query>
+                </aw:is>
+                <aw:nis name="childUuid">
+                    <aw:query cmd="println" value="2" />
+                    <aw:include path="invalidTarget.xml"/>
+                </aw:nis>
+            </aw:query>
+        </aw:query>
+    </aw:is>
+    <aw:nis name="target.desktop">
+        <aw:query cmd="append" name="webtop.path" value=".xml">
+            <aw:include aw:path="webtop.path"/>
+        </aw:query>
+    </aw:nis>
+</aw:is>

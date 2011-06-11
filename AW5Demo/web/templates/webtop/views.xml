@@ -1,0 +1,36 @@
+<aw:noop>
+  <div align="right">
+    <aw:query cmd="formatTimestamp">
+      <aw:rolon aw:setcon.uuid="_.rolonUuid" setcon.timestamp="">
+        <aw:contents name="formatTimestamp" />
+      </aw:rolon>
+    </aw:query>
+  </div>
+  <table>
+    <tr><td><h3>Menu</h3></td></tr>
+    <tr>
+      <th>View</th>
+      <th>Description</th>
+    </tr>
+    <aw:query cmd="rolon" aw:rolonUuid="_.rolonUuid">
+        <aw:loop cmd="views">
+            <tr aw:class="stripeClass">
+                <td aw:setvar.url="loader">
+                    <aw:query cmd="urlAppend" name="xml" value="/templates/webtop/viewer.xml"/>
+                    <!--<aw:query cmd="append" name="url" value="/viewer.xml"/>-->
+                    <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+                    <aw:query cmd="urlAppend" name="path" aw:value="path"/>
+                    <aw:query cmd="urlAppend" name="desc" aw:value="desc"/>
+                    <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+                    <aw:a aw:href="url">
+                        <aw:contents name="key"/>
+                    </aw:a>
+                </td>
+                <td>
+                    <aw:contents name="desc"/>
+                </td>
+            </tr>
+        </aw:loop>
+    </aw:query>
+  </table>
+</aw:noop>

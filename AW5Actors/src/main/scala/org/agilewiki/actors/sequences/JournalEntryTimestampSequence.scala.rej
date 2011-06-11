@@ -1,0 +1,53 @@
+--- JournalEntryTimestampSequence.scala
++++ JournalEntryTimestampSequence.scala
+@@ -35,9 +35,8 @@
+ 
+ class JournalEntryTimestampSequence (systemContext: SystemComposite, uuid: String)
+         extends AllSequenceAgent(systemContext, uuid) {
+-  private var rolonUuid = ""
+ 
+   protected override def sequenceConvenienceCollection: Iterable[SequenceConvenience] = {
+     var sequences = List[SequenceConvenience]()
+     for(ark <- ActorLayer(localContext).arks.keySet){
+       if (ark != "Shutdowner") {
+@@ -39,9 +38,9 @@
+ 
+   protected override def sequenceConvenienceCollection: Iterable[SequenceConvenience] = {
+     var sequences = List[SequenceConvenience]()
+     for(ark <- ActorLayer(localContext).arks.keySet){
+       if (ark != "Shutdowner") {
+-        val seq = JournalEntryTimestampSequenceAgent(localContext,ark,timestamp,rolonUuid)
++        val seq = JournalEntryTimestampSequenceAgent(localContext,ark,timestamp)
+         sequences ::= seq
+       }
+     }
+@@ -50,7 +49,7 @@
+ }
+ 
+ object JournalEntryTimestampSequence {
+-  def apply(systemContext: SystemComposite, timestamp: String, uuid: String): JournalEntryTimestampSequence = {
++  def apply(systemContext: SystemComposite, timestamp: String): JournalEntryTimestampSequence = {
+     val agent = Actors(systemContext).actorFromClassName(ClassName(classOf[JournalEntryTimestampSequence])).
+             asInstanceOf[JournalEntryTimestampSequence]
+     agent.timestamp = timestamp
+@@ -54,8 +53,7 @@
+     val agent = Actors(systemContext).actorFromClassName(ClassName(classOf[JournalEntryTimestampSequence])).
+             asInstanceOf[JournalEntryTimestampSequence]
+     agent.timestamp = timestamp
+-    agent.rolonUuid = uuid
+     agent.reverse = true
+     agent
+   }
+ 
+@@ -58,11 +56,7 @@
+     agent.reverse = true
+     agent
+   }
+ 
+-  def apply(systemContext: SystemComposite, timestamp: String): JournalEntryTimestampSequence = {
+-    apply(systemContext, timestamp, "")
+-  }
+-
+   def apply(systemContext: SystemComposite): JournalEntryTimestampSequence = {
+     apply(systemContext, Timestamp.timestamp)
+   }

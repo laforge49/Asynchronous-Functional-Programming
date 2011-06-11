@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
+	<head>
+	<meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+	<title>AgileWiki Desktop</title>
+
+		<link rel="stylesheet" href="/webtop/css/default.css" type="text/css" />
+		<link rel="stylesheet" href="/webtop/css/setup.icons.css" type="text/css" />
+		<link rel="stylesheet" href="/webtop/css/themes/ui-lightness/jquery-ui-aw.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="/webtop/css/taskbar/taskbar.css" type="text/css" media="all" />
+
+		<script type="text/javascript" src="/webtop/js/core/jquery-1.4.2.min.js"> </script>
+		
+		
+
+    	<script type="text/javascript" src="/webtop/js/comet/cometd.js"> </script>
+
+    	<script type="text/javascript" src="/webtop/js/core/jquery.json-1.3.js"> </script>
+    	<script type="text/javascript" src="/webtop/js/comet/jquery.cometd.js"> </script>
+
+
+
+		<script type="text/javascript" src="/webtop/js/ui/core/jquery-ui-1.7.2.custom.js"> </script>
+		<script type="text/javascript" src="/webtop/js/ui/ui.dialog.aw.js"> </script>
+
+		
+		<script type="text/javascript" src="/webtop/js/aw.desktop.utility.js"> </script>
+		<script type="text/javascript" src="/webtop/js/aw.desktop.window.js"> </script>
+		<script type="text/javascript" src="/webtop/js/aw.desktop.comms.js"> </script>
+		<script type="text/javascript" src="/webtop/js/aw.desktop.main.js"> </script>
+		
+		
+		<script type="text/javascript" src="/webtop/js/core/jquery.scrollTo-min.js"> </script>
+		<script type="text/javascript" src="/webtop/js/core/jquery.rightClick.js"> </script>
+	</head>
+	<body>
+    
+
+
+
+	<div id="loader">Loading..</div>
+
+	<div dir="ltr" id="desktop-holder">
+   		<div dir="ltr" id="desktop-space">
+			<div id="desktop-icons"> </div>
+			<div id="desktop-menus">
+				<div id="icon-menu">
+        			<a href="#" id="close-icon">Close Icon</a>
+        			<a href="#" id="rename-icon">Rename Icon</a>
+        			<a href="#" id="open-window">Open Window</a>
+				</div>
+			</div>
+  			<div id="windows">
+				<div id="language-settings" title="Language Select" > </div>
+				<div id="window-menu"> </div>
+			</div>
+		</div>
+	</div>
+
+	<div id="taskbar">
+		<div id="kicker"> </div>
+		<div id="connectStatus" class="connectGreen"> </div>
+	</div>
+  
+	<div id="startmenu" class="ltr"> </div>
+	<div id="attribution" class="ltr"> 
+This program was developed by the <a href='http://agilewiki.org/' target="_blank">AgileWiki Community</a>, copyright 2010 by the <a href='http://agilewiki.ning.com/profiles/members/' target="_blank">contributing members</a>; you can redistribute it and/or modify it under the terms of the <a href='http://www.opensource.org/licenses/lgpl-3.0.html' target="_blank">GNU Lesser General Public License (LGPLv3)</a>. Portions of this program are based on the Oxygen Desktop which has been made available under this license by its author, Colceriu Cristian.	
+	</div>
+
+	<div id="widgets"> </div>
+	<form id="parameters">
+        <aw:query cmd="cometChannel">
+            <input type="hidden" id="channelId" aw:value="user.channelId" />
+        </aw:query>
+		<input type="hidden" id="desktopSizeX" value="3200" />
+		<input type="hidden" id="desktopSizeY" value="2400" />
+		<input type="hidden" id="logoutLabel" value="Logout" />
+		<input type="hidden" id="logoutUrl" value="/templates/En/users/logoff.xml?oldRequest=/templates/En/index.html" />
+		<input type="hidden" id="restoreDefaultDesktopLabel" value="Restore Default Desktop" />
+
+	</form>
+	</body>
+</html>

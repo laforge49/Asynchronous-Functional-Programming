@@ -1,0 +1,12 @@
+<aw:query cmd="hasPrivilege" privilege="writer">
+  <aw:is name="hasPrivilege" newvar.duplicate="">
+      <aw:loop cmd="subjectUuids" limit="1" relType="parent" value="Groups">
+        <aw:noop aw:setvar.duplicate="uuid"/>
+      </aw:loop>
+      <aw:nis name="duplicate" aw:newvar.url="activeTemplateDirectory">
+        <aw:query cmd="append" name="url" value="/groups.html" />
+        <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+        <a aw:href="url" target="_top"><span style="color:green; font-style:italic">my groups</span></a>
+      </aw:nis>
+  </aw:is>
+</aw:query>

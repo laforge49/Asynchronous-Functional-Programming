@@ -1,0 +1,11 @@
+			<header id="branding">
+				<aw:include path="/templates/En/nav-top.xml" />
+				<div id="banner">
+						<nav class="action">
+						<ul>
+							<li id="download"><a href="/templates/En/gettingStarted/">Download</a></li>
+							<li id="try-demo"><a href="">Try demo</a></li>
+						</ul>
+					</nav>
+				</div>
+			</header>

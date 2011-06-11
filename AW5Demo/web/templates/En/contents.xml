@@ -1,0 +1,17 @@
+		  <ul aw:setcon.path="pagePathname" class="contents">
+		    <aw:query cmd="dirProp">
+		      <aw:loop cmd="context" prefix="dir" filter="postfix" postfix="html">
+		        <li aw:newvar.tmp="pageDirectory">
+		          <aw:query cmd="append" name="tmp" value="/" />
+		          <aw:is aw.key:value="link">
+		            <aw:query cmd="append" name="tmp" aw.key:setcon.value="link" />
+		            <aw:a aw:href="tmp"><aw:contents aw:name="key" /></aw:a>
+		          </aw:is>
+		          <aw:nis aw.key:value="link">
+		            <aw:query cmd="append" name="tmp" aw-rmpre:setcon.value="key" />
+		            <aw:a aw:href="tmp"><aw:contents aw:name="key" /></aw:a>
+		          </aw:nis>
+		        </li>
+		      </aw:loop>
+		    </aw:query>
+		  </ul>

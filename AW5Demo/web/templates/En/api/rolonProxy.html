@@ -1,0 +1,73 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Rolon Proxy" />
+  <body>
+    <aw:include path="../header.xml" />
+      <div class="content">
+   			<section class="main-content">		
+	    		<h2>Rolon Proxy</h2>
+				<nav  class="breadcrumbs">
+		   	   		<ul>
+		   	   			<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+		   	   			<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/api/">API</a></li>
+			   		</ul>
+				</nav>
+			    <p>
+			    A Rolon proxy is a limited representation of either a Rolon which is present in the context map or
+			    a Rolon which is to be created.
+			    </p>
+			    <p>
+			    A Rolon proxy can be created from a Rolon already loaded into the context map using the rolonProxy method of the
+			    <aw:a href="extendedContext.html">extended context</aw:a> object.
+			    A <aw:a href="createChildUpdateRequest.html">create child update request</aw:a>
+			    object can also be used as a Rolon proxy, as it is a subclass.
+			    </p>
+			    <table>
+			    <tr>
+			    <td align="right">
+			    String
+			    </td>
+			    <td>
+			    <p>
+			    <b>getRoleName()</b>
+			    </p>
+			    <p>
+			    Returns the name of the Rolon's role.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    String
+			    </td>
+			    <td>
+			    <p>
+			    <b>getUuidParameterName()</b>
+			    </p>
+			    <p>
+			    Returns the name of the UUID parameter used as a key in the <aw:a href="updateParameters.html">update parameters</aw:a> map.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    String
+			    </td>
+			    <td>
+			    <p>
+			    <b>getLastCommand()</b>
+			    </p>
+			    <p>
+			    Returns the command id of the last command applied to the Rolon.
+			    </p>
+			    </td>
+			    </tr>
+			    </table>
+                   </section>
+		<aside> </aside>
+	</div>
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

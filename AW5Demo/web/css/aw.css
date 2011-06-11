@@ -1,0 +1,652 @@
+/*
+ * AgileWiki
+ *
+ * Author: Silvia Benvenuti - happyworm.com
+ * Date: 24th September 2010
+ */
+
+/* @group RESET */
+
+/* 	css reset 
+	by eric meyer http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+}
+/* remember to define focus styles! 
+:focus {
+	outline: 0;
+}*/
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+
+/* @end */
+
+/* @group Layout */
+
+html {
+	background-color: #333;
+}
+
+body {
+	width: 800px;
+	padding: 0 40px 0 40px;
+	margin:24px auto 0 auto;
+	background-color: #fff;
+	font-family: Arial,Helvetica,sans-serif;
+	color: #333;
+	position: relative;
+}
+
+/*mb*/
+
+.inner {
+	padding:0;
+	background-color: #fff;
+	width: 100%;
+}
+
+table {
+	font-family: Arial,Helvetica,sans-serif;
+	width: 100%;
+	
+}
+
+table th {
+	font-weight:bold;
+	text-align:left;
+	background-color: #4777BB;
+	color: #fff;
+	padding: 8px;
+}
+
+table td {
+	padding: 4px 8px 4px 8px;
+}
+
+header {
+	display:block;
+	width:800px;
+	overflow:hidden;
+}
+
+.content {
+	width:800px;
+	overflow:hidden;
+	padding:40px 0;
+}
+
+.main-content {
+	display:block;
+	width:554px;
+	margin-right: 40px;
+	float: left;
+}
+
+aside {
+	width: 206px;
+	float: left;
+}
+
+.blue {
+	background-color:#e4ebf6;
+	width: 166px;
+	padding: 20px;
+	font-size:90%;
+}
+
+footer {
+	display:block;
+	clear: both;
+	margin: 0 -40px;
+	padding: 30px 30px 40px 30px;
+	background-color:#4777bb;
+/*	color: #e4ebf6;*/
+	color:#fff;
+	width: 820px;
+	overflow: hidden;
+}
+
+a {
+	color:#333;
+}
+
+footer a {
+	color:#e4ebf6;
+	text-decoration:none;
+}
+
+footer a:hover {
+	text-decoration:underline;
+}
+
+
+.col {
+	width: 185px;
+	padding: 0 10px;
+	float: left;
+}
+
+.col p {
+	font-size:90%;
+	margin-bottom: 0;
+}
+
+.col h1 {
+	color: #2c4973;
+	margin-bottom: 1em;
+}
+
+/* @end */
+
+
+/* @group navigation */
+
+.lang {
+	position:absolute;
+	top: -16px;
+	left: 0;
+	margin-right: 60px;
+	font-size:70%;
+}
+
+.lang li{
+	float: left;
+	margin-left: 12px;
+	color: #888;
+}
+
+.lang a{
+/*	color: #4777bb;
+	color:#92bcff;*/
+	color:#fff;
+	text-decoration:none;
+}
+
+#usermenu {
+	width:346px;
+	float: right;
+	font-size:80%;
+	text-align:right;
+	margin: 0 40px 0 0;
+	padding: 10px 0 0 0;
+}
+
+#usermenu ul {
+	height:100%;
+	margin:0;
+	padding: 6px 0;
+	overflow:hidden;
+}
+
+#usermenu li {
+	display:block;
+	float:right;
+	margin-right:20px;
+}
+
+#usermenu a{
+	color: #4777bb;
+}
+
+nav.main {
+	width:386px;
+	float: right;
+}
+
+nav.main ul {
+	position: relative;
+	top: 28px;
+	width:386px;
+	margin:0;
+	padding: 6px 0;
+	overflow:hidden;
+
+}
+
+nav.main li {
+	display:block;
+	float:left;
+	margin-left:20px;
+}
+
+nav.main a {
+	text-decoration:none;
+	color: #333;
+	padding: 4px 6px;
+}
+
+nav.main a:hover {
+	background-color:#e4ebf6;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+nav.main span {
+	padding:4px 6px;
+	background-color:#333;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	color:#fff;
+}
+
+nav.action {
+	width:176px;
+	float: right;
+	position: relative;
+	top: 40px;
+	right: 30px;
+	text-indent:-9999px;
+}
+
+#download a{
+	display: block;
+	height:55px;
+	background: url('../graphics/btn-actions.gif') 0 0 no-repeat;
+}
+
+#download a:hover{
+	background: url('../graphics/btn-actions.gif') -176px 0 no-repeat;
+}
+
+
+#try-demo a{
+	display: block;
+	height:55px;
+	background: url('../graphics/btn-actions.gif') 0 -55px no-repeat;
+	margin-top: 36px;
+}
+
+#try-demo a:hover{
+	background: url('../graphics/btn-actions.gif') -176px -55px no-repeat;
+}
+
+.dumpnav {
+	width: 100%;
+	overflow:hidden;
+	margin: -20px 0 0 0;
+	padding: 0;
+	font-size:80%;
+}
+
+ul.dumpnav li{
+	float: right;
+	list-style-type:none;
+	margin: 0;
+	background-color:#e4ebf6;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+
+
+ul.dumpnav li:last-child{
+	border-left: 1px solid #ccc;
+}
+
+ul.dumpnav li a{
+	display:block;
+	padding: 0 6px;
+	text-decoration:none;
+}
+
+ul.dumpnav li a:hover{
+	background-color: #4777bb;
+	color: #fff;
+}
+
+
+
+/* @end */
+
+#AW {
+	display:block;
+	width:315px;
+	height: 62px;
+	background: url('../graphics/agilewiki-logo.jpg') 0 0 no-repeat;
+	text-indent:-9999px;
+	float: left;
+	margin:20px 0;
+}
+
+#banner {
+	position:relative;
+	background: url('../graphics/banner.jpg') 0 0 no-repeat;	
+	height:222px;
+}
+
+.clear {
+	clear: both;
+}
+
+#badge {
+	position: absolute;
+	top: -11px;
+	right: -16px;
+}
+
+p {
+	line-height:140%;
+	margin-bottom: 20px;
+}
+
+.content li {
+	color: #333;
+	list-style-type:disc;
+	margin: 0 .5em 0 20px;
+	line-height:140%;
+}
+
+.content ul.listtypenone li {
+	list-style-type:none;
+}
+
+.content ul.items li {
+	border-bottom: 1px dotted #ccc;
+	width:100%;
+	overflow:hidden;
+}
+
+.content ul.items li img{
+	width:64px;
+	height:64px;
+	padding: 10px 10px 10px 0;
+	float:left;
+}
+
+.content ul.items li span{
+	display:block;
+	height:84px;
+	line-height:84px;
+}
+
+.content ul {
+	margin-bottom: 20px;
+}
+
+.content aside li, footer li{
+	line-height:140%;
+	margin:0 0 .5em 0;
+	color: #4777bb;
+	list-style-type:none;
+}
+
+
+dl {
+	line-height:140%;
+}
+
+dt {
+	border-left:4px solid #ccc;
+	padding-left:6px;
+}
+
+dt code{
+	font-weight:bold;
+}
+
+dd {
+	font-size:90%;
+	margin-bottom:1em;
+	padding-left:10px;
+}
+
+footer li {
+	font-size:80%;
+}
+
+
+em {
+	font-weight:bold;
+}
+
+h2 {
+	font-size:160%;
+	font-weight:bold;
+	color:#2C4973;
+	margin-bottom:0.5em;
+}
+
+.content a:link{
+	/*text-decoration:none;*/
+	color: #4777bb;
+}
+
+.content a:visited{
+	color:#2C4973;
+}
+
+.content a:hover, .content a:active{
+	color: #4777bb;
+}
+
+
+aside h1 {
+	font-size:133%;
+	font-weight:bold;
+	color:#2C4973;
+	margin-bottom:0.5em;
+}
+
+h3 {
+	font-size:120%;
+	font-weight:bold;
+	color:#2C4973;
+	margin-bottom:0.5em;
+}
+
+p+h2, p+h3, aside p+h1, ul+h2, ul+h3, dl+h2, dl+h3 {
+	margin-top: 2em;
+}
+
+.breadcrumbs {
+	margin: -0.5em 0 1em 0;
+}
+
+.breadcrumbs ul{
+	width:100%;
+	overflow:hidden;
+	font-size:80%;
+}
+
+.breadcrumbs li{
+	float:left;
+	margin:0 6px 0 0;
+	color: #333;
+	list-style-type:none;
+}
+
+.breadcrumbs a{
+	color: #333;
+	text-decoration:none;
+}
+
+.breadcrumbs a:hover{
+	text-decoration:underline;
+}
+
+.big_badge {
+	margin: 0 -56px 0 -50px;
+	background: url('../graphics/big_badge.gif') 0 0 no-repeat;	
+	height:66px;
+	padding: 14px 40px 0 40px;
+	width:840px;
+}
+
+.big_badge a{
+	margin-right: 40px ;
+}
+
+.contents li a:hover {
+	color:#2C4973;
+	background-color:#e4ebf6;
+}
+
+
+table {
+	border: 1px solid #ccc;
+	border-collapse: collapse;
+	font-size:90%;
+	margin-bottom: 20px;
+}
+
+td, th{
+	border: 1px solid #ccc;
+}
+
+
+/* @group forms */
+
+fieldset {
+	display:block;
+	padding: 6px 0;
+	margin-bottom: 10px;
+}
+
+label {
+	display:block;
+	font-size:80%;
+	color: #888;
+	font-weight:bold;
+	padding: 0 0 4px 0;
+}
+
+label span {
+	font-weight:normal;
+}
+
+input {
+	font-size:90%;
+	font-family: Arial,Helvetica,sans-serif;
+	color: #333;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+.errormsg {
+	font-size:90%;
+	color: red;
+}
+/*
+input:required:invalid {
+	border: 1px solid red;
+}*/
+
+button:hover {
+	cursor:pointer;
+}
+
+
+/* My Comment */
+
+/* @end */
+
+
+
+
+/*mb*/
+
+pre {
+	font-family: courier;
+	color:#777;
+	font-size:90%;
+	white-space:pre;
+	display: block;
+	overflow-x:auto;
+	padding:10px;
+	margin-bottom:20px;
+	border: 1px dotted #999;
+}
+
+code{
+	font-family: courier;
+	color:#777;
+	font-size:90%;
+	white-space:pre;
+}
+
+
+.overview {
+	font-style:italic;
+	color: #4777bb;
+	font-size:110%;
+}
+
+#lang-select {
+	/*float: right;*/
+	position : absolute;
+	top:0;
+	/*right:116px;*/
+}
+
+.table-stripe-on {
+	background-color:#eee;	
+}
+
+.table-stripe-off {
+	background-color:#fff;	
+}
+
+/*.contrib-desc {
+	vertical-align:100%;
+	margin-left:20px;
+}
+.indent0 {
+	font-weight:bold;
+	font-size:120%;
+	padding-top : 20px;
+}
+
+.indent1 {
+	padding-left : 20px;
+	font-size:120%;
+}
+
+.indent2 {
+	padding-left : 40px;
+	font-size:110%;
+}
+
+.indent3 {
+	padding-left : 60px;
+	font-size:100%;
+}
+
+.indent4 {
+	padding-left : 80px;
+	font-size:90%;
+}
+
+.indent5 {
+	padding-left : 100px;
+	font-size:80%;
+}
+
+.indent6 {
+	padding-left : 120px;
+	font-size:70%;
+}
+
+*/
+
+
+

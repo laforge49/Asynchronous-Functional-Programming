@@ -1,0 +1,16 @@
+<table width ="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0" bgcolor="C0FFFF">
+  <aw:include path="mainHeader.xml" />
+  <tr>
+    <td>
+    </td>
+    <td align="center">
+      <span style="color:red">
+      	<strong>
+          Unable to access page.
+      	</strong>
+      </span>
+    </td>
+    <td>
+    </td>
+  </tr>
+</table>

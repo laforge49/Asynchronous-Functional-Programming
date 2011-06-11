@@ -1,0 +1,37 @@
+<p newvar.pdump.resetLink="" newvar.pdump.previousLink="" newvar.pdump.nextLink="">
+  <table border="1">
+    <tr>
+      <th>
+      </th>
+      <th>
+        Property
+      </th>
+      <th>
+        Value
+      </th>
+    </tr>
+    <aw:loop cmd="properties" loopPrefix="pdump">
+      <tr aw:class="pdump.stripeClass">
+        <td align="right">
+          <aw:contents name="pdump.index" />
+        </td><td>
+          <aw:contents name="pdump.key" />
+        </td><td>
+          <aw:query cmd="property" aw:pname="pdump.key">
+            <aw:contents name="property" />
+          </aw:query>
+        </td>
+      </tr>
+    </aw:loop>
+  </table>
+    <ul class="dumpnav">
+  <aw:is name="pdump.nextLink">
+    <li><a aw:href="pdump.nextLink">Next</a></li>
+  </aw:is>
+  <aw:is name="pdump.previousLink">
+    <li><a aw:href="pdump.previousLink">Previous</a></li>
+    <li><a aw:href="pdump.resetLink">Reset</a></li>
+  </aw:is>
+
+  </ul>
+</p>

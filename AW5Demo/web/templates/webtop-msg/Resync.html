@@ -1,0 +1,43 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <script type="text/javascript" src="/jquery/jquery-1.4.2.js"> </script>
+    <script type="text/javascript" src="/jquery/jquery.json-2.2.js"> </script>
+    <script type="text/javascript" src="/org/cometd.js"> </script>
+    <script type="text/javascript" src="/jquery/jquery.cometd.js"> </script>
+    <aw:query cmd="cometChannel">
+        <aw:script type="text/javascript" charset="UTF-8">
+            var channel = '<aw:contents name="user.channelId"/>'
+            var msg = {"target": "~/Desktop", "userEvent": {
+    "action": "Resync",
+    "wrappers": {
+        "Test": {
+            "timestamp": "2009.09.14-07.05.51-315",
+            "id": "e32113fd-4e9f-4613-95c1-74e3790948d3",
+            "xPosition": 200,
+            "yPosition": 200,
+            "selected": true
+        },
+        "13824": {
+            "timestamp": "2009.09.14-07.05.52-004",
+            "id": "132113fd-4e9f-4613-95c1-74e3790948d4",
+            "xPosition": 400,
+            "yPosition": 400,
+            "selected": false,
+            "xSize": 300,
+            "ySize": 250,
+            "mode": "normal",
+            "view": "default"
+        }
+    }
+}}
+        </aw:script>
+    </aw:query>
+    <script type="text/javascript" src="/application.js"> </script>
+</head>
+<body>
+<div id="body"></div>
+</body>
+</html>
+
+

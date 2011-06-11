@@ -1,0 +1,43 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="aw:view element" />
+  <body>
+    <aw:include path="../header.xml" setcon.heading="The aw:view Element" />
+   
+			    <p>
+			    The <code>aw:view</code> element is used to include a view template after validating access.
+			    </p>
+			    <h3>
+			    Attributes
+			    </h3>
+			    <p>
+			    One attribute is required, <code>path</code>, which provides the absolute pathname of the view template.
+			    </p>
+			    <h3>
+			    Parameters
+			    </h3>
+			    <p>
+			    One parameter is required, <code>rolonUuid</code>, which provides the UUID of the Rolon that has been loaded into the context map.
+			    </p>
+			    <h3>
+			    Example
+			    </h3>
+			    <p>
+			    Here's a sample:
+			    </p>
+			<p><code>&lt;aw:query cmd="singletonUuid" role="users"&gt;
+	&lt;aw:query cmd="rolon"&gt;
+		&lt;aw:view path="/views/rolon/frog.xml" /&gt;
+	&lt;/aw:query&gt;
+&lt;/aw:query&gt;
+</code></p>
+			    <p>
+			    And here's the result:
+			    </p>
+			   <aw:query cmd="singletonUuid" role="users">
+			      <aw:query cmd="rolon">
+			        <aw:view path="/views/rolon/frog.xml" />
+			      </aw:query>
+			    </aw:query>
+	 <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

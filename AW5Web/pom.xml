@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>org.agilewiki</groupId>
+        <artifactId>AgileWiki5</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>AW5Web</artifactId>
+    <packaging>jar</packaging>
+
+    <!-- Meta data -->
+    <name>Web</name>
+
+    <!-- Properties -->
+    <properties>
+        <scala.version>2.8.1</scala.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <!-- Build -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+                <version>2.14.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <scalaVersion>${scala.version}</scalaVersion>
+                    <!--					<args>
+                             <arg>-deprecation</arg>
+                             <arg>-Xmigration</arg>
+                             <arg>-Xwarninit</arg>
+                         </args> -->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- Repositories -->
+    <repositories>
+        <repository>
+            <id>scala-tools.releases</id>
+            <name>Scala-Tools Dependencies Repository for Releases</name>
+            <url>http://scala-tools.org/repo-releases</url>
+        </repository>
+        <repository>
+            <id>scala-tools.snapshots</id>
+            <name>Scala-Tools Dependencies Repository for Snapshots</name>
+            <url>http://scala-tools.org/repo-snapshots</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <layout>default</layout>
+            <url>http://repo1.maven.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>cometd-snapshot</id>
+            <name>Comet Snapshop Repo</name>
+            <url>http://oss.sonatype.org/content/groups/cometd</url>
+        </repository>
+        <repository>
+            <id>scala-tools.org</id>
+            <name>Scala-Tools Maven2 Repository</name>
+            <url>http://scala-tools.org/repo-releases</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>scala-tools.releases</id>
+            <name>Scala-Tools Plugins Repository for Releases</name>
+            <url>http://scala-tools.org/repo-releases</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>scala-tools.snapshots</id>
+            <name>Scala-Tools Plugins Repository for Snapshots</name>
+            <url>http://scala-tools.org/repo-snapshots</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <!-- Dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+<!--
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+-->
+<!--
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.1</version>
+        </dependency>
+-->
+        <dependency>
+            <groupId>org.cometd.java</groupId>
+            <artifactId>cometd-api</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.cometd.java</groupId>
+            <artifactId>cometd-java-server</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>7.1.5.v20100705</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>7.1.5.v20100705</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <version>7.1.5.v20100705</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+            <version>7.1.5.v20100705</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jsp-2.1</artifactId>
+            <version>7.1.5.v20100705</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jsp-2.1-glassfish</artifactId>
+            <version>2.1.v20100127</version>
+        </dependency>
+
+        <!--
+            <dependency>
+              <groupId>org.cometd.jetty</groupId>
+              <artifactId>cometd-jetty-server</artifactId>
+              <version>1.0-SNAPSHOT</version>
+          </dependency>
+          -->
+        <!-- JUnit and testing dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.7</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-tools.testing</groupId>
+            <artifactId>specs_2.8.0</artifactId>
+            <version>1.6.5</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Internal agilewiki depdencies -->
+        <dependency>
+            <groupId>org.agilewiki</groupId>
+            <artifactId>AW5Command</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
+</project>

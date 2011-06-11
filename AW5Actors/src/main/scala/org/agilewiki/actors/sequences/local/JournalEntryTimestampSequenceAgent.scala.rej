@@ -1,0 +1,30 @@
+--- JournalEntryTimestampSequenceAgent.scala
++++ JournalEntryTimestampSequenceAgent.scala
+@@ -37,12 +37,8 @@
+ protected[sequences] class JournalEntryTimestampSequenceAgent(systemContext:SystemComposite, uuid:String)
+         extends SynchronousActor(systemContext,uuid) with SequenceWrapper{
+   override def wrappedSequence = {
+-    val uuid = payload.readUTF
+-    if(uuid.isEmpty)
+-      TransactionContext().journalEntryTimestampSequence
+-    else
+-      TransactionContext().journalEntryTimestampSequence(uuid)
++    TransactionContext().journalEntryTimestampSequence
+   }
+ }
+ 
+ protected[sequences] object JournalEntryTimestampSequenceAgent {
+@@ -45,6 +41,6 @@
+   }
+ }
+ 
+ protected[sequences] object JournalEntryTimestampSequenceAgent {
+-  def apply(systemContext: SystemComposite, remoteArkName: String, timestamp: String, uuid: String): SequenceAgent = {
++  def apply(systemContext: SystemComposite, remoteArkName: String, timestamp: String): SequenceAgent = {
+     val dos = DataOutputStack()
+@@ -50,5 +46,4 @@
+     val dos = DataOutputStack()
+-    dos writeUTF uuid
+     dos writeUTF timestamp
+     val sequenceResourceName = ClassName(classOf[JournalEntryTimestampSequenceAgent])
+     SequenceAgent.pseudoActor(systemContext,dos,remoteArkName,sequenceResourceName)

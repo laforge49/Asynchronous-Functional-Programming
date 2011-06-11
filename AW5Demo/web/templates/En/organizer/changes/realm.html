@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta charset="utf-8" />
+		<meta name="robots" content="all" />
+		<link type="text/css" rel="stylesheet" href="/css/awo.css" />
+    <!--script type="text/javascript" src="/js/jquery-1.4.2.min.js"> </script>
+    <script type="text/javascript" src="/js/scrollLoadContent.js"> </script-->
+  </head>
+<body aw:setcon.rolonUuid="_.rolonUuid" newvar.resetLink="" newvar.previousLink="" newvar.nextLink="" newvar.index="" newvar.key="">
+  <div style="text-align:center"><strong>Realm Changes</strong></div>
+  <aw:query cmd="rationalizeTimestamp">
+    <aw:query cmd="formatTimestamp">
+      <aw:contents name="formatTimestamp" />
+    </aw:query>
+    <aw:query cmd="plusYears" years="1" aw:newvar.url="currentRequest">
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid"/>
+      <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+      <aw:query cmd="urlAppend" name="userUuid" aw:value="_.user.uuid" />
+      <a aw:href="url">+Y</a>
+    </aw:query>
+    <aw:query cmd="plusYears" years="-1" aw:newvar.url="currentRequest">
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid"/>
+      <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+      <aw:query cmd="urlAppend" name="userUuid" aw:value="_.user.uuid" />
+      <a aw:href="url">-Y</a>
+    </aw:query>
+    <aw:query cmd="plusMonths" months="1" aw:newvar.url="currentRequest">
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid"/>
+      <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+      <aw:query cmd="urlAppend" name="userUuid" aw:value="_.user.uuid" />
+      <a aw:href="url">+M</a>
+    </aw:query>
+    <aw:query cmd="plusMonths" months="-1" aw:newvar.url="currentRequest">
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid"/>
+      <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+      <aw:query cmd="urlAppend" name="userUuid" aw:value="_.user.uuid" />
+      <a aw:href="url">-M</a>
+    </aw:query>
+    <aw:query cmd="plusDays" days="7" aw:newvar.url="currentRequest">
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid"/>
+      <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+      <aw:query cmd="urlAppend" name="userUuid" aw:value="_.user.uuid" />
+      <a aw:href="url">+W</a>
+    </aw:query>
+    <aw:query cmd="plusDays" days="-7" aw:newvar.url="currentRequest">
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid"/>
+      <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+      <aw:query cmd="urlAppend" name="userUuid" aw:value="_.user.uuid" />
+      <a aw:href="url">-W</a>
+    </aw:query>
+    <aw:query cmd="plusDays" days="1" aw:newvar.url="currentRequest">
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid"/>
+      <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+      <aw:query cmd="urlAppend" name="userUuid" aw:value="_.user.uuid" />
+      <a aw:href="url">+D</a>
+    </aw:query>
+    <aw:query cmd="plusDays" days="-1" aw:newvar.url="currentRequest">
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid"/>
+      <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+      <aw:query cmd="urlAppend" name="userUuid" aw:value="_.user.uuid" />
+      <a aw:href="url">-D</a>
+    </aw:query>
+    <aw:query cmd="plusHours" hours="1" aw:newvar.url="currentRequest">
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid"/>
+      <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+      <aw:query cmd="urlAppend" name="userUuid" aw:value="_.user.uuid" />
+      <a aw:href="url">+h</a>
+    </aw:query>
+    <aw:query cmd="plusHours" hours="-1" aw:newvar.url="currentRequest">
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid"/>
+      <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+      <aw:query cmd="urlAppend" name="userUuid" aw:value="_.user.uuid" />
+      <a aw:href="url">-h</a>
+    </aw:query>
+    <aw:query cmd="plusMinutes" minutes="1" aw:newvar.url="currentRequest">
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid"/>
+      <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+      <aw:query cmd="urlAppend" name="userUuid" aw:value="_.user.uuid" />
+      <a aw:href="url">+m</a>
+    </aw:query>
+    <aw:query cmd="plusMinutes" minutes="-1" aw:newvar.url="currentRequest">
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid"/>
+      <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+      <aw:query cmd="urlAppend" name="userUuid" aw:value="_.user.uuid" />
+      <a aw:href="url">-m</a>
+    </aw:query>
+    <aw:query cmd="plusSeconds" seconds="1" aw:newvar.url="currentRequest">
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid"/>
+      <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+      <aw:query cmd="urlAppend" name="userUuid" aw:value="_.user.uuid" />
+      <a aw:href="url">+s</a>
+    </aw:query>
+    <aw:query cmd="plusSeconds" seconds="-1" aw:newvar.url="currentRequest">
+      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid"/>
+      <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+      <aw:query cmd="urlAppend" name="userUuid" aw:value="_.user.uuid" />
+      <a aw:href="url">-s</a>
+    </aw:query>
+    <table border="0" width ="100%">
+      <aw:loop cmd="subjectKeys" limit="3" relType="realmChange">
+        <tr aw:class="stripeClass">
+          <td>
+            <aw:query cmd="jeUuidTimestamp">
+              <aw:query cmd="rolon" aw:rolonUuid="uuid">
+                <aw:query cmd="versionId">
+                  <aw:query cmd="formatTimestamp" aw:setvar.url="activeTemplateDirectory">
+                    <aw:query cmd="append" name="url" value="/../" />
+  	                <aw:query cmd="urlAppend" name="rolonUuid" aw:value="uuid"/>
+ 	                  <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+ 	                  <aw:query cmd="urlAppend" name="past" aw:value="timestamp"/>
+                    <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+                    <a aw:href="url" target="_top"><aw:contents name="formatTimestamp" /></a>
+                  </aw:query>
+                  <aw:contents aw.versionId:value="att.tagLine" />
+                  <aw:loop cmd="objects" loopPrefix="a" a.relType="user" aw:a.rolonUuid="uuid">
+                    <aw:query cmd="versionId" aw:newvar.url="activeTemplateDirectory" aw:uuid="a.uuid">
+                      <aw:query cmd="append" name="url" value="/../" />
+                      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="uuid"/>
+	    	              <aw:query cmd="urlAppend" name="timestamp" aw:setcon.value="timestamp"/>
+	    	              <aw:query cmd="urlAppend" name="past" aw:setcon.value="timestamp"/>
+                      <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+                      <br />
+                      <a aw:href="url" target="_top"><aw:contents aw.versionId:value="name" /></a>
+                      <aw:contents aw.versionId:value="att.tagLine" />
+                    </aw:query>
+                  </aw:loop>
+                  <aw:loop cmd="objects" loopPrefix="a" a.relType="effects" aw:a.rolonUuid="uuid">
+                    <aw:query cmd="versionId" aw:newvar.url="activeTemplateDirectory" aw:uuid="a.uuid">
+                      <aw:query cmd="append" name="url" value="/../" />
+                      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="uuid"/>
+	    	              <aw:query cmd="urlAppend" name="timestamp" aw:setcon.value="timestamp"/>
+	    	              <aw:query cmd="urlAppend" name="past" aw:setcon.value="timestamp"/>
+                      <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+                      <br />
+                      <a aw:href="url" target="_top"><aw:contents aw.versionId:value="name" /></a>
+                      <aw:query cmd="expandedType" aw.versionId:type="role">
+                        (<aw:contents name="expandedType" />)
+                      </aw:query>
+                      <aw:contents aw.versionId:value="att.tagLine" />
+                    </aw:query>
+                  </aw:loop>
+                </aw:query>
+              </aw:query>
+            </aw:query>
+          </td>
+        </tr>
+      </aw:loop>
+    </table>
+  </aw:query>
+    <br />
+    <form>
+      <input id="template" type="hidden" aw:value="_.xml" />
+      <input id="index" type="hidden" aw:value="index" />
+      <input id="key" type="hidden" aw:value="key" />
+    	<input class="param" name="rolonUuid" type="hidden" aw:value="_.rolonUuid" />
+  	  <input class="param" name="timestamp" type="hidden" aw:value="_.timestamp" />
+    	<input class="param" name="userUuid" type="hidden" aw:value="user.uuid" />
+    </form>
+    <aw:is name="previousLink">
+      <aw:noop aw:newvar.url="resetLink">
+        <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid" />
+        <aw:query cmd="urlAppend" name="timestamp" aw:value="_.timestamp" />
+        <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+        <a aw:href="url">Reset</a>
+      </aw:noop>
+      <aw:noop aw:newvar.url="previousLink">
+  	    <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid" />
+        <aw:query cmd="urlAppend" name="timestamp" aw:value="_.timestamp" />
+        <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+	      <a aw:href="url">Previous</a>
+      </aw:noop>
+    </aw:is>
+    <aw:is name="nextLink">
+      <aw:noop aw:newvar.url="nextLink">
+        <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid" />
+        <aw:query cmd="urlAppend" name="timestamp" aw:value="_.timestamp" />
+        <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+        <a id="nextLink" aw:href="url">Next</a>
+      </aw:noop>
+    </aw:is>
+  </body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="robots" content="all"/>
+    <title>Subtopic</title>
+</head>
+<body>
+<aw:query cmd="rolon" aw:setcon.rolonUuid="_.rolonUuid">
+    <aw:query cmd="versionId" aw:uuid="rolonUuid">
+        <aw:query cmd="expandedType" aw.versionId:type="role">
+            <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0" bgcolor="C0FFFF"
+                   newvar.header="../layout/">
+                <aw:include path="../layout/mainHeader.xml"/>
+                <aw:is name="expandedType">
+                    <aw:query cmd="append" name="header" aw:value="expandedType"/>
+                    <aw:query cmd="append" name="header" value="/header.xml"/>
+                    <aw:include aw:path="header"/>
+                    <aw:include path="../layout/commands.xml"/>
+                    <tr>
+                        <td colspan="2" bgcolor="FFFFC0" valign="top" aw:newvar.userVersionId="user.timestamp">
+                            <aw:query cmd="append" name="userVersionId" value="|"/>
+                            <aw:query cmd="append" name="userVersionId" aw:value="user.uuid"/>
+                            <aw:query cmd="equal" aw.userVersionId:a="name" b="Anonymous">
+                                <aw:is name="equal">
+                                    <h2>Priviledged Operation</h2>
+                                </aw:is>
+                                <aw:nis name="equal">
+                                    <h2>Create Subtopic</h2>
+
+                                    <p>
+                                        <aw:include path="/templates/En/error.xml"/>
+                                    </p>
+                                    <aw:is name="_.subtopicName">
+                                        <aw:update cmd="subtopic"/>
+                                    </aw:is>
+                                    <p>
+
+                                    <form aw:action="currentRequest" method="post">
+                                        <aw:include path="/templates/hiddenView.xml"/>
+                                        <table>
+                                            <tr>
+                                                <td>
+                              <span style="color:blue">
+                                Subtopic Name:
+                              </span>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="subtopicName" aw:value="_.subtopicName" autofocus="autofocus"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                              <span style="color:blue">
+                                Tagline:
+                              </span>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="tagLine" aw:value="_.tagLine"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                </td>
+                                                <td>
+                                                    <input type="submit" value="Create Subtopic"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </form>
+                                    </p>
+                                </aw:nis>
+                            </aw:query>
+                        </td>
+                        <td>
+                            <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0">
+                                <tr>
+                                    <aw:include path="changes.xml"/>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </aw:is>
+            </table>
+        </aw:query>
+    </aw:query>
+</aw:query>
+</body>
+</html>

@@ -1,0 +1,14 @@
+append.html = The Append Query Command
+add.html = The Add Query Command
+dirprop.html = The DirProp Query Command
+language.html = The Language Query Command
+rolon.html = The Rolon Query Command
+child.html = The Child Query Command
+property.html = The Property Query Command
+singletonUuid.html = The Singleton Uuid Query Command
+sitemap.html = The Sitemap Query Command
+contextType.html = The ContextType Command
+urlAppend.html = The Url Append Query Command
+isSubRole.html = The isSubRole Query Command
+roleProperty.html = The Role Property Query Command
+versionId.html = The versionId Query Command

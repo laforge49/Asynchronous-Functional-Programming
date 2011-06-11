@@ -1,0 +1,33 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Logon" />
+  <body>
+    <aw:include path="../header.xml" />
+  	<div class="content">
+			<section class="main-content">
+	      <h2>Logon</h2>
+        <p>
+          <aw:include path="/templates/En/error.xml" />
+          <aw:is name="invalid">
+            <b>Invalid user name or password.</b>
+          </aw:is>
+        </p>
+        <form aw:action="currentRequest" method="post">
+          <fieldset>
+            <label for="userName">User Name</label> <input type="text" name="userName" aw:value="_.userName"/>
+            <input type="hidden" name="oldRequest" aw:value="_.oldRequest"/>
+            <input type="hidden" name="rolonUuid" aw:value="_.rolonUuid"/>
+            <input type="hidden" name="past" aw:value="_.past"/>
+          </fieldset>
+          <fieldset>
+            <label for="password">Password</label>
+            <input type="password" name="password" />
+          </fieldset>
+          <fieldset>
+            <input type="submit" value="Logon"/>
+          </fieldset>
+        </form>
+      </section>
+    </div>
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

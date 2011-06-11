@@ -1,0 +1,3 @@
+<header id="branding">
+	<aw:include path="/templates/En/nav-top.xml" />
+</header>

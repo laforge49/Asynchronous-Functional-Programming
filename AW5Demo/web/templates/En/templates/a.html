@@ -1,0 +1,41 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="aw:a element" />
+  <body>
+    <aw:include path="../header.xml" setcon.heading="The aw:a Element" />
+    	<div class="content">
+   		<section class="main-content">		
+			<h2>The aw:a element</h2>
+			<nav  class="breadcrumbs">
+		   	   	<ul>
+		   	   		<li><a href="/templates/En/">Home</a></li>
+					<li><span>&#8250;</span></li>
+		   	   		<li><a href="/templates/En/docs.html">Docs</a></li>
+					<li><span>&#8250;</span></li>
+		   		   	<li><a href="/templates/En/templates/">Templates</a></li>
+			   	</ul>
+			</nav>
+
+		    <p>
+		      The <code>aw:a</code> element is transformed into a a element, with all but the href attribute left unchanged.
+		      The href attribute is also left unchanged unless it is a relative URL,
+		      in which case it is converted to an absolute URL.</p>
+		  
+		<p><code>&lt;aw:a href="index.html"&gt;back&lt;/aw:a&gt;</code>  </p>
+		    <p>
+		      The above example is transformed into the following HTML:</p>
+		   
+		<p><code>&lt;a href="/templates/En/templates/index.html"&gt;back&lt;/a&gt;</code> </p>
+		    <p>
+		      E.G. <aw:a href="index.html">back</aw:a>
+		    </p>
+		    <p>
+		      The <code>aw:a</code> element is helpful, as it allows web developers to use URLs which are
+		      relative to the template which contains the element - which might not be in
+		      the same directory where the generated HTML page is located.
+		    </p>
+		</section>
+		<aside> </aside>
+	</div>	
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

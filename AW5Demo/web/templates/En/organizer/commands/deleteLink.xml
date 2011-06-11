@@ -1,0 +1,13 @@
+<aw:query cmd="hasPrivilege" privilege="writer">
+  <aw:is name="hasPrivilege">
+    <aw:nis aw.versionId:value="att.childCount">
+      <aw:query cmd="singleton">
+        <aw:nis name="singleton" aw:newvar.url="activeTemplateDirectory">
+          <aw:query cmd="append" name="url" value="/delete.html" />
+          <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+          <a aw:href="url"><span style="color:green; font-style:italic">delete</span></a>
+        </aw:nis>
+      </aw:query>
+    </aw:nis>
+  </aw:is>
+</aw:query>

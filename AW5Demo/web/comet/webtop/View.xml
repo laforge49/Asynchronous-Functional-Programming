@@ -1,0 +1,23 @@
+<aw:nis name="webtop.window.changeView.executed">
+    <aw:query cmd="versionId" aw:uuid="target.wrapper.uuid">
+        <aw:query cmd="rolon" aw.versionId:rolonUuid="att.targetRolonUuid" newvar.view="view.">
+            <aw:query cmd="append" name="view" aw:value="comet.data.userEvent.view"/>
+            <aw:query cmd="setcon" aw:name="view" value="true">
+                <aw:loop cmd="views">
+                    <aw:noop setvar.view="view."/>
+                    <aw:query cmd="append" name="view" aw:value="key">
+                        <aw:is aw:name="view" aw:setvar.url="loader"
+                               aw:setcon.viewDesc="desc" aw:setcon.viewName="key">
+                            <aw:query cmd="urlAppend" name="xml" value="/templates/webtop/viewer.xml"/>
+                            <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+                            <aw:query cmd="urlAppend" name="path" aw:value="path"/>
+                            <aw:query cmd="urlAppend" name="desc" aw:value="desc"/>
+                            <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+                            <aw:update cmd="webtop/window/changeView" />
+                        </aw:is>
+                    </aw:query>
+                </aw:loop>
+            </aw:query>
+        </aw:query>
+    </aw:query>
+</aw:nis>

@@ -1,0 +1,47 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="append query" />
+  <body>
+    <aw:include path="../../header.xml" setcon.heading="The Append Query Command" />
+              <div class="content">
+	   		<section class="main-content">		
+				<h2>The Append Query Command</h2>
+				<nav  class="breadcrumbs">
+			   	   	<ul>
+			   	   		<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+			   	   		<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/">Templates</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/query/">AW5 Queries</a></li>
+
+				   	</ul>
+				</nav>
+    <p>
+      The <code>append</code> query command appends a string to the current value of a variable.
+    </p>
+    <h3>
+      Attributes
+    </h3>
+    <p>
+      The <code>cmd</code> attribute on the <code>aw:query</code> element is required to invoke this command:
+    </p>
+<pre>cmd="append"</pre>
+    <h3>
+      Parameters
+    </h3>
+    <p>
+      This command uses two parameters which must be present in the context map:
+    </p>
+	<dl>
+      <dt>The <code>name</code> parameter</dt><dd> provides the name of an existing string variable in the context map.
+      This is the variable which the append command updates.</dd>
+      <dt>The <code>value</code> parameter</dt><dd> provides a string,
+      which is appended to the named variable.</dd>
+    </dl>
+   </section>
+    <aside> </aside>
+    </div>
+    <aw:include path="../../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Qualifiers" />
+  <body>
+    <aw:include path="../header.xml" />
+         <div class="content">
+   			<section class="main-content">		
+	    		<h2>Qualifiers</h2>
+				<nav  class="breadcrumbs">
+		   	   		<ul>
+		   	   			<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+		   	   			<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/api/">API</a></li>
+			   		</ul>
+				</nav>
+    <p>
+    A qualifiers object is loaded to the context map with a name of <code>{timestamp}|{rolonUuid}.qualifiers</code> when a Rolon is read.
+    This object is a subclass of <code>java.util.TreeMap&lt;String,<aw:a href="qualifications.html">Qualifications</aw:a>&gt;</code>, 
+    where the keys are the UUIDs of the qualifiers. 
+    </p>
+                </section>
+		<aside> </aside>
+	</div>
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

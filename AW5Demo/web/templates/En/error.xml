@@ -1,0 +1,31 @@
+<aw:noop>
+  <aw:is name="duplicate">
+    <p class="errormsg">Error: Name is already in use.</p>
+  </aw:is>
+  <aw:is name="updateRequestInError">
+    <aw:is aw.updateRequestInError:value="duplicate">
+      <p class="errormsg">Error: Name is already in use.</p>
+    </aw:is>
+    <aw:is aw.updateRequestInError:value="duplicateRelationship">
+      <p class="errormsg">Error: Implicit delete.</p>
+    </aw:is>
+    <aw:is aw.updateRequestInError:value="missingRelationship">
+      <p class="errormsg">Error: Implicit delete.</p>
+    </aw:is>
+    <aw:is aw.updateRequestInError:value="implicitDelete">
+      <p class="errormsg">Error: Delete with children.</p>
+    </aw:is>
+    <aw:is aw.updateRequestInError:value="deleteWithChildren">
+      <p class="errormsg">Error: Delete with children.</p>
+    </aw:is>
+    <aw:is aw.updateRequestInError:value="negativeChildCount">
+      <p class="errormsg">Error: Negative child count.</p>
+    </aw:is>
+    <aw:is aw.updateRequestInError:value="missing">
+      <p class="errormsg">Error: No longer present.</p>
+    </aw:is>
+    <aw:is aw.updateRequestInError:value="outdated">
+      <p class="errormsg">Error: Another user has made a change.</p>
+    </aw:is>
+  </aw:is>
+</aw:noop>

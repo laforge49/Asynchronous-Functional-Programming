@@ -1,0 +1,11 @@
+<aw:noop setvar.json='{
+  "message": "LoadIcon",
+  "id": "e32113fd-4e9f-4613-95c1-74e3790948d3",
+  "name": "Test",
+  "image": "/images/largeDefaultIcon.gif",
+  "xPosition": 200,
+  "yPosition": 200,
+  "tagline": "This is the Test Rolon",
+  "timestamp": "2009.09.14-07.05.51-315",
+  "selected": true
+}'/>

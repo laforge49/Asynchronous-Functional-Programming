@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="robots" content="all"/>
+    <title>Text</title>
+</head>
+<body>
+<aw:query cmd="rolon" aw:setcon.rolonUuid="_.rolonUuid">
+    <aw:query cmd="versionId" aw:uuid="rolonUuid">
+        <aw:query cmd="expandedType" aw.versionId:type="role">
+            <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0" bgcolor="C0FFFF"
+                   newvar.header="../layout/">
+                <aw:include path="../layout/mainHeader.xml"/>
+                <aw:is name="expandedType">
+                    <aw:query cmd="append" name="header" aw:value="expandedType"/>
+                    <aw:query cmd="append" name="header" value="/header.xml"/>
+                    <aw:include aw:path="header"/>
+                    <aw:include path="../layout/commands.xml"/>
+                    <tr>
+                        <td colspan="2" bgcolor="FFFFC0" valign="top">
+                            <aw:query cmd="hasPrivilege" privilege="writer">
+                                <aw:nis name="hasPrivilege">
+                                    <h2>Priviledged Operation</h2>
+                                </aw:nis>
+                                <aw:is name="hasPrivilege">
+                                    <h2>Edit Text</h2>
+                                    <aw:update cmd="text"/>
+                                    <p>
+                                        <aw:include path="/templates/En/error.xml"/>
+                                    </p>
+                                    <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0">
+                                      <tr>
+                                        <td>
+                                          <div style="text-align:center">
+                                            <form aw:action="currentRequest" method="post">
+                                              <aw:include path="/templates/hiddenView.xml"/>
+                                              <textarea rows="20" cols="80" name="text" autofocus="autofocus"><aw:contents aw.versionId:value="att.text"/></textarea>
+                                              <input type="hidden" name="upd" value="true"/>
+                                              <br/>
+                                              <br/>
+                                              <input type="submit" value="Update"/>
+                                            </form>
+                                          </div>
+                                          <br />
+                                        </td>
+                                      </tr>
+                                      <tr bgcolor="#C0FFFF">
+                                        <aw:include path="changes.xml"/>
+                                      </tr>
+                                    </table>
+                                </aw:is>
+                            </aw:query>
+                        </td>
+                        <td valign="top" bgcolor="#ffffff">
+                            <aw:is name="updateRequestInError">
+                              <h2>Lost Update</h2>
+                            </aw:is>
+                            <aw:nis name="updateRequestInError">
+                              <h2>Current</h2>
+                            </aw:nis>
+                            <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0">
+                                <tr>
+                                    <td>
+                                      <aw:is name="updateRequestInError">
+                                        <aw:br name="newText" />
+                                      </aw:is>
+                                      <aw:nis name="updateRequestInError">
+                                        <aw:br aw.versionId:value="att.text" />
+                                      </aw:nis>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </aw:is>
+            </table>
+        </aw:query>
+    </aw:query>
+</aw:query>
+</body>
+</html>

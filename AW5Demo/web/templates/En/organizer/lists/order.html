@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta charset="utf-8" />
+		<meta name="robots" content="all" />
+		<link type="text/css" rel="stylesheet" href="/css/awoc.css" />
+    <title>Order</title>
+  </head>
+  <body>
+    <aw:query cmd="rolon" aw:setcon.rolonUuid="_.rolonUuid">
+      <aw:query cmd="versionId" aw:uuid="rolonUuid">
+      	<aw:query cmd="expandedType" aw.versionId:type="role">
+          <table width ="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0" bgcolor="C0FFFF" newvar.header="../layout/">
+            <aw:include path="../layout/mainHeader.xml" />
+            <aw:query cmd="append" name="header" aw:value="expandedType"/>
+            <aw:query cmd="append" name="header" value="/header.xml"/>
+            <aw:include aw:path="header" />
+            <aw:include path="../layout/commands.xml" />
+            <tr>
+              <td colspan="2" bgcolor="FFFFC0" valign="top">
+                <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0">
+                  <tr>
+                    <td>
+                      <aw:query cmd="hasPrivilege" privilege="writer">
+                        <aw:nis name="hasPrivilege">
+                          <h2>Priviledged Operation</h2>
+                        </aw:nis>
+                        <aw:is name="hasPrivilege">
+                        <aw:nis name="_.rel">
+                          <h2>Unspecified Relationship</h2>
+                        </aw:nis>
+                        <aw:is name="_.rel">
+                          <h2>Order List</h2>
+                          <p>
+                            Relationship =
+                            <strong><aw:contents name="_.rel" /></strong>
+                          </p>
+                          <aw:is name="_.upd">
+                            <aw:update cmd="order" />
+                          </aw:is>
+                          <p>
+                            <aw:include path="/templates/En/error.xml" />
+                          </p>
+                          <p>
+                            <table border="0" cellspacing="0" width="100%">
+                              <aw:loop cmd="objects" aw:relType="_.rel">
+                                <aw:query cmd="versionId">
+                                  <tr aw:class="stripeClass">
+                                    <td aw:newvar.url="activeTemplateDirectory">
+                                      <aw:query cmd="append" name="url" value="/../" />
+                                      <aw:query cmd="urlAppend" name="rolonUuid" aw:value="uuid"/>
+                                      <aw:query cmd="urlAppend" name="timestamp" aw:setcon.value="_.past"/>
+                                      <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past"/>
+                                      <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+                                      <aw:loop cmd="objects" loopPrefix="r" r.relType="realm" aw:r.rolonUuid="uuid">
+                                        <aw:query cmd="versionId" aw:uuid="r.uuid">
+                                          <aw:contents aw.versionId:value="name" />:
+                                        </aw:query>
+                                      </aw:loop>
+                                      <a aw:href="url" target="_top"><aw:contents aw.versionId:value="name"/></a>
+                                      <aw:query cmd="expandedType" aw.versionId:type="role">
+                                        (<aw:contents name="expandedType" />)
+                                      </aw:query>
+                                    </td>
+                                    <td>
+                                      <aw:contents aw.versionId:value="att.tagLine" />
+                                    </td>
+                                    <td>
+                                      <aw:contents name="value" />
+                                    </td>
+                                    <td>
+                                      <form aw:action="currentRequest" method="post">
+                                        <aw:include path="/templates/hiddenView.xml" />
+                                        <input type="hidden" name="objUuid" aw:value="uuid" />
+                                        <input type="hidden" name="rel" aw:value="_.rel" />
+                                        <input type="hidden" name="upd" value="true" />
+                                        <input type="submit" name="order" value="Top" />
+                                        <input type="submit" name="order" value="Up" />
+                                        <input type="submit" name="order" value="Down" />
+                                        <input type="submit" name="order" value="Bottom" />
+                                      </form>
+                                    </td>
+                                  </tr>
+                                </aw:query>
+                              </aw:loop>
+                            </table>
+                          </p>
+                        </aw:is>
+                        </aw:is>
+                      </aw:query>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td>
+                <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0">
+                  <tr>
+                    <aw:include path="../commands/changes.xml" />
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </aw:query>
+      </aw:query>
+    </aw:query>
+  </body>
+</html>

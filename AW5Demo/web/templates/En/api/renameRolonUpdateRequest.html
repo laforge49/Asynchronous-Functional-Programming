@@ -1,0 +1,222 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Rename Rolon Update Request" />
+  <body>
+    <aw:include path="../header.xml" />
+         <div class="content">
+   			<section class="main-content">		
+	    		<h2>Rename Rolon Update Request</h2>
+				<nav  class="breadcrumbs">
+		   	   		<ul>
+		   	   			<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+		   	   			<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/api/">API</a></li>
+			   		</ul>
+				</nav>
+    <p>
+    A rename Rolon update request is an update request which renames and updates an existing Rolon.
+    This request is created by calling renameRolonUpdateRequest factory method on the 
+    <aw:a href="extendedContext.html">extended context</aw:a> object. Once created,
+    the request can be configured and then added to the 
+    <aw:a href="updateRequests.html">update requests</aw:a> list for subequent processing.
+    </p>
+    <h3>
+    Factory Arguments
+    </h3>
+    <p>
+    The factory method in the extended context requires five arguments:
+    </p><ul><li><p>
+    String <b>requestName</b> - The name of the update request.
+    Each update request must have a unique request name.
+    The request name is used as a prefix for any results added to the 
+    <aw:a href="updateParameters.html">update parameters</aw:a> 
+    map when the request is handled.
+    </p></li><li><p>
+    <aw:a href="context.html">Context</aw:a> <b>context</b> - the context map.
+    </p></li><li><p>
+    RolonProxy <b>parentProxy</b> - a Rolon proxy representing the parent Rolon of the Rolon to be updated.
+    </p></li><li><p>
+    RolonProxy <b>childProxy</b> - a Rolon proxy representing the Rolon to be updated.
+    </p></li><li><p>
+    String <b>newChildName</b> - a Rolon proxy representing the Rolon to be updated.
+    </p></li><li><p>
+    String <b>viewName</b> - the name of the view performing the update.
+    </p></li></ul>
+    <h3>
+    Configuration
+    </h3>
+    <table>
+    <tr>
+    <td align="right">
+    
+    </td>
+    <td>
+    <p>
+    <b>setDocument(byte[] document)</b>
+    </p><p>
+    This method is used to set/update the Rolon's document.
+    </p><p>
+    A document with a size of 0 will throw an IllegalArgumentException.
+    </p>
+    </td>
+    </tr>
+    <tr>
+    <td align="right">
+    
+    </td>
+    <td>
+    <p>
+    <b>deleteDocument()</b>
+    </p><p>
+    This method is used to delete the Rolon's document, if present.
+    </p>
+    </td>
+    </tr>
+    <tr>
+    <td align="right">
+    
+    </td>
+    <td>
+    <p>
+    <b>setAttribute(String name, String value)</b>
+    </p><p>
+    This method is used to specify the Rolon attributes to be added or changed.
+    </p><p>
+    For a given attribute name, only a single value can be used.
+    Any attempt to provide a second value will simply overwrite the first.
+    </p><p>
+    Use of a reserved attribute will throw an IllegalArgumentException.
+    </p>
+    </td>
+    </tr>
+    <tr>
+    <td align="right">
+    
+    </td>
+    <td>
+    <p>
+    <b>setPassword(String value)</b>
+    </p><p>
+    This method is used to add a password to the newly created Rolon.
+    </p><p>
+    A password less then 6 characters in length will throw an IllegalArgumentException.
+    </p>
+    </td>
+    </tr>
+    <tr>
+    <td align="right">
+    
+    </td>
+    <td>
+    <p>
+    <b>removeAttribute(String name)</b>
+    </p><p>
+    This method is used to specify the attributes to be removed from Rolon.
+    </p><p>
+    Use of a reserved attribute will throw an IllegalArgumentException.
+    </p>
+    </td>
+    </tr>
+    <tr>
+    <td align="right">
+    
+    </td>
+    <td>
+    <p>
+    <b>addQualification(RolonProxy qualifierproxy, String qualificationType, String qualificationValue)</b>
+    </p><p>
+    Qualifications are the connections between a Rolon and the larger systems in which is plays a role.
+    They can also be used to locate Rolons based on the Rolons which qualify them.
+    The qualification type allows a qualifier Rolon to qualify other rolons in more than one way,
+    and the qualification value allows further parameterization of the qualification type.
+    E.G. When the qualification type is <b>permission</b>, the qualification value is used to 
+    further qualify the permission, be it reader, writer or owner.
+    </p><p>
+    The qualification type and qualification value must be non-empty strings. 
+    If either is null or of zero length, then an IllegalArgumentException is thrown.
+    </p><p>
+    For a given qualifier Rolon / qualification type,
+    there must be only a single qualification value given.
+    Any attempt to add a second value simply overwrites the first.
+    </p>
+    <p>
+    Use of a reserved attribute name for a qualification type will throw an IllegalArgumentException.
+    </p>
+    <p>
+    The qualifier Rolon's role must be a sub-role of "<b>qualifier</b>".
+    Otherwise an IllegalArgumentException will be thrown.
+    </p><p>
+    The qualifier Rolon's role must specifiy a qualified role which is equal to or a super-role of the child role.
+    Otherwise an IllegalArgumentException will be thrown.
+    </p>
+    </td>
+    </tr>
+    <tr>
+    <td align="right">
+    
+    </td>
+    <td>
+    <p>
+    <b>removeQualification(RolonProxy qualifierproxy, String qualificationType)</b>
+    </p><p>
+    Removes a qualification from the Rolon.
+    </p>
+    </td>
+    </tr>
+    </table>
+    <h3>
+    Results
+    </h3>
+    <p>
+    When the rename Rolon update request is handled, the results are posted in the update parameters map.
+    </p><p>
+    If, while processing this request, the Rolon is found to have been deleted or updated, or if the new child name is already in use, then
+    an error has occurred. No subsequent requests are processed and the name of the request is put in the update parameters map
+    with a name of <b>updateRequestInError</b>.
+    </p><p>
+    If the request is handled, then several parameters are added to the update parameters map.
+    The names of these parameters are all prefixed with the request name:
+    </p>
+    <table>
+    <tr><th>
+    Parameter Name
+    </th><th>
+    Description
+    </th></tr>
+    <tr><td>
+    duplicate
+    </td><td>
+    Set to true when a Rolon with the child name is already present.
+    Otherwise this parameter is not present.
+    </td></tr>
+    <tr><td>
+    missing
+    </td><td>
+    Set to true when the Rolon has been deleted by another user.
+    Otherwise this parameter is not present.
+    </td></tr>
+    <tr><td>
+    outdated
+    </td><td>
+    Set to true when a Rolon has been updated by another user.
+    Otherwise this parameter is not present.
+    </td></tr>
+    <tr><td>
+    role
+    </td><td>
+    The role of the outdated Rolon.
+    Present for outdated errors.
+    </td></tr>
+    <tr><td>
+    rolonUuid
+    </td><td>
+    The UUID of the Rolon when an error occurs.
+    </td></tr>
+    </table>
+                   </section>
+		<aside> </aside>
+	</div>
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

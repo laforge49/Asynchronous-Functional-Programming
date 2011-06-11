@@ -1,0 +1,6 @@
+<aw:nis name="webtop.moveIcon.executed">
+    <aw:is name="target.wrapper.uuid">
+        <aw:update cmd="webtop/moveIcon"/>
+    </aw:is>
+</aw:nis>
+

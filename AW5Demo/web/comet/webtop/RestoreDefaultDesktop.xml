@@ -1,0 +1,10 @@
+<aw:query cmd="versionId" aw:uuid="user.uuid" aw:setcon.rolonUuid="user.uuid">
+    <aw:is name="webtop.restore.executed">
+        <aw:noop setvar.json='{"message":"RefreshDesktop","broadcast":true}' />
+    </aw:is>
+    <aw:nis name="webtop.restore.executed">
+        <aw:query cmd="child" childName="Desktop" aw.versionId:setcon.role="role">
+            <aw:update cmd="webtop/reset"/>
+        </aw:query>
+    </aw:nis>
+</aw:query>

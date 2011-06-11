@@ -1,0 +1,36 @@
+<aw:noop>
+<div class="big_badge">
+	<a href="http://groovy.codehaus.org/"><img src="/graphics/groovy.jpg" /></a>
+	<a href="http://jetty.codehaus.org/"><img src="/graphics/jetty.gif" /></a>
+	<a href="https://sourceforge.net/projects/agilewiki/"><img src="/graphics/sourceforge.gif" alt="Project on SourceForge" /></a>
+</div>
+<footer>
+  <section class="col">
+	<h1>Connect</h1>  
+    <ul>
+      <li><a href="http://groups.google.com/group/agilewikidevelopers">Discussion Group</a></li>
+	  <li><a href="http://www.facebook.com/group.php?gid=116455768396183&amp;v=info&amp;edit_info=all#!/group.php?gid=116455768396183&amp;v=wall" target="_blank">Facebook</a></li>
+    </ul>
+  </section>
+  <div class="col">
+	<h1>Information</h1>
+	<ul>
+		<li><a href="/templates/En/testimonials/">Testimonials</a></li>     
+	    <li><a href="/templates/En/sitemap.html">Sitemap</a></li>
+    </ul>
+  </div>
+  <div class="col">
+	<h1>Development</h1>
+	<ul>
+	  <li><a href="http://agilewiki.hg.sourceforge.net/hgweb/agilewiki/agilewiki/graph">Mercurial Graph</a></li>
+	  <li><a href="/templates/En/changes/">Change Log</a></li>
+	</ul>
+  </div>
+  <div class="col">
+  	<h1>Contacts</h1>
+	<ul>
+    <li><a href="mailto:laforge49@gmail.com">laforge49@agilewiki.org</a></li>
+    </ul>
+  </div>
+</footer>
+</aw:noop>

@@ -1,0 +1,4 @@
+<aw:nis name="webtop.select.executed">
+    <aw:update cmd="webtop/select"/>
+</aw:nis>
+

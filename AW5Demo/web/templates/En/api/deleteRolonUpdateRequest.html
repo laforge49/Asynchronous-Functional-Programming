@@ -1,0 +1,50 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Delete Rolon Update Request" />
+  <body>
+    <aw:include path="../header.xml" />
+           <div class="content">
+   			<section class="main-content">		
+	    		<h2>Delete Rolon Update Request</h2>
+				<nav  class="breadcrumbs">
+		   	   		<ul>
+		   	   			<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+		   	   			<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/api/">API</a></li>
+			   		</ul>
+				</nav>
+
+			    <p>
+			    A delete Rolon update request is an update request which deletes an existing Rolon.
+			    This request is created by calling deleteRolonUpdateRequest factory method on the 
+			    <aw:a href="extendedContext.html">extended context</aw:a> object. Once created,
+			    the request can then be added to the 
+			    <aw:a href="updateRequests.html">update requests</aw:a> list for subequent processing.
+			    </p>
+			    <h3>
+			    Factory Arguments
+			    </h3>
+			    <p>
+			    The factory method in the extended context requires three arguments:
+			    </p>
+			    <dl>
+			    <dt>String <code>requestName</code></dt><dd>The name of the update request.
+			    Each update request must have a unique request name.
+			    The request name is used as a prefix for any results added to the 
+			    <aw:a href="updateParameters.html">update parameters</aw:a> 
+			    map when the request is handled.
+			    </dd>
+			    <dt><aw:a href="context.html">Context</aw:a> <code>context</code></dt><dd>the context map.
+			    </dd>
+			    <dt>RolonProxy <code>rolonProxy</code></dt><dd>a Rolon proxy representing the Rolon to be deleted.
+			    </dd>
+			    <dt>String <code>viewName</code></dt><dd>The name of the view performing the update.
+			    </dd>
+			    </dl>
+				     </section>
+		<aside> </aside>
+	</div>
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

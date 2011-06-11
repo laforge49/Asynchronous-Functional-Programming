@@ -1,0 +1,5 @@
+<td>
+  <aw:include path="../changes/allLink.xml" />
+  <aw:include path="../changes/effectedLink.xml" />
+  <aw:include path="../changes/effected.xml" />
+</td>

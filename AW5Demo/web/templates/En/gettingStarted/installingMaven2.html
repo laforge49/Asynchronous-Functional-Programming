@@ -1,0 +1,56 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="installingMaven2" />
+  <body>
+    <aw:include path="../header.xml" setcon.heading="How to install maven2" />
+
+    <div class="content">
+		<h2>How to Install Maven 2</h2>
+		    <section class="main-content">
+				<nav  class="breadcrumbs">
+	   		    	<ul>
+	   			   		<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+	   			   		<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+	   			   		<li><a href="/templates/En/gettingStarted/">Getting Started</a></li>
+			    	</ul>
+			    </nav>
+		      <p class="overview">
+		        This page describes how to install Maven on your machine. These instructions assume machine has Windows OS.
+		      </p>
+		    <p>Firstly user will have to download the Maven from 
+		    <a href="http://maven.apache.org/download.html">Apache Maven Download</a>
+			</p>
+		
+			<p>
+		       Maven is a Java tool, so you must have Java installed in order to proceed. More precisely, you need a Java Development Kit (JDK), the Java Runtime Environment (JRE) is not sufficient.
+			</p>
+			<p>
+		       Additional optional installation steps are listed after the platform specific instructions.
+			</p>
+			<p>Unzip the distribution archive, i.e. apache-maven-2.2.1-bin.zip to the directory you wish to install
+		          Maven 2.2.1. These instructions assume you chose <code>C:\Program Files\Apache Software Foundation</code>
+		          The subdirectory apache-maven-2.2.1 will be created from the archive.</p>
+			   <p>Add the <code>M2_HOME</code> environment variable by opening up the system properties (WinKey + Pause),
+			      selecting the "Advanced" tab, and the "Environment Variables" button,
+			      then adding the <code>M2_HOME</code> variable in the user variables with the value
+			      <code>C:\Program Files\Apache Software Foundation\apache-maven-2.2.1</code>
+			      Be sure to omit any quotation marks around the path even if it contains spaces.
+			      Note: For Maven: 2.0.9, also be sure that the <code>M2_HOME</code> does not have a "\" as last character </p>
+			   <p>In the same dialog, add the M2 environment variable in the user variables with the value <code>%M2_HOME%\bin</code></p>
+			   <p>Optional: In the same dialog, add the MAVEN_OPTS environment variable in the user variables
+			      to specify JVM properties, e.g. the value <code>-Xms256m -Xmx512m</code>. This environment variable can be used to
+			      supply extra options to Maven.</p>
+			   <p>In the same dialog, update/create the Path environment variable in the user variables and prepend the
+			      value <code>%M2%</code> to add Maven available in the command line.</p>
+			   <p>In the same dialog, make sure that <code>JAVA_HOME</code> exists in your user variables or in the system variables and
+			      it is set to the location of your JDK, e.g. <code>C:\Program Files\Java\jdk1.5.0_02 and that %JAVA_HOME%\bin</code> is
+			      in your Path environment variable.</p>
+			   <p>Open a new command prompt (Winkey + R then type cmd) and run <code>mvn --version</code> to verify that it is correctly
+			      installed.</p>
+		</section>
+		<aside> </aside>
+	</div>
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

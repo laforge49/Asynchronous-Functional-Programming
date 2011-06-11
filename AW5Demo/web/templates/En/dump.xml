@@ -1,0 +1,45 @@
+<aw:noop newvar.dump.resetLink="" newvar.dump.previousLink="" newvar.dump.nextLink="">
+  <table border="1">
+    <tr>
+      <th></th>
+      <th>
+        Attribute
+      </th>
+      <th>
+        Type
+      </th>
+      <th>
+        Value
+      </th>
+    </tr>
+    <aw:loop cmd="context" loopPrefix="dump">
+      <tr aw:class="dump.stripeClass">
+        <td align="right">
+          <aw:contents name="dump.index" />
+        </td><td>
+          <aw:is name="dump.prefix">
+            <aw:contents aw-rmpre:value="dump.key" />
+          </aw:is>
+          <aw:nis name="dump.prefix">
+            <aw:contents name="dump.key" />
+          </aw:nis>
+        </td><td>
+          <aw:query cmd="contextType" aw:name="dump.key">
+            <aw:contents name="type" />
+          </aw:query>
+        </td><td>
+          <aw:contents aw:name="dump.key" />
+        </td>
+      </tr>
+    </aw:loop>
+  </table>
+  <ul class="dumpnav">
+  <aw:is name="dump.nextLink">
+    <li><a aw:href="dump.nextLink">Next</a></li>
+  </aw:is>
+  <aw:is name="dump.previousLink">
+    <li><a aw:href="dump.previousLink">Previous</a></li>
+    <li><a aw:href="dump.resetLink">Reset</a></li>
+  </aw:is>
+  </ul>
+</aw:noop>

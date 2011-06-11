@@ -1,0 +1,60 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="sitemap query" />
+  <body>
+    <aw:include path="../../header.xml" setcon.heading="The Sitemap Query Command" />
+           <div class="content">
+	   		<section class="main-content">		
+				<h2>The Sitemap Query Command</h2>
+				<nav  class="breadcrumbs">
+			   	   	<ul>
+			   	   		<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+			   	   		<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/">Templates</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/query/">AW5 Queries</a></li>
+
+				   	</ul>
+				</nav> 
+    <p>
+      The <code>sitemap</code> query looks into all dir.prop files and add it's contents in context map.
+    </p>
+    <h3>
+      Attributes
+    </h3>
+    <p>
+      The <code>cmd</code> attribute on the <code>aw:query</code> element is required to invoke this command:
+    </p>
+<pre>cmd="sitemap"</pre>
+    <h3>
+      Result
+    </h3>
+    <p>
+      This command places contents of dir.prop in context map with prefix "sitemap".If no dir.prop found, then no
+      updates are made to the context map.
+    </p>
+    <h3>
+      Example
+    </h3>
+    <p>
+      Here's the code to access the ark rolon:
+    </p>
+    <pre>    &lt;aw:query cmd="sitemap"&gt;
+      &lt;aw:include path="dump.xml" /&gt;
+    &lt;/aw:query&gt;
+    
+    </pre>
+    <p>
+      And here's the result:
+    </p>
+    <aw:query cmd="sitemap">
+      <aw:include path="../../dump.xml" />
+    </aw:query>
+    </section>
+    <aside> </aside>
+    </div>    
+    
+    <aw:include path="../../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

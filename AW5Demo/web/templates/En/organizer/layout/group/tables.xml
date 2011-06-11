@@ -1,0 +1,6 @@
+<td>
+  <aw:include path="../../tables/childrenLink.xml" />
+  <aw:include path="../../tables/membersLink.xml" />
+  <aw:include path="../../tables/realmLink.xml" />
+  <aw:include path="../../tables/children.xml" />
+</td>

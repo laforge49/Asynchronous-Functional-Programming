@@ -1,0 +1,5 @@
+<aw:nis name="webtop.renameIcon.executed">
+    <aw:is name="target.wrapper.uuid">
+        <aw:update cmd="webtop/renameIcon"/>
+    </aw:is>
+</aw:nis>

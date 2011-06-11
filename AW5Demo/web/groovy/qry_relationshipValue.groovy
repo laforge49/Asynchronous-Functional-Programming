@@ -1,0 +1,8 @@
+def extendedContext = context.getSpecial(".extendedContext")
+def relType = context.get("relType")
+def uuid = context.get("uuid")
+relName = context.relationshipName(relType)
+def objUuid = context.get("objUuid")
+def value = extendedContext.getValue(context, uuid, relName, objUuid)
+if (value == null) context.setCon("relationshipValue", "")
+else context.setCon("relationshipValue", value)

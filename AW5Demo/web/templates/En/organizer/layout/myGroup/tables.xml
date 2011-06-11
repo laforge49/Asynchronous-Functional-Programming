@@ -1,0 +1,4 @@
+<td>
+  <aw:include path="../../tables/membersLink.xml" />
+  <aw:include path="../../tables/members.xml" />
+</td>

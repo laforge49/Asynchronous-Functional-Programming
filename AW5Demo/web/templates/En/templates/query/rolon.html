@@ -1,0 +1,78 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="rolon query" />
+  <body>
+    <aw:include path="../../header.xml" setcon.heading="The Rolon Query Command" />
+        <div class="content">
+	   		<section class="main-content">		
+				<h2>The Rolon Query Command</h2>
+				<nav  class="breadcrumbs">
+			   	   	<ul>
+			   	   		<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+			   	   		<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/">Templates</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/query/">AW5 Queries</a></li>
+
+				   	</ul>
+				</nav>
+    <p>
+      The <code>rolon</code> query command pulls information from the selected rolon and adds it to the context map.
+      If this information was already present in the context map, or if the rolon does not exist,
+      then no updates are made to the context map.
+    </p>
+    <h3>
+      Attributes
+    </h3>
+    <p>
+      The <code>cmd</code> attribute on the <code>aw:query</code> element is required to invoke this command:
+    </p>
+<pre>cmd="rolon"</pre>
+    <h3>
+      Parameters
+    </h3>
+    <p>
+      The <code>rolonUuid</code> parameter provides the <code>uuid</code> of the rolon and must be present in the context map.
+    </p>
+    <h3>
+      Example
+    </h3>
+    <p>
+      Here's the code to access the home rolon:
+    </p>
+<pre>    &lt;aw:query cmd="singletonUuid" role="users"&gt;
+      &lt;aw:query cmd="rolon"&gt;
+        &lt;p&gt;
+          &lt;b&gt;Ark Rolon:&lt;/b&gt;
+        &lt;/p&gt;
+        &lt;aw:query cmd="versionId" aw:uuid="rolonUuid"&gt;
+          &lt;aw:include path="dump.xml" aw:setcon.dump.prefix="versionId" /&gt;
+        &lt;/aw:query&gt;
+      &lt;/aw:query&gt;
+    &lt;/aw:query&gt;
+    
+    </pre>
+    <p>
+      Note in the above, we use singletonUuid to set the <code>rolonUuid</code>, based on the role. We can do this because the home role is a singleton, i.e. there is only a single rolon for that type of role.
+    </p>
+    <p>
+      And here's the result:
+    </p>
+    <aw:query cmd="singletonUuid" role="users">
+      <aw:query cmd="rolon">
+        <p>
+          <b>Ark Rolon:</b>
+        </p>
+        <aw:query cmd="versionId" aw:uuid="rolonUuid">
+          <aw:include path="../../dump.xml" aw:setcon.dump.prefix="versionId" />
+        </aw:query>
+      </aw:query>
+    </aw:query>
+    
+              </section>
+    <aside> </aside>
+    </div>
+    <aw:include path="../../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

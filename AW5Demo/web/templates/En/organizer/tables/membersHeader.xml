@@ -1,0 +1,49 @@
+<div style="text-align:center">
+  <aw:noop aw:newvar.url="activeTemplateDirectory">
+    <aw:query cmd="append" name="url" value="/members.html"/>
+    <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+    <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+    <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past"/>
+    <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+    <a aw:href="url" target="tables">All</a>
+  </aw:noop>
+  <aw:noop aw:newvar.url="activeTemplateDirectory">
+    <aw:query cmd="append" name="url" value="/readerMembers.html"/>
+    <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+    <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+    <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past"/>
+    <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+    <a aw:href="url" target="tables">Readers</a>
+  </aw:noop>
+  <aw:noop aw:newvar.url="activeTemplateDirectory">
+    <aw:query cmd="append" name="url" value="/writerMembers.html"/>
+    <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+    <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+    <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past"/>
+    <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+    <a aw:href="url" target="tables">Writers</a>
+  </aw:noop>
+  <aw:noop aw:newvar.url="activeTemplateDirectory">
+    <aw:query cmd="append" name="url" value="/ownerMembers.html"/>
+    <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+    <aw:query cmd="urlAppend" name="timestamp" aw:value="timestamp"/>
+    <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past"/>
+    <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+    <a aw:href="url" target="tables">Owners</a>
+  </aw:noop>
+  <aw:nis name="_.past">
+    <aw:query cmd="hasPrivilege" privilege="writer" aw:newvar.url="activeTemplateDirectory">
+      <aw:is name="hasPrivilege" aw:newvar.uVersionId="user.timestamp">
+        <aw:query cmd="append" name="uVersionId" value="|" />
+        <aw:query cmd="append" name="uVersionId" aw:value="user.uuid" />
+        <aw:query cmd="equal" aw.uVersionId:a="name" b="Anonymous">
+          <aw:nis name="equal" aw:newvar.commands="expandedType">
+            <aw:query cmd="append" name="url" value="/editMembership.html"/>
+            <aw:query cmd="urlAppend" name="rolonUuid" aw:value="rolonUuid"/>
+            <a aw:href="url" target="_top"><span style="color:green; font-style:italic">edit</span></a>
+          </aw:nis>
+        </aw:query>
+      </aw:is>
+    </aw:query>
+  </aw:nis>
+</div>

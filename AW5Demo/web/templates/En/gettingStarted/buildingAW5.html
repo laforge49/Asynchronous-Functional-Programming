@@ -1,0 +1,37 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="buildingAW5" />
+  <body>
+    <aw:include path="../header.xml" setcon.heading="How to build AW5" />
+    <div class="content">
+		<section class="main-content">
+			<h2>How to Build AgileWiki 5</h2>
+		    	<nav  class="breadcrumbs">
+		   	    	<ul>
+		   		   		<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+		   		   		<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+		   		   		<li><a href="/templates/En/gettingStarted/">Getting Started</a></li>
+			    	</ul>
+			    </nav>
+	      <p class="overview">
+	        This page describes how to build the AgiliWiki5 source code.
+	      </p>
+	      <p>
+	        In order to build Agiliwiki firstly open a terminal or command prompt and navigate to 
+	        the Agilewiki5 directory. Next issue the following command:
+	      </p>
+	      <p>
+	        <code>mvn clean install</code> - This will perform a fresh compile of the source code, 
+	        run any unit tests and install the resulting artifacts into your local Maven repository.
+	      </p>
+	      <p>
+	        As part of this task Maven will automatically download any depdendenices required by Agilewiki, 
+	        once the entire process is complete you will be presented with a 'BUILD SUCCESSFUL' message.
+	      </p>
+		</section>
+		<aside> </aside>
+    </div>
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

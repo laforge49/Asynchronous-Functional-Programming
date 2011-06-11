@@ -1,0 +1,77 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Updates" />
+  <body>
+    <aw:include path="header.xml" />
+        	<div class="content">
+   		<section class="main-content">		
+	    <h2>Updates</h2>
+			<nav  class="breadcrumbs">
+		   	   	<ul>
+		   	   		<li><a href="/templates/En/">Home</a></li>
+					<li><span>&#8250;</span></li>
+		   	   		<li><a href="/templates/En/docs.html">Docs</a></li>
+			   	</ul>
+			</nav>
+  
+		    <p>
+		      <aw:a href="api/updateRequests.html">Update Requests</aw:a> are composed using templates,
+		      and these requests are handled on completion of template processing.
+		      But when an update request is found, any HTML that was generated is discarded.
+		      After handling any update requests, the requested template is reprocessed and this time the generated 
+		      HTML is sent to the browser.
+		    </p>
+		    <h3>
+		      Request Parameters
+		    </h3>
+		    <p>
+		      Request parameters are included in web page either as hidden variables within a form element
+		      or as part of a web link, e.g. <code>?role="users"</code>.
+		    </p><p>
+		      On receipt of a request from a browser any request parameters included with the request
+		      are added to the context map, but with <code>"_."</code> prepended to the parameter names.
+		    </p><p>
+		      Request parameters are only added to the context map when the request is first processed.
+		      When a request is reprocessed after handling any update requests, a new context map is
+		      created and the request parameters are not included.
+		    </p>
+		    <h3>
+		      Update Parameters
+		    </h3>
+		    <p>
+		      When a template composes an update request, it often needs to specify various 
+		      <aw:a href="api/updateParameters.html">Update Parameters</aw:a>.
+		      These parameters are used in place of the context map while handling update requests.
+		    </p><p>
+		      Subsequent to handling the update requests, a new context map is created and the request from
+		      the browser is reprocessed. When this new context map is created, the update parameters are
+		      included.
+		    </p><p>
+		      One update parameter of particular note is the <code>templateRequest</code>.
+		      When present after handling the update requests, 
+		      the value of <code>templateRequest</code> replaces the request from the browser.
+		      By this means an alternate template can be selected for processing.
+		      This is how, when the user changes language selection, a web page in the
+		      new language is passed to the browser.
+		      Other parameters of interest are <code>user.language</code> and <code>newUser.rolonUuid</code>
+		    </p>
+		    <h3>
+		    Recovery
+		    </h3>
+		    <p>
+		    Recovery from errors is handled partly by AgileWiki and partly by the application.
+		    AgileWiki is responsible for making sure that when an error occurs while processing the update requests,
+		    that no changes were made to the database.
+		    AgileWiki is also responsible for handling the case where a server crashes while updates are being applied - in this
+		    case the complete set of updates must be completed when the server is restored.
+		    </p>
+		    <p>
+		    Applications are responsible for handling errors. Applying the change requests can always result in an error,
+		    as more than one user may be requesting updates and it is impossible to control the order in which different
+		    user's updates are applied.
+		    </p>
+		   </section>
+		<aside> </aside>
+	</div>	
+    <aw:include path="footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

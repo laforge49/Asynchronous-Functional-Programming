@@ -1,0 +1,175 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Attribute Notation" />
+  <body>
+    <aw:include path="../header.xml" setcon.heading="Attribute Notation" />
+      	<div class="content">
+   		<section class="main-content">		
+			<h2>Attribute Notation</h2>
+			<nav  class="breadcrumbs">
+		   	   	<ul>
+		   	   		<li><a href="/templates/En/">Home</a></li>
+					<li><span>&#8250;</span></li>
+		   	   		<li><a href="/templates/En/docs.html">Docs</a></li>
+					<li><span>&#8250;</span></li>
+		   		   	<li><a href="/templates/En/templates/">Templates</a></li>
+			   	</ul>
+			</nav>
+
+    <p>
+      AW5 Templates include a rich set of attribute notations for accessing and updating the underlying context map.
+      As we are confined to XML conventions, some of the notations will appear to be a bit obscure.
+      But you will quickly learn that the notations we have chosen are reasonably concise and very easy to use.
+    </p>
+    <h3>x="y"</h3>
+    <p>
+      Ordinary attributes take the form <code>x="y"</code>. In general, ordinary attributes have nothing to do with the context map, 
+      and behave exactly as you would expect.
+    </p>
+    <p>
+      A good case in point is the <code>aw:a</code> element, which is transformed into the regular a element. The transformation process
+      only effects the href attribute when a relative URL is used. Otherwise, all attributes on the <code>aw:a</code> element are transfered
+      unchanged to the generated a element which replaces it.
+    </p>
+    <p>
+      The attributes on the <code>aw:loop</code> and <code>aw:query</code> elements are however handled differently. 
+      These attributes do update the context map, adding the attribute values as constants. 
+      This is done as a convenience, allowing the application logic invoked when an <code>aw:loop</code>
+      or <code>aw:query</code> element is processed to access, via the context map, all the attributes on
+      their invoking element.
+    </p>
+    <h3>aw:x="n"</h3>
+    <p>
+      Application logic will often be used to provide values which need to be added as attributes
+      to HTML elements, a good case in point being the hidden variables of a form element.
+      As all data bassed between templates and application is via the context map, 
+      we need an easy way to use a value from the context map as an attribute value.
+      This is done with an attribute in the form <code>aw:x="n"</code>, where <b>x</b> is the name of the attribute and
+      <b>n</b> is the name assigned a value in the context map.
+    </p>
+<pre>&lt;input type="hidden" name="soupOfTheDay" aw:value="soup" /&gt;</pre>
+    <p>
+      The above illustrates the use of the <code>aw:x"n"</code> form, where "soup" has been assigned
+      the value of "onion" in the context map. Here's the generated HTML: 
+    </p>
+<pre>&lt;input type="hidden" name="soupOfTheDay" value="onion" /&gt;</pre>
+    <h3>setcon.n="v"</h3>
+    <p>
+      When a template is transformed into HTML a lot of the attributes in the template are dropped,
+      as they are simply notations for updating the underlying context map. Case in point, attributes
+      in the form <code>setcon.n="v"</code> are simply used to assign a string value <b>v</b>, to a name in the context map.
+    </p>
+	<pre>&lt;p setcon.friend="Fred"&gt;
+	&lt;aw:contents name="friend" /&gt;
+    &lt;p setcon.friend="Sam"&gt;
+    &lt;aw:contents name="friend" /&gt;
+    &lt;/p&gt;
+    &lt;aw:contents name="friend" /&gt;
+&lt;/p&gt;</pre>
+    <p>
+      The above illustrates both the use of the <code>setcon.n="v"</code> form
+      and the scoping of assignments in the context map. 
+      When the template is transformed, the following HTML is generated:
+    </p>
+<pre>&lt;p&gt;
+	Fred
+    &lt;p&gt;
+    		Sam
+    &lt;/p&gt;
+    Fred
+&lt;/p&gt;</pre>
+    <h3>
+      aw:setcon.n1="n2"
+    </h3>
+    <p>
+      The <code>aw:</code> notation can be combined with other notations as a means of assigning the value associated with one name 
+      in the context map to another name. For example, if the name "friend" has been assigned a value of "Fred" then the attribute 
+      <code>aw:setcon.buddy="friend"</code> simply assigns the falue of "Fred" to the name "buddy".
+    </p>
+    <h3>
+      newvar.n="v" and setvar.n="v"
+    </h3>
+    <p>
+      There are times, especially when dealing with loops, that the effect of an assignment to a name in the 
+      context map needs to extend beyond the scope of the element where the assignment was made.
+      To this end we introduce variables, which we create with the newvar notation and update with the setvar notation.
+    </p>
+<pre>&lt;p newvar.friend="Fred"&gt;
+	&lt;aw:contents name="friend" /&gt;
+    &lt;p setvar.friend="Sam"&gt;
+    		&lt;aw:contents name="friend" /&gt;
+    &lt;/p&gt;
+    &lt;aw:contents name="friend" /&gt;
+&lt;/p&gt;</pre>
+    <p>
+      The above shows how to use newvar and setvar. Here's the generated HTML, which is quite different from the 
+      eariler example where we were using setcon:
+    </p>
+<pre>&lt;p&gt;
+	Fred
+    &lt;p&gt;
+    		Sam
+    &lt;/p&gt;
+    Sam
+&lt;/p&gt;</pre>
+    <h3>
+      aw-rmpre:x="n"
+    </h3>
+    <p>
+      Prefixes are used extensively in the context map, as a means of representing tree structures. As a result, you will often
+      need to remove a prefix. This is exactly what the aw-rmpre notation does for you.
+    </p>
+    <p>
+      Lets say that in the context map the name "index" has been assigned the value "sammy.chips" and we want to have
+      an attribute, fastfood, with the same value as index but without the prefix. We can do this with the template attribute
+      <code>aw-rmpre:fastfood="index"</code>, which is transformed in the generated HTML to <code>fastfood="chips"</code>.
+    </p>
+    <h3>
+      aw.p:x="n"
+    </h3>
+    <p>
+      How do you extract data from a table? Lets say the context map contains the following:
+    </p>
+<pre>pre="123"
+123.x="a"
+123.y="22"
+123.z="Sammy"</pre>
+    <p>
+      Using the <code>aw.p:x="n"</code> notation, where <b>p</b> is the name assigned the prefix value, we can display the value assigned to <b>y</b> like this:
+    </p>
+<pre>&lt;aw:contents aw.pre:value="y" /&gt;</pre>
+    <p>
+      The above then generates the following HTML:
+    </p>
+<pre>22</pre>
+    <h3>
+      aw:special.n1="n2", aw-rmpre:special.n1="n2" and aw.p:special.n1="n2"
+    </h3>
+    <p>
+      So far we have only looked at notations which work with strings, but the content map may also contain other types of objects.
+      The special notation has been included for when you need to work with these objects.
+    </p>
+    <h3>
+      Combining Attribute Notations
+    </h3>
+    <p>
+      We have already seen how the <code>aw:</code> notation can be combined with the <code>setcon.</code> notation. Here then are all the legal combinations:
+      <ul><li><code>aw:setcon.n1="n2"</code>
+      </li><li><code>aw-rmpre:setcon.n1="n2"</code>
+      </li><li><code>aw.p:setcon.n1="n2"</code>
+      </li><li><code>aw:newvar.n1="n2"</code>
+      </li><li><code>aw-rmpre:newvar.n1="n2"</code>
+      </li><li><code>aw.p:newvar.n1="n2"</code>
+      </li><li><code>aw:setvar.n1="n2"</code>
+      </li><li><code>aw-rmpre:setvar.n1="n2"</code>
+      </li><li><code>aw.p:setvar.n1="n2"</code>
+      </li><li><code>aw:special.n1="n2"</code>
+      </li><li><code>aw-rmpre:special.n1="n2"</code>
+      </li><li><code>aw.p:special.n1="n2"</code>
+      </li></ul>
+    </p>
+    </section>
+    <aside> </aside>
+    </div>
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

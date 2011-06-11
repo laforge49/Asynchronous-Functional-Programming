@@ -1,0 +1,6 @@
+def extendedContext = context.getSpecial(".extendedContext")
+uuid = context.get("uuid")
+i = uuid.indexOf("_")
+ts = uuid.substring(0,i)
+ts = extendedContext.invertTimestamp(ts)
+context.setCon("timestamp",ts)

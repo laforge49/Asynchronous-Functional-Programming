@@ -1,0 +1,24 @@
+<aw:noop>
+
+<aw:include path="language.xml"/>
+<aw:include path="users/user.xml" />
+
+
+<img id="badge" src="/graphics/badge-ea.gif" alt="early alpha" />
+<a href="/templates/En/" title="Agile Wiki" id="AW">Agile Wiki</a>
+<nav class="main" role="navigation">
+  <ul>
+
+   <!-- we can activate the current link with the below code -->
+   <!-- still thinking about the best way of doing this -->
+
+   <!--<li><span class="current">Home</span></li>-->
+
+   <li><a href="/templates/En/">Home</a></li>
+   <li><a href="/templates/En/about.html">About</a></li>
+   <li><a href="/templates/En/docs.html">Docs</a></li>
+   <li><a href="/templates/En/contributors.html">Contributors</a></li>
+  </ul>
+</nav>
+<div class="clear">	</div>
+</aw:noop>

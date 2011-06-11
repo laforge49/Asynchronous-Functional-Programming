@@ -1,0 +1,7 @@
+<aw:noop aw:newvar.url="activeTemplateDirectory">
+  <aw:query cmd="append" name="url" value="/logon.html" />
+  <aw:query cmd="urlAppend" name="oldRequest" aw:value="currentRequest" />
+  <aw:query cmd="urlAppend" name="rolonUuid" aw:value="_.rolonUuid" />
+  <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past"/>
+  <a aw:href="url"><span style="color:green; font-style:italic">logon</span></a>
+</aw:noop>

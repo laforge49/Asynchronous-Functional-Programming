@@ -1,0 +1,9 @@
+<tr bgcolor="FFFFFF">
+  <td width="25%">
+    <img src="/images/AgileWiki-logo.png" alt="AgileWiki" />
+  </td>
+  <td width="50%" align="center">
+    <aw:include path="../topLink.xml" />
+  </td>
+    <aw:include path="user.xml" />
+</tr>

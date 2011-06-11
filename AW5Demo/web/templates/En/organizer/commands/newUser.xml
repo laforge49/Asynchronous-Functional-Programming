@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="robots" content="all"/>
+        <title>New User</title>
+    </head>
+    <body>
+        <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0" bgcolor="C0FFFF"
+               aw:newvar.header="expandedType">
+            <tr bgcolor="FFFFFF">
+                <td width="25%">
+                    <a href="/">
+                        <img src="/images/AgileWiki-logo.png" alt="AgileWiki"/>
+                    </a>
+                </td>
+                <td width="50%" align="center">
+                    <aw:include path="../topLink.xml"/>
+                </td>
+                <td width="25%">
+                </td>
+            </tr>
+        </table>
+        <div class="content">
+            <section class="main-content">
+                <h2>Create New User</h2>
+                <p>
+                    <aw:include path="/templates/En/error.xml"/>
+                    <aw:is name="tooShort">
+                        <p class="errormsg">Error: Password is less than 6 characters.</p>
+                    </aw:is>
+                    <aw:is name="noMatch">
+                        <p class="errormsg">Error: The new passwords are not equal.</p>
+                    </aw:is>
+                    <aw:is name="newUser.name">
+                        <aw:nis name="updateRequestInError">
+                            <p>Welcome
+                                <b>
+                                    <aw:contents name="newUser.name" setvar.show=""/>
+                                </b>
+                            </p>
+                        </aw:nis>
+                    </aw:is>
+                </p>
+                <form aw:action="currentRequest" method="post">
+                    <div>
+                        <label for="newUserName" style="color:blue">User name:</label>
+                        <input type="text" name="newUserName" aw:value="_.newUserName" required="required" autofocus="autofocus"/>
+                        <input type="hidden" name="oldRequest" aw:value="_.oldRequest"/>
+                        <input type="hidden" name="rolonUuid" aw:value="_.rolonUuid"/>
+                    </div>
+                    <div>
+                        <label for="np1" style="color:blue">User password:</label>
+                        <input type="password" name="np1"/>
+                        <!--required="required" pattern="(?=^.{8,}$)" placeholder="minimum 6 characters" />-->
+                    </div>
+                    <div>
+                        <label for="np2" style="color:blue">User password
+                            <span>(again):</span>
+                        </label>
+                        <input type="password" name="np2"/>
+                        <!--required="required" />-->
+                    </div>
+                    <div>
+                        <label for="tagLine" style="color:blue">Tagline:</label>
+                        <input type="text" name="tagLine" aw:value="_.tagLine"/>
+                    </div>
+                    <div>
+                        <input type="submit" value="Create"/>
+                    </div>
+                </form>
+            </section>
+            <aside></aside>
+        </div>
+    </body>
+</html>

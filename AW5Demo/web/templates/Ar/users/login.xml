@@ -1,0 +1,17 @@
+<html dir="rtl">
+  <aw:include path="/templates/head.xml" setcon.title="Login" />
+  <body>
+    <aw:include path="../header.xml" />
+    <h2>Login</h2>
+    <form aw:action="currentRequest" method="post">
+      User Name: <input type="text" name="userName"/>
+      <input type="hidden" name="oldRequest" aw:value="_.oldRequest"/>
+      <input type="submit" value="Login"/>
+    </form>
+    <aw:is name="_.userName">
+      <p>
+        No such user: <aw:contents name="_.userName" />
+      </p>
+    </aw:is>
+  </body>
+</html>

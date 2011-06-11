@@ -1,0 +1,11 @@
+def extendedContext = context.getSpecial(".extendedContext")
+def loopPrefix = context.get("loopPrefix")
+if (loopPrefix.length() > 0)
+  loopPrefix = loopPrefix+"."
+def timestamp = context.get("timestamp")
+def rolonUuid = context.get(loopPrefix+"rolonUuid")
+def relType = context.relationshipName(context.get(loopPrefix+"relType"))
+def value = context.get(loopPrefix+"value")
+def subjectUuidsSequence = extendedContext.subjectUuidsSequence(timestamp,rolonUuid, relType, value)
+context.setSpecial(loopPrefix+"sequence",subjectUuidsSequence)
+context.setCon(loopPrefix+"isUuidSequence","true")

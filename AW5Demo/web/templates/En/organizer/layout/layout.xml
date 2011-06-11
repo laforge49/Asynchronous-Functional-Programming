@@ -1,0 +1,50 @@
+<table width ="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0" bgcolor="C0FFFF" aw:newvar.header="expandedType">
+  <aw:include path="mainHeader.xml" />
+  <aw:is name="expandedType">
+    <aw:query cmd="append" name="header" value="/header.xml"/>
+    <aw:include aw:path="header" />
+    <aw:include path="commands.xml" />
+    <tr valign="top">
+      <td width="25%">
+        <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0">
+          <tr aw:newvar.tables="expandedType">
+            <aw:query cmd="append" name="tables" value="/tables.xml"/>
+            <aw:include aw:path="tables" />
+          </tr>
+        </table>
+      </td>
+      <td width="50%">
+        <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0">
+          <tr>
+            <td>
+              <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0" bgcolor="FFFFC0">
+                <tr aw:newvar.contents="expandedType">
+                  <aw:query cmd="append" name="contents" value="/contents.xml"/>
+                  <aw:include aw:path="contents" />
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0" bgcolor="FFFFFF">
+                <tr aw:newvar.lists="expandedType">
+                  <aw:query cmd="append" name="lists" value="/lists.xml"/>
+                  <aw:include aw:path="lists" />
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+      <td width="25%">
+        <table width="100%" cellspacing="0" cellpadding="0" vspace="0" hspace="0">
+          <tr aw:newvar.changes="expandedType">
+            <aw:query cmd="append" name="changes" value="/changes.xml"/>
+            <aw:include aw:path="changes" />
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </aw:is>
+</table>

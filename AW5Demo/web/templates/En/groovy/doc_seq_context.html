@@ -1,0 +1,66 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="context sequence explaination" />
+  <body>
+    <aw:include path="../header.xml" setcon.heading="Explaination of sequence" />
+        
+    <div class="content">
+      <section class="main-content">
+        <h2>Explaination of sequence</h2>
+        <nav  class="breadcrumbs">
+          <ul>
+	    <li><a href="/templates/En/">Home</a></li>
+            <li><span>&#8250;</span></li>
+            <li><a href="/templates/En/docs.html">Docs</a></li>
+            <li><span>&#8250;</span></li>
+            <li><a href="/templates/En/groovy/">Groovy</a></li>
+          </ul>
+        </nav>
+    <p>
+        A <code>sequence </code> is a <a href="http://www.scala-lang.org/node/242" target="_blank">scala actor</a> which provides
+        an ordered sequence of strings.<br/>
+        A sequence command is a groovy script or scala actor which composes a sequence. Sequence commands can be invoked
+        using the <code>aw:loop</code> element in a template.<br/>
+    </p>
+    <p>The <code>context sequence</code> command composes a sequence which provides the names of all the values in the
+       context map.
+    </p>
+    <p>Listing of code with line numbers:</p>
+      <pre>
+        1. def extendedContext = context.getSpecial(".extendedContext")
+        2. def contextNames = context.stringSet()
+        3. def sequence = extendedContext.navigableSequence(contextNames,false)
+        4. def loopPrefix = context.get("loopPrefix")
+        5. if (loopPrefix.length() > 0)
+        6.    loopPrefix = loopPrefix+"."
+        7. context.setSpecial(loopPrefix+"sequence",sequence)
+      </pre>
+    <p>Detailed explaination how the script works:</p>
+    
+    <ul class="listtypenone">
+    <li><b>1.</b><code> def extendedContext = context.getSpecial(".extendedContext")</code>
+    <p> Get the object of <a href="/templates/En/api/extendedContext.html">extendedContext</a> from the
+        <a href="/templates/En/api/context.html">context</a> map.</p></li>
+
+    <li><b>2.</b><code> def contextNames = context.stringSet()</code>
+    <p>Here, stringSet method of context is invoked which return the tree set of all keys in context. </p></li>
+
+    <li><b>3.</b><code> def sequence = extendedContext.navigableSequence(contextNames,false)</code>
+    <p>This statement returns a sequence over tree set of keys. When the second argument is true, the order is reversed.</p></li>
+
+    <li><b>4.</b><code> def loopPrefix = context.get("loopPrefix")</code>
+    <p>Get the value of loopPrefix from the <a href="/templates/En/api/context.html">context</a> map. </p></li>
+
+    <li><b>5.</b> <code>if (loopPrefix.length() > 0)</code>
+	  <ul class="listtypenone">
+	    <li><b>6.</b> <code>loopPrefix = loopPrefix+"."</code>
+	    <p>If loopPrefix is not empty, append it with ".".</p></li>
+	</ul></li>
+	
+    <li><b>7.</b> <code>context.setSpecial(loopPrefix+"sequence",sequence)</code>
+    <p>Returns the composed sequence.</p></li>
+    </ul>
+          </section>
+    </div>
+<aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+</body>
+</html>

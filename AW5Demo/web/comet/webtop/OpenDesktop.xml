@@ -1,0 +1,18 @@
+<aw:query cmd="versionId" aw:uuid="user.uuid" aw:setcon.rolonUuid="user.uuid">
+    <aw:nis name="CreateWebtop.rolonUuid">
+        <aw:query cmd="child" childName="Desktop" aw.versionId:setcon.role="role">
+            <aw:is name="childUuid">
+                <aw:query cmd="rolon" aw:setcon.rolonUuid="childUuid" aw:setcon.desktopUuid="childUuid">
+                    <aw:loop cmd="children">
+                        <aw:query cmd="rolon" aw:setcon.rolonUuid="uuid" aw:setcon.itemUuid="uuid">
+                            <aw:query cmd="webtop/loadItem" />
+                        </aw:query>
+                    </aw:loop>
+                </aw:query>
+            </aw:is>
+            <aw:nis name="childUuid">
+                <aw:update cmd="webtop/create"/>
+            </aw:nis>
+        </aw:query>
+    </aw:nis>
+</aw:query>

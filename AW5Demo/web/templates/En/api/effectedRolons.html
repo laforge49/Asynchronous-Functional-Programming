@@ -1,0 +1,27 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Effected Rolons" />
+  <body>
+    <aw:include path="../header.xml" />
+       <div class="content">
+   			<section class="main-content">		
+	    		<h2>Effected Rolons</h2>
+				<nav  class="breadcrumbs">
+		   	   		<ul>
+		   	   			<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+		   	   			<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/api/">API</a></li>
+			   		</ul>
+				</nav>
+    <p>
+    An effected rolons object is a TreeMap&lt;String, TreeMap&lt;String, TreeMap&lt;String, String&gt;&gt;&gt; and is loaded to the context map with a name of <code>{timestamp}|{rolonUuid}.effectedRolons</code> when a Rolon is read.
+    </p><p>
+    When the rolon is a Journal Entry, the primary keys of this map are the effected Rolon UUIDs, the secondary keys are change sequence numbers and the lowest level maps are name/value pairs which describe the effected changes.
+    </p>
+				     </section>
+		<aside> </aside>
+	</div>    
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

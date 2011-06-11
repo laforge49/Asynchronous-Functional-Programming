@@ -1,0 +1,14 @@
+<aw:noop>
+  <aw:query cmd="versionId" aw:uuid="user.uuid">
+  <aw:is aw.versionId:value="role" newvar.url="/templates/Ar/users/logoff.xml">
+    Welcome <aw:contents aw.versionId:value="name" />
+    <aw:query cmd="urlAppend" name="oldRequest" aw:value="currentRequest" />
+    <a aw:href="url">log off</a>
+  </aw:is>
+  <aw:nis aw.versionId:value="role" newvar.url="/templates/Ar/users/login.html">
+    <aw:query cmd="urlAppend" name="oldRequest" aw:value="currentRequest" />
+    <a aw:href="url">login</a>
+    <a href="/templates/Ar/users/newUser.html">إضافة مستخدم جديد</a>
+  </aw:nis>
+  </aw:query>
+</aw:noop>

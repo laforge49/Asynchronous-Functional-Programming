@@ -1,0 +1,5 @@
+<td>
+  <br />
+  <aw:include path="../../lists/shareLink.xml" />
+  <aw:include path="../../lists/accessControl.xml" />
+</td>

@@ -1,0 +1,30 @@
+<aw:noop newvar._.b.key="">
+  <aw:query cmd="versionId" aw:uuid="_.rolonUuid">
+    <aw:query cmd="compound" aw.versionId:setcon.name="name">
+      <aw:noop aw:setvar._.b.key="compound" />
+    </aw:query>
+  </aw:query>
+  <aw:loop cmd="parentObjects" loopPrefix="a" aw:a.rolonUuid="rolonUuid">
+      <aw:loop cmd="subSubjectKeys" loopPrefix="b" b.relType="parent" aw:b.rolonUuid="a.uuid" b.limit="1">
+          <aw:query cmd="versionId" aw:uuid="b.uuid" aw:newvar.url="activeTemplateDirectory">
+            <aw:query cmd="append" name="url" value="/../" />
+            <aw:query cmd="urlAppend" name="rolonUuid" aw:value="b.uuid" />
+            <aw:query cmd="urlAppend" name="timestamp" aw:setcon.value="_.past" />
+            <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past" />
+            <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+            <span style="color:blue">
+              next sibling:
+            </span>
+            <a aw:href="url" target="_top"><aw:contents aw.versionId:value="name" /></a>
+            <aw:query cmd="expandedType" aw.versionId:type="role">
+              (<aw:contents name="expandedType" />)
+            </aw:query>
+            <aw:is aw.versionId:value="att.tagLine">
+              -
+              <aw:contents aw.versionId:value="att.tagLine" />
+            </aw:is>
+          </aw:query>
+          <br />
+      </aw:loop>
+  </aw:loop>
+</aw:noop>

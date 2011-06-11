@@ -1,0 +1,115 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="nContains filter" />
+  <body>
+    <aw:include path="../../../header.xml" setcon.heading="The nContains Filter Command" />
+    <div class="content">
+      <section class="main-content">
+        <h2>The nContains Filter Command</h2>
+        <nav  class="breadcrumbs">
+          <ul>
+	    <li><a href="/templates/En/">Home</a></li>
+            <li><span>&#8250;</span></li>
+            <li><a href="/templates/En/docs.html">Docs</a></li>
+            <li><span>&#8250;</span></li>
+            <li><a href="/templates/En/templates">Templates</a></li>
+            <li><span>&#8250;</span></li>
+            <li><a href="/templates/En/templates/loop/">AW5 Loops</a></li>
+            <li><span>&#8250;</span></li>
+            <li><a href="/templates/En/templates/loop/filters/">Filters</a></li>
+
+          </ul>
+        </nav>    
+    <p>
+      The <code>nContains</code> filter command is used to prevent further processing of keys which contains text.
+      To know how the groovy script works step by step, please see this
+      <a href="/templates/En/groovy/doc_ftr_nContains.html">example</a>
+    </p>
+    <h3>
+      Attributes
+    </h3>
+    <p>
+      Filters use 2 attributes specified on the <code>aw:loop</code> element:
+    </p>
+    <dl>
+    <dt>The <code>filter</code> attribute on the <code>aw:loop</code> element</dt><dd>is required to invoke this command:
+    <p><code>filter="nContains"</code></p></dd>
+    
+     <dt>The <code>loopPrefix</code></dt><dd>when specified as an attribute on the <code>aw:loop</code> element, is pre-pended to the parameters used
+      by the <code>nContains</code> filter command.
+    </dd></dl>
+    <h3>
+      Properties
+    </h3>
+    <p>
+      The <code>text</code> string is used by this command to determine which keys are not to be processed further.
+      Note that the name of this property is modified when a loopPrefix is specified.
+    </p>
+    <h3>
+      Result
+    </h3>
+    <p>
+      This filter excludes all the properties which contains <code>text</code>.
+    </p>
+    <h3>
+      Example
+    </h3>
+    <pre>
+    &lt;table border="1"&gt;
+       &lt;tr&gt;
+        &lt;th&gt;
+        &lt;/th&gt;
+        &lt;th&gt;
+           Property
+        &lt;/th&gt;
+        &lt;th&gt;
+           Value
+        &lt;/th&gt;
+       &lt;/tr&gt;
+      &lt;aw:loop cmd="properties" loopPrefix="pdump"  filter="nContains" pdump.text="."&gt;
+         &lt;tr&gt;
+           &lt;td align="right"&gt;
+             &lt;aw:contents name="pdump.index" /&gt;
+           &lt;/td&gt;&lt;td&gt;
+             &lt;aw:contents name="pdump.key" /&gt;
+           &lt;/td&gt;&lt;td&gt;
+             &lt;aw:query cmd="property" aw:pname="pdump.key"&gt;
+             &lt;aw:contents name="property" /&gt;
+             &lt;/aw:query&gt;
+           &lt;/td&gt;
+         &lt;/tr&gt;
+      &lt;/aw:loop&gt;
+    &lt;/table&gt;
+    </pre>
+    <p>
+      And here is the result:
+    </p>
+    <table border="1">
+    <tr>
+      <th>
+      </th>
+      <th>
+        Property
+      </th>
+      <th>
+        Value
+      </th>
+    </tr>
+    <aw:loop cmd="properties" loopPrefix="pdump"  filter="nContains" pdump.text=".">
+      <tr>
+        <td align="right">
+          <aw:contents name="pdump.index" />
+        </td><td>
+          <aw:contents name="pdump.key" />
+        </td><td>
+          <aw:query cmd="property" aw:pname="pdump.key">
+            <aw:contents name="property" />
+          </aw:query>
+        </td>
+      </tr>
+    </aw:loop>
+  </table>
+            </section>
+    </div>
+     <aw:include path="../../../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

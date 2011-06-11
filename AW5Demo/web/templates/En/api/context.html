@@ -1,0 +1,180 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Context" />
+  <body>
+    <aw:include path="../header.xml" />
+          <div class="content">
+   			<section class="main-content">		
+	    		<h2>Context</h2>
+				<nav  class="breadcrumbs">
+		   	   		<ul>
+		   	   			<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+		   	   			<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/api/">API</a></li>
+			   		</ul>
+				</nav>
+    <p>
+      The Context class provides access to the context map used by the template engine.
+      An instance of this class is bound to every Groovy script with the name <b>context</b>.
+    </p>
+    <table>
+    <tr>
+    <td align="right">
+    boolean
+    </td>
+    <td>
+    <p>
+    <b>contains(String name)</b>
+    </p><p>
+    Returns true when the context map has a value with the given name.
+    </p>
+    </td>
+    </tr>
+    <tr>
+    <td align="right">
+    String
+    </td>
+    <td>
+    <p>
+    <b>get(String name)</b>
+    </p><p>
+    Returns the value assigned to the given name as a String.
+    When there is no value assigned to the given name, an empty String is returned.
+    </p>
+    </td>
+    </tr>
+    <tr>
+    <td align="right">
+    StringBuilder
+    </td>
+    <td>
+    <p>
+    <b>getVar(String name)</b>
+    </p><p>
+    Returns the StringBuilder object of the named variable.
+    </p>
+    </td>
+    </tr>
+    <tr>
+    <td align="right">
+    
+    </td>
+    <td>
+    <p>
+    <b>setCon(String name, String value)</b>
+    </p><p>
+    Adds the constant value to the context map with the given name.
+    </p>
+    </td>
+    </tr>
+    <tr>
+    <td align="right">
+    
+    </td>
+    <td>
+    <p>
+    <b>newVar(String name, String value)</b>
+    </p><p>
+    Adds a StringBuilder object to the context map with the given name and initialized to the given value.
+    </p>
+    </td>
+    </tr>
+    <tr>
+    <td align="right">
+    boolean
+    </td>
+    <td>
+    <p>
+    <b>isVar(String name)</b>
+    </p><p>
+    Returns true when the name is present in the context map and the value is a StringBuilder object.
+    </p>
+    </td>
+    </tr>
+    <tr>
+    <td align="right">
+    
+    </td>
+    <td>
+    <p>
+    <b>setVar(String name, String value)</b>
+    </p><p>
+    Replaces the contents of the named StringBuilder object with the given value.
+    </p>
+    </td>
+    </tr>
+    <tr>
+    <td align="right">
+    
+    </td>
+    <td>
+    <p>
+    <b>makeVar(String name, String value)</b>
+    </p><p>
+    If the value of the given name is a StringBuilder object, 
+    then the contents of the StringBuilder is replaced with the given value;
+    otherwise a new StringBuilder object is created with the given name and value.
+    </p>
+    </td>
+    </tr>
+    <tr>
+    <td align="right">
+    java.util.TreeMap&lt;String,String&gt;
+    </td>
+    <td>
+    <p>
+    <b>stringMap(String prefix)</b>
+    </p><p>
+    Returns a TreeMap of names and values for all the names in the context map which begin with the given prefix,
+    only the prefix is removed from the names as they are added to the TreeMap.
+    </p><p>
+    The prefix may be an empty String, in which case the contents of the entire context map are added to the TreeMap.
+    When the prefix is not an empty String, a "." is added to the end of the prefix prior to
+    processing the context map.
+    </p>
+    </td>
+    </tr>
+    <tr>
+    <td align="right">
+    java.util.TreeSet&lt;String&gt;
+    </td>
+    <td>
+    <p>
+    <b>stringSet()</b>
+    </p><p>
+    Returns a TreeSet of all the names in the context map.
+    </p>
+    </td>
+    </tr>
+    <tr>
+    <td align="right">
+    
+    </td>
+    <td>
+    <p>
+    <b>setSpecial(String name, Object value)</b>
+    </p><p>
+    Adds an object to the context map with the given name.
+    </p>
+    </td>
+    </tr>
+    <tr>
+    <td align="right">
+    Object
+    </td>
+    <td>
+    <p>
+    <b>getSpecial(String name)</b>
+    </p><p>
+    Returns the object in the context map with the given name.
+    </p>
+    </td>
+    </tr>
+    </table>
+    		   </section>
+		<aside> </aside>
+	</div>
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

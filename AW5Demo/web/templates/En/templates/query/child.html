@@ -1,0 +1,92 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="child query" />
+  <body>
+    <aw:include path="../../header.xml" setcon.heading="The Child Query Command" />
+                  <div class="content">
+	   		<section class="main-content">		
+				<h2>The Child Query Command</h2>
+				<nav  class="breadcrumbs">
+			   	   	<ul>
+			   	   		<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+			   	   		<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/">Templates</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/query/">AW5 Queries</a></li>
+
+				   	</ul>
+				</nav>
+    <p>
+      The <code>child</code> query command pulls information from the selected child rolon and adds it to the context map.
+      If this information was already present in the context map, or if the child is not present,
+      then no updates are made to the context map.
+    </p>
+    <h3>
+      Attributes
+    </h3>
+    <p>
+      The <code>cmd</code> attribute on the <code>aw:query</code> element is required to invoke this command:
+    </p>
+<pre>cmd="child"</pre>
+    <h3>
+      Parameters
+    </h3>
+    <p>
+      There are three parameters required by the child query:
+    </p>
+	<dl>
+      <dt>The <code>rolonUuid</code> parameter</dt><dd>provides the uuid of the parent rolon.</dd>
+      <dt>The <code>role</code> parameter</dt><dd>provides the role of the parent rolon. And </dd>
+      <dt>The <code>childName</code> parameter</dt><dd>provides the name of the child.</dd>
+    </dl>
+    <h3>
+      Results
+    </h3>
+    <p>
+      When successful, the child query adds a <code>childUuid</code> constant to the context map,
+      as well as the contents of the child rolon,
+      where the constants reflecting the contents of the child rolon use the versionId of the child rolon as a prefix.
+    </p>
+    <h3>
+      Example
+    </h3>
+    <p>
+      Here's the code to access the Home child rolon:
+    </p>
+<pre>    &lt;aw:query cmd="singletonUuid" role="home"&gt;
+      &lt;aw:query cmd="child" childName="Users"&gt;
+        &lt;p&gt;
+          &lt;b&gt;Home Rolon:&lt;/b&gt;
+        &lt;/p&gt;
+        &lt;aw:query cmd="versionId" aw:uuid="childUuid"&gt;
+          &lt;aw:include path="../../dump.xml" aw:setcon.dump.prefix="versionId" /&gt;
+        &lt;/aw:query&gt;
+      &lt;/aw:query&gt;
+    &lt;/aw:query&gt;
+    
+    </pre>
+    <p>
+      Note in the above, we use singletonUuid to set the rolonUuid, based on the role. 
+      We can do this because the ark role is a singleton, i.e. there is only a single rolon for that type of role.
+    </p>
+    <p>
+      And here's the Home rolon child of ark:
+    </p>
+    <aw:query cmd="singletonUuid" role="home">
+      <aw:query cmd="child" childName="Users">
+        <p>
+          <b>Home Rolon:</b>
+        </p>
+        <aw:query cmd="versionId" aw:uuid="childUuid">
+          <aw:include path="../../dump.xml" aw:setcon.dump.prefix="versionId" />
+        </aw:query>
+      </aw:query>
+    </aw:query>
+       </section>
+    <aside> </aside>
+    </div>
+    
+    <aw:include path="../../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

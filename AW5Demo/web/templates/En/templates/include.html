@@ -1,0 +1,65 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="aw:include element" />
+  <body>
+    <aw:include path="../header.xml" setcon.heading="The aw:include Element" />
+      <div class="content">
+	   		<section class="main-content">		
+				<h2>The aw:include Element</h2>
+				<nav  class="breadcrumbs">
+			   	   	<ul>
+			   	   		<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+			   	   		<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/">Templates</a></li>
+				   	</ul>
+				</nav>
+
+    <p>
+      The <code>aw:include</code> element is used to add the content of a template file 
+      to the content of a page or to the content of another template.
+      The path attriube is used to identify the template to be included,
+      and can be either a relative or absolute pathname.
+      Here is an example using an absolute pathname:
+    </p>
+<p><pre>&lt;aw:include path="/templates/head.xml" setcon.title="aw:include element" /&gt;</pre></p>
+    <p>
+      Here is the contents of the head.xml file:
+    </p>
+<p><pre>&lt;head&gt; 
+	&lt;title&gt;&lt;aw:contents name="title" /&gt;&lt;/title&gt;
+    &lt;META http-equiv="Pragma" content="no-cache" /&gt; 
+    &lt;META http-equiv="Cache-Control" content="no-cache,no-store" /&gt; 
+&lt;/head></pre></p>
+    <p>
+      And here is the code generated from the <code>aw:include</code> element:
+    </p>
+<p><pre>&lt;head&gt; 
+	&lt;title&gt;aw:include element&lt;/title&gt;
+    &lt;META http-equiv="Pragma" content="no-cache" /&gt; 
+    &lt;META http-equiv="Cache-Control" content="no-cache,no-store" /&gt; 
+&lt;/head></pre></p>
+    <p>
+      Here then is an example of <code>aw:include</code> using a relative pathname:
+    </p>
+<p><pre>&lt;aw:include path="../header.xml" setcon.heading="The aw:include Element" /&gt;</pre></p>
+    <p>
+      Here is the contents of the header.xml file:
+    </p>
+<p><pre>&lt;h1&gt;
+	&lt;a href="/"&gt;&lt;img src="/images/AgileWiki-logo.png" /&gt;&lt;/a&gt; 
+    &lt;aw:contents name="heading" /&gt;
+&lt;/h1&gt;</pre></p> 
+    <p>
+      And here is the generated HTML:
+    </p>
+<p><pre>&lt;h1&gt;
+	&lt;a href="/"&gt;&lt;img src="/images/AgileWiki-logo.png" /&gt;&lt;/a&gt; 
+    The aw:include Element
+&lt;/h1&gt;</pre></p> 
+    </section>
+    <aside> </aside>
+    </div>
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

@@ -1,0 +1,492 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Extended Context" />
+  <body>
+    <aw:include path="../header.xml" />
+       <div class="content">
+   			<section class="main-content">		
+	    		<h2>Extended Context</h2>
+				<nav  class="breadcrumbs">
+		   	   		<ul>
+		   	   			<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+		   	   			<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/api/">API</a></li>
+			   		</ul>
+				</nav>
+			    <p>
+			    </p>
+			    <table>
+			    <tr>
+			    <td align="right">
+			    
+			    </td>
+			    <td>
+			    <p>
+			    <b>java.util.List&lt;UpdateRequest&gt; <aw:a href="updateRequests.html">updateRequests</aw:a></b>
+			    </p><p>
+			    The update requests to be processed.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    
+			    </td>
+			    <td>
+			    <p>
+			    <b>java.util.Set&lt;String&gt; reservedAttributes</b>
+			    </p><p>
+			    The reserved attributes can not be used in an application:
+			    </p>
+			    <p>
+			    <ul><li>
+			    btreeSize,
+			    </li><li>
+			    elementType,
+			    </li><li>
+			    lastcommand,
+			    </li><li>
+			    name,
+			    </li><li>
+			    password and
+			    </li><li>
+			    rolonType.
+			    </li></ul></p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    
+			    </td>
+			    <td>
+			    <p>
+			    <b>java.util.Map&lt;String,Object&gt; <aw:a href="updateParameters.html">updateParameters</aw:a></b>
+			    </p><p>
+			    Parameters to be used in processing the update requests,
+			    these parameters are added to a new context map on completion of the update request processing.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    
+			    </td>
+			    <td>
+			    <p>
+			    <b>assignViewParameters(Context context)</b>
+			    </p><p>
+			    Used by update requests to add the required view parameters.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    <aw:a href="role.html">Role</aw:a>
+			    </td>
+			    <td>
+			    <p>
+			    <b>role(String roleName)</b>
+			    </p><p>
+			    Returns the named role, or null if there is no such role.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    String
+			    </td>
+			    <td>
+			    <p>
+			    <b>singletonUuid(String roleName)</b>
+			    </p><p>
+			    If the named role is a singleton, then the UUID of the Rolon is returned;
+			    otherwise the returned value is not defined.
+			    I.E. For non-singleton roles, the returned value may be null or may be the UUID of a non-existing rolon.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    <aw:a href="rolonProxy.html">RolonProxy</aw:a>
+			    </td>
+			    <td>
+			    <p>
+			    <b>rolonProxy(<aw:a href="context.html">Context</aw:a> context, String uuid)</b>
+			    </p><p>
+			    Returns a new RolonProxy created from a Rolon already present in the context map.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    <aw:a href="rolonProxy.html">RolonProxy</aw:a>
+			    </td>
+			    <td>
+			    <p>
+			    <b>userProxy(<aw:a href="context.html">Context</aw:a> context)</b>
+			    </p><p>
+			    Returns a new RolonProxy created from the user Rolon.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    <aw:a href="rolonProxy.html">RolonProxy</aw:a>
+			    </td>
+			    <td>
+			    <p>
+			    <b>singletonProxy(<aw:a href="context.html">Context</aw:a> context, String roleName)</b>
+			    </p><p>
+			    Returns a new RolonProxy created from a Rolon already present in the context map.
+			    </p>
+			    </td>
+			    </tr>
+          <tr>
+          <td align="right">
+          java.util.HashSet&lt;String&gt;
+          </td>
+          <td>
+          <p>
+          <b>userGroups(<aw:a href="context.html">Context</aw:a> context, String String privilege)</b>
+          </p><p>
+          Returns a set of the UUIDs of the groups for which the user has a membership with the specified privilege. 
+          And when the user is a member of a nested group, the UUIDs of the super groups of that nested group are included. 
+          </p>
+          </td>
+          </tr>
+			    <tr>
+			    <td align="right">
+			    boolean
+			    </td>
+			    <td>
+			    <p>
+			    <b>hasPrivilege(<aw:a href="context.html">Context</aw:a> context, String rolonUuid, String privilege)</b>
+			    </p><p>
+			    Returns true when the user has the specified privilege for the given rolon.
+			    </p><p>
+			    The rolon be already loaded into the context map and the privilege must be 
+			    <b>reader</b>, <b>writer</b> or <b>owner</b>.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    <aw:a href="noopUpdateRequest.html">NoopUpdateRequest</aw:a>
+			    </td>
+			    <td>
+			    <p>
+			    <b>noopUpdateRequest(String requestName, <aw:a href="context.html">Context</aw:a> context)</b>
+			    </p><p>
+			    Returns a new NoopUpdateRequest.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    <aw:a href="createChildUpdateRequest.html">CreateChildUpdateRequest</aw:a>
+			    </td>
+			    <td>
+			    <p>
+			    <b>createChildUpdateRequest(String requestName, <aw:a href="context.html">Context</aw:a> context, 
+			    <aw:a href="rolonProxy.html">RolonProxy</aw:a> parentProxy, 
+			    String childRoleName, String childName, String viewName)</b>
+			    </p><p>
+			    Returns a new CreateChildUpdateRequest. But if the parent role does not permit a child of the given role or if the child role does not permit a parent of the given role,
+			    then a IllegalArgumentException is thrown.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    <aw:a href="rolonUpdateRequest.html">RolonUpdateRequest</aw:a>
+			    </td>
+			    <td>
+			    <p>
+			    <b>rolonUpdateRequest(String requestName, <aw:a href="context.html">Context</aw:a> context, 
+			    <aw:a href="rolonProxy.html">RolonProxy</aw:a> rolonProxy, String viewName)</b>
+			    </p><p>
+			    Returns a new RolonUpdateRequest.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    <aw:a href="deleteRolonUpdateRequest.html">DeleteRolonUpdateRequest</aw:a>
+			    </td>
+			    <td>
+			    <p>
+			    <b>deleteRolonUpdateRequest(String requestName, <aw:a href="context.html">Context</aw:a> context, 
+			    <aw:a href="rolonProxy.html">RolonProxy</aw:a> rolonProxy, String viewName)</b>
+			    </p><p>
+			    Returns a new DeleteRolonUpdateRequest.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    <aw:a href="renameRolonUpdateRequest.html">RenameRolonUpdateRequest</aw:a>
+			    </td>
+			    <td>
+			    <p>
+			    <b>renameRolonUpdateRequest(String requestName, <aw:a href="context.html">Context</aw:a> context, 
+			    <aw:a href="rolonProxy.html">RolonProxy</aw:a> parentProxy, 
+			    <aw:a href="rolonProxy.html">RolonProxy</aw:a> childProxy,
+			    String newChildName, String viewName)</b>
+			    </p><p>
+			    Returns a new RenameRolonUpdateRequest.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    java.util.NavigableSet&lt;String&gt;
+			    </td>
+			    <td>
+			    <p>
+			    <b>propertyNames()</b>
+			    </p><p>
+			    Returns the set of property names.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    String
+			    </td>
+			    <td>
+			    <p>
+			    <b>invertTimestamp(String timestamp)</b>
+			    </p><p>
+			    Inverts the timestamp.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    SequenceConvenience
+			    </td>
+			    <td>
+			    <p>
+			    <b>groovySequence(Context context, String groovySequenceCommandName)</b>
+			    </p><p>
+			    Returns the SequenceConvenience created by a Groovy sequence command.
+			    The command name would be in the form "children" rather than in the form "seq_children.groovy".
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    SequenceConvenience
+			    </td>
+			    <td>
+			    <p>
+			    <b>navigableSequence(NavigableSet&lt;String&gt; set, boolean reverse)</b>
+			    </p><p>
+			    Returns a sequence over a navigable set of strings.
+			    When reverse is true, the order is reversed.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    SequenceConvenience
+			    </td>
+			    <td>
+			    <p>
+			    <b>intersectionSequence(List&lt;SequenceConvenience&gt; sequences, boolean reverse)</b>
+			    </p><p>
+			    Returns a sequence which is the intersection of the list of sequences.
+			    The reverse flag must agree with the value of the reverse flag of the sequences in the provided list.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    SequenceConvenience
+			    </td>
+			    <td>
+			    <p>
+			    <b>unionSequence(List&lt;SequenceConvenience&gt; sequences, boolean reverse)</b>
+			    </p><p>
+			    Returns a sequence which is the union of the list of sequences.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    SequenceConvenience
+			    </td>
+			    <td>
+			    <p>
+			    <b>subSequence(SequenceConvenience wrappedSequence, String prefix)</b>
+			    </p><p>
+			    Returns a sequence containing only those items from the wrapped sequence which start with the provided prefix.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    SequenceConvenience
+			    </td>
+			    <td>
+			    <p>
+			    <b>prefixesSequence(SequenceConvenience wrappedSequence, char delimiter)</b>
+			    </p><p>
+			    Returns a sequence of the unique prefixes found in the wrapped sequence.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    SequenceConvenience
+			    </td>
+			    <td>
+			    <p>
+			    <b>invertedTimestampSequence(SequenceConvenience wrappedSequence)</b>
+			    </p><p>
+			    Inverts the keys of the wrapped sequence.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    SequenceConvenience
+			    </td>
+			    <td>
+			    <p>
+			    <b>contextFilterSequence(Context context, SequenceConvenience wrappedSequence, String filterCommandName)</b>
+			    </p><p>
+			    Returns a sequence of selected items.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    SequenceConvenience
+			    </td>
+			    <td>
+			    <p>
+			    <b>contextFilterSequence(Context context, SequenceConvenience wrappedSequence, String filterCommandName, char delimiter)</b>
+			    </p><p>
+			    Returns a sequence of selected items.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    SequenceConvenience
+			    </td>
+			    <td>
+			    <p>
+			    <b>qualifiedSequence(String timestamp, String uuid)</b>
+			    </p><p>
+			    Returns a sequence of the qualified rolon UUIDs for the given Roloon and time.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    SequenceConvenience
+			    </td>
+			    <td>
+			    <p>
+			    <b>childrenSequence(String timestamp, String uuid)</b>
+			    </p><p>
+			    Returns a sequence consisting of the child name, the character 5 and the UUID of the child rolon.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    SequenceConvenience
+			    </td>
+			    <td>
+			    <p>
+			    <b>parentsSequence(<aw:a href="parents.html">Parents</aw:a> parents)</b>
+			    </p><p>
+			    Returns a sequence consisting of the parent UUID, the character 5 and the child name used by the parent
+			    to reference this child.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    SequenceConvenience
+			    </td>
+			    <td>
+			    <p>
+			    <b>templateFilterSequence(Context context, SequenceConvenience wrappedSequence, String templatePath)</b>
+			    </p><p>
+			    Uses a template to filter the wrapped sequence.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    SequenceConvenience
+			    </td>
+			    <td>
+			    <p>
+			    <b>templateFilterSequence(Context context, SequenceConvenience wrappedSequence, String templatePath, char delimiter)</b>
+			    </p><p>
+			    Uses a template to filter the wrapped sequence.
+			    Key extension is also supported.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    SequenceConvenience
+			    </td>
+			    <td>
+			    <p>
+			    <b>journalEntryTimestampSequence(Context context)</b>
+			    </p><p>
+			    Returns a sequence of all journal entry Rolons.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    SequenceConvenience
+			    </td>
+			    <td>
+			    <p>
+			    <b>journalEntryTimestampSequence(Context context, String uuid)</b>
+			    </p><p>
+			    Returns a sequence of all journal entry Rolons effecting a given Rolon.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    SequenceConvenience
+			    </td>
+			    <td>
+			    <p>
+			    <b>keySequence(TreeMap&lt;String, Object&gt; tm)</b>
+			    </p><p>
+			    Returns a sequence of the keys in the given tree map.
+			    </p>
+			    </td>
+			    </tr>
+			    <tr>
+			    <td align="right">
+			    Object
+			    </td>
+			    <td>
+			    <p>
+			    <b>getValue(TreeMap&lt;String, Object&gt; tm, String key)</b>
+			    </p><p>
+			    Returns the value for a given key in the given tree map.
+			    </p>
+			    </td>
+			    </tr>
+			    </table>
+			    </section>
+		<aside> </aside>
+	</div>    
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+<aw:loop cmd="objects" relType="realm">
+  <aw:query cmd="versionId" aw:newvar.url="activeTemplateDirectory">
+    <aw:query cmd="append" name="url" value="/../" />
+    <aw:query cmd="urlAppend" name="rolonUuid" aw:value="uuid" />
+    <aw:query cmd="urlAppend" name="timestamp" aw:setcon.value="_.past" />
+    <aw:query cmd="urlAppend" name="past" aw:setcon.value="_.past" />
+    <aw:query cmd="urlAppend" name="userUuid" aw:value="user.uuid" />
+    <a aw:href="url" target="_top"><aw:contents aw.versionId:value="name" /></a>:
+  </aw:query>
+</aw:loop>

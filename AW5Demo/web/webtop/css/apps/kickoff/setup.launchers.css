@@ -1,0 +1,41 @@
+#kickoff #bottom #applications {
+  background-image: url('etc/applications-icon.png');
+}
+
+#kickoff #bottom #preferences {
+  background-image: url('etc/preferences-icon.png');
+}
+
+#kickoff #bottom #logout {
+  background-image: url('etc/logout-icon.png');
+}
+
+/* launchers start here */
+           
+#rolon-launcher {
+  background-image: url('icons/nos-icon.png');   
+}
+
+#nos-launcher {
+  background-image: url('icons/nos-icon.png');   
+}
+
+#oxipad-launcher {
+  background-image: url('icons/oxipad-icon.png'); 
+}
+
+#oxiphoto-launcher {
+  background-image: url('icons/oxiphoto-icon.png');
+}
+
+#oxicalc-launcher {
+  background-image: url('icons/oxicalc-icon.png');
+}
+
+#sticky-launcher {
+  background-image: url('icons/sticky-icon.png');
+}
+
+#oxidesk-launcher {
+  background-image: url('icons/oxidesk-icon.png');
+}

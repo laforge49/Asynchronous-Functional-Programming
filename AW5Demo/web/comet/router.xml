@@ -1,0 +1,29 @@
+<aw:is name="comet.data.target">
+    <aw:query cmd="explodeTarget">
+        <aw:is name="target.user">
+            <aw:query cmd="rolon" aw:setcon.rolonUuid="user.uuid">
+                <aw:include path="comet/webtop/dispatcher.xml"/>
+<!--
+                <aw:is name="target.desktop" aw.rolonUuid:setcon.role="role">
+                    <aw:query cmd="child" aw:childName="target.desktop">
+                        <aw:is name="childUuid">
+                            <aw:is name="target.wrapper">
+                                <aw:include path="comet/webtop/dispatcher.xml"/>
+                            </aw:is>
+                            <aw:nis name="target.wrapper">
+                                <aw:include path="comet/webtop/dispatcher.xml"/>
+                            </aw:nis>
+                        </aw:is>
+                        <aw:nis name="childUuid" >
+                            <aw:include path="comet/webtop/dispatcher.xml"/>
+                        </aw:nis>
+                    </aw:query>
+                </aw:is>
+                <aw:nis name="target.desktop">
+                    <aw:include path="comet/webtop/dispatcher.xml"/>
+                </aw:nis>
+-->
+            </aw:query>
+        </aw:is>
+    </aw:query>
+</aw:is>

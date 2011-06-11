@@ -1,0 +1,50 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="queries introduction" />
+  <body>
+    <aw:include path="../../header.xml" setcon.heading="An Introduction to AW5 Queries" />
+          <div class="content">
+	   		<section class="main-content">		
+				<h2>An Introduction to AW5 Queries</h2>
+				<nav  class="breadcrumbs">
+			   	   	<ul>
+			   	   		<li><a href="/templates/En/">Home</a></li>
+						<li><span>&#8250;</span></li>
+			   	   		<li><a href="/templates/En/docs.html">Docs</a></li>
+						<li><span>&#8250;</span></li>
+			   		   	<li><a href="/templates/En/templates/">Templates</a></li>
+					</ul>
+				</nav>
+    <h3>
+      Query Commands 
+    </h3>
+    <p>
+      The <code>aw:query</code> element provides a means for invoking query commands.
+      AW5 includes a number of query commands,
+      and additional commands can be provided by application developers.
+    </p>
+    <p>
+      The query commands invoked by this element may query the AW5 database and other data sources,
+      as well as using the context map to access parameters and return results.
+    </p>
+    <h3>
+      Query Attributes
+    </h3>
+    <p>
+      The <code>aw:query</code> element has a single required attribute, <b>cmd</b>, 
+      which must be set to the name of the query command to be invoked.
+    </p>
+    <p>
+      As a convenience, all aw:query attributes are added as string contents to the context map,
+      which makes them accessible to the query command being invoked.
+    </p>
+    <h3>
+      Query Commands
+    </h3>
+    <aw:include path="../../contents.xml" />
+    </section>
+    <aside> </aside>
+    </div>
+    
+    <aw:include path="../../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

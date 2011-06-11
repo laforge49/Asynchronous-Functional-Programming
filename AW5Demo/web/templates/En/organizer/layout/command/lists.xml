@@ -1,0 +1,7 @@
+<td>
+  <br />
+  <aw:include path="../../lists/breadcrumbsLink.xml" />
+  <aw:include path="../../lists/htmlLink.xml" />
+  <aw:include path="../../lists/shareUpdateLink.xml" />
+  <aw:include path="../../lists/accessControlUpdate.xml" />
+</td>

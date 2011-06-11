@@ -1,0 +1,5 @@
+<aw:noop setvar.json='{
+  "message": "Ready"
+}'>
+    <aw:query cmd="println" value="RESYNC REQUESTED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" />
+</aw:noop>

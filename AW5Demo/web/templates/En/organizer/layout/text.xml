@@ -1,0 +1,5 @@
+<p>
+  <aw:query cmd="versionId" aw:uuid="_.rolonUuid">
+    <aw:encodedContents aw.versionId:value="att.text" />
+  </aw:query>
+</p>

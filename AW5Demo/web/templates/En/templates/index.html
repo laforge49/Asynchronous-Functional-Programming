@@ -1,0 +1,225 @@
+<html>
+  <aw:include path="/templates/head.xml" setcon.title="Templates Introduction" />
+  <body>
+    <aw:include path="../header.xml" setcon.heading="An Introduction to AW5 Templates" />
+	
+	<div class="content">
+   		<section class="main-content">		
+			<h2>Templates</h2>
+			<nav  class="breadcrumbs">
+		   	   	<ul>
+		   	   		<li><a href="/templates/En/">Home</a></li>
+					<li><span>&#8250;</span></li>
+		   	   		<li><a href="/templates/En/docs.html">Docs</a></li>
+			   	</ul>
+			</nav>
+		    <p>
+		      AgileWiki 5 Templates are used to generate HTML and to access database content.
+		      The templates are designed to be easy for web developers to work with, being pure XML.
+		      Complex application logic can not be included in templates, 
+		      as the focus is entirely on the generation of HTML, though support is included
+		      for conditional expression and looping. Indeed, one of the goals of AW5 is to <b>put more
+		      of the application development process in the hands of web developers.</b>
+		    </p>
+		    <h3>Files</h3>
+		    <p>
+		      Within each directory there are three types of files: pages, templates and a properties file.
+		    </p>
+		    <dl>
+		    <dt>Pages</dt><dd>Pages are a special type of template - they are used to define HTML pages and have a file extension of ".html".
+		      A page consists of a single (root) element - an html element - and do not include a doctype.
+		    </dd><dt>Templates</dt><dd>
+		      Templates contain a single (root) XML element and have a file extension of ".xml".
+		      Templates are included by pages and may also include other templates.
+		    </dd><dt>Directory</dt><dd>
+		      A directory may also include a properties file, named "dir.prop". 
+		      A property file can be loaded into the context map, when needed to provide additional information.
+		    </dd>
+		    </dl>
+		    <p>
+		      When a file changes, the change is immediately reflected in the web pages the next time they are accessed.
+		      This makes working with templates and pages a lot easier, as you can immediately see the effect of your changes
+		      without having to restart the server. 
+		    </p>
+		    <h3>The Context Map
+		    </h3>
+		    <p>
+		      The Context Map is central to the operation of AW5 templates. 
+		      It holds a set of name/value pairs, 
+		      where a value is either of type constant, variable or special.
+		      (Special types are used to extend the basic template engine, one such example being <code>.extendedContext</code>.)
+		      Within a template, an attribute notation is used to access these values, 
+		      to assign new name/value pairs, and to update the variable strings.
+		    </p>
+		    <p>
+		      When a new name/value pair is added to the context map and the name is not unique,
+		      only the latest value can be accessed. But these pairs are scoped to the element where they
+		      are defined. So once the end of an element is reached, any name/value pairs created by
+		      that element are removed from the context map - allowing access once again to older values which
+		      had been masked by newer values with the same name.
+		    </p>
+		    <p>
+		      A number of name/value pairs are always present in the context map:
+		    </p>
+		    <table>
+		      <tr>
+		        <th>
+		          Name
+		       </th>
+		        <th>
+		          Sample
+		       </th>
+		        <th>
+		          Description
+		       </th>
+		      </tr>
+		      <tr>
+		        <td>
+		          <code>activeTemplateDirectory</code>
+		       </td>
+		        <td>
+		          /templates
+		       </td>
+		        <td>
+		          The URL of the directory where the active template resides
+		       </td>
+		      </tr>
+		      <tr>
+		        <td>
+		          <code>activeTemplatePathname</code>
+		       </td>
+		        <td>
+		          C:\AgileWiki5\AW5Demo\web\templates
+		       </td>
+		        <td>
+		          Absolute pathname of the directory where the active template resides
+		       </td>
+		      </tr>
+		      <tr>
+		        <td>
+		          <code>currentRequest</code>
+		       </td>
+		        <td>
+		          /templates/En/newUser.html
+		       </td>
+		        <td>
+		          A portion of the URL submitted by the user's browser.
+		       </td>
+		      </tr>
+		      <tr>
+		        <td>
+		          <code>pageDirectory</code>
+		       </td>
+		        <td>
+		          /templates
+		       </td>
+		        <td>
+		          The URL of the directory where the active page resides
+		       </td>
+		      </tr>
+		      <tr>
+		        <td>
+		          <code>pagePathname</code>
+		       </td>
+		        <td>
+		          C:\AgileWiki5\AW5Demo\web\templates
+		       </td>
+		        <td>
+		          Absolute pathname of the directory where the active page resides
+		       </td>
+		      </tr>
+		      <tr>
+		        <td>
+		          <code>templates.directory.pathname</code>
+		       </td>
+		        <td>
+		          C:\AgileWiki5\AW5Demo\web\templates
+		       </td>
+		        <td>
+		          Absolute pathname of the templates directory.
+		       </td>
+		      </tr>
+		      <tr>
+		        <td>
+		          <code>user.language</code>
+		       </td>
+		        <td>
+		          En
+		       </td>
+		        <td>
+		          The language code of the language selected by the user.
+		       </td>
+		      </tr>
+		      <tr>
+		        <td>
+		          <code>user.uuid</code>
+		       </td>
+		        <td>
+		          anonymous
+		       </td>
+		        <td>
+		          A unique identifier of the user's account record.
+		       </td>
+		      </tr>
+		    </table>
+		    <p>
+		      For more information on how to access or update the context map, 
+		      please refer to the <aw:a href="attributeNotation.html">Attribute Notation</aw:a> page.
+		    </p>
+		    <h3>
+		      Request Parameters
+		    </h3>
+		    <p>
+		      Parameters passed on an HTTP [get] request are added to the context map, 
+		      however the parameter name is prepended with a "_.".
+		      Consider the following request:
+		    </p>
+		<pre>/templates/scrollLoadContent.html?xml=/templates/En/configuration/allProperties.xml</pre>
+		    <p>
+		      When this request is processed, the name of the item added to the context map is "_.xml".
+		      This is an important security consideration, as otherwise browser requests could make
+		      arbitrary changes to the context map.
+		    </p>
+		    <h3>
+		      The AW Elements
+		    </h3>
+		    <p>
+		      AW5 Templates use only a few special elements:
+		    </p>		  
+		    <dl>  
+		      <dt><aw:a href="a.html">aw:a</aw:a></dt>
+		      <dd>This element is transformed into an "a" element 
+		      and allows the web developer to specify an href value that is relative to the template where the 
+		      element is used--not a value relative to the page being generated.</dd>
+
+		      <dt><aw:a href="capture.html">aw:capture</aw:a></dt><dd>Captures an HTML fragment.</dd>
+
+		      <dt><aw:a href="contents.html">aw:contents</aw:a></dt><dd>Includes a value from the context map in the generated HTML page.</dd>
+
+		      <dt><aw:a href="encodedContents.html">aw:encodedContents</aw:a></dt><dd>Includes an encoded value from the context map in the generated HTML page.</dd>
+	
+		      <dt><aw:a href="include.html">aw:include</aw:a></dt><dd>Includes another template in the generated HTML page. </dd>
+
+		      <dt><aw:a href="is.html">aw:is and aw:nis</aw:a></dt><dd>Conditionally process the element contents when the context map has (or doesn't have)
+		      a name/value pair for a given name.</dd>
+
+		      <dt><aw:a href="loop/">aw:loop</aw:a></dt><dd>Applies a sequence of values to its contents, looping over its contents once for each value in the sequence.</dd>
+
+		      <dt><aw:a href="noop.html">aw:noop</aw:a></dt><dd>A place-holder element which always processes its element content.</dd>
+
+		      <dt><aw:a href="query/">aw:query</aw:a></dt><dd>Performs a query and updates the context map with the result.</dd>
+		
+		      <dt><aw:a href="rolon.html">aw:rolon</aw:a></dt><dd>Generates the code for navigating from within a view to another Rolon.</dd>
+		  
+		      <dt><aw:a href="script.html">aw:script</aw:a></dt><dd>Generates a script element and turns off entity encoding.</dd>
+		 
+		      <dt><aw:a href="update/">aw:update</aw:a></dt><dd>Performs an update.</dd>
+	
+		      <dt><aw:a href="view.html">aw:view</aw:a></dt><dd>Includes a view template in the generated HTML page after validating accessibility.</dd>
+			</dl>
+		</section>
+		<aside> </aside>
+	</div>
+    <aw:include path="../footer.xml" aw:setcon.template="currentRequest"/>
+  </body>
+</html>

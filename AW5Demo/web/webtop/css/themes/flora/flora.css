@@ -1,0 +1,23 @@
+.ui-wrapper { border: 1px solid #50A029; }
+.ui-wrapper input, .ui-wrapper textarea { border: 0; }
+
+.flora #taskbar {
+  height: 42px;
+  background: #000 url(i/taskbar_tile.jpg) repeat-x;
+  padding-top: 10px;
+}
+
+.flora #taskbar .task {
+  padding: 8px 5px 8px 5px;
+  margin-left: 2px;
+  font-size: 12px;
+  color: #fff;  
+  background: url(i/task_tile.png) repeat-x;
+  -moz-border-radius: 0 0 5px 5px;  
+  border-bottom: 1px solid #000;  
+}
+
+.flora #taskbar .task-on {  
+  background-color: #fff;
+  color: #000;  
+}
