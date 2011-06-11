@@ -1,0 +1,3 @@
+Asynchronous programming with fast actors (replies without future) and keyed sequences has been developed as part of the AgileWiki project, which is included in its entirity in this repository. 
+
+While the overall effort is to convert this code base entirely to this new style of asynchronous programming, complete with a versioning graphical database and a template-driven front end written in Groovy, the code for fast actors can be found in the Scala package org.agilewiki.util.lite.
