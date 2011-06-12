@@ -31,8 +31,8 @@ import java.util.Comparator
 abstract class SeqActor[T, V](reactor: LiteReactor)
   extends LiteActor(reactor) {
   private lazy val c = new Comparator[T] {
-        override def compare(a: T, b: T) = a.asInstanceOf[Comparable[T]].compareTo(b)
-      }
+    override def compare(a: T, b: T) = a.asInstanceOf[Comparable[T]].compareTo(b)
+  }
 
   def comparator: Comparator[T] = c
 }

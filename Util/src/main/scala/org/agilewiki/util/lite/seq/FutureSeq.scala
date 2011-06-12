@@ -53,6 +53,17 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
     throw new UnsupportedOperationException(rsp.toString)
   }
 
+  def firstMatch(expectedKey: T, expectedValue: V): Boolean = {
+    send(actor, SeqFirstReq(), new LiteReactor)
+    val rsp = get
+    if (rsp.isInstanceOf[SeqEndRsp]) return false
+    if (rsp.isInstanceOf[SeqResultRsp[T, V]]) {
+      val result = rsp.asInstanceOf[SeqResultRsp[T,V]]
+      return result.key == expectedKey && result.value == expectedValue
+    }
+    throw new UnsupportedOperationException(rsp.toString)
+  }
+
   def currentKey(k: T): T = {
     send(actor, SeqCurrentReq[T](k), new LiteReactor)
     val rsp = get
@@ -66,6 +77,17 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return null.asInstanceOf[V]
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) return rsp.asInstanceOf[SeqResultRsp[T, V]].value
+    throw new UnsupportedOperationException(rsp.toString)
+  }
+
+  def currentMatch(k: T, expectedKey: T, expectedValue: V): Boolean = {
+    send(actor, SeqCurrentReq[T](k), new LiteReactor)
+    val rsp = get
+    if (rsp.isInstanceOf[SeqEndRsp]) return false
+    if (rsp.isInstanceOf[SeqResultRsp[T, V]]) {
+      val result = rsp.asInstanceOf[SeqResultRsp[T,V]]
+      return result.key == expectedKey && result.value == expectedValue
+    }
     throw new UnsupportedOperationException(rsp.toString)
   }
 
@@ -101,6 +123,17 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return null.asInstanceOf[V]
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) return rsp.asInstanceOf[SeqResultRsp[T, V]].value
+    throw new UnsupportedOperationException(rsp.toString)
+  }
+
+  def nextMatch(k: T, expectedKey: T, expectedValue: V): Boolean = {
+    send(actor, SeqNextReq[T](k), new LiteReactor)
+    val rsp = get
+    if (rsp.isInstanceOf[SeqEndRsp]) return false
+    if (rsp.isInstanceOf[SeqResultRsp[T, V]]) {
+      val result = rsp.asInstanceOf[SeqResultRsp[T,V]]
+      return result.key == expectedKey && result.value == expectedValue
+    }
     throw new UnsupportedOperationException(rsp.toString)
   }
 

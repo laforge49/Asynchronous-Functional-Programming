@@ -18,9 +18,9 @@ class ListTest extends SpecificationWithJUnit {
       lst add "five"
       lst add "etc"
       var seq = new LiteListSeq(null, lst)
-      FutureSeq(seq).first must be equalTo "one"
-      FutureSeq(seq).current(2) must be equalTo "three"
-      FutureSeq(seq).next(4) must be equalTo "etc"
+      FutureSeq(seq).firstMatch(0,"one") must be equalTo true
+      FutureSeq(seq).currentMatch(2,2,"three") must be equalTo true
+      FutureSeq(seq).nextMatch(4,5,"etc") must be equalTo true
       FutureSeq(seq).isCurrentEnd(8) must be equalTo true
     }
   }
