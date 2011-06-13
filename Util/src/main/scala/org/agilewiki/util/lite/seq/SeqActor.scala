@@ -35,6 +35,21 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   }
 
   def comparator: Comparator[T] = c
+
+  def first(sourceActor: LiteActor)
+           (responseProcess: PartialFunction[Any, Unit]) {
+    sourceActor.send(this, SeqFirstReq())(responseProcess)
+  }
+
+  def current(sourceActor: LiteActor, key: T)
+             (responseProcess: PartialFunction[Any, Unit]) {
+    sourceActor.send(this, SeqCurrentReq(key))(responseProcess)
+  }
+
+  def next(sourceActor: LiteActor, key: T)
+          (responseProcess: PartialFunction[Any, Unit]) {
+    sourceActor.send(this, SeqNextReq(key))(responseProcess)
+  }
 }
 
 case class SeqCurrentReq[T](key: T)
