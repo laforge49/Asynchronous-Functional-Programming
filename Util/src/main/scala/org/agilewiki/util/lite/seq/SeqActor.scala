@@ -52,7 +52,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   }
 }
 
-class SeqReq
+abstract class SeqReq
 
 case class SeqCurrentReq[T](key: T) extends SeqReq
 
