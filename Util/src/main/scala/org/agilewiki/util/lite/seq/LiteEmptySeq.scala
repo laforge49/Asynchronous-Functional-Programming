@@ -26,10 +26,10 @@ package util
 package lite
 package seq
 
-class LiteEmptySeq[T,V](reactor: LiteReactor)
-  extends SeqActor[T,V](reactor) {
+class LiteEmptySeq[T](reactor: LiteReactor)
+  extends SeqActor[T,T](reactor) {
 
   requestHandler = {
-    case msg => reply(SeqEndRsp())
+    case msg: SeqReq => reply(SeqEndRsp())
   }
 }

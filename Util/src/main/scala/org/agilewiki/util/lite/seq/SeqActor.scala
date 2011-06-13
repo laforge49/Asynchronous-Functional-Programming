@@ -52,13 +52,15 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   }
 }
 
-case class SeqCurrentReq[T](key: T)
+class SeqReq
+
+case class SeqCurrentReq[T](key: T) extends SeqReq
 
 object SeqFirstReq {
   def apply(): SeqCurrentReq[Any] = SeqCurrentReq(null)
 }
 
-case class SeqNextReq[T](key: T)
+case class SeqNextReq[T](key: T) extends SeqReq
 
 object SeqNextReq {
   def apply(): SeqNextReq[Any] = SeqNextReq(null)
