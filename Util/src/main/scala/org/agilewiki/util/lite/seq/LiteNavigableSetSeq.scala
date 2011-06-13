@@ -42,27 +42,26 @@ class LiteNavigableSetSeq[T](reactor: LiteReactor, navigableSet: NavigableSet[T]
   requestHandler = {
     case msg: SeqCurrentReq[T] => {
       if (navigableSet.isEmpty) {
-        reply(SeqEndRsp())
+        end
       }
       else if (msg.key == null) {
         val key = navigableSet.first
-        reply(SeqResultRsp(key, key))
+        result(key, key)
       } else {
         val key = navigableSet.ceiling(msg.key)
-        if (key == null) reply(SeqEndRsp())
-        else reply(SeqResultRsp[T,T](key, key))
+        if (key == null) end
+        else result(key, key)
       }
     }
     case msg: SeqNextReq[T] => {
-      if (navigableSet.isEmpty) reply(SeqEndRsp())
+      if (navigableSet.isEmpty) end
       else if (msg.key == null) {
-        val key = navigableSet.first.asInstanceOf[Comparable[T]]
-        reply(SeqResultRsp(key, key))
-      } else if (comparator.compare(msg.key, navigableSet.last) > 0) reply(SeqEndRsp())
-      else {
+        val key = navigableSet.first
+        result(key, key)
+      } else {
         val key = navigableSet.higher(msg.key)
-        if (key == null) reply(SeqEndRsp())
-        else reply(SeqResultRsp[T,T](key, key))
+        if (key == null) end
+        else result(key, key)
       }
     }
   }

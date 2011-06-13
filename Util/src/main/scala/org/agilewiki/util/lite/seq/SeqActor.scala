@@ -53,7 +53,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
 
   def result(key: T, value: V) { reply(SeqResultRsp(key, value)) }
 
-  def end { reply(SeqEndRsp())}
+  def end { reply(SeqEndRsp()) }
 }
 
 abstract class SeqReq
