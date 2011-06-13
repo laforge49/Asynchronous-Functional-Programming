@@ -49,7 +49,6 @@ class FilteredTest extends SpecificationWithJUnit {
         pk endsWith "1" must be equalTo true
         pk = FutureSeq(seq).nextKey(pk)
       }
-
       FutureSeq(seq).current("11") must be equalTo "11"
       FutureSeq(seq).current("00") must be equalTo "01"
       FutureSeq(seq).isCurrentEnd("abc") must be equalTo true
