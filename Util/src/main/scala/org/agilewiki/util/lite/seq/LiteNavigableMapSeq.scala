@@ -40,25 +40,25 @@ class LiteNavigableMapSeq[T,V](reactor: LiteReactor, navigableMap: NavigableMap[
 
   requestHandler = {
     case msg: SeqCurrentReq[T] => {
-      if (navigableMap.isEmpty) reply(SeqEndRsp())
+      if (navigableMap.isEmpty) end
       else if (msg.key == null) {
         val key = navigableMap.firstKey
-        reply(SeqResultRsp(key, navigableMap.get(key)))
-      } else if (comparator.compare(msg.key, navigableMap.lastKey) > 0) reply(SeqEndRsp())
-      else {
+        result(key, navigableMap.get(key))
+      } else {
         val key = navigableMap.ceilingKey(msg.key)
-        reply(SeqResultRsp[T,V](key, navigableMap.get(key)))
+        if (key == null) end
+        result(key, navigableMap.get(key))
       }
     }
     case msg: SeqNextReq[T] => {
-      if (navigableMap.isEmpty) reply(SeqEndRsp())
+      if (navigableMap.isEmpty) end
       else if (msg.key == null) {
         val key = navigableMap.firstKey
-        reply(SeqResultRsp(key, navigableMap.get(key)))
+        result(key, navigableMap.get(key))
       } else {
         val key = navigableMap.higherKey(msg.key)
-        if (key == null) reply(SeqEndRsp())
-        else reply(SeqResultRsp[T,V](key,navigableMap.get(key)))
+        if (key == null) end
+        else result(key,navigableMap.get(key))
       }
     }
   }
