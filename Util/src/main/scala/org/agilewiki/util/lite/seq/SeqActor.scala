@@ -50,6 +50,10 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
           (responseProcess: PartialFunction[Any, Unit]) {
     sourceActor.send(this, SeqNextReq(key))(responseProcess)
   }
+
+  def result(key: T, value: V) { reply(SeqResultRsp(key, value)) }
+
+  def end { reply(SeqEndRsp())}
 }
 
 abstract class SeqReq

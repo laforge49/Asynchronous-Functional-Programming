@@ -30,6 +30,6 @@ class LiteEmptySeq[T](reactor: LiteReactor)
   extends SeqActor[T,T](reactor) {
 
   requestHandler = {
-    case msg: SeqReq => reply(SeqEndRsp())
+    case msg: SeqReq => end
   }
 }

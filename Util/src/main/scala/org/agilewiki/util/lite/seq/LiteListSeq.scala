@@ -33,15 +33,15 @@ class LiteListSeq[V](reactor: LiteReactor, list: java.util.List[V])
     case req: SeqCurrentReq[Int] => {
       var k = req.key
       if (k < 0) k = 0
-      if (k + 1 > list.size) reply(SeqEndRsp())
-      else reply(SeqResultRsp(k, list.get(k)))
+      if (k + 1 > list.size) end
+      else result(k, list.get(k))
     }
     case req: SeqNextReq[Int] => {
       var k = req.key
       if (k < 0) k = 0
       else k = k + 1
-      if (k + 1 > list.size) reply(SeqEndRsp())
-      else reply(SeqResultRsp(k, list.get(k)))
+      if (k + 1 > list.size) end
+      else result(k, list.get(k))
     }
   }
 }
