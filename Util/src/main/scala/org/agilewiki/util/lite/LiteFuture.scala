@@ -47,6 +47,13 @@ class LiteFuture
   @volatile private[this] var rsp: LiteRspMsg = _
   @volatile private[this] var satisfied = false
 
+  def send(actor: LiteActor, messageContent: Any, defaultReactor: LiteReactor) {
+    val req = new LiteReqMsg(0, actor, null, null, messageContent, this)
+    actor.currentReactor(defaultReactor)
+    val reactor = actor.currentReactor
+    reactor.request(req)
+  }
+
   override def response(msg: LiteRspMsg) {
     synchronized{
       if (!satisfied) {

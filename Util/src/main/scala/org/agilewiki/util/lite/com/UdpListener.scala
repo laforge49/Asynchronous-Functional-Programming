@@ -26,7 +26,7 @@ package util
 package lite
 package com
 
-import java.net.{DatagramPacket, DatagramSocket, InetAddress}
+import java.net.{DatagramPacket, DatagramSocket}
 import scala.collection.mutable.HashMap
 
 class UdpListener(localHostPort: HostPort, insideActor: LiteActor)
@@ -45,6 +45,13 @@ class UdpListener(localHostPort: HostPort, insideActor: LiteActor)
   }
 
   lazy val defaultReactor = new ContextReactor(systemContext)
+
+  def send(actor: LiteActor, messageContent: Any, defaultReactor: LiteReactor) {
+    val req = new LiteReqMsg(0, actor, null, null, messageContent, this)
+    actor.currentReactor(defaultReactor)
+    val reactor = actor.currentReactor
+    reactor.request(req)
+  }
 
   def receiveIncomingMessages = {
     try {
@@ -66,12 +73,12 @@ class UdpListener(localHostPort: HostPort, insideActor: LiteActor)
     val bytes = new Array[Byte](l)
     System.arraycopy(packet.getData, packet.getOffset, bytes, 0, l)
     val payload = new DataInputStack(bytes)
-    val isReply = payload.readByte.asInstanceOf[Boolean]           //messageType
-    val srcServer = payload.readUTF                                //sender server
-    val reqActor = Uuid(payload.readUTF)                           //sender actor UUID
-    val msgUuid = Uuid(payload.readUTF)                            //message UUID
-    val dstServer = payload.readUTF                                //dest server
-    val dstActor = ResourceName(payload.readUTF)                   //dest actor
+    val isReply = payload.readByte.asInstanceOf[Boolean] //messageType
+    val srcServer = payload.readUTF //sender server
+    val reqActor = Uuid(payload.readUTF) //sender actor UUID
+    val msgUuid = Uuid(payload.readUTF) //message UUID
+    val dstServer = payload.readUTF //dest server
+    val dstActor = ResourceName(payload.readUTF) //dest actor
     if (util.Configuration(systemContext).localServerName != dstServer) return
     val hostPort = HostPort(packet.getAddress, packet.getPort)
     val msg = IncomingPacketReq(isReply, msgUuid, hostPort, srcServer, reqActor, payload)

@@ -27,11 +27,4 @@ package lite
 
 trait LiteSrc {
   def response(msg: LiteRspMsg) {}
-
-  def send(actor: LiteActor, messageContent: Any, defaultReactor: LiteReactor) {
-    val req = new LiteReqMsg(0, actor, null, null, messageContent, this)
-    actor.currentReactor(defaultReactor)
-    val reactor = actor.currentReactor
-    reactor.request(req)
-  }
 }

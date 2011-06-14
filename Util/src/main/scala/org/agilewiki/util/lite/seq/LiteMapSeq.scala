@@ -31,20 +31,9 @@ class LiteMapSeq[T,V1,V2](reactor: LiteReactor, liteSeq: SeqActor[T,V1], map: V1
   override def comparator = liteSeq.comparator
 
   requestHandler = {
-    case req => send(liteSeq.asInstanceOf[LiteActor], req) {
-      case rsp: SeqEndRsp => reply(rsp)
-      case rsp: SeqResultRsp[T,V1] => reply(SeqResultRsp[T,V2](rsp.key, map(rsp.value)))
-    }
-  }
-}
-
-class LiteKeyMapSeq[T1,T2,V](reactor: LiteReactor, liteSeq: SeqActor[T1,V], map: T1 => T2)
-  extends SeqActor[T2,V](reactor) {
-
-  requestHandler = {
-    case req => send(liteSeq.asInstanceOf[LiteActor], req) {
-      case rsp: SeqEndRsp => reply(rsp)
-      case rsp: SeqResultRsp[T1,V] => reply(SeqResultRsp[T2,V](map(rsp.key), rsp.value))
+    case req: SeqReq => send(liteSeq.asInstanceOf[LiteActor], req) {
+      case rsp: SeqEndRsp => end
+      case rsp: SeqResultRsp[T,V1] => result(rsp.key, map(rsp.value))
     }
   }
 }
