@@ -25,28 +25,18 @@ package org.agilewiki
 package util
 package lite
 
-class InternalAddressActor(reactor: LiteReactor, uuid: Uuid) extends LiteActor(reactor) {
-  def getUuid = uuid
-}
+trait LiteResponder {
 
-class LiteActor(reactor: LiteReactor)
-  extends LiteResponder
-  with LiteSrc
-  with SystemContext {
-  var requestHandler: PartialFunction[Any, Unit] = null
-  private var _currentReactor = reactor
+  def currentReactor: LiteReactor
 
-  def liteReactor = reactor
+  def systemContext = currentReactor.asInstanceOf[ContextReactor].systemContext
 
-  override def currentReactor = _currentReactor
-
-  def currentReactor(activeReactor: LiteReactor) {
-    if (reactor.eq(null)) _currentReactor = activeReactor
+  def send(actor: LiteActor, content: Any)
+          (responseProcess: PartialFunction[Any, Unit]) {
+    currentReactor.send(actor, content)(responseProcess)
   }
 
-  override def response(msg: LiteRspMsg) {
-    currentReactor.response(msg)
+  def reply(content: Any) {
+    currentReactor.reply(content)
   }
-
-  def senderUuid = currentReactor.currentRequestMessage.sender.asInstanceOf[InternalAddressActor].getUuid
 }
