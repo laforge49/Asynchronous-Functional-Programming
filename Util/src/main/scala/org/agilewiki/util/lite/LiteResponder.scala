@@ -40,6 +40,8 @@ trait LiteResponder {
 
   def actor: LiteActor
 
+  def isSafe(actor: LiteActor) = actor.currentReactor == currentReactor
+
   def addExtension(ext: LiteExtension) {
     ext.actor(actor)
     addRequestHandler(ext.requestHandler)

@@ -60,6 +60,24 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T])
 
   override def comparator = seq.comparator
 
+  override def first(sourceActor: LiteActor)
+           (responseProcess: PartialFunction[Any, Unit]) {
+    if (isSafe(sourceActor)) responseProcess(seq.first)
+    else sourceActor.send(this, SeqFirstReq())(responseProcess)
+  }
+
+  override def current(sourceActor: LiteActor, key: T)
+             (responseProcess: PartialFunction[Any, Unit]) {
+    if (isSafe(sourceActor)) responseProcess(seq.current(key))
+    else sourceActor.send(this, SeqCurrentReq(key))(responseProcess)
+  }
+
+  override def next(sourceActor: LiteActor, key: T)
+          (responseProcess: PartialFunction[Any, Unit]) {
+    if (isSafe(sourceActor)) responseProcess(seq.next(key))
+    else sourceActor.send(this, SeqNextReq(key))(responseProcess)
+  }
+
   override def mapActor[V2](map: V => V2): SeqActor[T, V2] =
     seq.mapActor(map)
 
