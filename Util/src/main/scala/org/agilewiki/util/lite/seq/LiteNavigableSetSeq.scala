@@ -29,7 +29,10 @@ package seq
 import java.util.{Comparator, NavigableSet}
 
 class LiteNavigableSetSeq[T](reactor: LiteReactor, navigableSet: NavigableSet[T])
-  extends SeqActor[T,T](reactor) {
+  extends SeqExtensionActor[T, T](reactor, new NavigableSetSeqExtension[T](navigableSet))
+
+class NavigableSetSeqExtension[T](navigableSet: NavigableSet[T])
+  extends SeqExtension[T] {
 
   override def comparator = {
     var c = navigableSet.comparator.asInstanceOf[Comparator[T]]
@@ -39,30 +42,25 @@ class LiteNavigableSetSeq[T](reactor: LiteReactor, navigableSet: NavigableSet[T]
     c
   }
 
-  requestHandler = {
-    case msg: SeqCurrentReq[T] => {
-      if (navigableSet.isEmpty) {
-        end
-      }
-      else if (msg.key == null) {
-        val key = navigableSet.first
-        result(key, key)
-      } else {
-        val key = navigableSet.ceiling(msg.key)
-        if (key == null) end
-        else result(key, key)
-      }
+  override def current(k: T): SeqRsp = {
+    if (navigableSet.isEmpty) return SeqEndRsp()
+    if (k == null) {
+      val key = navigableSet.first
+      return SeqResultRsp(key, key)
     }
-    case msg: SeqNextReq[T] => {
-      if (navigableSet.isEmpty) end
-      else if (msg.key == null) {
-        val key = navigableSet.first
-        result(key, key)
-      } else {
-        val key = navigableSet.higher(msg.key)
-        if (key == null) end
-        else result(key, key)
-      }
+    val key = navigableSet.ceiling(k)
+    if (key == null) return SeqEndRsp()
+    SeqResultRsp(key, key)
+  }
+
+  override def next(k: T): SeqRsp = {
+    if (navigableSet.isEmpty) return SeqEndRsp()
+    if (k == null) {
+      val key = navigableSet.first
+      return SeqResultRsp(key, key)
     }
+    val key = navigableSet.higher(k)
+    if (key == null) return SeqEndRsp()
+    SeqResultRsp(key, key)
   }
 }

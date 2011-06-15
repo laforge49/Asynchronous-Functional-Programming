@@ -24,26 +24,28 @@
 package org.agilewiki
 package util
 package lite
+package seq
 
-trait LiteResponder {
-  var requestHandler: PartialFunction[Any, Unit] = null
+abstract class SeqReq
 
-  def currentReactor: LiteReactor
+case class SeqCurrentReq[T](key: T)
+  extends SeqReq
 
-  def systemContext = currentReactor.asInstanceOf[ContextReactor].systemContext
-
-  def send(actor: LiteActor, content: Any)
-          (responseProcess: PartialFunction[Any, Unit]) {
-    currentReactor.send(actor, content)(responseProcess)
-  }
-
-  def reply(content: Any) {
-    currentReactor.reply(content)
-  }
-
-  def addRequestHandler(rh: PartialFunction[Any, Unit]) {
-    if (rh == null) return
-    if (requestHandler == null) requestHandler = rh
-    requestHandler = requestHandler orElse rh
-  }
+object SeqFirstReq {
+  def apply(): SeqCurrentReq[Any] = SeqCurrentReq(null)
 }
+
+case class SeqNextReq[T](key: T)
+  extends SeqReq
+
+object SeqNextReq {
+  def apply(): SeqNextReq[Any] = SeqNextReq(null)
+}
+
+abstract class SeqRsp
+
+case class SeqResultRsp[T, V](key: T, value: V)
+  extends SeqRsp
+
+case class SeqEndRsp()
+  extends SeqRsp

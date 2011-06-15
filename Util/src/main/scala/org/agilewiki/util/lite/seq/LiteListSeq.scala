@@ -27,21 +27,23 @@ package lite
 package seq
 
 class LiteListSeq[V](reactor: LiteReactor, list: java.util.List[V])
-  extends SeqActor[Int,V](reactor) {
+  extends SeqExtensionActor[Int,V](reactor, new ListSeqExtension[V](list))
 
-  requestHandler = {
-    case req: SeqCurrentReq[Int] => {
-      var k = req.key
-      if (k < 0) k = 0
-      if (k + 1 > list.size) end
-      else result(k, list.get(k))
-    }
-    case req: SeqNextReq[Int] => {
-      var k = req.key
-      if (k < 0) k = 0
-      else k = k + 1
-      if (k + 1 > list.size) end
-      else result(k, list.get(k))
-    }
+class ListSeqExtension[V](list: java.util.List[V])
+  extends SeqExtension[Int] {
+
+  override def current(key: Int): SeqRsp = {
+    var k = key
+    if (k < 0) k = 0
+    if (k + 1 > list.size) return SeqEndRsp()
+    SeqResultRsp(k, list.get(k))
+  }
+
+  override def next(key: Int): SeqRsp = {
+    var k = key
+    if (k < 0) k = 0
+    else k = k + 1
+    if (k + 1 > list.size) return SeqEndRsp()
+    SeqResultRsp(k, list.get(k))
   }
 }

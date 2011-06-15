@@ -26,15 +26,9 @@ package util
 package lite
 package seq
 
-import java.util.Comparator
-
 abstract class SeqActor[T, V](reactor: LiteReactor)
-  extends LiteActor(reactor) {
-  private lazy val c = new Comparator[T] {
-    override def compare(a: T, b: T) = a.asInstanceOf[Comparable[T]].compareTo(b)
-  }
-
-  def comparator: Comparator[T] = c
+  extends LiteActor(reactor)
+  with SeqComparator[T] {
 
   def first(sourceActor: LiteActor)
            (responseProcess: PartialFunction[Any, Unit]) {
@@ -51,25 +45,30 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     sourceActor.send(this, SeqNextReq(key))(responseProcess)
   }
 
-  def result(key: T, value: V) { reply(SeqResultRsp(key, value)) }
+  def mapActor[V2](map: V => V2): SeqActor[T, V2] =
+    new LiteMapSeq(reactor, this, map)
 
-  def end { reply(SeqEndRsp()) }
+  def filterActor(filter: V => Boolean): SeqActor[T, V] =
+    new LiteFilterSeq(reactor, this, filter)
 }
 
-abstract class SeqReq
 
-case class SeqCurrentReq[T](key: T) extends SeqReq
+class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T])
+  extends SeqActor[T, V](reactor) {
 
-object SeqFirstReq {
-  def apply(): SeqCurrentReq[Any] = SeqCurrentReq(null)
+  requestHandlerExtension(seq)
+
+  override def comparator = seq.comparator
+
+  override def mapActor[V2](map: V => V2): SeqActor[T, V2] =
+    seq.mapActor(map)
+
+  def mapExtension[V2](map: V => V2): SeqExtension[T] =
+    seq.mapExtension(map)
+
+  override def filterActor(filter: V => Boolean): SeqActor[T, V] =
+    seq.filterActor(filter)
+
+  def filterExtension(filter: V => Boolean): SeqExtension[T] =
+    seq.filterExtension(filter)
 }
-
-case class SeqNextReq[T](key: T) extends SeqReq
-
-object SeqNextReq {
-  def apply(): SeqNextReq[Any] = SeqNextReq(null)
-}
-
-case class SeqResultRsp[T, V](key: T, value: V)
-
-case class SeqEndRsp()

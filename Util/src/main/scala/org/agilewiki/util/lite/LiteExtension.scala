@@ -25,6 +25,16 @@ package org.agilewiki
 package util
 package lite
 
-class LiteExtension(actor: LiteActor) extends LiteResponder {
+trait LiteExtension
+  extends LiteResponder {
+  private var _actor: LiteActor = null
+
+  def actor(a: LiteActor) {
+    if (_actor != null) throw new UnsupportedOperationException
+    _actor = a
+  }
+
+  def actor = _actor
+
   override def currentReactor = actor.currentReactor
 }

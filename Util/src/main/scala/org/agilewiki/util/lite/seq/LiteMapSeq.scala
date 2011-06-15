@@ -26,14 +26,39 @@ package util
 package lite
 package seq
 
-class LiteMapSeq[T,V1,V2](reactor: LiteReactor, liteSeq: SeqActor[T,V1], map: V1 => V2)
-  extends SeqActor[T,V2](reactor) {
+class LiteMapSeq[T, V1, V2](reactor: LiteReactor, liteSeq: SeqActor[T, V1], map: V1 => V2)
+  extends SeqActor[T, V2](reactor) {
   override def comparator = liteSeq.comparator
 
   requestHandler = {
     case req: SeqReq => send(liteSeq.asInstanceOf[LiteActor], req) {
-      case rsp: SeqEndRsp => end
-      case rsp: SeqResultRsp[T,V1] => result(rsp.key, map(rsp.value))
+      case rsp: SeqEndRsp => reply(SeqEndRsp())
+      case rsp: SeqResultRsp[T, V1] => reply(SeqResultRsp(rsp.key, map(rsp.value)))
+    }
+  }
+}
+
+class LiteExtensionMapSeq[T, V1, V2](reactor: LiteReactor, extension: SeqExtension[T], map: V1 => V2)
+  extends SeqExtensionActor[T, V2](reactor, new MapSeqExtension[T, V1, V2](extension, map))
+
+class MapSeqExtension[T, V1, V2](extension: SeqExtension[T], map: V1 => V2)
+  extends SeqExtension[T] {
+
+  override def comparator = extension.comparator
+
+  override def current(k: T): SeqRsp = {
+    m(extension.current(k))
+  }
+
+  override def next(k: T): SeqRsp = {
+    m(extension.next(k))
+  }
+
+  def m(rsp: SeqRsp): SeqRsp = {
+    return rsp match {
+      case r: SeqResultRsp[T, V1] => SeqResultRsp(r.key, map(r.value))
+      case r: SeqEndRsp => r
+      case r => r
     }
   }
 }

@@ -24,26 +24,32 @@
 package org.agilewiki
 package util
 package lite
+package seq
 
-trait LiteResponder {
-  var requestHandler: PartialFunction[Any, Unit] = null
+trait SeqExtension[T]
+  extends LiteExtension
+  with SeqComparator[T] {
 
-  def currentReactor: LiteReactor
-
-  def systemContext = currentReactor.asInstanceOf[ContextReactor].systemContext
-
-  def send(actor: LiteActor, content: Any)
-          (responseProcess: PartialFunction[Any, Unit]) {
-    currentReactor.send(actor, content)(responseProcess)
+  requestHandler = {
+    case req: SeqCurrentReq[T] => reply(current(req.key))
+    case req: SeqNextReq[T] => reply(next(req.key))
   }
 
-  def reply(content: Any) {
-    currentReactor.reply(content)
-  }
+  def first = current(null.asInstanceOf[T])
 
-  def addRequestHandler(rh: PartialFunction[Any, Unit]) {
-    if (rh == null) return
-    if (requestHandler == null) requestHandler = rh
-    requestHandler = requestHandler orElse rh
-  }
+  def current(key: T): SeqRsp
+
+  def next(key: T): SeqRsp
+
+  def mapExtension[V1, V2](map: V1 => V2): SeqExtension[T] =
+    new MapSeqExtension(this, map)
+
+  def mapActor[V1, V2](map: V1 => V2): SeqActor[T, V2] =
+    new LiteExtensionMapSeq(currentReactor, this, map)
+
+  def filterExtension[V](filter: V => Boolean): SeqExtension[T] =
+    new FilterSeqExtension(this, filter)
+
+  def filterActor[V](filter: V => Boolean): SeqActor[T, V] =
+    new LiteExtensionFilterSeq(currentReactor, this, filter)
 }

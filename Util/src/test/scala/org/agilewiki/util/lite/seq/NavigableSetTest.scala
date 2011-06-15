@@ -5,7 +5,7 @@ package seq
 
 import org.specs.SpecificationWithJUnit
 
-class SetTest extends SpecificationWithJUnit {
+class NavigableSetTest extends SpecificationWithJUnit {
   "Set Seq" should {
 
     "Pass the basic navigation test" in {

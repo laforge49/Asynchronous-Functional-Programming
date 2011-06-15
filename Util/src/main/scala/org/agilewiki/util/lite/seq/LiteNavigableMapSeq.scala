@@ -28,8 +28,12 @@ package seq
 
 import java.util.{Comparator, NavigableMap}
 
-class LiteNavigableMapSeq[T,V](reactor: LiteReactor, navigableMap: NavigableMap[T, V])
-  extends SeqActor[T,V](reactor) {
+class LiteNavigableMapSeq[T, V](reactor: LiteReactor, navigableMap: NavigableMap[T, V])
+  extends SeqExtensionActor[T, V](reactor, new NavigableMapSeqExtension[T, V](navigableMap))
+
+class NavigableMapSeqExtension[T, V](navigableMap: NavigableMap[T, V])
+  extends SeqExtension[T] {
+
   override def comparator = {
     var c = navigableMap.comparator.asInstanceOf[Comparator[T]]
     if (c == null) {
@@ -38,28 +42,25 @@ class LiteNavigableMapSeq[T,V](reactor: LiteReactor, navigableMap: NavigableMap[
     c
   }
 
-  requestHandler = {
-    case msg: SeqCurrentReq[T] => {
-      if (navigableMap.isEmpty) end
-      else if (msg.key == null) {
-        val key = navigableMap.firstKey
-        result(key, navigableMap.get(key))
-      } else {
-        val key = navigableMap.ceilingKey(msg.key)
-        if (key == null) end
-        result(key, navigableMap.get(key))
-      }
+  override def current(k: T): SeqRsp = {
+    if (navigableMap.isEmpty) return SeqEndRsp()
+    if (k == null) {
+      val key = navigableMap.firstKey
+      return SeqResultRsp(key, navigableMap.get(key))
     }
-    case msg: SeqNextReq[T] => {
-      if (navigableMap.isEmpty) end
-      else if (msg.key == null) {
-        val key = navigableMap.firstKey
-        result(key, navigableMap.get(key))
-      } else {
-        val key = navigableMap.higherKey(msg.key)
-        if (key == null) end
-        else result(key,navigableMap.get(key))
-      }
+    val key = navigableMap.ceilingKey(k)
+    if (key == null) return SeqEndRsp()
+    SeqResultRsp(key, navigableMap.get(key))
+  }
+
+  override def next(k: T): SeqRsp = {
+    if (navigableMap.isEmpty) return SeqEndRsp()
+    if (k == null) {
+      val key = navigableMap.firstKey
+      return SeqResultRsp(key, navigableMap.get(key))
     }
+    val key = navigableMap.higherKey(k)
+    if (key == null) return SeqEndRsp()
+    SeqResultRsp(key, navigableMap.get(key))
   }
 }

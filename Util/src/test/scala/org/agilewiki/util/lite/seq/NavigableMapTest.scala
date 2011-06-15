@@ -5,7 +5,7 @@ package seq
 
 import org.specs.SpecificationWithJUnit
 
-class MapTest extends SpecificationWithJUnit {
+class NavigableMapTest extends SpecificationWithJUnit {
   "Map Seq" should {
 
     "Pass the basic navigation test" in {

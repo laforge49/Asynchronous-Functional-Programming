@@ -24,26 +24,15 @@
 package org.agilewiki
 package util
 package lite
+package seq
 
-trait LiteResponder {
-  var requestHandler: PartialFunction[Any, Unit] = null
+import java.util.Comparator
 
-  def currentReactor: LiteReactor
+trait SeqComparator[T] {
 
-  def systemContext = currentReactor.asInstanceOf[ContextReactor].systemContext
-
-  def send(actor: LiteActor, content: Any)
-          (responseProcess: PartialFunction[Any, Unit]) {
-    currentReactor.send(actor, content)(responseProcess)
+  private lazy val c = new Comparator[T] {
+    override def compare(a: T, b: T) = a.asInstanceOf[Comparable[T]].compareTo(b)
   }
 
-  def reply(content: Any) {
-    currentReactor.reply(content)
-  }
-
-  def addRequestHandler(rh: PartialFunction[Any, Unit]) {
-    if (rh == null) return
-    if (requestHandler == null) requestHandler = rh
-    requestHandler = requestHandler orElse rh
-  }
+  def comparator = c
 }

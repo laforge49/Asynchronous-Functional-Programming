@@ -26,17 +26,43 @@ package util
 package lite
 package seq
 
-class LiteFilterSeq[T,V](reactor: LiteReactor, liteSeq: SeqActor[T,V], filter: V => Boolean)
-  extends SeqActor[T,V](reactor) {
+import annotation.tailrec
+
+class LiteFilterSeq[T, V](reactor: LiteReactor, liteSeq: SeqActor[T, V], filter: V => Boolean)
+  extends SeqActor[T, V](reactor) {
   override def comparator = liteSeq.comparator
 
   requestHandler = {
     case req: SeqReq => send(liteSeq, req) {
-      case rsp: SeqEndRsp => end
-      case rsp: SeqResultRsp[T,V] => {
+      case rsp: SeqEndRsp => reply(SeqEndRsp())
+      case rsp: SeqResultRsp[T, V] => {
         if (filter(rsp.value)) reply(rsp)
         else requestHandler(SeqNextReq[T](rsp.key))
       }
     }
+  }
+}
+
+class LiteExtensionFilterSeq[T, V](reactor: LiteReactor, extension: SeqExtension[T], filter: V => Boolean)
+  extends SeqExtensionActor[T, V](reactor, new FilterSeqExtension[T, V](extension, filter))
+
+class FilterSeqExtension[T, V](extension: SeqExtension[T], filter: V => Boolean)
+  extends SeqExtension[T] {
+
+  override def comparator = extension.comparator
+
+  override def current(k: T): SeqRsp = {
+    f(extension.current(k))
+  }
+
+  override def next(k: T): SeqRsp = {
+    f(extension.next(k))
+  }
+
+  @tailrec private def f(rsp: SeqRsp): SeqRsp = {
+    if (!rsp.isInstanceOf[SeqResultRsp[T, V]]) return rsp
+    val r = rsp.asInstanceOf[SeqResultRsp[T, V]]
+    if (filter(r.value)) return rsp
+    f(extension.next(r.key))
   }
 }
