@@ -81,12 +81,6 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T])
   override def mapActor[V2](map: V => V2): SeqActor[T, V2] =
     seq.mapActor(map)
 
-  def mapExtension[V2](map: V => V2): SeqExtension[T] =
-    seq.mapExtension(map)
-
   override def filterActor(filter: V => Boolean): SeqActor[T, V] =
     seq.filterActor(filter)
-
-  def filterExtension(filter: V => Boolean): SeqExtension[T] =
-    seq.filterExtension(filter)
 }
