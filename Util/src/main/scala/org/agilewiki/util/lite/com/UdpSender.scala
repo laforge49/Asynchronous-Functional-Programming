@@ -33,7 +33,7 @@ class UdpSender(systemContext: SystemComposite) extends LiteActor(new ContextRea
   var socket: DatagramSocket = null
   val localServer = Configuration(systemContext).localServerName
 
-  requestHandler = {
+  addRequestHandler {
     case packetReq: OutgoingPacketReq => send(packetReq)
   }
 

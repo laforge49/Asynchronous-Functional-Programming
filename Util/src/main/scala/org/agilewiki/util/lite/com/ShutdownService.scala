@@ -28,7 +28,7 @@ package com
 
 class ShutdownService(reactor: LiteReactor, uuid: Uuid)
   extends InternalAddressActor(reactor, uuid) {
-  requestHandler = {
+  addRequestHandler {
     case req: IncomingPacketReq => System.exit(0)
   }
 }

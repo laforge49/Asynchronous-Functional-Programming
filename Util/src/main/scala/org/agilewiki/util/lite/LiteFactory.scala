@@ -31,7 +31,7 @@ class LiteFactory
   extends LiteActor(new LiteReactor) {
   val classLoader = ClassLoader.getSystemClassLoader
 
-  requestHandler = {
+  addRequestHandler {
     case req: CreateUuidReq => {
       val className = req.className.value
       val c = classLoader.

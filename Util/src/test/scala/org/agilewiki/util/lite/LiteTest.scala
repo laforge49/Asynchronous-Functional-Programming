@@ -29,7 +29,7 @@ import org.specs.SpecificationWithJUnit
 
 class LiteTestActor(reactor: LiteReactor, next: LiteActor)
   extends LiteActor(reactor) {
-  requestHandler = {
+  addRequestHandler {
     case reqContent => {
       if (next == null) reply(reqContent)
       else send(next, reqContent) {

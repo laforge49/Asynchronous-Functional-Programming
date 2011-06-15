@@ -38,7 +38,7 @@ class LocalResponder(reactor: ContextReactor, uuid: Uuid) extends InternalAddres
   send(liteManager, RememberReq(this, maxTimeout)) {
     case rsp =>
   }
-  requestHandler = {
+  addRequestHandler {
     case req: PacketReq => packetReq(req)
   }
   var largeReqPayload: DataOutputStack = null

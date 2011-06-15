@@ -26,9 +26,24 @@ package util
 package lite
 
 trait LiteResponder {
-  var requestHandler: PartialFunction[Any, Unit] = null
+  private var _requestHandler: PartialFunction[Any, Unit] = null
+
+  def requestHandler = _requestHandler
+
+  def addRequestHandler(rh: PartialFunction[Any, Unit]) {
+    if (rh == null) return
+    if (_requestHandler == null) _requestHandler = rh
+    else _requestHandler = requestHandler orElse rh
+  }
 
   def currentReactor: LiteReactor
+
+  def actor: LiteActor
+
+  def addExtension(ext: LiteExtension) {
+    ext.actor(actor)
+    addRequestHandler(ext.requestHandler)
+  }
 
   def systemContext = currentReactor.asInstanceOf[ContextReactor].systemContext
 
@@ -39,11 +54,5 @@ trait LiteResponder {
 
   def reply(content: Any) {
     currentReactor.reply(content)
-  }
-
-  def addRequestHandler(rh: PartialFunction[Any, Unit]) {
-    if (rh == null) return
-    if (requestHandler == null) requestHandler = rh
-    requestHandler = requestHandler orElse rh
   }
 }

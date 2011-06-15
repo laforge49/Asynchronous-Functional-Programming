@@ -38,7 +38,7 @@ case class ExtendedRetryRsp(tt: TimerTask)
 class Pinger extends LiteActor(new LiteReactor) {
   private val timer = new Timer
 
-  requestHandler = {
+  addRequestHandler {
     case req: RetryReq => {
       reply(RetryRsp(retry(req.timeout, currentReactor.currentRequestMessage, req.notification)))
     }

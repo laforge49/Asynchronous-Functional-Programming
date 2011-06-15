@@ -31,7 +31,7 @@ class RemoteAccess(systemContext: SystemComposite, packetRouter: LiteActor) exte
   private var maxPayloadSize: Int = Configuration(systemContext).
     requiredIntProperty(Udp.MAX_SHORT_MSG_UUID_CACHE_SIZE_PROPERTY)
   private val liteManager = Lite(systemContext).liteManager
-  requestHandler = {
+  addRequestHandler {
     case pkt: PacketReq => packetReq(pkt)
   }
 

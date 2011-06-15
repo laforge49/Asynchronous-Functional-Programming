@@ -51,7 +51,7 @@ class PacketResender(reactor: ContextReactor, uuid: Uuid, insideActor: LiteActor
   private val incomingReqUuids = new HashSet[String]
   private val outgoingRspCache = new CanonicalMap[OutgoingPacketReq](cacheSize)
 
-  requestHandler = {
+  addRequestHandler {
     case packet: OutgoingPacketReq if packet.retry => resend(packet)
     case packet: OutgoingPacketReq if !packet.retry => sendOut(packet)
     case packet: IncomingPacketReq if packet.isReply => forwardInReply(packet)

@@ -32,7 +32,7 @@ class LiteFilterSeq[T, V](reactor: LiteReactor, liteSeq: SeqActor[T, V], filter:
   extends SeqActor[T, V](reactor) {
   override def comparator = liteSeq.comparator
 
-  requestHandler = {
+  addRequestHandler {
     case req: SeqReq => send(liteSeq, req) {
       case rsp: SeqEndRsp => reply(SeqEndRsp())
       case rsp: SeqResultRsp[T, V] => {

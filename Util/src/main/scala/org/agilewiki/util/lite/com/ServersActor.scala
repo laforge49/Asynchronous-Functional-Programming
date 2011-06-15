@@ -58,7 +58,7 @@ class ServersActor(reactor: ContextReactor) extends LiteActor(reactor) {
     }
   }
 
-  requestHandler = {
+  addRequestHandler {
     case req: HostPortQueryReq => {
       reply(HostPortQueryRsp(map.get(req.serverName)))
     }

@@ -35,6 +35,8 @@ class LiteActor(reactor: LiteReactor)
   with SystemContext {
   private var _currentReactor = reactor
 
+  def actor = this
+
   def liteReactor = reactor
 
   override def currentReactor = _currentReactor
@@ -45,11 +47,6 @@ class LiteActor(reactor: LiteReactor)
 
   override def response(msg: LiteRspMsg) {
     currentReactor.response(msg)
-  }
-
-  def requestHandlerExtension(ext: LiteExtension) {
-    ext.actor(this)
-    addRequestHandler(ext.requestHandler)
   }
 
   def senderUuid = currentReactor.currentRequestMessage.sender.asInstanceOf[InternalAddressActor].getUuid

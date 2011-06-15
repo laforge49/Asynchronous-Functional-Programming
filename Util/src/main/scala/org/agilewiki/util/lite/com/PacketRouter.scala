@@ -34,7 +34,7 @@ class PacketRouter(systemContext: SystemComposite)
   val serverSequenceActor = serversActor.serverSequenceActor
   val map = new HashMap[String, LiteActor]
 
-  requestHandler = {
+  addRequestHandler {
     case req: PacketReq => {
       val server = req.server
       if (map.containsKey(server)) packetReq(req)

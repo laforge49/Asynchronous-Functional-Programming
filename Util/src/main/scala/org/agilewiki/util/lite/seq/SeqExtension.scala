@@ -30,7 +30,7 @@ trait SeqExtension[T]
   extends LiteExtension
   with SeqComparator[T] {
 
-  requestHandler = {
+  addRequestHandler {
     case req: SeqCurrentReq[T] => reply(current(req.key))
     case req: SeqNextReq[T] => reply(next(req.key))
   }

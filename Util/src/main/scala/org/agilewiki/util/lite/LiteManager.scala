@@ -58,7 +58,7 @@ class LiteManager(systemContext: SystemComposite) extends LiteActor(new ContextR
   private var factory = new LiteFactory
   private lazy val pinger = Lite(systemContext).pinger
 
-  requestHandler = {
+  addRequestHandler {
     case req: CreateReq => {
       val uuid = Uuid(UUID.randomUUID.toString)
       send(factory, CreateUuidReq(req.reactor, req.className, uuid)) {

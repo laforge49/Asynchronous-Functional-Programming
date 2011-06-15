@@ -56,7 +56,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
 class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T])
   extends SeqActor[T, V](reactor) {
 
-  requestHandlerExtension(seq)
+  addExtension(seq)
 
   override def comparator = seq.comparator
 

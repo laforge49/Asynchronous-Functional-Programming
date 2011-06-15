@@ -50,7 +50,7 @@ class PacketResponder(reactor: ContextReactor, hostPort: HostPort)
   private val liteManager = Lite(systemContext).liteManager
   private val defaultReactor = new ContextReactor(systemContext)
 
-  requestHandler = {
+  addRequestHandler {
     case packet: PacketReq => forwardOutgoingRequest(packet)
     case packet: IncomingPacketReq if !packet.isReply => incomingRequest(packet)
     case packet: IncomingPacketReq if packet.isReply => incomingReply(packet)

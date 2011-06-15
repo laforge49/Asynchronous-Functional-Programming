@@ -31,7 +31,7 @@ class LiteRandomIO(reactor: LiteReactor, pathname: String, accessMode: String)
   extends LiteActor(reactor) {
   val file = new File(pathname)
   val randomAccessFile = new RandomAccessFile(file, accessMode)
-  requestHandler = {
+  addRequestHandler {
     case req: ReadBlockReq => {
       randomAccessFile.seek(req.blockOffset)
       randomAccessFile.readFully(req.bytes)

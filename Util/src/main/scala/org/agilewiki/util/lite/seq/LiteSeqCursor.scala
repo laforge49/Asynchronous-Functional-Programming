@@ -55,7 +55,7 @@ class LiteSeqCursor[T, V](wrappedSeq: SeqActor[T, V])
     compareTo(other) == 0
   }
 
-  requestHandler = {
+  addRequestHandler {
     case req: SeqCurrentReq[T] => current(req)
     case req: SeqNextReq[T] => next(req)
   }
