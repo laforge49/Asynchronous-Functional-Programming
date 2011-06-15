@@ -62,19 +62,19 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T])
 
   override def first(sourceActor: LiteActor)
            (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor)) responseProcess(seq.first)
+    if (isSafe(sourceActor, this)) responseProcess(seq.first)
     else sourceActor.send(this, SeqFirstReq())(responseProcess)
   }
 
   override def current(sourceActor: LiteActor, key: T)
              (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor)) responseProcess(seq.current(key))
+    if (isSafe(sourceActor, this)) responseProcess(seq.current(key))
     else sourceActor.send(this, SeqCurrentReq(key))(responseProcess)
   }
 
   override def next(sourceActor: LiteActor, key: T)
           (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor)) responseProcess(seq.next(key))
+    if (isSafe(sourceActor, this)) responseProcess(seq.next(key))
     else sourceActor.send(this, SeqNextReq(key))(responseProcess)
   }
 
