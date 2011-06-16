@@ -26,8 +26,8 @@ package util
 package lite
 package seq
 
-class LiteEmptySeq[T](reactor: LiteReactor)
-  extends SeqExtensionActor[T,T](reactor, new EmptySeqExtension[T])
+class LiteEmptySeq[T]
+  extends SeqExtensionActor[T,T](null, new EmptySeqExtension[T])
 
 class EmptySeqExtension[T]
   extends SeqExtension[T] {
