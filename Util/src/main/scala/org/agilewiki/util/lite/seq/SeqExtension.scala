@@ -40,10 +40,4 @@ trait SeqExtension[T]
   def current(key: T): SeqRsp
 
   def next(key: T): SeqRsp
-
-  def mapActor[V1, V2](map: V1 => V2): SeqActor[T, V2] =
-    new LiteExtensionMapSeq(currentReactor, this, map)
-
-  def filterActor[V](filter: V => Boolean): SeqActor[T, V] =
-    new LiteExtensionFilterSeq(currentReactor, this, filter)
 }

@@ -58,6 +58,8 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T])
 
   addExtension(seq)
 
+  def seqExtension = seq
+
   override def comparator = seq.comparator
 
   override def first(sourceActor: LiteActor)
@@ -78,9 +80,9 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T])
     else sourceActor.send(this, SeqNextReq(key))(responseProcess)
   }
 
-  override def mapActor[V2](map: V => V2): SeqActor[T, V2] =
-    seq.mapActor(map)
+  override def mapActor[V2](map: V => V2) =
+    new LiteExtensionMapSeq(currentReactor, this, map)
 
-  override def filterActor(filter: V => Boolean): SeqActor[T, V] =
-    seq.filterActor(filter)
+  override def filterActor(filter: V => Boolean) =
+    new LiteExtensionFilterSeq(currentReactor, this, filter)
 }

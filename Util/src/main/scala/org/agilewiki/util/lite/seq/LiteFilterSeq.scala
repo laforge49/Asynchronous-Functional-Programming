@@ -43,8 +43,8 @@ class LiteFilterSeq[T, V](reactor: LiteReactor, liteSeq: SeqActor[T, V], filter:
   }
 }
 
-class LiteExtensionFilterSeq[T, V](reactor: LiteReactor, extension: SeqExtension[T], filter: V => Boolean)
-  extends SeqExtensionActor[T, V](reactor, new FilterSeqExtension[T, V](extension, filter))
+class LiteExtensionFilterSeq[T, V](reactor: LiteReactor, seqExtensionActor: SeqExtensionActor[T, V], filter: V => Boolean)
+  extends SeqExtensionActor[T, V](reactor, new FilterSeqExtension[T, V](seqExtensionActor.seqExtension, filter))
 
 class FilterSeqExtension[T, V](extension: SeqExtension[T], filter: V => Boolean)
   extends SeqExtension[T] {
