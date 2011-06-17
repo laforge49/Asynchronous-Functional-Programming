@@ -32,7 +32,7 @@ class LiteNavigableMapSeq[T, V](reactor: LiteReactor, navigableMap: NavigableMap
   extends SeqExtensionActor[T, V](reactor, new NavigableMapSeqExtension[T, V](navigableMap))
 
 class NavigableMapSeqExtension[T, V](navigableMap: NavigableMap[T, V])
-  extends SeqExtension[T] {
+  extends SeqExtension[T, V] {
 
   override def comparator = {
     var c = navigableMap.comparator.asInstanceOf[Comparator[T]]

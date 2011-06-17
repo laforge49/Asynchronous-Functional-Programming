@@ -30,7 +30,7 @@ class LiteListSeq[V](reactor: LiteReactor, list: java.util.List[V])
   extends SeqExtensionActor[Int,V](reactor, new ListSeqExtension[V](list))
 
 class ListSeqExtension[V](list: java.util.List[V])
-  extends SeqExtension[Int] {
+  extends SeqExtension[Int, V] {
 
   override def current(key: Int): SeqRsp = {
     var k = key

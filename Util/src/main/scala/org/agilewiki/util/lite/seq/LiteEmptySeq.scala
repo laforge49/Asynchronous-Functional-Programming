@@ -26,11 +26,11 @@ package util
 package lite
 package seq
 
-class LiteEmptySeq[T]
-  extends SeqExtensionActor[T,T](null, new EmptySeqExtension[T])
+class LiteEmptySeq[T, V]
+  extends SeqExtensionActor[T, V](null, new EmptySeqExtension[T, V])
 
-class EmptySeqExtension[T]
-  extends SeqExtension[T] {
+class EmptySeqExtension[T, V]
+  extends SeqExtension[T, V] {
   override def current(key: T) = SeqEndRsp()
   override def next(key: T) = SeqEndRsp()
 }

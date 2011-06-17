@@ -11,7 +11,7 @@ class CursorTest extends SpecificationWithJUnit {
 
     "Pass the comparision Test" in {
       var set = new TreeSet[String]
-      var seq1 = new LiteSeqCursor(new LiteEmptySeq[String])
+      var seq1 = new LiteSeqCursor(new LiteEmptySeq[String, String])
       FutureSeq(seq1).first
       var seq2 = new LiteSeqCursor(new LiteNavigableSetSeq[String](null, set))
       FutureSeq(seq2).first
@@ -29,7 +29,7 @@ class CursorTest extends SpecificationWithJUnit {
       FutureSeq(seq3).first
       seq2.compareTo(seq3) < 0 must be equalTo true
       seq3.compareTo(seq2) > 0 must be equalTo true
-      seq2 = new LiteSeqCursor(new LiteEmptySeq[String])
+      seq2 = new LiteSeqCursor(new LiteEmptySeq[String, String])
       FutureSeq(seq2).first
       seq1 == seq2 must be equalTo true
     }

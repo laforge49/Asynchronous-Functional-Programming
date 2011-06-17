@@ -46,8 +46,8 @@ class LiteFilterSeq[T, V](reactor: LiteReactor, liteSeq: SeqActor[T, V], filter:
 class LiteExtensionFilterSeq[T, V](reactor: LiteReactor, seqExtensionActor: SeqExtensionActor[T, V], filter: V => Boolean)
   extends SeqExtensionActor[T, V](reactor, new FilterSeqExtension[T, V](seqExtensionActor.seqExtension, filter))
 
-class FilterSeqExtension[T, V](extension: SeqExtension[T], filter: V => Boolean)
-  extends SeqExtension[T] {
+class FilterSeqExtension[T, V](extension: SeqExtension[T, V], filter: V => Boolean)
+  extends SeqExtension[T, V] {
 
   override def comparator = extension.comparator
 

@@ -26,7 +26,7 @@ package util
 package lite
 package seq
 
-trait SeqExtension[T]
+trait SeqExtension[T, V]
   extends LiteExtension
   with SeqComparator[T] {
 

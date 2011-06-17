@@ -41,8 +41,8 @@ class LiteMapSeq[T, V1, V2](reactor: LiteReactor, liteSeq: SeqActor[T, V1], map:
 class LiteExtensionMapSeq[T, V1, V2](reactor: LiteReactor, seqExtensionActor: SeqExtensionActor[T, V1], map: V1 => V2)
   extends SeqExtensionActor[T, V2](reactor, new MapSeqExtension[T, V1, V2](seqExtensionActor.seqExtension, map))
 
-class MapSeqExtension[T, V1, V2](extension: SeqExtension[T], map: V1 => V2)
-  extends SeqExtension[T] {
+class MapSeqExtension[T, V1, V2](extension: SeqExtension[T, V1], map: V1 => V2)
+  extends SeqExtension[T, V2] {
 
   override def comparator = extension.comparator
 

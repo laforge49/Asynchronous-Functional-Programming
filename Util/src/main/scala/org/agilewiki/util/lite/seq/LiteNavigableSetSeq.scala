@@ -32,7 +32,7 @@ class LiteNavigableSetSeq[T](reactor: LiteReactor, navigableSet: NavigableSet[T]
   extends SeqExtensionActor[T, T](reactor, new NavigableSetSeqExtension[T](navigableSet))
 
 class NavigableSetSeqExtension[T](navigableSet: NavigableSet[T])
-  extends SeqExtension[T] {
+  extends SeqExtension[T, T] {
 
   override def comparator = {
     var c = navigableSet.comparator.asInstanceOf[Comparator[T]]
