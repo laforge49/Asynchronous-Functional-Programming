@@ -55,7 +55,6 @@ class FilteredTest extends SpecificationWithJUnit {
 
       FutureSeq(iSeq).current("0") must be equalTo "00"
       seq = iSeq.filterActor((x: String) => x startsWith ".")
-      seq = new LiteFilterSeq(new LiteReactor, iSeq, (x: String) => x startsWith ".")
       FutureSeq(seq).isEmpty must be equalTo true
       FutureSeq(iSeq).next(".") must be equalTo "00"
     }
