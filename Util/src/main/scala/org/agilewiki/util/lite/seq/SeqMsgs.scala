@@ -49,3 +49,15 @@ case class SeqResultRsp[T, V](key: T, value: V)
 
 case class SeqEndRsp()
   extends SeqRsp
+
+case class FoldReq[V](seed: V, fold: (V, V) => V)
+
+case class FoldRsp[V](result: V)
+
+case class ExistsReq[V](exists: V => Boolean)
+
+case class ExistsRsp(result: Boolean)
+
+case class FindReq[V](find: V => Boolean)
+
+case class FindRsp[V](result: V)
