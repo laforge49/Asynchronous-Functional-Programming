@@ -160,13 +160,23 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
   }
 
   override def exists(sourceActor: LiteActor, e: V => Boolean)
-                   (responseProcess: PartialFunction[Any, Unit]) {
+                     (responseProcess: PartialFunction[Any, Unit]) {
     if (isSafe(sourceActor, this)) responseProcess(seq._exists(null.asInstanceOf[T], e))
     else sourceActor.send(this, ExistsReq(e))(responseProcess)
   }
 
   override protected def _exists(key: T, exists: V => Boolean) {
     reply(seq._exists(null.asInstanceOf[T], exists))
+  }
+
+  override def find(sourceActor: LiteActor, f: V => Boolean)
+                     (responseProcess: PartialFunction[Any, Unit]) {
+    if (isSafe(sourceActor, this)) responseProcess(seq._find(null.asInstanceOf[T], f))
+    else sourceActor.send(this, FindReq(f))(responseProcess)
+  }
+
+  override protected def _find(key: T, find: V => Boolean) {
+    reply(seq._find(null.asInstanceOf[T], find))
   }
 
   override def mapActor[V2](map: V => V2) =
