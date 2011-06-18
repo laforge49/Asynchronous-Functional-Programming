@@ -57,7 +57,12 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   }
 
   protected def _fold(key: T, seed: V, fold: (V, V) => V) {
-    next(this, key) {
+    if (key == null.asInstanceOf[V])
+      current(this, key) {
+        case rsp: SeqEndRsp => reply(FoldRsp(seed))
+        case rsp: SeqResultRsp[T, V] => _fold(rsp.key, fold(seed, rsp.value), fold)
+      }
+    else next(this, key) {
       case rsp: SeqEndRsp => reply(FoldRsp(seed))
       case rsp: SeqResultRsp[T, V] => _fold(rsp.key, fold(seed, rsp.value), fold)
     }
@@ -69,7 +74,15 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   }
 
   protected def _exists(key: T, exists: V => Boolean) {
-    next(this, key) {
+    if (key == null.asInstanceOf[V])
+      current(this, key) {
+        case rsp: SeqEndRsp => reply(ExistsRsp(false))
+        case rsp: SeqResultRsp[T, V] => {
+          if (exists(rsp.value)) reply(true)
+          else _exists(rsp.key, exists)
+        }
+      }
+    else next(this, key) {
       case rsp: SeqEndRsp => reply(ExistsRsp(false))
       case rsp: SeqResultRsp[T, V] => {
         if (exists(rsp.value)) reply(true)
@@ -84,7 +97,15 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   }
 
   protected def _find(key: T, find: V => Boolean) {
-    next(this, key) {
+    if (key == null.asInstanceOf[V])
+      current(this, key) {
+        case rsp: SeqEndRsp => reply(FindRsp(null.asInstanceOf[V]))
+        case rsp: SeqResultRsp[T, V] => {
+          if (find(rsp.value)) reply(rsp.value)
+          else _find(rsp.key, find)
+        }
+      }
+    else next(this, key) {
       case rsp: SeqEndRsp => reply(FindRsp(null.asInstanceOf[V]))
       case rsp: SeqResultRsp[T, V] => {
         if (find(rsp.value)) reply(rsp.value)
