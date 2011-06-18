@@ -33,11 +33,15 @@ class LiteFilterSeq[T, V](reactor: LiteReactor, liteSeq: SeqActor[T, V], filter:
   override def comparator = liteSeq.comparator
 
   addRequestHandler {
-    case req: SeqReq => send(liteSeq, req) {
+    case req: SeqReq => _filter(req)
+  }
+
+  private def _filter(req: SeqReq) {
+    send(liteSeq, req) {
       case rsp: SeqEndRsp => reply(SeqEndRsp())
       case rsp: SeqResultRsp[T, V] => {
         if (filter(rsp.value)) reply(rsp)
-        else requestHandler(SeqNextReq[T](rsp.key))
+        else _filter(SeqNextReq[T](rsp.key))
       }
     }
   }
