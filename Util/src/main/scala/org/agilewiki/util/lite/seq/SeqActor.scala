@@ -78,14 +78,14 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
       current(this, key) {
         case rsp: SeqEndRsp => reply(ExistsRsp(false))
         case rsp: SeqResultRsp[T, V] => {
-          if (exists(rsp.value)) reply(true)
+          if (exists(rsp.value)) reply(ExistsRsp(true))
           else _exists(rsp.key, exists)
         }
       }
     else next(this, key) {
       case rsp: SeqEndRsp => reply(ExistsRsp(false))
       case rsp: SeqResultRsp[T, V] => {
-        if (exists(rsp.value)) reply(true)
+        if (exists(rsp.value)) reply(ExistsRsp(true))
         else _exists(rsp.key, exists)
       }
     }
@@ -101,14 +101,14 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
       current(this, key) {
         case rsp: SeqEndRsp => reply(FindRsp(null.asInstanceOf[V]))
         case rsp: SeqResultRsp[T, V] => {
-          if (find(rsp.value)) reply(rsp.value)
+          if (find(rsp.value)) reply(FindRsp(rsp.value))
           else _find(rsp.key, find)
         }
       }
     else next(this, key) {
       case rsp: SeqEndRsp => reply(FindRsp(null.asInstanceOf[V]))
       case rsp: SeqResultRsp[T, V] => {
-        if (find(rsp.value)) reply(rsp.value)
+        if (find(rsp.value)) reply(FindRsp(rsp.value))
         else _find(rsp.key, find)
       }
     }
