@@ -58,7 +58,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return false
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) {
-      val result = rsp.asInstanceOf[SeqResultRsp[T,V]]
+      val result = rsp.asInstanceOf[SeqResultRsp[T, V]]
       return result.key == expectedKey && result.value == expectedValue
     }
     throw new UnsupportedOperationException(rsp.toString)
@@ -85,7 +85,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return false
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) {
-      val result = rsp.asInstanceOf[SeqResultRsp[T,V]]
+      val result = rsp.asInstanceOf[SeqResultRsp[T, V]]
       return result.key == expectedKey && result.value == expectedValue
     }
     throw new UnsupportedOperationException(rsp.toString)
@@ -131,7 +131,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return false
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) {
-      val result = rsp.asInstanceOf[SeqResultRsp[T,V]]
+      val result = rsp.asInstanceOf[SeqResultRsp[T, V]]
       return result.key == expectedKey && result.value == expectedValue
     }
     throw new UnsupportedOperationException(rsp.toString)
@@ -154,5 +154,34 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
     if (rsp.isInstanceOf[SeqEndRsp]) return true
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) return false
     throw new UnsupportedOperationException(rsp.toString)
+  }
+
+  def fold(seed: V, f: (V, V) => V): V = {
+    send(actor, FoldReq(seed, f), new LiteReactor)
+    val rsp = get
+    if (rsp.isInstanceOf[FoldRsp[V]]) return rsp.asInstanceOf[FoldRsp[V]].result
+    throw new UnsupportedOperationException(rsp.toString)
+  }
+
+  def foldMatch(seed: V, f: (V, V) => V, expectedValue: V): Boolean = {
+    return fold(seed, f) == expectedValue
+  }
+
+  def exists(f: V => Boolean): Boolean = {
+    send(actor, ExistsReq(f), new LiteReactor)
+    val rsp = get
+    if (rsp.isInstanceOf[ExistsRsp]) return rsp.asInstanceOf[ExistsRsp].result
+    throw new UnsupportedOperationException(rsp.toString)
+  }
+
+  def find(f: V => Boolean): V = {
+    send(actor, FindReq(f), new LiteReactor)
+    val rsp = get
+    if (rsp.isInstanceOf[FindRsp[V]]) return rsp.asInstanceOf[FindRsp[V]].result
+    throw new UnsupportedOperationException(rsp.toString)
+  }
+
+  def findMatch(f: V => Boolean, expectedValue: V) {
+    return find(f) == expectedValue
   }
 }
