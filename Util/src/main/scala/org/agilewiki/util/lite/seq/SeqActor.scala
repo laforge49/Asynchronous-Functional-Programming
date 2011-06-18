@@ -68,7 +68,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     }
   }
 
-  def exists(sourceActor: LiteActor, e: (V) => Boolean)
+  def exists(sourceActor: LiteActor, e: V => Boolean)
             (responseProcess: PartialFunction[Any, Unit]) {
     sourceActor.send(this, ExistsReq(e))(responseProcess)
   }
@@ -150,13 +150,23 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
   }
 
   override def fold(sourceActor: LiteActor, seed: V, f: (V, V) => V)
-          (responseProcess: PartialFunction[Any, Unit]) {
+                   (responseProcess: PartialFunction[Any, Unit]) {
     if (isSafe(sourceActor, this)) responseProcess(seq._fold(null.asInstanceOf[T], seed, f))
     else sourceActor.send(this, FoldReq(seed, f))(responseProcess)
   }
 
   override protected def _fold(key: T, seed: V, fold: (V, V) => V) {
     reply(seq._fold(null.asInstanceOf[T], seed, fold))
+  }
+
+  override def exists(sourceActor: LiteActor, e: V => Boolean)
+                   (responseProcess: PartialFunction[Any, Unit]) {
+    if (isSafe(sourceActor, this)) responseProcess(seq._exists(null.asInstanceOf[T], e))
+    else sourceActor.send(this, ExistsReq(e))(responseProcess)
+  }
+
+  override protected def _exists(key: T, exists: V => Boolean) {
+    reply(seq._exists(null.asInstanceOf[T], exists))
   }
 
   override def mapActor[V2](map: V => V2) =

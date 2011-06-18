@@ -44,14 +44,25 @@ trait SeqExtension[T, V]
   def next(key: T): SeqRsp
 
   @tailrec final def _fold(key: T, seed: V, fold: (V, V) => V): FoldRsp[V] = {
-    if (key == null.asInstanceOf[V])
-      current(key) match {
-        case rsp: SeqEndRsp => return FoldRsp(seed)
-        case rsp: SeqResultRsp[T, V] => return _fold(rsp.key, fold(seed, rsp.value), fold)
-      }
-    val rsp = next(key)
+    val rsp = if (key == null.asInstanceOf[V]) current(key) else next(key)
     if (rsp.isInstanceOf[SeqEndRsp]) return FoldRsp(seed)
-    val result = rsp.asInstanceOf[SeqResultRsp[T,V]]
+    val result = rsp.asInstanceOf[SeqResultRsp[T, V]]
     _fold(result.key, fold(seed, result.value), fold)
+  }
+
+  @tailrec final def _exists(key: T, exists: V => Boolean): ExistsRsp = {
+    val rsp = if (key == null.asInstanceOf[V]) current(key) else next(key)
+    if (rsp.isInstanceOf[SeqEndRsp]) return ExistsRsp(false)
+    val result = rsp.asInstanceOf[SeqResultRsp[T, V]]
+    if (exists(result.value)) return ExistsRsp(true)
+    _exists(result.key, exists)
+  }
+
+  @tailrec final def _find(key: T, find: V => Boolean): FindRsp = {
+    val rsp = if (key == null.asInstanceOf[V]) current(key) else next(key)
+    if (rsp.isInstanceOf[SeqEndRsp]) return NotFoundRsp()
+    val result = rsp.asInstanceOf[SeqResultRsp[T, V]]
+    if (find(result.value)) return FoundRsp(result.value)
+    _find(result.key, find)
   }
 }
