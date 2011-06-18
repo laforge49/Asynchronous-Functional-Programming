@@ -99,14 +99,14 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   protected def _find(key: T, find: V => Boolean) {
     if (key == null.asInstanceOf[V])
       current(this, key) {
-        case rsp: SeqEndRsp => reply(FindRsp(null.asInstanceOf[V]))
+        case rsp: SeqEndRsp => reply(NoFindRsp())
         case rsp: SeqResultRsp[T, V] => {
           if (find(rsp.value)) reply(FindRsp(rsp.value))
           else _find(rsp.key, find)
         }
       }
     else next(this, key) {
-      case rsp: SeqEndRsp => reply(FindRsp(null.asInstanceOf[V]))
+      case rsp: SeqEndRsp => reply(NoFindRsp())
       case rsp: SeqResultRsp[T, V] => {
         if (find(rsp.value)) reply(FindRsp(rsp.value))
         else _find(rsp.key, find)

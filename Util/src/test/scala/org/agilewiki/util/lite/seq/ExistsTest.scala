@@ -4,6 +4,7 @@ package lite
 package seq
 
 import org.specs.SpecificationWithJUnit
+
 class ExistsTest extends SpecificationWithJUnit {
   "Exists" should {
 

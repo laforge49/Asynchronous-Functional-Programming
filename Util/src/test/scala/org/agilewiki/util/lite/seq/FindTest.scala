@@ -5,16 +5,17 @@ package seq
 
 import org.specs.SpecificationWithJUnit
 
-class FoldTest extends SpecificationWithJUnit {
-  "Fold" should {
+class FindTest extends SpecificationWithJUnit {
+  "Find" should {
 
-    "sum" in {
+    "find even" in {
       val list = new java.util.ArrayList[Int]
       list.add(1)
       list.add(2)
       list.add(3)
       var seq = new LiteListSeq(null, list)
-      FutureSeq(seq).fold(0, (x: Int, y: Int) => (x + y)) must be equalTo 6
+      FutureSeq(seq).find((x: Int) => x % 2 == 0) must be equalTo(2)
+      FutureSeq(seq).noFind((x: Int) => x % 4 == 0) must be equalTo(true)
     }
   }
 }
