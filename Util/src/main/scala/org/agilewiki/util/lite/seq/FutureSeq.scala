@@ -177,7 +177,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   def find(f: V => Boolean): V = {
     send(actor, FindReq(f), new LiteReactor)
     val rsp = get
-    if (rsp.isInstanceOf[FindRsp[V]]) return rsp.asInstanceOf[FindRsp[V]].result
+    if (rsp.isInstanceOf[FoundRsp[V]]) return rsp.asInstanceOf[FoundRsp[V]].result
     throw new UnsupportedOperationException(rsp.toString)
   }
 
@@ -188,8 +188,8 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   def noFind(f: V => Boolean): Boolean = {
     send(actor, FindReq(f), new LiteReactor)
     val rsp = get
-    if (rsp.isInstanceOf[FindRsp[V]]) return false
-    if (rsp.isInstanceOf[NoFindRsp]) return true
+    if (rsp.isInstanceOf[FoundRsp[V]]) return false
+    if (rsp.isInstanceOf[NotFoundRsp]) return true
     throw new UnsupportedOperationException(rsp.toString)
   }
 }

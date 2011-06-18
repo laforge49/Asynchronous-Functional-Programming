@@ -26,11 +26,13 @@ package util
 package lite
 package seq
 
+import annotation.tailrec
+
 trait SeqExtension[T, V]
   extends LiteExtension
   with SeqComparator[T] {
 
-  addRequestHandler {
+  addRequestHandler{
     case req: SeqCurrentReq[T] => reply(current(req.key))
     case req: SeqNextReq[T] => reply(next(req.key))
   }
@@ -40,4 +42,16 @@ trait SeqExtension[T, V]
   def current(key: T): SeqRsp
 
   def next(key: T): SeqRsp
+
+  @tailrec final def _fold(key: T, seed: V, fold: (V, V) => V): FoldRsp[V] = {
+    if (key == null.asInstanceOf[V])
+      current(key) match {
+        case rsp: SeqEndRsp => return FoldRsp(seed)
+        case rsp: SeqResultRsp[T, V] => return _fold(rsp.key, fold(seed, rsp.value), fold)
+      }
+    val rsp = next(key)
+    if (rsp.isInstanceOf[SeqEndRsp]) return FoldRsp(seed)
+    val result = rsp.asInstanceOf[SeqResultRsp[T,V]]
+    _fold(result.key, fold(seed, result.value), fold)
+  }
 }

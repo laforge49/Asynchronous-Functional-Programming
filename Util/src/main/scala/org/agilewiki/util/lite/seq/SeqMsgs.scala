@@ -60,6 +60,10 @@ case class ExistsRsp(result: Boolean)
 
 case class FindReq[V](find: V => Boolean)
 
-case class FindRsp[V](result: V)
+abstract class FindRsp
 
-case class NoFindRsp()
+case class FoundRsp[V](result: V)
+  extends FindRsp
+
+case class NotFoundRsp()
+  extends FindRsp
