@@ -119,6 +119,11 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
 
   def filterActor(filter: V => Boolean): SeqActor[T, V] =
     new LiteFilterSeq(reactor, this, filter)
+
+  def flatMapActor[V2](map: V => V2): SeqActor[T, V2] = {
+    val ms = mapActor(map)
+    ms.filterActor((x: V2) => x != null.asInstanceOf[V])
+  }
 }
 
 
