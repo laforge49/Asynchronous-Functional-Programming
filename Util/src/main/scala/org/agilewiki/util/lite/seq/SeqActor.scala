@@ -51,6 +51,36 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     sourceActor.send(this, SeqNextReq(key))(responseProcess)
   }
 
+  def has(sourceActor: LiteActor, key: T)
+         (responseProcess: PartialFunction[Any, Unit]) {
+    current(sourceActor, key) {
+      case rsp: SeqEndRsp => reply(false)
+      case rsp: SeqResultRsp[T, V] => reply(rsp.key == key)
+    }
+  }
+
+  def get(sourceActor: LiteActor, key: T)
+         (responseProcess: PartialFunction[Any, Unit]) {
+    current(sourceActor, key) {
+      case rsp: SeqEndRsp => reply(null.asInstanceOf[T])
+      case rsp: SeqResultRsp[T, V] => {
+        if (rsp.key == key) reply(rsp.value)
+        else reply(null.asInstanceOf[T])
+      }
+    }
+  }
+
+  def exact(sourceActor: LiteActor, key: T)
+         (responseProcess: PartialFunction[Any, Unit]) {
+    current(sourceActor, key) {
+      case rsp: SeqEndRsp => throw new IllegalArgumentException("not present: " + key)
+      case rsp: SeqResultRsp[T, V] => {
+        if (rsp.key == key) reply(rsp.value)
+        else throw new IllegalArgumentException("not present: " + key)
+      }
+    }
+  }
+
   def fold(sourceActor: LiteActor, seed: V, f: (V, V) => V)
           (responseProcess: PartialFunction[Any, Unit]) {
     sourceActor.send(this, FoldReq(seed, f))(responseProcess)
