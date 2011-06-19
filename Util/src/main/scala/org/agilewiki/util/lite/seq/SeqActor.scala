@@ -145,7 +145,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   }
 
   def mapActor[V2](map: V => V2): SeqActor[T, V2] =
-    new LiteMapSeq(reactor, this, map)
+    new LiteMapSeq(this, map)
 
   def filterActor(filter: V => Boolean): SeqActor[T, V] =
     new LiteFilterSeq(reactor, this, filter)
@@ -213,9 +213,6 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
   override protected def _find(key: T, find: V => Boolean) {
     reply(seq._find(null.asInstanceOf[T], find))
   }
-
-  override def mapActor[V2](map: V => V2) =
-    new LiteExtensionMapSeq(currentReactor, this, map)
 
   override def filterActor(filter: V => Boolean) =
     new LiteExtensionFilterSeq(currentReactor, this, filter)

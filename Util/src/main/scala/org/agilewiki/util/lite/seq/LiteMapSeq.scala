@@ -26,39 +26,34 @@ package util
 package lite
 package seq
 
-class LiteMapSeq[T, V1, V2](reactor: LiteReactor, liteSeq: SeqActor[T, V1], map: V1 => V2)
-  extends SeqActor[T, V2](reactor) {
+class LiteMapSeq[T, V1, V2](liteSeq: SeqActor[T, V1], map: V1 => V2)
+  extends SeqActor[T, V2](null) {
   override def comparator = liteSeq.comparator
 
-  addRequestHandler {
+  addRequestHandler{
     case req: SeqReq => send(liteSeq.asInstanceOf[LiteActor], req) {
       case rsp: SeqEndRsp => reply(SeqEndRsp())
       case rsp: SeqResultRsp[T, V1] => reply(SeqResultRsp(rsp.key, map(rsp.value)))
     }
   }
-}
 
-class LiteExtensionMapSeq[T, V1, V2](reactor: LiteReactor, seqExtensionActor: SeqExtensionActor[T, V1], map: V1 => V2)
-  extends SeqExtensionActor[T, V2](reactor, new MapSeqExtension[T, V1, V2](seqExtensionActor.seqExtension, map))
-
-class MapSeqExtension[T, V1, V2](extension: SeqExtension[T, V1], map: V1 => V2)
-  extends SeqExtension[T, V2] {
-
-  override def comparator = extension.comparator
-
-  override def current(k: T): SeqRsp = {
-    m(extension.current(k))
+  val m: PartialFunction[Any, Unit] = {
+    case r: SeqResultRsp[T, V1] => reply(SeqResultRsp(r.key, map(r.value)))
+    case r => reply(r)
   }
 
-  override def next(k: T): SeqRsp = {
-    m(extension.next(k))
+  override def first(sourceActor: LiteActor)
+                    (responseProcess: PartialFunction[Any, Unit]) {
+    liteSeq.first(this)(m)
   }
 
-  def m(rsp: SeqRsp): SeqRsp = {
-    return rsp match {
-      case r: SeqResultRsp[T, V1] => SeqResultRsp(r.key, map(r.value))
-      case r: SeqEndRsp => r
-      case r => r
-    }
+  override def current(sourceActor: LiteActor, key: T)
+                      (responseProcess: PartialFunction[Any, Unit]) {
+    liteSeq.current(this, key)(m)
+  }
+
+  override def next(sourceActor: LiteActor, key: T)
+                   (responseProcess: PartialFunction[Any, Unit]) {
+    liteSeq.next(this, key)(m)
   }
 }
