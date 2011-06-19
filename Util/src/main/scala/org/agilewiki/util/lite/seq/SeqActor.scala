@@ -54,8 +54,8 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   def has(sourceActor: LiteActor, key: T)
          (responseProcess: PartialFunction[Any, Unit]) {
     current(sourceActor, key) {
-      case rsp: SeqEndRsp => reply(false)
-      case rsp: SeqResultRsp[T, V] => reply(rsp.key == key)
+      case rsp: SeqEndRsp => responseProcess(false)
+      case rsp: SeqResultRsp[T, V] => responseProcess(rsp.key == key)
     }
   }
 
@@ -64,8 +64,8 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     current(sourceActor, key) {
       case rsp: SeqEndRsp => reply(null.asInstanceOf[T])
       case rsp: SeqResultRsp[T, V] => {
-        if (rsp.key == key) reply(rsp.value)
-        else reply(null.asInstanceOf[T])
+        if (rsp.key == key) responseProcess(rsp.value)
+        else responseProcess(null.asInstanceOf[T])
       }
     }
   }
@@ -75,7 +75,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     current(sourceActor, key) {
       case rsp: SeqEndRsp => throw new IllegalArgumentException("not present: " + key)
       case rsp: SeqResultRsp[T, V] => {
-        if (rsp.key == key) reply(rsp.value)
+        if (rsp.key == key) responseProcess(rsp.value)
         else throw new IllegalArgumentException("not present: " + key)
       }
     }
@@ -144,14 +144,14 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     }
   }
 
-  def mapActor[V2](map: V => V2): SeqActor[T, V2] =
-    new LiteMapSeq(this, map)
+  def mapActor[V2](seq: SeqActor[V, V2]): SeqActor[T, V2] =
+    new LiteMapSeq(this, seq)
 
   def filterActor(filter: V => Boolean): SeqActor[T, V] =
     new LiteFilterSeq(reactor, this, filter)
 
-  def flatMapActor[V2](map: V => V2): SeqActor[T, V2] = {
-    val ms = mapActor(map)
+  def flatMapActor[V2](seq: SeqActor[V, V2]): SeqActor[T, V2] = {
+    val ms = mapActor(seq)
     ms.filterActor((x: V2) => x != null.asInstanceOf[V])
   }
 }
@@ -168,25 +168,37 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
 
   override def first(sourceActor: LiteActor)
                     (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor, this)) responseProcess(seq.first)
+    if (isSafe(sourceActor, this)) {
+      currentReactor(sourceActor.currentReactor)
+      responseProcess(seq.first)
+    }
     else sourceActor.send(this, SeqFirstReq())(responseProcess)
   }
 
   override def current(sourceActor: LiteActor, key: T)
                       (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor, this)) responseProcess(seq.current(key))
+    if (isSafe(sourceActor, this)) {
+      currentReactor(sourceActor.currentReactor)
+      responseProcess(seq.current(key))
+    }
     else sourceActor.send(this, SeqCurrentReq(key))(responseProcess)
   }
 
   override def next(sourceActor: LiteActor, key: T)
                    (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor, this)) responseProcess(seq.next(key))
+    if (isSafe(sourceActor, this)) {
+      currentReactor(sourceActor.currentReactor)
+      responseProcess(seq.next(key))
+    }
     else sourceActor.send(this, SeqNextReq(key))(responseProcess)
   }
 
   override def fold(sourceActor: LiteActor, seed: V, f: (V, V) => V)
                    (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor, this)) responseProcess(seq._fold(null.asInstanceOf[T], seed, f))
+    if (isSafe(sourceActor, this)) {
+      currentReactor(sourceActor.currentReactor)
+      responseProcess(seq._fold(null.asInstanceOf[T], seed, f))
+    }
     else sourceActor.send(this, FoldReq(seed, f))(responseProcess)
   }
 
@@ -196,7 +208,10 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
 
   override def exists(sourceActor: LiteActor, e: V => Boolean)
                      (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor, this)) responseProcess(seq._exists(null.asInstanceOf[T], e))
+    if (isSafe(sourceActor, this)) {
+      currentReactor(sourceActor.currentReactor)
+      responseProcess(seq._exists(null.asInstanceOf[T], e))
+    }
     else sourceActor.send(this, ExistsReq(e))(responseProcess)
   }
 
@@ -206,7 +221,10 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
 
   override def find(sourceActor: LiteActor, f: V => Boolean)
                      (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor, this)) responseProcess(seq._find(null.asInstanceOf[T], f))
+    if (isSafe(sourceActor, this)) {
+      currentReactor(sourceActor.currentReactor)
+      responseProcess(seq._find(null.asInstanceOf[T], f))
+    }
     else sourceActor.send(this, FindReq(f))(responseProcess)
   }
 

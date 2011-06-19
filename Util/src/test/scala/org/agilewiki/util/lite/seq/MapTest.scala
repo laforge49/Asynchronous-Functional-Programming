@@ -14,11 +14,12 @@ class MapTest extends SpecificationWithJUnit {
       list.add("b")
       list.add("c")
       var seq = new LiteListSeq(null, list)
-      val m = new java.util.HashMap[String, String]
+      val m = new java.util.TreeMap[String, String]
       m.put("a", "Apple")
       m.put("b", "Boy")
       m.put("c", "Cat")
-      val mappedSeq = seq.mapActor((x: String) => m.get(x))
+      val mapSeq = new LiteNavigableMapSeq(null, m)
+      val mappedSeq = seq.mapActor(mapSeq)
       FutureSeq(mappedSeq).firstMatch(0, "Apple") must be equalTo true
       FutureSeq(mappedSeq).currentMatch(1, 1, "Boy") must be equalTo true
       FutureSeq(mappedSeq).nextMatch(1, 2, "Cat") must be equalTo true

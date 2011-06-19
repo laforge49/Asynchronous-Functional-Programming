@@ -26,20 +26,25 @@ package util
 package lite
 package seq
 
-class LiteMapSeq[T, V1, V2](liteSeq: SeqActor[T, V1], map: V1 => V2)
+class LiteMapSeq[T, V1, V2](liteSeq: SeqActor[T, V1], mapSeq: SeqActor[V1, V2])
   extends SeqActor[T, V2](null) {
   override def comparator = liteSeq.comparator
 
   addRequestHandler{
-    case req: SeqReq => send(liteSeq.asInstanceOf[LiteActor], req) {
-      case rsp: SeqEndRsp => reply(SeqEndRsp())
-      case rsp: SeqResultRsp[T, V1] => reply(SeqResultRsp(rsp.key, map(rsp.value)))
-    }
+    case req: SeqReq => send(liteSeq.asInstanceOf[LiteActor], req)(m)
   }
 
   val m: PartialFunction[Any, Unit] = {
-    case r: SeqResultRsp[T, V1] => reply(SeqResultRsp(r.key, map(r.value)))
-    case r => reply(r)
+    case r: SeqResultRsp[T, V1] => {
+      mapSeq.get(this, r.value) {
+        case mr => {
+          reply(SeqResultRsp(r.key, mr))
+        }
+      }
+    }
+    case r => {
+      reply(r)
+    }
   }
 
   override def first(sourceActor: LiteActor)
