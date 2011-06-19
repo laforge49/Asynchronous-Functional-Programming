@@ -28,7 +28,7 @@ package seq
 
 import annotation.tailrec
 
-class LiteFilterSeq[T, V](reactor: LiteReactor, liteSeq: SeqActor[T, V], filter: V => Boolean)
+class LiteFilterFunc[T, V](reactor: LiteReactor, liteSeq: SeqActor[T, V], filter: V => Boolean)
   extends SeqActor[T, V](reactor) {
   override def comparator = liteSeq.comparator
 
@@ -42,6 +42,29 @@ class LiteFilterSeq[T, V](reactor: LiteReactor, liteSeq: SeqActor[T, V], filter:
       case rsp: SeqResultRsp[T, V] => {
         if (filter(rsp.value)) reply(rsp)
         else _filter(SeqNextReq[T](rsp.key))
+      }
+    }
+  }
+}
+
+class LiteFilterSeq[T, V, V1](reactor: LiteReactor, liteSeq: SeqActor[T, V], filter: SeqActor[V, V1])
+  extends SeqActor[T, V](reactor) {
+  override def comparator = liteSeq.comparator
+
+  addRequestHandler {
+    case req: SeqReq => _filter(req)
+  }
+
+  private def _filter(req: SeqReq) {
+    send(liteSeq, req) {
+      case rsp: SeqEndRsp => reply(SeqEndRsp())
+      case rsp: SeqResultRsp[T, V] => {
+        filter.hasKey(this, rsp.value) {
+          case r: Boolean => {
+            if (r) reply(rsp)
+            else _filter(SeqNextReq[T](rsp.key))
+          }
+        }
       }
     }
   }

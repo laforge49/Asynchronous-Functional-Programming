@@ -58,5 +58,21 @@ class FilteredTest extends SpecificationWithJUnit {
       FutureSeq(seq).isEmpty must be equalTo true
       FutureSeq(iSeq).next(".") must be equalTo "00"
     }
+
+    "filter using a sequence" in {
+      val set = new TreeSet[String]
+      set add "00"
+      set add "01"
+      set add "10"
+      set add "11"
+      val iSeq = new LiteNavigableSetSeq(new LiteReactor, set)
+      val f = new TreeSet[String]
+      f add "01"
+      f add "30"
+      val sf = new LiteNavigableSetSeq(new LiteReactor, f)
+      val seq = iSeq.filterActor(sf)
+      FutureSeq(seq).firstMatch("01", "01") must be equalTo true
+      FutureSeq(seq).isNextEnd("01") must be equalTo true
+    }
   }
 }

@@ -51,7 +51,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     sourceActor.send(this, SeqNextReq(key))(responseProcess)
   }
 
-  def has(sourceActor: LiteActor, key: T)
+  def hasKey(sourceActor: LiteActor, key: T)
          (responseProcess: PartialFunction[Any, Unit]) {
     current(sourceActor, key) {
       case rsp: SeqEndRsp => responseProcess(false)
@@ -151,6 +151,9 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     new LiteMapSeq(reactor, this, map)
 
   def filterActor(filter: V => Boolean): SeqActor[T, V] =
+    new LiteFilterFunc(reactor, this, filter)
+
+  def filterActor[V1](filter: SeqActor[V, V1]): SeqActor[T, V] =
     new LiteFilterSeq(reactor, this, filter)
 
   def flatMapActor[V2](map: V => V2): SeqActor[T, V2] = {
