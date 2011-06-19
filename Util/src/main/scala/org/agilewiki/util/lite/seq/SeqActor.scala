@@ -147,8 +147,8 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   def mapActor[V2](map: V => V2): SeqActor[T, V2] =
     new LiteMapFunc(this, map)
 
-  def mapActor[V2](seq: SeqActor[V, V2]): SeqActor[T, V2] =
-    new LiteMapSeq(this, seq)
+  def mapActor[V2](map: SeqActor[V, V2]): SeqActor[T, V2] =
+    new LiteMapSeq(reactor, this, map)
 
   def filterActor(filter: V => Boolean): SeqActor[T, V] =
     new LiteFilterSeq(reactor, this, filter)
