@@ -18,8 +18,13 @@ class MapTest extends SpecificationWithJUnit {
       m.put("a", "Apple")
       m.put("b", "Boy")
       m.put("c", "Cat")
+      var mappedSeq = seq.mapActor((x: String) => m.get(x))
+      FutureSeq(mappedSeq).firstMatch(0, "Apple") must be equalTo true
+      FutureSeq(mappedSeq).currentMatch(1, 1, "Boy") must be equalTo true
+      FutureSeq(mappedSeq).nextMatch(1, 2, "Cat") must be equalTo true
+      FutureSeq(mappedSeq).isCurrentEnd(8) must be equalTo true
       val mapSeq = new LiteNavigableMapSeq(null, m)
-      val mappedSeq = seq.mapActor(mapSeq)
+      mappedSeq = seq.mapActor(mapSeq)
       FutureSeq(mappedSeq).firstMatch(0, "Apple") must be equalTo true
       FutureSeq(mappedSeq).currentMatch(1, 1, "Boy") must be equalTo true
       FutureSeq(mappedSeq).nextMatch(1, 2, "Cat") must be equalTo true

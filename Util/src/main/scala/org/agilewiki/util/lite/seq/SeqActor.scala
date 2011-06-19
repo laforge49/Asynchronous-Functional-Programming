@@ -71,7 +71,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   }
 
   def exact(sourceActor: LiteActor, key: T)
-         (responseProcess: PartialFunction[Any, Unit]) {
+           (responseProcess: PartialFunction[Any, Unit]) {
     current(sourceActor, key) {
       case rsp: SeqEndRsp => throw new IllegalArgumentException("not present: " + key)
       case rsp: SeqResultRsp[T, V] => {
@@ -144,11 +144,19 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     }
   }
 
+  def mapActor[V2](map: V => V2): SeqActor[T, V2] =
+    new LiteMapFunc(this, map)
+
   def mapActor[V2](seq: SeqActor[V, V2]): SeqActor[T, V2] =
     new LiteMapSeq(this, seq)
 
   def filterActor(filter: V => Boolean): SeqActor[T, V] =
     new LiteFilterSeq(reactor, this, filter)
+
+  def flatMapActor[V2](map: V => V2): SeqActor[T, V2] = {
+    val ms = mapActor(map)
+    ms.filterActor((x: V2) => x != null.asInstanceOf[V])
+  }
 
   def flatMapActor[V2](seq: SeqActor[V, V2]): SeqActor[T, V2] = {
     val ms = mapActor(seq)
@@ -220,7 +228,7 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
   }
 
   override def find(sourceActor: LiteActor, f: V => Boolean)
-                     (responseProcess: PartialFunction[Any, Unit]) {
+                   (responseProcess: PartialFunction[Any, Unit]) {
     if (isSafe(sourceActor, this)) {
       currentReactor(sourceActor.currentReactor)
       responseProcess(seq._find(null.asInstanceOf[T], f))
