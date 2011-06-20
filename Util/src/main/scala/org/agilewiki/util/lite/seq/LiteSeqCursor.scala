@@ -28,8 +28,8 @@ package seq
 
 import java.util.Comparator
 
-class LiteSeqCursor[T, V](wrappedSeq: SeqActor[T, V])
-  extends SeqActor[T, V](null)
+class LiteSeqCursor[T, V](reactor: LiteReactor, wrappedSeq: SeqActor[T, V])
+  extends SeqActor[T, V](reactor)
   with Comparable[LiteSeqCursor[T, V]] {
   var lastResult: SeqResultRsp[T, V] = null
 

@@ -36,26 +36,26 @@ trait LiteResponder {
     else _requestHandler = requestHandler orElse rh
   }
 
-  def currentReactor: LiteReactor
+  def liteReactor: LiteReactor
 
   def actor: LiteActor
 
   def isSafe(srcActor: LiteActor, dstActor: LiteActor) =
-    dstActor.liteReactor == null || srcActor.currentReactor == dstActor.liteReactor
+    dstActor.liteReactor == null || srcActor.liteReactor == dstActor.liteReactor
 
   def addExtension(ext: LiteExtension) {
     ext.actor(actor)
     addRequestHandler(ext.requestHandler)
   }
 
-  def systemContext = currentReactor.asInstanceOf[ContextReactor].systemContext
+  def systemContext = liteReactor.asInstanceOf[ContextReactor].systemContext
 
   def send(actor: LiteActor, content: Any)
           (responseProcess: PartialFunction[Any, Unit]) {
-    currentReactor.send(actor, content)(responseProcess)
+    liteReactor.send(actor, content)(responseProcess)
   }
 
   def reply(content: Any) {
-    currentReactor.reply(content)
+    liteReactor.reply(content)
   }
 }

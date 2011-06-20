@@ -13,7 +13,7 @@ class FoldTest extends SpecificationWithJUnit {
       list.add(1)
       list.add(2)
       list.add(3)
-      var seq = new LiteListSeq(null, list)
+      var seq = new LiteListSeq(new LiteReactor, list)
       FutureSeq(seq).fold(0, (x: Int, y: Int) => (x + y)) must be equalTo 6
     }
   }

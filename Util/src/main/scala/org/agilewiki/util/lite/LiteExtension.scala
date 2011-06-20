@@ -36,5 +36,5 @@ trait LiteExtension
 
   def actor = _actor
 
-  override def currentReactor = actor.currentReactor
+  override def liteReactor = actor.liteReactor
 }

@@ -32,7 +32,7 @@ case class PingerTestRetryReq(count: Int)
 case class PingerTestRsp
 
 class PingerTestActor(pinger: LiteActor)
-  extends LiteActor(null) {
+  extends LiteActor(new LiteReactor) {
   addRequestHandler {
     case req: PingerTestReq => {
       send(pinger, RetryReq(PingerTestRetryReq(5), 1)) {

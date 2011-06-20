@@ -29,15 +29,9 @@ import annotation.tailrec
 
 object LiteFuture {
 
-  def apply(actor: LiteActor, messageContent: Any, defaultReactor: LiteReactor) = {
-    val future = new LiteFuture
-    future.send(actor, messageContent, defaultReactor)
-    future.get
-  }
-
   def apply(actor: LiteActor, messageContent: Any) = {
     val future = new LiteFuture
-    future.send(actor, messageContent, new LiteReactor)
+    future.send(actor, messageContent)
     future.get
   }
 }
@@ -47,10 +41,9 @@ class LiteFuture
   @volatile private[this] var rsp: LiteRspMsg = _
   @volatile private[this] var satisfied = false
 
-  def send(actor: LiteActor, messageContent: Any, defaultReactor: LiteReactor) {
+  def send(actor: LiteActor, messageContent: Any) {
     val req = new LiteReqMsg(0, actor, null, null, messageContent, this)
-    actor.currentReactor(defaultReactor)
-    val reactor = actor.currentReactor
+    val reactor = actor.liteReactor
     reactor.request(req)
   }
 

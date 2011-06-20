@@ -59,7 +59,7 @@ class PacketResponder(reactor: ContextReactor, hostPort: HostPort)
 
   def forwardOutgoingRequest(packet: PacketReq) {
     val msgUuid = UUID.randomUUID.toString
-    requestsSent.put(msgUuid, currentReactor.currentRequestMessage)
+    requestsSent.put(msgUuid, liteReactor.currentRequestMessage)
     val externalPacket = OutgoingPacketReq(
       false,
       Uuid(msgUuid),
@@ -153,7 +153,7 @@ class PacketResponder(reactor: ContextReactor, hostPort: HostPort)
     }
     val actor = liteReqMsg.sender.asInstanceOf[LiteActor]
     val liteRspMsg = new LiteRspMsg(0, liteReqMsg.responseProcess, liteReqMsg, rsp)
-    actor.currentReactor.response(liteRspMsg)
+    actor.liteReactor.response(liteRspMsg)
   }
 
   def timeout(packet: OutgoingPacketReq) {
@@ -164,6 +164,6 @@ class PacketResponder(reactor: ContextReactor, hostPort: HostPort)
       ClassName(this.getClass),
       ClassName(outsideActor.getClass))
     val liteRspMsg = new LiteRspMsg(0, liteReqMsg.responseProcess, liteReqMsg, error)
-    actor.currentReactor.response(liteRspMsg)
+    actor.liteReactor.response(liteRspMsg)
   }
 }

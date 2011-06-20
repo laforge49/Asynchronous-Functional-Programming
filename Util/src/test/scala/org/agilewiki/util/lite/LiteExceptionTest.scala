@@ -30,9 +30,8 @@ import org.specs.SpecificationWithJUnit
 class LiteExceptionTest extends SpecificationWithJUnit {
   "lea" should {
     "reject message" in {
-      val reactor = new LiteReactor
       val actor = new LiteExceptionActor
-      val rsp = LiteFuture(actor, "?", reactor)
+      val rsp = LiteFuture(actor, "?")
       rsp.isInstanceOf[UncaughtExceptionRsp] must be equalTo (true)
       rsp.toString must be equalTo (
         "java.lang.IllegalArgumentException: java.lang.String; source=org.agilewiki.util.lite.LiteFuture; target=org.agilewiki.util.lite.LiteExceptionActor")
@@ -41,7 +40,7 @@ class LiteExceptionTest extends SpecificationWithJUnit {
 }
 
 class LiteExceptionActor
-  extends LiteActor(null) {
+  extends LiteActor(new LiteReactor) {
   addRequestHandler {
     case req: Int =>
   }

@@ -9,7 +9,7 @@ class EmptyTest extends SpecificationWithJUnit {
   "Empty Seq" should {
 
     "be empty" in {
-      val seq = new LiteEmptySeq[Int, Int]
+      val seq = new LiteEmptySeq[Int, Int](new LiteReactor)
       FutureSeq(seq).isEmpty must be equalTo true
     }
   }

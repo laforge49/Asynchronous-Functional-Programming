@@ -40,7 +40,7 @@ class Pinger extends LiteActor(new LiteReactor) {
 
   addRequestHandler {
     case req: RetryReq => {
-      reply(RetryRsp(retry(req.timeout, currentReactor.currentRequestMessage, req.notification)))
+      reply(RetryRsp(retry(req.timeout, liteReactor.currentRequestMessage, req.notification)))
     }
     case req: ExtendedRetryReq => {
       reply(ExtendedRetryRsp(retry(req.timeout, req.retry, req.notification)))
@@ -59,10 +59,10 @@ class Pinger extends LiteActor(new LiteReactor) {
           oldRequest.oldRequest,
           notification,
           oldRequest.sender)
-        target.currentReactor.request(newReqMsg)
+        target.liteReactor.request(newReqMsg)
       }
     }
-    currentReactor.scheduler.execute {
+    liteReactor.scheduler.execute {
       timer.schedule(tt, timeout)
     }
     tt

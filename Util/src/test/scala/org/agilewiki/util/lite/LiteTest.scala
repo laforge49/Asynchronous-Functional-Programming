@@ -45,15 +45,13 @@ class LiteTest extends SpecificationWithJUnit {
       val M = 1000
       val N = 1000
       val actors = new Array[LiteActor](M)
-      val defaultReactors = new Array[LiteReactor](M)
       var j = 0
       while (j < M) {
-        val reactor = new LiteReactor
-        defaultReactors.update(j, reactor)
         var actor: LiteActor = null
+        val reactor = new LiteReactor
         var i = 0
         while (i < N) {
-          actor = new LiteTestActor(null, actor)
+          actor = new LiteTestActor(reactor, actor)
           i = i + 1
         }
         actors.update(j, actor)
@@ -71,8 +69,7 @@ class LiteTest extends SpecificationWithJUnit {
       while (j < M) {
         val future = futures(j)
         val actor = actors(j)
-        val defaultReactor = defaultReactors(j)
-        future.send(actor, null, defaultReactor)
+        future.send(actor, null)
         j = j + 1
       }
       j = 0

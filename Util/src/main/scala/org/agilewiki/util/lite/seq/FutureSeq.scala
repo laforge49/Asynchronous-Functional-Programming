@@ -30,7 +30,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   extends LiteFuture {
 
   def isEmpty: Boolean = {
-    send(actor, SeqFirstReq(), new LiteReactor)
+    send(actor, SeqFirstReq())
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return true
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) return false
@@ -38,7 +38,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def firstKey: T = {
-    send(actor, SeqFirstReq(), new LiteReactor)
+    send(actor, SeqFirstReq())
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return null.asInstanceOf[T]
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) return rsp.asInstanceOf[SeqResultRsp[T, V]].key
@@ -46,7 +46,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def first: V = {
-    send(actor, SeqFirstReq(), new LiteReactor)
+    send(actor, SeqFirstReq())
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return null.asInstanceOf[V]
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) return rsp.asInstanceOf[SeqResultRsp[T, V]].value
@@ -54,7 +54,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def firstMatch(expectedKey: T, expectedValue: V): Boolean = {
-    send(actor, SeqFirstReq(), new LiteReactor)
+    send(actor, SeqFirstReq())
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return false
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) {
@@ -65,7 +65,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def currentKey(k: T): T = {
-    send(actor, SeqCurrentReq[T](k), new LiteReactor)
+    send(actor, SeqCurrentReq[T](k))
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return null.asInstanceOf[T]
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) return rsp.asInstanceOf[SeqResultRsp[T, V]].key
@@ -73,7 +73,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def current(k: T): V = {
-    send(actor, SeqCurrentReq[T](k), new LiteReactor)
+    send(actor, SeqCurrentReq[T](k))
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return null.asInstanceOf[V]
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) return rsp.asInstanceOf[SeqResultRsp[T, V]].value
@@ -81,7 +81,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def currentMatch(k: T, expectedKey: T, expectedValue: V): Boolean = {
-    send(actor, SeqCurrentReq[T](k), new LiteReactor)
+    send(actor, SeqCurrentReq[T](k))
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return false
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) {
@@ -92,7 +92,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def currentPair(k: T): (T, V) = {
-    send(actor, SeqCurrentReq[T](k), new LiteReactor)
+    send(actor, SeqCurrentReq[T](k))
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return (k, null.asInstanceOf[V])
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) {
@@ -103,7 +103,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def isCurrentEnd(k: T): Boolean = {
-    send(actor, SeqCurrentReq[T](k), new LiteReactor)
+    send(actor, SeqCurrentReq[T](k))
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return true
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) return false
@@ -111,7 +111,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def nextKey(k: T): T = {
-    send(actor, SeqNextReq[T](k), new LiteReactor)
+    send(actor, SeqNextReq[T](k))
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return null.asInstanceOf[T]
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) return rsp.asInstanceOf[SeqResultRsp[T, V]].key
@@ -119,7 +119,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def next(k: T): V = {
-    send(actor, SeqNextReq[T](k), new LiteReactor)
+    send(actor, SeqNextReq[T](k))
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return null.asInstanceOf[V]
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) return rsp.asInstanceOf[SeqResultRsp[T, V]].value
@@ -127,7 +127,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def nextMatch(k: T, expectedKey: T, expectedValue: V): Boolean = {
-    send(actor, SeqNextReq[T](k), new LiteReactor)
+    send(actor, SeqNextReq[T](k))
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return false
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) {
@@ -138,7 +138,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def nextPair(k: T): (T, V) = {
-    send(actor, SeqNextReq[T](k), new LiteReactor)
+    send(actor, SeqNextReq[T](k))
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return (k, null.asInstanceOf[V])
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) {
@@ -149,7 +149,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def isNextEnd(k: T): Boolean = {
-    send(actor, SeqNextReq[T](k), new LiteReactor)
+    send(actor, SeqNextReq[T](k))
     val rsp = get
     if (rsp.isInstanceOf[SeqEndRsp]) return true
     if (rsp.isInstanceOf[SeqResultRsp[T, V]]) return false
@@ -157,7 +157,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def fold(seed: V, f: (V, V) => V): V = {
-    send(actor, FoldReq(seed, f), new LiteReactor)
+    send(actor, FoldReq(seed, f))
     val rsp = get
     if (rsp.isInstanceOf[FoldRsp[V]]) return rsp.asInstanceOf[FoldRsp[V]].result
     throw new UnsupportedOperationException(rsp.toString)
@@ -168,14 +168,14 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def exists(f: V => Boolean): Boolean = {
-    send(actor, ExistsReq(f), new LiteReactor)
+    send(actor, ExistsReq(f))
     val rsp = get
     if (rsp.isInstanceOf[ExistsRsp]) return rsp.asInstanceOf[ExistsRsp].result
     throw new UnsupportedOperationException(rsp.toString)
   }
 
   def find(f: V => Boolean): V = {
-    send(actor, FindReq(f), new LiteReactor)
+    send(actor, FindReq(f))
     val rsp = get
     if (rsp.isInstanceOf[FoundRsp[V]]) return rsp.asInstanceOf[FoundRsp[V]].result
     throw new UnsupportedOperationException(rsp.toString)
@@ -186,7 +186,7 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
   }
 
   def noFind(f: V => Boolean): Boolean = {
-    send(actor, FindReq(f), new LiteReactor)
+    send(actor, FindReq(f))
     val rsp = get
     if (rsp.isInstanceOf[FoundRsp[V]]) return false
     if (rsp.isInstanceOf[NotFoundRsp]) return true

@@ -44,12 +44,9 @@ class UdpListener(localHostPort: HostPort, insideActor: LiteActor)
     case Some(x) => x
   }
 
-  lazy val defaultReactor = new ContextReactor(systemContext)
-
-  def send(actor: LiteActor, messageContent: Any, defaultReactor: LiteReactor) {
+  def send(actor: LiteActor, messageContent: Any) {
     val req = new LiteReqMsg(0, actor, null, null, messageContent, this)
-    actor.currentReactor(defaultReactor)
-    val reactor = actor.currentReactor
+    val reactor = actor.liteReactor
     reactor.request(req)
   }
 
@@ -82,7 +79,7 @@ class UdpListener(localHostPort: HostPort, insideActor: LiteActor)
     if (util.Configuration(systemContext).localServerName != dstServer) return
     val hostPort = HostPort(packet.getAddress, packet.getPort)
     val msg = IncomingPacketReq(isReply, msgUuid, hostPort, srcServer, reqActor, payload)
-    send(insideActor, msg, defaultReactor)
+    send(insideActor, msg)
   }
 
   private def startReceivingIncomingMessages {

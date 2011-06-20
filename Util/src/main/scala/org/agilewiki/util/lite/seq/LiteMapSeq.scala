@@ -26,8 +26,8 @@ package util
 package lite
 package seq
 
-class LiteMapSeq[T, V1, V2](reactor: LiteReactor, liteSeq: SeqActor[T, V1], mapSeq: SeqActor[V1, V2])
-  extends SeqActor[T, V2](null) {
+class LiteMapSeq[T, V1, V2](liteSeq: SeqActor[T, V1], mapSeq: SeqActor[V1, V2])
+  extends SeqActor[T, V2](liteSeq.liteReactor) {
   override def comparator = liteSeq.comparator
 
   addRequestHandler{
@@ -59,7 +59,7 @@ class LiteMapSeq[T, V1, V2](reactor: LiteReactor, liteSeq: SeqActor[T, V1], mapS
 }
 
 class LiteMapFunc[T, V1, V2](liteSeq: SeqActor[T, V1], map: V1 => V2)
-  extends SeqActor[T, V2](null) {
+  extends SeqActor[T, V2](liteSeq.liteReactor) {
   override def comparator = liteSeq.comparator
 
   addRequestHandler{

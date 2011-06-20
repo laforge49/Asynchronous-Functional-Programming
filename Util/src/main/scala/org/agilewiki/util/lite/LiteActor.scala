@@ -33,21 +33,14 @@ class LiteActor(reactor: LiteReactor)
   extends LiteResponder
   with LiteSrc
   with SystemContext {
-  private var _currentReactor = reactor
 
   def actor = this
 
-  def liteReactor = reactor
-
-  override def currentReactor = _currentReactor
-
-  def currentReactor(activeReactor: LiteReactor) {
-    if (reactor.eq(null)) _currentReactor = activeReactor
-  }
+  override def liteReactor = reactor
 
   override def response(msg: LiteRspMsg) {
-    currentReactor.response(msg)
+    liteReactor.response(msg)
   }
 
-  def senderUuid = currentReactor.currentRequestMessage.sender.asInstanceOf[InternalAddressActor].getUuid
+  def senderUuid = liteReactor.currentRequestMessage.sender.asInstanceOf[InternalAddressActor].getUuid
 }

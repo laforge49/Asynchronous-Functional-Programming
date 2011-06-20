@@ -46,15 +46,11 @@ class LiteReactor extends Reactor[LiteMsg] {
         case msg: LiteReqMsg => {
           curMsg = msg
           val target = msg.target
-          target.currentReactor(this)
           (target.requestHandler orElse uncaughtMsg)(msg.content)
         }
         case msg: LiteRspMsg => {
           curMsg = msg
           val sender = currentRequestMessage.sender
-          if (sender.isInstanceOf[LiteActor]) {
-            sender.asInstanceOf[LiteActor].currentReactor(this)
-          }
           (msg.responseProcess orElse uncaughtMsg)(msg.content)
         }
         case msg => {
@@ -133,7 +129,6 @@ class LiteReactor extends Reactor[LiteMsg] {
       val oldMsg = curMsg
       curMsg = req
       try {
-        targetActor.currentReactor(this)
         (targetActor.requestHandler orElse uncaughtMsg)(content)
       } catch {
         case ex: Exception => exceptionHandler(ex)
@@ -164,9 +159,6 @@ class LiteReactor extends Reactor[LiteMsg] {
       val oldMsg = curMsg
       curMsg = rsp
       try {
-        if (sender.isInstanceOf[LiteActor]) {
-          sender.asInstanceOf[LiteActor].currentReactor(this)
-        }
         (req.responseProcess orElse uncaughtMsg)(content)
       } catch {
         case ex: Exception => exceptionHandler(ex)

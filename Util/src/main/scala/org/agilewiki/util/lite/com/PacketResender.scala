@@ -71,7 +71,7 @@ class PacketResender(reactor: ContextReactor, uuid: Uuid, insideActor: LiteActor
       outgoingRspCache.put(msgUuid, packet)
     }
     else
-      sendRequests.put(msgUuid, currentReactor.currentRequestMessage)
+      sendRequests.put(msgUuid, liteReactor.currentRequestMessage)
     send(outsideActor, packet) {
       case rsp: OutgoingPacketRsp => reply(rsp)
     }
