@@ -168,7 +168,7 @@ class LiteReactor extends Reactor[LiteMsg] {
   }
 }
 
-abstract class LiteMsg(depth: Int,
+sealed abstract class LiteMsg(depth: Int,
                        pf: PartialFunction[Any, Unit],
                        oldReq: LiteReqMsg,
                        data: Any) {

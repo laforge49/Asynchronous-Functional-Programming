@@ -42,12 +42,14 @@ class NavigableMapSeqExtension[T, V](navigableMap: NavigableMap[T, V])
     c
   }
 
+  override def first: SeqRsp = {
+    if (navigableMap.isEmpty) return SeqEndRsp()
+    val key = navigableMap.firstKey
+    return SeqResultRsp(key, navigableMap.get(key))
+  }
+
   override def current(k: T): SeqRsp = {
     if (navigableMap.isEmpty) return SeqEndRsp()
-    if (k == null) {
-      val key = navigableMap.firstKey
-      return SeqResultRsp(key, navigableMap.get(key))
-    }
     val key = navigableMap.ceilingKey(k)
     if (key == null) return SeqEndRsp()
     SeqResultRsp(key, navigableMap.get(key))
@@ -55,10 +57,6 @@ class NavigableMapSeqExtension[T, V](navigableMap: NavigableMap[T, V])
 
   override def next(k: T): SeqRsp = {
     if (navigableMap.isEmpty) return SeqEndRsp()
-    if (k == null) {
-      val key = navigableMap.firstKey
-      return SeqResultRsp(key, navigableMap.get(key))
-    }
     val key = navigableMap.higherKey(k)
     if (key == null) return SeqEndRsp()
     SeqResultRsp(key, navigableMap.get(key))

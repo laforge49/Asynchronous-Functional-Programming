@@ -32,7 +32,7 @@ class LiteFilterFunc[T, V](reactor: LiteReactor, liteSeq: SeqActor[T, V], filter
   extends SeqActor[T, V](reactor) {
   override def comparator = liteSeq.comparator
 
-  addRequestHandler {
+  addRequestHandler{
     case req: SeqReq => _filter(req)
   }
 
@@ -51,7 +51,7 @@ class LiteFilterSeq[T, V, V1](reactor: LiteReactor, liteSeq: SeqActor[T, V], fil
   extends SeqActor[T, V](reactor) {
   override def comparator = liteSeq.comparator
 
-  addRequestHandler {
+  addRequestHandler{
     case req: SeqReq => _filter(req)
   }
 
@@ -77,6 +77,10 @@ class FilterSeqExtension[T, V](extension: SeqExtension[T, V], filter: V => Boole
   extends SeqExtension[T, V] {
 
   override def comparator = extension.comparator
+
+  override def first: SeqRsp = {
+    f(extension.first)
+  }
 
   override def current(k: T): SeqRsp = {
     f(extension.current(k))

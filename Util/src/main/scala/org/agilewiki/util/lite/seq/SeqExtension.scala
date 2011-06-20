@@ -33,11 +33,12 @@ trait SeqExtension[T, V]
   with SeqComparator[T] {
 
   addRequestHandler{
+    case req: SeqFirstReq => reply(first)
     case req: SeqCurrentReq[T] => reply(current(req.key))
     case req: SeqNextReq[T] => reply(next(req.key))
   }
 
-  def first = current(null.asInstanceOf[T])
+  def first: SeqRsp
 
   def current(key: T): SeqRsp
 

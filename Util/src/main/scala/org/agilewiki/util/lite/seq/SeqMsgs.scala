@@ -26,44 +26,39 @@ package util
 package lite
 package seq
 
-abstract class SeqReq
+sealed abstract class SeqReq
 
-case class SeqCurrentReq[T](key: T)
+final case class SeqFirstReq()
   extends SeqReq
 
-object SeqFirstReq {
-  def apply(): SeqCurrentReq[Any] = SeqCurrentReq(null)
-}
-
-case class SeqNextReq[T](key: T)
+final case class SeqCurrentReq[T](key: T)
   extends SeqReq
 
-object SeqNextReq {
-  def apply(): SeqNextReq[Any] = SeqNextReq(null)
-}
+final case class SeqNextReq[T](key: T)
+  extends SeqReq
 
-abstract class SeqRsp
+sealed abstract class SeqRsp
 
-case class SeqResultRsp[T, V](key: T, value: V)
+final case class SeqResultRsp[T, V](key: T, value: V)
   extends SeqRsp
 
-case class SeqEndRsp()
+final case class SeqEndRsp()
   extends SeqRsp
 
-case class FoldReq[V](seed: V, fold: (V, V) => V)
+final case class FoldReq[V](seed: V, fold: (V, V) => V)
 
-case class FoldRsp[V](result: V)
+final case class FoldRsp[V](result: V)
 
-case class ExistsReq[V](exists: V => Boolean)
+final case class ExistsReq[V](exists: V => Boolean)
 
-case class ExistsRsp(result: Boolean)
+final case class ExistsRsp(result: Boolean)
 
-case class FindReq[V](find: V => Boolean)
+final case class FindReq[V](find: V => Boolean)
 
-abstract class FindRsp
+sealed abstract class FindRsp
 
-case class FoundRsp[V](result: V)
+final case class FoundRsp[V](result: V)
   extends FindRsp
 
-case class NotFoundRsp()
+final case class NotFoundRsp()
   extends FindRsp

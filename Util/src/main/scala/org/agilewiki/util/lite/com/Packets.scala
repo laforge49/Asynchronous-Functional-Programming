@@ -28,21 +28,21 @@ package com
 
 import java.net.InetAddress
 
-object HostPort {
+final object HostPort {
   def apply(hostName: String, port: Int): HostPort = HostPort(InetAddress.getByName(hostName), port)
 }
 
-case class HostPort(inetAddress: InetAddress, port: Int)
+final case class HostPort(inetAddress: InetAddress, port: Int)
 
-abstract class Packet(_payload: DataStack) {
+sealed abstract class Packet(_payload: DataStack) {
   def outputPayload = _payload.asInstanceOf[DataOutputStack].clone
   def inputPayload = _payload.inputPayload
 }
 
-case class PacketReq(server: String, actorName: ResourceName, payload: DataStack)
+final case class PacketReq(server: String, actorName: ResourceName, payload: DataStack)
   extends Packet(payload)
 
-abstract class ExternalPacket(_isReply: Boolean,
+sealed abstract class ExternalPacket(_isReply: Boolean,
                               _msgUuid: Uuid,
                               _hostPort: HostPort,
                               _server: String,
@@ -50,7 +50,7 @@ abstract class ExternalPacket(_isReply: Boolean,
                               _payload: DataStack)
   extends Packet(_payload)
 
-case class OutgoingPacketReq(isReply: Boolean,
+final case class OutgoingPacketReq(isReply: Boolean,
                              msgUuid: Uuid,
                              hostPort: HostPort,
                              server: String,
@@ -60,9 +60,9 @@ case class OutgoingPacketReq(isReply: Boolean,
   var retry = false
 }
 
-case class OutgoingPacketRsp()
+final case class OutgoingPacketRsp()
 
-case class IncomingPacketReq(isReply: Boolean,
+final case class IncomingPacketReq(isReply: Boolean,
                              msgUuid: Uuid,
                              hostPort: HostPort,
                              server: String,
@@ -70,4 +70,4 @@ case class IncomingPacketReq(isReply: Boolean,
                              payload: DataStack)
   extends ExternalPacket(isReply, msgUuid, hostPort, server, actorName, payload)
 
-case class IncomingPacketRsp()
+final case class IncomingPacketRsp()

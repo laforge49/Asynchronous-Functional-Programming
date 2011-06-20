@@ -32,12 +32,17 @@ class LiteListSeq[V](reactor: LiteReactor, list: java.util.List[V])
 class ListSeqExtension[V](list: java.util.List[V])
   extends SeqExtension[Int, V] {
 
-  override def current(key: Int): SeqRsp = {
-    var k = key
-    if (k < 0) k = 0
-    if (k + 1 > list.size) return SeqEndRsp()
-    SeqResultRsp(k, list.get(k))
+  override def first: SeqRsp = {
+    if (list.isEmpty) return SeqEndRsp()
+    SeqResultRsp(0, list.get(0))
   }
+
+    override def current(key: Int): SeqRsp = {
+      var k = key
+      if (k < 0) k = 0
+      if (k + 1 > list.size) return SeqEndRsp()
+      SeqResultRsp(k, list.get(k))
+    }
 
   override def next(key: Int): SeqRsp = {
     var k = key

@@ -32,6 +32,7 @@ class LiteSeqCursor[T, V](reactor: LiteReactor, wrappedSeq: SeqActor[T, V])
   extends SeqActor[T, V](reactor)
   with Comparable[LiteSeqCursor[T, V]] {
   var lastResult: SeqResultRsp[T, V] = null
+  var _first = false
 
   override def comparator: Comparator[T] = wrappedSeq.comparator
 
@@ -55,9 +56,31 @@ class LiteSeqCursor[T, V](reactor: LiteReactor, wrappedSeq: SeqActor[T, V])
     compareTo(other) == 0
   }
 
-  addRequestHandler {
+  addRequestHandler{
+    case req: SeqFirstReq => first(req)
     case req: SeqCurrentReq[T] => current(req)
     case req: SeqNextReq[T] => next(req)
+  }
+
+  private def first(req: SeqFirstReq) {
+    if (inited && _first)
+      if (lastResult != null) reply(lastResult)
+      else reply(SeqEndRsp())
+    else {
+      inited = true
+      send(wrappedSeq.asInstanceOf[LiteActor], req) {
+        case rsp: SeqEndRsp => {
+          lastResult = null
+          _first = true
+          reply(rsp)
+        }
+        case rsp: SeqResultRsp[T, V] => {
+          lastResult = rsp
+          _first = true
+          reply(rsp)
+        }
+      }
+    }
   }
 
   private def current(req: SeqCurrentReq[T]) {
@@ -68,10 +91,12 @@ class LiteSeqCursor[T, V](reactor: LiteReactor, wrappedSeq: SeqActor[T, V])
       send(wrappedSeq.asInstanceOf[LiteActor], req) {
         case rsp: SeqEndRsp => {
           lastResult = null
+          _first = false
           reply(rsp)
         }
         case rsp: SeqResultRsp[T, V] => {
           lastResult = rsp
+          _first = false
           reply(rsp)
         }
       }
@@ -84,10 +109,12 @@ class LiteSeqCursor[T, V](reactor: LiteReactor, wrappedSeq: SeqActor[T, V])
     send(wrappedSeq.asInstanceOf[LiteActor], SeqNextReq(key)) {
       case rsp: SeqEndRsp => {
         lastResult = null
+        _first = false
         reply(rsp)
       }
       case rsp: SeqResultRsp[T, V] => {
         lastResult = rsp
+        _first = false
         reply(rsp)
       }
     }

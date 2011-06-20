@@ -38,7 +38,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
 
   def first(sourceActor: LiteActor)
            (responseProcess: PartialFunction[Any, Unit]) {
-    current(sourceActor, null.asInstanceOf[T])(responseProcess)
+    sourceActor.send(this, SeqFirstReq)(responseProcess)
   }
 
   def current(sourceActor: LiteActor, key: T)
@@ -183,13 +183,21 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
 
   override def comparator = seq.comparator
 
-  override def current(sourceActor: LiteActor, key: T)
-                      (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor, this)) {
-      responseProcess(seq.current(key))
+    override def first(sourceActor: LiteActor)
+                        (responseProcess: PartialFunction[Any, Unit]) {
+      if (isSafe(sourceActor, this)) {
+        responseProcess(seq.first)
+      }
+      else sourceActor.send(this, SeqFirstReq)(responseProcess)
     }
-    else sourceActor.send(this, SeqCurrentReq(key))(responseProcess)
-  }
+
+    override def current(sourceActor: LiteActor, key: T)
+                        (responseProcess: PartialFunction[Any, Unit]) {
+      if (isSafe(sourceActor, this)) {
+        responseProcess(seq.current(key))
+      }
+      else sourceActor.send(this, SeqCurrentReq(key))(responseProcess)
+    }
 
   override def next(sourceActor: LiteActor, key: T)
                    (responseProcess: PartialFunction[Any, Unit]) {
