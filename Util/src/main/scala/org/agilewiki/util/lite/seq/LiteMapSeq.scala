@@ -47,11 +47,6 @@ class LiteMapSeq[T, V1, V2](reactor: LiteReactor, liteSeq: SeqActor[T, V1], mapS
     }
   }
 
-  override def first(sourceActor: LiteActor)
-                    (responseProcess: PartialFunction[Any, Unit]) {
-    liteSeq.first(this)(m)
-  }
-
   override def current(sourceActor: LiteActor, key: T)
                       (responseProcess: PartialFunction[Any, Unit]) {
     liteSeq.current(this, key)(m)
@@ -76,11 +71,6 @@ class LiteMapFunc[T, V1, V2](liteSeq: SeqActor[T, V1], map: V1 => V2)
     case r => {
       reply(r)
     }
-  }
-
-  override def first(sourceActor: LiteActor)
-                    (responseProcess: PartialFunction[Any, Unit]) {
-    liteSeq.first(this)(m)
   }
 
   override def current(sourceActor: LiteActor, key: T)
