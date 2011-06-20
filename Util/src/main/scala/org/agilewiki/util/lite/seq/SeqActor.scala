@@ -171,6 +171,9 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     val ms = mapActor(seq)
     ms.filterActor((x: V2) => x != null.asInstanceOf[V])
   }
+
+  def tailActor(start: T): SeqActor[T, V] =
+    new LiteTailSeq(reactor, this, start)
 }
 
 
@@ -183,21 +186,21 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
 
   override def comparator = seq.comparator
 
-    override def first(sourceActor: LiteActor)
-                        (responseProcess: PartialFunction[Any, Unit]) {
-      if (isSafe(sourceActor, this)) {
-        responseProcess(seq.first)
-      }
-      else sourceActor.send(this, SeqFirstReq)(responseProcess)
+  override def first(sourceActor: LiteActor)
+                    (responseProcess: PartialFunction[Any, Unit]) {
+    if (isSafe(sourceActor, this)) {
+      responseProcess(seq.first)
     }
+    else sourceActor.send(this, SeqFirstReq)(responseProcess)
+  }
 
-    override def current(sourceActor: LiteActor, key: T)
-                        (responseProcess: PartialFunction[Any, Unit]) {
-      if (isSafe(sourceActor, this)) {
-        responseProcess(seq.current(key))
-      }
-      else sourceActor.send(this, SeqCurrentReq(key))(responseProcess)
+  override def current(sourceActor: LiteActor, key: T)
+                      (responseProcess: PartialFunction[Any, Unit]) {
+    if (isSafe(sourceActor, this)) {
+      responseProcess(seq.current(key))
     }
+    else sourceActor.send(this, SeqCurrentReq(key))(responseProcess)
+  }
 
   override def next(sourceActor: LiteActor, key: T)
                    (responseProcess: PartialFunction[Any, Unit]) {
