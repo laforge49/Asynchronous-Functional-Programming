@@ -52,3 +52,24 @@ class LiteTailSeq[T, V](reactor: LiteReactor, liteSeq: SeqActor[T, V], start: T)
     }
   }
 }
+
+class LiteExtensionTailSeq[T, V](reactor: LiteReactor, seqExtensionActor: SeqExtensionActor[T, V], start: T)
+  extends SeqExtensionActor[T, V](reactor, new TailSeqExtension[T, V](seqExtensionActor.seqExtension, start))
+
+class TailSeqExtension[T, V](extension: SeqExtension[T, V], start: T)
+  extends SeqExtension[T, V] {
+
+  override def comparator = extension.comparator
+
+  override def first: SeqRsp = extension.current(start)
+
+  override def current(k: T): SeqRsp = {
+    if (comparator.compare(k, start) < 0) extension.current(start)
+    else extension.current(k)
+  }
+
+  override def next(k: T): SeqRsp = {
+    if (comparator.compare(k, start) < 0) extension.current(start)
+    else extension.next(k)
+  }
+}
