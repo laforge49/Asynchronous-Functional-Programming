@@ -150,29 +150,29 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     }
   }
 
-  def mapActor[V2](map: V => V2): SeqActor[T, V2] =
-    new LiteMapFunc(this, map)
+  def map[V2](_map: V => V2): SeqActor[T, V2] =
+    new LiteMapFunc(this, _map)
 
-  def mapActor[V2](map: SeqActor[V, V2]): SeqActor[T, V2] =
-    new LiteMapSeq(this, map)
+  def map[V2](_map: SeqActor[V, V2]): SeqActor[T, V2] =
+    new LiteMapSeq(this, _map)
 
-  def filterActor(filter: V => Boolean): SeqActor[T, V] =
-    new LiteFilterFunc(reactor, this, filter)
+  def filter(_filter: V => Boolean): SeqActor[T, V] =
+    new LiteFilterFunc(reactor, this, _filter)
 
-  def filterActor[V1](filter: SeqActor[V, V1]): SeqActor[T, V] =
-    new LiteFilterSeq(reactor, this, filter)
+  def filter[V1](_filter: SeqActor[V, V1]): SeqActor[T, V] =
+    new LiteFilterSeq(reactor, this, _filter)
 
-  def flatMapActor[V2](map: V => V2): SeqActor[T, V2] = {
-    val ms = mapActor(map)
-    ms.filterActor((x: V2) => x != null.asInstanceOf[V])
+  def flatMap[V2](_map: V => V2): SeqActor[T, V2] = {
+    val ms = map(_map)
+    ms.filter((x: V2) => x != null.asInstanceOf[V])
   }
 
-  def flatMapActor[V2](seq: SeqActor[V, V2]): SeqActor[T, V2] = {
-    val ms = mapActor(seq)
-    ms.filterActor((x: V2) => x != null.asInstanceOf[V])
+  def flatMap[V2](seq: SeqActor[V, V2]): SeqActor[T, V2] = {
+    val ms = map(seq)
+    ms.filter((x: V2) => x != null.asInstanceOf[V])
   }
 
-  def tailActor(start: T): SeqActor[T, V] =
+  def tail(start: T): SeqActor[T, V] =
     new LiteTailSeq(reactor, this, start)
 }
 
@@ -246,6 +246,6 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
     reply(seq._find(find))
   }
 
-  override def filterActor(filter: V => Boolean) =
+  override def filter(filter: V => Boolean) =
     new LiteExtensionFilterSeq(liteReactor, this, filter)
 }

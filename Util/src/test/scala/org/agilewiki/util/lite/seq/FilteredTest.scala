@@ -13,7 +13,7 @@ class FilteredTest extends SpecificationWithJUnit {
       val set = new TreeSet[String]
       val iSeq = new LiteNavigableSetSeq(new LiteReactor, set)
       FutureSeq(iSeq).isEmpty must be equalTo true
-      val seq = iSeq.filterActor((x: String) => true)
+      val seq = iSeq.filter((x: String) => true)
       FutureSeq(seq).isEmpty must be equalTo true
       set.add("123")
       FutureSeq(iSeq).next("0") must be equalTo "123"
@@ -26,7 +26,7 @@ class FilteredTest extends SpecificationWithJUnit {
       var set = new TreeSet[String]
       val iSeq = new LiteNavigableSetSeq(new LiteReactor, set)
       FutureSeq(iSeq).isEmpty must be equalTo true
-      val seq = iSeq.filterActor((x: String) => false)
+      val seq = iSeq.filter((x: String) => false)
       FutureSeq(seq).isEmpty must be equalTo true
       set.add("123")
       FutureSeq(iSeq).first must be equalTo "123"
@@ -42,7 +42,7 @@ class FilteredTest extends SpecificationWithJUnit {
       set add "11"
       var iSeq = new LiteNavigableSetSeq(new LiteReactor, set)
       FutureSeq(iSeq).first must be equalTo "00"
-      var seq = iSeq.filterActor((x: String) => x endsWith "1")
+      var seq = iSeq.filter((x: String) => x endsWith "1")
       FutureSeq(seq).first must be equalTo "01"
       var pk = FutureSeq(seq).firstKey
       while (pk != null) {
@@ -54,7 +54,7 @@ class FilteredTest extends SpecificationWithJUnit {
       FutureSeq(seq).isCurrentEnd("abc") must be equalTo true
 
       FutureSeq(iSeq).current("0") must be equalTo "00"
-      seq = iSeq.filterActor((x: String) => x startsWith ".")
+      seq = iSeq.filter((x: String) => x startsWith ".")
       FutureSeq(seq).isEmpty must be equalTo true
       FutureSeq(iSeq).next(".") must be equalTo "00"
     }
@@ -70,7 +70,7 @@ class FilteredTest extends SpecificationWithJUnit {
       f add "01"
       f add "30"
       val sf = new LiteNavigableSetSeq(new LiteReactor, f)
-      val seq = iSeq.filterActor(sf)
+      val seq = iSeq.filter(sf)
       FutureSeq(seq).firstMatch("01", "01") must be equalTo true
       FutureSeq(seq).isNextEnd("01") must be equalTo true
     }
