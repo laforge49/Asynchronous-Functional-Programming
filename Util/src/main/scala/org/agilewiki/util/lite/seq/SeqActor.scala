@@ -174,6 +174,9 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
 
   def tail(start: T): SeqActor[T, V] =
     new LiteTailSeq(reactor, this, start)
+
+  def head(limit: T): SeqActor[T, V] =
+    new LiteHeadSeq(reactor, this, limit)
 }
 
 
