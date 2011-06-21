@@ -254,4 +254,7 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
 
   override def tail(start: T) =
     new LiteExtensionTailSeq(liteReactor, this, start)
+
+  override def head(limit: T) =
+    new LiteExtensionHeadSeq(liteReactor, this, limit)
 }
