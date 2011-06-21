@@ -181,8 +181,8 @@ case class FutureSeq[T, V](actor: SeqActor[T, V])
     throw new UnsupportedOperationException(rsp.toString)
   }
 
-  def findMatch(f: V => Boolean, expectedValue: V) {
-    return find(f) == expectedValue
+  def findMatch(f: V => Boolean, expectedValue: V): Boolean = {
+    find(f) == expectedValue
   }
 
   def noFind(f: V => Boolean): Boolean = {
