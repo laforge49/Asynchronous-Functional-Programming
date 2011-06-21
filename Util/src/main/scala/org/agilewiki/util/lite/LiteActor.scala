@@ -31,8 +31,7 @@ abstract class InternalAddressActor(reactor: LiteReactor, uuid: Uuid) extends Li
 
 class LiteActor(reactor: LiteReactor)
   extends LiteResponder
-  with LiteSrc
-  with SystemContext {
+  with LiteSrc {
 
   def actor = this
 

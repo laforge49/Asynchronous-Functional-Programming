@@ -25,7 +25,7 @@ package org.agilewiki
 package util
 package lite
 
-trait LiteResponder {
+trait LiteResponder extends SystemContext {
   private var _requestHandler: PartialFunction[Any, Unit] = null
 
   def requestHandler = _requestHandler
