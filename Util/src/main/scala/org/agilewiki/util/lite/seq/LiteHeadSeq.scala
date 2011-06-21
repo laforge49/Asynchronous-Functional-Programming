@@ -52,3 +52,31 @@ class LiteHeadSeq[T, V](reactor: LiteReactor, liteSeq: SeqActor[T, V], limit: T)
     }
   }
 }
+
+class LiteExtensionHeadSeq[T, V](reactor: LiteReactor, seqExtensionActor: SeqExtensionActor[T, V], limit: T)
+  extends SeqExtensionActor[T, V](reactor, new HeadSeqExtension[T, V](seqExtensionActor.seqExtension, limit))
+
+class HeadSeqExtension[T, V](extension: SeqExtension[T, V], limit: T)
+  extends SeqExtension[T, V] {
+
+  override def comparator = extension.comparator
+
+  override def first: SeqRsp = h(extension.first)
+
+  override def current(k: T): SeqRsp = {
+    if (comparator.compare(k, limit) < 0) h(extension.current(k))
+    else SeqEndRsp()
+  }
+
+  override def next(k: T): SeqRsp = {
+    if (comparator.compare(k, limit) < 0) h(extension.next(k))
+    else SeqEndRsp()
+  }
+
+  def h(rsp: SeqRsp): SeqRsp = {
+    if (!rsp.isInstanceOf[SeqResultRsp[T,V]]) return rsp
+    val r = rsp.asInstanceOf[SeqResultRsp[T, V]]
+    if (comparator.compare(r.key, limit) < 0) return rsp
+    SeqEndRsp()
+  }
+}
