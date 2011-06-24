@@ -33,7 +33,7 @@ class PacketResender(reactor: LiteReactor,
                      insideActor: LiteActor,
                      outsideActor: LiteActor)
   extends LiteActor(reactor) {
-  private val pinger = Lite(systemContext).pinger
+  private val pinger = Udp(systemContext).pinger
   private val udp = Udp(systemContext)
   private val timeoutMin = udp.timeOutMin
   private val timeoutInc = udp.timeOutInc

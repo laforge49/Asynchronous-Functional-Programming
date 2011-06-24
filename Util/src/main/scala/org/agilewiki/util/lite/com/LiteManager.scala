@@ -24,6 +24,7 @@
 package org.agilewiki
 package util
 package lite
+package com
 
 import java.lang.ref.ReferenceQueue
 import cache.NamedWeakReference
@@ -45,7 +46,7 @@ class LiteManager(reactor: LiteReactor) extends LiteActor(reactor) {
   private val referenceQueue = new ReferenceQueue[LiteActor]
   private val hashMap = new HashMap[String, NamedWeakReference[LiteActor]]
   private var longLivingActors = new java.util.HashMap[String, (LiteActor, TimerTask)]
-  private lazy val pinger = Lite(systemContext).pinger
+  private lazy val pinger = Udp(systemContext).pinger
 
   addRequestHandler {
     case req: RememberReq => {

@@ -30,7 +30,7 @@ class RemoteAccess(reactor: LiteReactor, packetRouter: LiteActor)
   extends LiteActor(reactor) {
   private val localServerName = LocalServerName(systemContext).name
   private var maxPayloadSize: Int = Udp(systemContext).maxPayloadSize
-  private val liteManager = Lite(systemContext).liteManager
+  private val liteManager = Udp(systemContext).liteManager
   addRequestHandler{
     case pkt: PacketReq => packetReq(pkt)
   }

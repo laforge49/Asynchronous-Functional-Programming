@@ -39,7 +39,7 @@ class LocalResponder(reactor: LiteReactor)
   val udp = Udp(systemContext)
   private var maxPayloadSize = udp.maxPayloadSize
   private var retryLimit = udp.retryLimit
-  val liteManager = Lite(systemContext).liteManager
+  val liteManager = Udp(systemContext).liteManager
   send(liteManager, MapPutReq(this)) {
     case rsp =>
   }

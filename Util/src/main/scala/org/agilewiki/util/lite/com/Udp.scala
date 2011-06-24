@@ -71,6 +71,8 @@ object Udp {
 
 class Udp(systemContext: SystemContext, udpFactory: UdpFactory)
   extends SystemComponent(systemContext) {
+  val pinger = new Pinger(newReactor)
+  val liteManager = new LiteManager(newReactor)
   val localServerName = ServerName(udpFactory.localServerName)
   val localHostPort = HostPort(udpFactory.localHostName, udpFactory.localPort)
   val maxPayloadSize = udpFactory.maxPayloadSize

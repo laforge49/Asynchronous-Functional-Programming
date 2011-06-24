@@ -46,7 +46,7 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
   extends LiteActor(reactor) {
   var outsideActor: LiteActor = null
   val requestsSent = new HashMap[String, LiteReqMsg]
-  private val liteManager = Lite(systemContext).liteManager
+  private val liteManager = Udp(systemContext).liteManager
   private val defaultReactor = newReactor
 
   addRequestHandler{

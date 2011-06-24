@@ -66,7 +66,7 @@ class UdpListener(localHostPort: HostPort, insideActor: LiteActor)
   def receive(packet: DatagramPacket) {
     val l = packet.getLength
     if (l == 0) return
-    val liteManager = Lite(systemContext).liteManager
+    val liteManager = Udp(systemContext).liteManager
     val bytes = new Array[Byte](l)
     System.arraycopy(packet.getData, packet.getOffset, bytes, 0, l)
     val payload = new DataInputStack(bytes)

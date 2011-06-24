@@ -24,6 +24,7 @@
 package org.agilewiki
 package util
 package lite
+package com
 
 import java.util.{TimerTask, Timer}
 

@@ -50,8 +50,6 @@ object Lite {
 
 class Lite(systemContext: SystemContext, liteFactory: LiteFactory)
   extends SystemComponent(systemContext) {
-  val pinger = new Pinger(newReactor)
-  val liteManager = new LiteManager(newReactor)
 
   def newActor(factoryName: FactoryName, reactor: LiteReactor) =
     liteFactory.actorFactories.get(factoryName.value).instantiate(reactor)
