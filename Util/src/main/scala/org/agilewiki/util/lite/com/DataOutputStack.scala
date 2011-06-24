@@ -215,9 +215,9 @@ case class DataOutputStack()
     x
   }
 
-  def writeRolonName(rolonName: RolonName) {
-    writeUTF(rolonName.rolonUuid)
-    writeUTF("ROLON")
+  def writeId(id: ActorId) {
+    writeUTF(id.value)
+    writeUTF("ID")
   }
 
   def writeStringList(list: List[String]) {
@@ -248,9 +248,9 @@ case class DataOutputStack()
       (b: Map[String, Map[String, String]], dos: DataOutputStack) => dos.writeMapMap(b))
   }
 
-  def writeRolonList(list: List[RolonName]) {
-    writeList[RolonName](list, "ROLON_LIST", (rolon: RolonName, dos: DataOutputStack) => {
-      dos.writeUTF(rolon.rolonUuid)
+  def writeIdList(list: List[ActorId]) {
+    writeList[ActorId](list, "ID_LIST", (id: ActorId, dos: DataOutputStack) => {
+      dos.writeId(id)
     })
   }
 

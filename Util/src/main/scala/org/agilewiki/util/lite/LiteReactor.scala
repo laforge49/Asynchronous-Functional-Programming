@@ -27,16 +27,13 @@ package lite
 
 import scala.actors.Reactor
 
-class ContextReactor(_systemContext: SystemComposite)
-  extends LiteReactor
-  with SystemContext {
-
-  def systemContext = _systemContext
-}
-
-class LiteReactor extends Reactor[LiteMsg] {
+final case class LiteReactor(systemContext: SystemContext)
+  extends Reactor[LiteMsg]
+  with SystemContextGetter {
   private var curMsg: LiteMsg = null
   start
+
+  def newReactor = new LiteReactor(systemContext)
 
   override def scheduler = super.scheduler
 
@@ -68,8 +65,8 @@ class LiteReactor extends Reactor[LiteMsg] {
         val curReq = currentRequestMessage
         reply(new UncaughtExceptionRsp(
           ex.toString,
-          ClassName(curReq.sender.getClass.getName),
-          ClassName(curReq.target.getClass.getName)))
+          curReq.sender.getClass.getName,
+          curReq.target.getClass.getName))
       }
     }
   }
@@ -107,7 +104,7 @@ class LiteReactor extends Reactor[LiteMsg] {
     val sender = oldReq.target
     val targetReactor = targetActor.liteReactor
     if (recursionDepth > 100 ||
-      (targetReactor != null && targetReactor != this)) {
+      (!eq(targetReactor))) {
       val req = new LiteReqMsg(
         0,
         targetActor,
@@ -142,7 +139,7 @@ class LiteReactor extends Reactor[LiteMsg] {
     val sender = req.sender
     if (recursionDepth > 100 ||
       !sender.isInstanceOf[LiteActor] ||
-      (sender.asInstanceOf[LiteActor].liteReactor != null && sender.asInstanceOf[LiteActor].liteReactor != this)) {
+      (!eq(sender.asInstanceOf[LiteActor].liteReactor))) {
       val rsp = new LiteRspMsg(
         0,
         req.responseProcess,

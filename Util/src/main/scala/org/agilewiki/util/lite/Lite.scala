@@ -25,23 +25,34 @@ package org.agilewiki
 package util
 package lite
 
-import java.lang.reflect.Constructor
+object LiteFactory {
+  def apply(systemContext: SystemContext) =
+    systemContext.factory(classOf[LiteFactory].asInstanceOf[Class[SystemComponentFactory]])
+      .asInstanceOf[LiteFactory]
+}
 
 class LiteFactory
-  extends LiteActor(new LiteReactor) {
-  val classLoader = ClassLoader.getSystemClassLoader
+  extends SystemComponentFactory {
+  val actorFactories = new java.util.HashMap[String, ActorFactory]
 
-  addRequestHandler {
-    case req: CreateUuidReq => {
-      val className = req.className.value
-      val c = classLoader.
-        loadClass(className).asInstanceOf[Class[InternalAddressActor]].getConstructors.find(c => {
-        c.getGenericParameterTypes.size == 2 &&
-          c.getGenericParameterTypes.apply(0).isInstanceOf[Class[LiteReactor]] &&
-          c.getGenericParameterTypes.apply(1).isInstanceOf[Class[Uuid]]
-      }).get.asInstanceOf[Constructor[InternalAddressActor]]
-      val a = c.newInstance(req.reactor, req.uuid)
-      reply(CreateRsp(a))
-    }
+  def addFactory(factory: ActorFactory) {
+    actorFactories.put(factory.name.value, factory)
   }
+
+  override def instantiate(systemContext: SystemContext) = new Lite(systemContext, this)
+}
+
+object Lite {
+  def apply(systemContext: SystemContext) =
+    systemContext.component(classOf[LiteFactory].asInstanceOf[Class[SystemComponentFactory]])
+      .asInstanceOf[Lite]
+}
+
+class Lite(systemContext: SystemContext, liteFactory: LiteFactory)
+  extends SystemComponent(systemContext) {
+  val pinger = new Pinger(newReactor)
+  val liteManager = new LiteManager(newReactor)
+
+  def newActor(factoryName: FactoryName, reactor: LiteReactor) =
+    liteFactory.actorFactories.get(factoryName.value).instantiate(reactor)
 }

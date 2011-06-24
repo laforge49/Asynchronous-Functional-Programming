@@ -26,43 +26,24 @@ package util
 package lite
 package com
 
-import java.util.TreeMap
-import seq.LiteNavigableSetSeq
+import seq.LiteNavigableMapSeq
 
-case class HostPortQueryReq(serverName: String)
+case class HostPortQueryReq(serverName: ServerName)
 case class HostPortQueryRsp(hostPort: HostPort)
 
-case class HostPortUpdateReq(serverName: String, hostPort: HostPort)
+case class HostPortUpdateReq(serverName: ServerName, hostPort: HostPort)
 case class HostPortUpdateRsp()
 
-class ServersActor(reactor: ContextReactor) extends LiteActor(reactor) {
-  private val map = new TreeMap[Comparable[AnyRef], HostPort]
-  val serverSequenceActor = new LiteNavigableSetSeq(reactor, map.navigableKeySet)
-
-  init
-
-  private def init{
-    val configuration = Configuration(systemContext)
-    var ndx = 1
-    var more = true
-    while (more) {
-      val prefix = "server." + ndx + "."
-      val serverName = configuration.property(prefix + "name").asInstanceOf[Comparable[AnyRef]]
-      if (serverName == null) more = false
-      else {
-        val host = configuration.requiredProperty(prefix + "host")
-        val port = configuration.requiredIntProperty(prefix + "port")
-        map.put(serverName, HostPort(host, port))
-        ndx += 1
-      }
-    }
-  }
+class ServersActor(reactor: LiteReactor, servers: java.util.TreeMap[String, HostPort])
+  extends LiteActor(reactor) {
+  val serverSequenceActor = new LiteNavigableMapSeq(liteReactor, servers)
 
   addRequestHandler {
     case req: HostPortQueryReq => {
-      reply(HostPortQueryRsp(map.get(req.serverName)))
+      reply(HostPortQueryRsp(servers.get(req.serverName.name)))
     }
     case req: HostPortUpdateReq => {
+      servers.put(req.serverName.name, req.hostPort)
       reply(HostPortUpdateRsp())
     }
   }

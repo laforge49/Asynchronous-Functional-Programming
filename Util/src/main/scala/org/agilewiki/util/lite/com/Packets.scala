@@ -39,22 +39,22 @@ sealed abstract class Packet(_payload: DataStack) {
   def inputPayload = _payload.inputPayload
 }
 
-final case class PacketReq(server: String, actorName: ResourceName, payload: DataStack)
+final case class PacketReq(server: ServerName, actorName: ActorName, payload: DataStack)
   extends Packet(payload)
 
 sealed abstract class ExternalPacket(_isReply: Boolean,
-                              _msgUuid: Uuid,
+                              _msgUuid: String,
                               _hostPort: HostPort,
-                              _server: String,
-                              _actorName: ResourceName,
+                              _server: ServerName,
+                              _actorName: ActorName,
                               _payload: DataStack)
   extends Packet(_payload)
 
 final case class OutgoingPacketReq(isReply: Boolean,
-                             msgUuid: Uuid,
+                             msgUuid: String,
                              hostPort: HostPort,
-                             server: String,
-                             actorName: ResourceName,
+                             server: ServerName,
+                             actorName: ActorName,
                              payload: DataStack)
   extends ExternalPacket(isReply, msgUuid, hostPort, server, actorName, payload) {
   var retry = false
@@ -63,10 +63,10 @@ final case class OutgoingPacketReq(isReply: Boolean,
 final case class OutgoingPacketRsp()
 
 final case class IncomingPacketReq(isReply: Boolean,
-                             msgUuid: Uuid,
+                             msgUuid: String,
                              hostPort: HostPort,
-                             server: String,
-                             actorName: ResourceName,
+                             server: ServerName,
+                             actorName: ActorName,
                              payload: DataStack)
   extends ExternalPacket(isReply, msgUuid, hostPort, server, actorName, payload)
 

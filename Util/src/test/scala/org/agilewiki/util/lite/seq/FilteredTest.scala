@@ -11,7 +11,7 @@ class FilteredTest extends SpecificationWithJUnit {
 
     "Pass the basic always true filter test" in {
       val set = new TreeSet[String]
-      val iSeq = new LiteNavigableSetSeq(new LiteReactor, set)
+      val iSeq = new LiteNavigableSetSeq(new LiteReactor(null), set)
       FutureSeq(iSeq).isEmpty must be equalTo true
       val seq = iSeq.filter((x: String) => true)
       FutureSeq(seq).isEmpty must be equalTo true
@@ -24,7 +24,7 @@ class FilteredTest extends SpecificationWithJUnit {
 
     "Pass the basic always false filter test" in {
       var set = new TreeSet[String]
-      val iSeq = new LiteNavigableSetSeq(new LiteReactor, set)
+      val iSeq = new LiteNavigableSetSeq(new LiteReactor(null), set)
       FutureSeq(iSeq).isEmpty must be equalTo true
       val seq = iSeq.filter((x: String) => false)
       FutureSeq(seq).isEmpty must be equalTo true
@@ -40,7 +40,7 @@ class FilteredTest extends SpecificationWithJUnit {
       set add "01"
       set add "10"
       set add "11"
-      var iSeq = new LiteNavigableSetSeq(new LiteReactor, set)
+      var iSeq = new LiteNavigableSetSeq(new LiteReactor(null), set)
       FutureSeq(iSeq).first must be equalTo "00"
       var seq = iSeq.filter((x: String) => x endsWith "1")
       FutureSeq(seq).first must be equalTo "01"
@@ -65,11 +65,11 @@ class FilteredTest extends SpecificationWithJUnit {
       set add "01"
       set add "10"
       set add "11"
-      val iSeq = new LiteNavigableSetSeq(new LiteReactor, set)
+      val iSeq = new LiteNavigableSetSeq(new LiteReactor(null), set)
       val f = new TreeSet[String]
       f add "01"
       f add "30"
-      val sf = new LiteNavigableSetSeq(new LiteReactor, f)
+      val sf = new LiteNavigableSetSeq(new LiteReactor(null), f)
       val seq = iSeq.filter(sf)
       FutureSeq(seq).firstMatch("01", "01") must be equalTo true
       FutureSeq(seq).isNextEnd("01") must be equalTo true

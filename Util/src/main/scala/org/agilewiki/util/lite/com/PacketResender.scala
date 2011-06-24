@@ -29,20 +29,17 @@ package com
 import java.util.{TimerTask, HashSet, LinkedHashMap}
 import cache.CanonicalMap
 
-class PacketResender(reactor: ContextReactor, uuid: Uuid, insideActor: LiteActor, outsideActor: LiteActor)
-  extends InternalAddressActor(reactor, uuid) {
+class PacketResender(reactor: LiteReactor,
+                     insideActor: LiteActor,
+                     outsideActor: LiteActor)
+  extends LiteActor(reactor) {
   private val pinger = Lite(systemContext).pinger
-
-  private val timeoutMin = Configuration(systemContext).
-    requiredIntProperty(Udp.SHORT_TIMEOUT_MIN_PROPERTY) + 0L
-  private val timeoutInc = Configuration(systemContext).
-    requiredIntProperty(Udp.SHORT_TIMEOUT_INC_PROPERTY) + 0L
-  private val timeoutMax = Configuration(systemContext).
-    requiredIntProperty(Udp.SHORT_TIMEOUT_MAX_PROPERTY) + 0L
-  private val limit = Configuration(systemContext).
-    requiredIntProperty(Udp.SHORT_LIMIT_PROPERTY)
-  private val cacheSize = Configuration(systemContext).
-    requiredIntProperty(Udp.MAX_SHORT_MSG_UUID_CACHE_SIZE_PROPERTY)
+  private val udp = Udp(systemContext)
+  private val timeoutMin = udp.timeOutMin
+  private val timeoutInc = udp.timeOutInc
+  private val timeoutMax = udp.timeOutMax
+  private val limit = udp.retryLimit
+  private val cacheSize = udp.maxMessageUuidCacheSize
 
   private var timeLastMsgReceived = 0L
   private var timeoutDelay = timeoutMin
@@ -65,7 +62,7 @@ class PacketResender(reactor: ContextReactor, uuid: Uuid, insideActor: LiteActor
       timeoutDelay = timeoutMin
       scheduleRetry
     }
-    val msgUuid = packet.msgUuid.value
+    val msgUuid = packet.msgUuid
     if (packet.isReply) {
       incomingReqUuids.remove(msgUuid)
       outgoingRspCache.put(msgUuid, packet)
@@ -105,7 +102,7 @@ class PacketResender(reactor: ContextReactor, uuid: Uuid, insideActor: LiteActor
 
   def forwardInReq(packet: IncomingPacketReq) {
     timeLastMsgReceived = System.currentTimeMillis
-    val msgUuid = packet.msgUuid.value
+    val msgUuid = packet.msgUuid
     if (incomingReqUuids.contains(msgUuid)) {
       reply(IncomingPacketRsp())
     } else if (outgoingRspCache.has(msgUuid)) {
@@ -122,7 +119,7 @@ class PacketResender(reactor: ContextReactor, uuid: Uuid, insideActor: LiteActor
 
   def forwardInReply(packet: IncomingPacketReq) {
     timeLastMsgReceived = System.currentTimeMillis
-    val msgUuid = packet.msgUuid.value
+    val msgUuid = packet.msgUuid
     if (sendRequests.containsKey(msgUuid)) {
       sendRequests.remove(msgUuid)
       send(insideActor, packet) {

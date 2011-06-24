@@ -26,8 +26,8 @@ package util
 package lite
 package com
 
-class ShutdownService(reactor: LiteReactor, uuid: Uuid)
-  extends InternalAddressActor(reactor, uuid) {
+class ShutdownService(reactor: LiteReactor)
+  extends LiteActor(reactor) {
   addRequestHandler {
     case req: IncomingPacketReq => System.exit(0)
   }

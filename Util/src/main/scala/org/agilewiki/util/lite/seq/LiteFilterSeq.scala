@@ -28,8 +28,8 @@ package seq
 
 import annotation.tailrec
 
-class LiteFilterFunc[T, V](reactor: LiteReactor, liteSeq: SeqActor[T, V], filter: V => Boolean)
-  extends SeqActor[T, V](reactor) {
+class LiteFilterFunc[T, V](liteSeq: SeqActor[T, V], filter: V => Boolean)
+  extends SeqActor[T, V](liteSeq.liteReactor) {
   override def comparator = liteSeq.comparator
 
   addRequestHandler{
@@ -38,7 +38,9 @@ class LiteFilterFunc[T, V](reactor: LiteReactor, liteSeq: SeqActor[T, V], filter
 
   private def _filter(req: SeqReq) {
     send(liteSeq, req) {
-      case rsp: SeqEndRsp => reply(SeqEndRsp())
+      case rsp: SeqEndRsp => {
+        reply(SeqEndRsp())
+      }
       case rsp: SeqResultRsp[T, V] => {
         if (filter(rsp.value)) reply(rsp)
         else _filter(SeqNextReq[T](rsp.key))
@@ -47,8 +49,8 @@ class LiteFilterFunc[T, V](reactor: LiteReactor, liteSeq: SeqActor[T, V], filter
   }
 }
 
-class LiteFilterSeq[T, V, V1](reactor: LiteReactor, liteSeq: SeqActor[T, V], filter: SeqActor[V, V1])
-  extends SeqActor[T, V](reactor) {
+class LiteFilterSeq[T, V, V1](liteSeq: SeqActor[T, V], filter: SeqActor[V, V1])
+  extends SeqActor[T, V](liteSeq.liteReactor) {
   override def comparator = liteSeq.comparator
 
   addRequestHandler{
@@ -70,8 +72,8 @@ class LiteFilterSeq[T, V, V1](reactor: LiteReactor, liteSeq: SeqActor[T, V], fil
   }
 }
 
-class LiteExtensionFilterSeq[T, V](reactor: LiteReactor, seqExtensionActor: SeqExtensionActor[T, V], filter: V => Boolean)
-  extends SeqExtensionActor[T, V](reactor, new FilterSeqExtension[T, V](seqExtensionActor.seqExtension, filter))
+class LiteExtensionFilterSeq[T, V](seqExtensionActor: SeqExtensionActor[T, V], filter: V => Boolean)
+  extends SeqExtensionActor[T, V](seqExtensionActor.liteReactor, new FilterSeqExtension[T, V](seqExtensionActor.seqExtension, filter))
 
 class FilterSeqExtension[T, V](extension: SeqExtension[T, V], filter: V => Boolean)
   extends SeqExtension[T, V] {
@@ -93,7 +95,9 @@ class FilterSeqExtension[T, V](extension: SeqExtension[T, V], filter: V => Boole
   @tailrec private def f(rsp: SeqRsp): SeqRsp = {
     if (!rsp.isInstanceOf[SeqResultRsp[T, V]]) return rsp
     val r = rsp.asInstanceOf[SeqResultRsp[T, V]]
-    if (filter(r.value)) return rsp
+    if (filter(r.value)) {
+      return rsp
+    }
     f(extension.next(r.key))
   }
 }

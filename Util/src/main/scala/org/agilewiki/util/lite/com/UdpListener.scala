@@ -37,9 +37,9 @@ class UdpListener(localHostPort: HostPort, insideActor: LiteActor)
 
   private var socket: DatagramSocket = null
   private var buffer: Array[Byte] = new Array[Byte](0)
-  private var sc: Option[SystemComposite] = None
+  private var sc: Option[SystemContext] = None
 
-  def systemContext: SystemComposite = sc match {
+  def systemContext: SystemContext = sc match {
     case None => null
     case Some(x) => x
   }
@@ -72,18 +72,17 @@ class UdpListener(localHostPort: HostPort, insideActor: LiteActor)
     val payload = new DataInputStack(bytes)
     val isReply = payload.readByte.asInstanceOf[Boolean] //messageType
     val srcServer = payload.readUTF //sender server
-    val reqActor = Uuid(payload.readUTF) //sender actor UUID
-    val msgUuid = Uuid(payload.readUTF) //message UUID
+    val msgUuid = payload.readUTF //message UUID
     val dstServer = payload.readUTF //dest server
-    val dstActor = ResourceName(payload.readUTF) //dest actor
-    if (util.Configuration(systemContext).localServerName != dstServer) return
+    val dstActor = ActorName(payload.readUTF) //dest actor name
+    if (LocalServerName(systemContext).name != dstServer) return
     val hostPort = HostPort(packet.getAddress, packet.getPort)
-    val msg = IncomingPacketReq(isReply, msgUuid, hostPort, srcServer, reqActor, payload)
+    val msg = IncomingPacketReq(isReply, msgUuid, hostPort, ServerName(srcServer), dstActor, payload)
     send(insideActor, msg)
   }
 
   private def startReceivingIncomingMessages {
-    val bufferSize = Configuration(systemContext).requiredIntProperty(Udp.UDP_DATAGRAM_BUFFER_SIZE_PROPERTY)
+    val bufferSize = Udp(systemContext).maxPayloadSize
     try {
       socket = new DatagramSocket(localHostPort.port, localHostPort.inetAddress)
     } catch {
@@ -95,7 +94,7 @@ class UdpListener(localHostPort: HostPort, insideActor: LiteActor)
     receiveIncomingMessages
   }
 
-  def startUdp(systemContext: SystemComposite) {
+  def startUdp(systemContext: SystemContext) {
     sc = Some(systemContext)
     stopUdp
     udpRunner = new Thread {
@@ -131,8 +130,8 @@ object UdpListener {
     listeners(localHostPort)
   }
 
-  def apply(systemContext: SystemComposite, insideActor: LiteActor): UdpListener = {
-    val listener = apply(Udp(systemContext).hostPort, insideActor)
+  def apply(systemContext: SystemContext, insideActor: LiteActor): UdpListener = {
+    val listener = apply(Udp(systemContext).localHostPort, insideActor)
     listener.startUdp(systemContext)
     listener
   }

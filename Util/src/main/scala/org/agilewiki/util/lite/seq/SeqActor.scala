@@ -157,10 +157,10 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     new LiteMapSeq(this, _map)
 
   def filter(_filter: V => Boolean): SeqActor[T, V] =
-    new LiteFilterFunc(reactor, this, _filter)
+    new LiteFilterFunc(this, _filter)
 
   def filter[V1](_filter: SeqActor[V, V1]): SeqActor[T, V] =
-    new LiteFilterSeq(reactor, this, _filter)
+    new LiteFilterSeq(this, _filter)
 
   def flatMap[V2](_map: V => V2): SeqActor[T, V2] = {
     val ms = map(_map)
@@ -173,10 +173,10 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   }
 
   def tail(start: T): SeqActor[T, V] =
-    new LiteTailSeq(reactor, this, start)
+    new LiteTailSeq(this, start)
 
   def head(limit: T): SeqActor[T, V] =
-    new LiteHeadSeq(reactor, this, limit)
+    new LiteHeadSeq(this, limit)
 }
 
 
@@ -250,11 +250,11 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
   }
 
   override def filter(filter: V => Boolean) =
-    new LiteExtensionFilterSeq(liteReactor, this, filter)
+    new LiteExtensionFilterSeq(this, filter)
 
   override def tail(start: T) =
-    new LiteExtensionTailSeq(liteReactor, this, start)
+    new LiteExtensionTailSeq(this, start)
 
   override def head(limit: T) =
-    new LiteExtensionHeadSeq(liteReactor, this, limit)
+    new LiteExtensionHeadSeq(this, limit)
 }

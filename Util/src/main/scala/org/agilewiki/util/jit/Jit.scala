@@ -29,8 +29,7 @@ object Jit {
 }
 
 class Jit
-  extends Cloneable
-  with SystemContext {
+  extends Cloneable {
   protected val debugJit = false
   protected var jitCursor: JitImmutableCursor = _
   private var _jitContainer: Jit = _
@@ -48,7 +47,7 @@ class Jit
     jitRole.roleName
   }
 
-  override def systemContext = jitRole.systemContext
+  def systemContext = jitRole.systemContext
 
   def stringByteLength(length: Int): Int = intByteLength + 2 * length
 

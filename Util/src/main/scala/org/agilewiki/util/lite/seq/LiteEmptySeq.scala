@@ -31,7 +31,9 @@ class LiteEmptySeq[T, V](reactor: LiteReactor)
 
 class EmptySeqExtension[T, V]
   extends SeqExtension[T, V] {
-  override def first = SeqEndRsp()
+  override def first = {
+    SeqEndRsp()
+  }
   override def current(key: T) = SeqEndRsp()
   override def next(key: T) = SeqEndRsp()
 }

@@ -11,9 +11,9 @@ class CursorTest extends SpecificationWithJUnit {
 
     "Pass the comparision Test" in {
       var set = new TreeSet[String]
-      var seq1 = new LiteSeqCursor(new LiteReactor, new LiteEmptySeq[String, String](new LiteReactor))
+      var seq1 = new LiteSeqCursor(new LiteReactor(null), new LiteEmptySeq[String, String](new LiteReactor(null)))
       FutureSeq(seq1).first
-      var seq2 = new LiteSeqCursor(new LiteReactor, new LiteNavigableSetSeq[String](new LiteReactor, set))
+      var seq2 = new LiteSeqCursor(new LiteReactor(null), new LiteNavigableSetSeq[String](new LiteReactor(null), set))
       FutureSeq(seq2).first
       seq1 == seq2 must be equalTo true
       seq2 == seq1 must be equalTo true
@@ -25,18 +25,18 @@ class CursorTest extends SpecificationWithJUnit {
       seq2.compareTo(seq1) < 0 must be equalTo true
       var set3 = new TreeSet[String]
       set3.add("something")
-      var seq3 = new LiteSeqCursor(new LiteReactor, new LiteNavigableSetSeq[String](new LiteReactor, set3))
+      var seq3 = new LiteSeqCursor(new LiteReactor(null), new LiteNavigableSetSeq[String](new LiteReactor(null), set3))
       FutureSeq(seq3).first
       seq2.compareTo(seq3) < 0 must be equalTo true
       seq3.compareTo(seq2) > 0 must be equalTo true
-      seq2 = new LiteSeqCursor(new LiteReactor, new LiteEmptySeq[String, String](new LiteReactor))
+      seq2 = new LiteSeqCursor(new LiteReactor(null), new LiteEmptySeq[String, String](new LiteReactor(null)))
       FutureSeq(seq2).first
       seq1 == seq2 must be equalTo true
     }
 
     "Pass Empty Sequence Test" in {
       var set = new TreeSet[String]
-      var seq = new LiteSeqCursor(new LiteReactor, new LiteNavigableSetSeq[String](new LiteReactor, set))
+      var seq = new LiteSeqCursor(new LiteReactor(null), new LiteNavigableSetSeq[String](new LiteReactor(null), set))
       FutureSeq(seq).isEmpty must be equalTo true
       FutureSeq(seq).isNextEnd("anything") must be equalTo true
       FutureSeq(seq).isCurrentEnd("anything") must be equalTo true
@@ -45,7 +45,7 @@ class CursorTest extends SpecificationWithJUnit {
     "Pass the navigation Test of a sequence with size 1" in {
       var set = new TreeSet[String]
       set add "anything"
-      var seq = new LiteSeqCursor(new LiteReactor, new LiteNavigableSetSeq[String](new LiteReactor, set))
+      var seq = new LiteSeqCursor(new LiteReactor(null), new LiteNavigableSetSeq[String](new LiteReactor(null), set))
       FutureSeq(seq).current("anything") must be equalTo "anything"
       FutureSeq(seq).isNextEnd("anything") must be equalTo true
       FutureSeq(seq).current("anything") must be equalTo "anything"
@@ -55,7 +55,7 @@ class CursorTest extends SpecificationWithJUnit {
       var set = new TreeSet[String]
       set add "first"
       set add "last"
-      var seq = new LiteSeqCursor(new LiteReactor, new LiteNavigableSetSeq[String](new LiteReactor, set))
+      var seq = new LiteSeqCursor(new LiteReactor(null), new LiteNavigableSetSeq[String](new LiteReactor(null), set))
       FutureSeq(seq).current("first") must be equalTo "first"
       FutureSeq(seq).isNextEnd("last") must be equalTo true
       FutureSeq(seq).current("first") must be equalTo "first"
@@ -66,7 +66,7 @@ class CursorTest extends SpecificationWithJUnit {
       var set = new TreeSet[Int]
       for (i <- 0 to 5)
         set.add(i)
-      var seq = new LiteSeqCursor(new LiteReactor, new LiteNavigableSetSeq[Int](new LiteReactor, set))
+      var seq = new LiteSeqCursor(new LiteReactor(null), new LiteNavigableSetSeq[Int](new LiteReactor(null), set))
       for (i <- 0 to 5) {
         FutureSeq(seq).current(i) must be equalTo i
       }
@@ -77,7 +77,7 @@ class CursorTest extends SpecificationWithJUnit {
 
     "Pass the navigation Test of a long variable size sequence" in {
       var set = new TreeSet[Int]
-      var seq = new LiteSeqCursor(new LiteReactor, new LiteNavigableSetSeq[Int](new LiteReactor, set))
+      var seq = new LiteSeqCursor(new LiteReactor(null), new LiteNavigableSetSeq[Int](new LiteReactor(null), set))
       FutureSeq(seq).isEmpty must be equalTo true
       for (i <- 0 to 5)
         set.add(i)

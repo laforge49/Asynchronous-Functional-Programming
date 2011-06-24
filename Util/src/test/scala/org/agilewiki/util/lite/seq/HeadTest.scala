@@ -17,7 +17,7 @@ class HeadTest extends SpecificationWithJUnit {
       lst add "four"
       lst add "five"
       lst add "etc"
-      val iseq = new LiteListSeq(new LiteReactor, lst)
+      val iseq = new LiteListSeq(new LiteReactor(null), lst)
       val seq = iseq.head(2)
       FutureSeq(seq).firstMatch(0,"one") must be equalTo true
       FutureSeq(seq).currentMatch(1,1,"two") must be equalTo true

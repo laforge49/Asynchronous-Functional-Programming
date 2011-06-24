@@ -32,7 +32,7 @@ case class PingerTestRetryReq(count: Int)
 case class PingerTestRsp
 
 class PingerTestActor(pinger: LiteActor)
-  extends LiteActor(new LiteReactor) {
+  extends LiteActor(new LiteReactor(null)) {
   addRequestHandler {
     case req: PingerTestReq => {
       send(pinger, RetryReq(PingerTestRetryReq(5), 1)) {
@@ -52,7 +52,7 @@ class PingerTestActor(pinger: LiteActor)
 class PingerTest extends SpecificationWithJUnit {
   "pinger test" should {
     "count down from 5" in {
-      LiteFuture(new PingerTestActor(new Pinger), PingerTestReq())
+      LiteFuture(new PingerTestActor(new Pinger(new LiteReactor(null))), PingerTestReq())
     }
   }
 }

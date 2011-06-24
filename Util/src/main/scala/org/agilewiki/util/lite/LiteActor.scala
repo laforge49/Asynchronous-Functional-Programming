@@ -25,21 +25,37 @@ package org.agilewiki
 package util
 package lite
 
-abstract class InternalAddressActor(reactor: LiteReactor, uuid: Uuid) extends LiteActor(reactor) {
-  def getUuid = uuid
+abstract case class ActorFactory(name: FactoryName) {
+  def instantiate(reactor: LiteReactor): LiteActor
 }
 
 class LiteActor(reactor: LiteReactor)
   extends LiteResponder
   with LiteSrc {
+  private var actorId: ActorId = null
+  private var actorFactory: ActorFactory = null
 
-  def actor = this
+  def id = actorId
+
+  def id(_id: ActorId) {
+    if (actorId != null) throw new UnsupportedOperationException
+    actorId = _id
+  }
+
+  def factory = actorFactory
+
+  def factory(_factory: ActorFactory) {
+    if (actorFactory != null) throw new UnsupportedOperationException
+    actorFactory = _factory
+  }
+
+  def factoryName = factory.name
+
+  override def actor = this
 
   override def liteReactor = reactor
 
   override def response(msg: LiteRspMsg) {
     liteReactor.response(msg)
   }
-
-  def senderUuid = liteReactor.currentRequestMessage.sender.asInstanceOf[InternalAddressActor].getUuid
 }

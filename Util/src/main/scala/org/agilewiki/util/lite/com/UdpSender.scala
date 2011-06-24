@@ -27,11 +27,11 @@ package util
 package lite
 package com
 
-import java.net.{DatagramPacket, DatagramSocket, InetAddress}
+import java.net.{DatagramPacket, DatagramSocket}
 
-class UdpSender(systemContext: SystemComposite) extends LiteActor(new ContextReactor(systemContext)) {
+class UdpSender(reactor: LiteReactor) extends LiteActor(reactor) {
   var socket: DatagramSocket = null
-  val localServer = Configuration(systemContext).localServerName
+  val localServer = LocalServerName(systemContext).name
 
   addRequestHandler {
     case packetReq: OutgoingPacketReq => send(packetReq)
@@ -39,11 +39,10 @@ class UdpSender(systemContext: SystemComposite) extends LiteActor(new ContextRea
 
   private def send(packetReq: OutgoingPacketReq) {
     val payload = packetReq.outputPayload
-    payload.writeUTF(packetReq.actorName.toString)          //dest actor
-    payload.writeUTF(packetReq.server)                      //dest server
-    payload.writeUTF(packetReq.msgUuid.value)               //message UUID
+    payload.writeUTF(packetReq.actorName.toString)          //dest actor name
+    payload.writeUTF(packetReq.server.name)                      //dest server
+    payload.writeUTF(packetReq.msgUuid)               //message UUID
     payload.writeByte(packetReq.isReply.asInstanceOf[Byte]) //message type
-    payload.writeUTF(senderUuid.toString)                   //sender actor UUID
     payload.writeUTF(localServer)                           //sender server
     val buffer = payload.getBytes
     //TODO: must throw an exception when the buffer is truncated

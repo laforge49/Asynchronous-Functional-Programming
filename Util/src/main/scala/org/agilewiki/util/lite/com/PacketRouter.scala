@@ -28,8 +28,8 @@ package com
 
 import java.util.HashMap
 
-class PacketRouter(systemContext: SystemComposite)
-  extends LiteActor(new ContextReactor(systemContext)) {
+class PacketRouter(reactor: LiteReactor)
+  extends LiteActor(reactor) {
   val serversActor = Udp(systemContext).serversActor
   val serverSequenceActor = serversActor.serverSequenceActor
   val map = new HashMap[String, LiteActor]
@@ -57,22 +57,22 @@ class PacketRouter(systemContext: SystemComposite)
     }
   }
 
-  private def add(server: String, hostPort: HostPort) {
-    val packetResponder = PacketResponder(systemContext, server, hostPort)
-    map.put(server, packetResponder)
+  private def add(server: ServerName, hostPort: HostPort) {
+    val packetResponder = PacketResponder(newReactor, server, hostPort)
+    map.put(server.name, packetResponder)
   }
 
   private def packetReq(req: PacketReq) {
     val server = req.server
     val packetResponder = map.get(server)
-    if (packetResponder == null) throw new IllegalArgumentException("Unknown server: " + server)
+    if (packetResponder == null) throw new IllegalArgumentException("Unknown server: " + server.name)
     send(packetResponder, req) { case prr => reply(prr)}
   }
 
   private def incomePacket(req: IncomingPacketReq) {
     val server = req.server
     val packetResponder = map.get(server)
-    if (packetResponder == null) throw new IllegalArgumentException("Unknown server: " + server)
+    if (packetResponder == null) throw new IllegalArgumentException("Unknown server: " + server.name)
     send(packetResponder, req) { case prr => reply(prr)}
   }
 }

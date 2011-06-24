@@ -26,16 +26,24 @@ package util
 package lite
 package com
 
-class LocalResponder(reactor: ContextReactor, uuid: Uuid) extends InternalAddressActor(reactor, uuid) {
-  private var maxPayloadSize: Int = Configuration(systemContext).
-    requiredIntProperty(Udp.MAX_SHORT_MSG_UUID_CACHE_SIZE_PROPERTY)
-  private var maxTimeout: Int = Configuration(systemContext).
-    requiredIntProperty(Udp.SHORT_TIMEOUT_MAX_PROPERTY)
+case class LocalResponderFactory() extends ActorFactory(UdpFactory.LOCAL_RESPONDER_FACTORY_NAME) {
+  override def instantiate(reactor: LiteReactor) = {
+    val lr = new LocalResponder(reactor)
+    lr.factory(this)
+    lr
+  }
+}
+
+class LocalResponder(reactor: LiteReactor)
+  extends LiteActor(reactor) {
+  val udp = Udp(systemContext)
+  private var maxPayloadSize = udp.maxPayloadSize
+  private var retryLimit = udp.retryLimit
   val liteManager = Lite(systemContext).liteManager
   send(liteManager, MapPutReq(this)) {
     case rsp =>
   }
-  send(liteManager, RememberReq(this, maxTimeout)) {
+  send(liteManager, RememberReq(this, retryLimit)) {
     case rsp =>
   }
   addRequestHandler {
@@ -53,13 +61,13 @@ class LocalResponder(reactor: ContextReactor, uuid: Uuid) extends InternalAddres
     else smallReq(req.server, inputPayload)
   }
 
-  def smallReq(server: String, inputPayload: DataInputStack) {
-    val actorName = ResourceName(inputPayload.readUTF)
-    val pkt = new PacketReq(server, actorName, inputPayload)
+  def smallReq(server: ServerName, inputPayload: DataInputStack) {
+    val id = inputPayload.readId
+    val pkt = new PacketReq(server, id, inputPayload)
     process(pkt)
   }
 
-  def largeReq(count: Int, server: String, inputPayload: DataInputStack) {
+  def largeReq(count: Int, server: ServerName, inputPayload: DataInputStack) {
     if (largeReqPayload == null) largeReqPayload = new DataOutputStack
     val last = inputPayload.readByte.asInstanceOf[Boolean]
     val size = inputPayload.size
@@ -68,24 +76,27 @@ class LocalResponder(reactor: ContextReactor, uuid: Uuid) extends InternalAddres
     largeReqPayload.write(bytes)
     if (!last) {
       val ackRsp = new DataOutputStack
-      ackRsp.writeUTF(getUuid.toString)
+      ackRsp.writeId(id)
       reply(ackRsp)
     } else {
       val reqPayload = largeReqPayload.inputPayload
       largeReqPayload = null
-      val actorName = ResourceName(reqPayload.readUTF)
-      val pkt = new PacketReq(server, actorName, reqPayload)
+      val id = reqPayload.readId
+      val pkt = new PacketReq(server, id, reqPayload)
       process(pkt)
     }
   }
 
   def process(req: PacketReq) {
     req.actorName match {
-      case rn: ClassName => send(liteManager, CreateForwardReq(new ContextReactor(systemContext), rn, req)) {
-        case rsp: DataOutputStack => packetRsp(rsp)
-        case rsp => reply(rsp)
+      case rn: FactoryName => {
+        val actor = Lite(systemContext).newActor(rn, newReactor)
+        send(actor, req) {
+          case rsp: DataOutputStack => packetRsp(rsp)
+          case rsp => reply(rsp)
+        }
       }
-      case rn: Uuid => send(liteManager, ForwardReq(rn, req)) {
+      case rn: ActorId => send(liteManager, ForwardReq(rn, req)) {
         case rsp: DataOutputStack => packetRsp(rsp)
         case rsp => reply(rsp)
       }
@@ -111,7 +122,7 @@ class LocalResponder(reactor: ContextReactor, uuid: Uuid) extends InternalAddres
     val count: Int = (size + maxPayloadSize - 1) / maxPayloadSize
     val rspPayload = new DataOutputStack
     rspPayload.write(largeRspBytes, 0, maxPayloadSize)
-    rspPayload.writeUTF(getUuid.toString)
+    rspPayload.writeId(id)
     rspPayload.writeInt(count)
     rspPos = maxPayloadSize
     reply(rspPayload)

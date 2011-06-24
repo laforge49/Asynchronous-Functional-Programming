@@ -26,12 +26,12 @@ package util
 package lite
 package com
 
-class RemoteAccess(systemContext: SystemComposite, packetRouter: LiteActor) extends LiteActor(null) {
-  private val localServerName = Configuration(systemContext).localServerName
-  private var maxPayloadSize: Int = Configuration(systemContext).
-    requiredIntProperty(Udp.MAX_SHORT_MSG_UUID_CACHE_SIZE_PROPERTY)
+class RemoteAccess(reactor: LiteReactor, packetRouter: LiteActor)
+  extends LiteActor(reactor) {
+  private val localServerName = LocalServerName(systemContext).name
+  private var maxPayloadSize: Int = Udp(systemContext).maxPayloadSize
   private val liteManager = Lite(systemContext).liteManager
-  addRequestHandler {
+  addRequestHandler{
     case pkt: PacketReq => packetReq(pkt)
   }
 
@@ -42,10 +42,13 @@ class RemoteAccess(systemContext: SystemComposite, packetRouter: LiteActor) exte
 
   private def process(pkt: PacketReq) {
     pkt.actorName match {
-      case rn: ClassName => send(liteManager, CreateForwardReq(new ContextReactor(systemContext), rn, pkt)) {
-        case rsp => reply(rsp)
+      case rn: FactoryName => {
+        val actor = Lite(systemContext).newActor(rn, newReactor)
+        send(actor, pkt) {
+          case rsp => reply(rsp)
+        }
       }
-      case rn: Uuid => send(liteManager, ForwardReq(rn, pkt)) {
+      case rn: ActorId => send(liteManager, ForwardReq(rn, pkt)) {
         case rsp => reply(rsp)
       }
     }
@@ -58,23 +61,23 @@ class RemoteAccess(systemContext: SystemComposite, packetRouter: LiteActor) exte
     else largeReq(pkt.server, outputPayload)
   }
 
-  private def smallReq(server: String, outputPayload: DataOutputStack) {
+  private def smallReq(server: ServerName, outputPayload: DataOutputStack) {
     outputPayload.writeInt(1)
-    val req = PacketReq(server, ClassName(classOf[LocalResponder]), outputPayload)
+    val req = PacketReq(server, UdpFactory.LOCAL_RESPONDER_FACTORY_NAME, outputPayload)
     send(packetRouter, req) {
       case rsp: DataStack => packetRsp(server, rsp)
       case rsp => reply(rsp)
     }
   }
 
-  private def largeReq(server: String, outputPayload: DataOutputStack) {
+  private def largeReq(server: ServerName, outputPayload: DataOutputStack) {
     val bytes = outputPayload.getBytes
     val count: Int = (bytes.size + maxPayloadSize - 1) / maxPayloadSize
-    partReq(server, ClassName(classOf[LocalResponder]), count, 1, bytes)
+    partReq(server, UdpFactory.LOCAL_RESPONDER_FACTORY_NAME, count, 1, bytes)
   }
 
-  private def partReq(server: String,
-                      actorName: ResourceName,
+  private def partReq(server: ServerName,
+                      actorName: ActorName,
                       count: Int,
                       ndx: Int,
                       bytes: Array[Byte]) {
@@ -92,7 +95,7 @@ class RemoteAccess(systemContext: SystemComposite, packetRouter: LiteActor) exte
         if (last) packetRsp(server, rsp)
         else {
           val inputPayload = rsp.inputPayload
-          val responderName = Uuid(inputPayload.readUTF)
+          val responderName = inputPayload.readId
           partReq(server, responderName, count, ndx + 1, bytes)
         }
       }
@@ -100,21 +103,21 @@ class RemoteAccess(systemContext: SystemComposite, packetRouter: LiteActor) exte
     }
   }
 
-  private def packetRsp(server: String, payload: DataStack) {
+  private def packetRsp(server: ServerName, payload: DataStack) {
     val inputPayload = payload.inputPayload
     val count = inputPayload.readInt
     if (count > 1) largeRsp(server, count, inputPayload)
     else reply(inputPayload)
   }
 
-  private def largeRsp(server: String, count: Int, inputPayload: DataInputStack) {
-    val responderName = Uuid(inputPayload.readUTF)
+  private def largeRsp(server: ServerName, count: Int, inputPayload: DataInputStack) {
+    val responderName = inputPayload.readId
     val payload = new DataOutputStack
     partRsp(server, responderName, count, payload, inputPayload)
   }
 
-  private def partRsp(server: String,
-                      responderName: Uuid,
+  private def partRsp(server: ServerName,
+                      responderName: ActorId,
                       count: Int,
                       payload: DataOutputStack,
                       inputPayload: DataInputStack) {

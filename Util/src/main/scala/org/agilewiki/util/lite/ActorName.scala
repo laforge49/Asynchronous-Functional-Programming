@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Bill La Forge
+ * Copyright 2011 Bill La Forge
  *
  * This file is part of AgileWiki and is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,37 +25,28 @@ package org.agilewiki
 package util
 package lite
 
-import java.util.Properties
-
-object _Lite {
-  def defaultConfiguration(serverName: String) = {
-    val properties = new Properties
-    Configuration.defaultConfiguration(properties, serverName)
-    properties
+object ActorName {
+  def apply(s: String): ActorName = {
+    s match {
+      case res if res.startsWith("LAID:") => ActorId(res)
+      case res if res.startsWith("FACT:") => FactoryName(res)
+      case _ => throw new IllegalArgumentException("Wrong resource name format: " + s)
+    }
   }
 }
 
-class _Lite(configurationProperties: Properties)
-  extends SystemComposite
-  with SystemConfigurationComponent
-  with SystemLiteComponent {
-  setProperties(configurationProperties)
-
-  def close {}
+sealed abstract class ActorName {
+  def value:String
 }
 
-object Lite {
-  def apply(context: SystemComposite) = context.asInstanceOf[SystemLiteComponent].lite
+case class ActorId(id: String) extends ActorName {
+  override def toString = "LAID:"+ value
+  override def value = if(id.startsWith("LAID:")) id.substring(5) else id
 }
 
-trait SystemLiteComponent {
-  this: SystemConfigurationComponent
-    with SystemComposite =>
-  lazy val lite = new Lite
+case class FactoryName(name: String) extends ActorName {
 
-  class Lite {
-    val pinger = new Pinger
-    val liteManager = new LiteManager(SystemLiteComponent.this)
-  }
+  override def value = if(name.startsWith("FACT:")) name.substring(5) else name
 
+  override def toString = "FACT:"+value
 }

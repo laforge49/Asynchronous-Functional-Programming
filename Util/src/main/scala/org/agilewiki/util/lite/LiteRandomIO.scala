@@ -67,8 +67,8 @@ class LiteRandomIO(reactor: LiteReactor, pathname: String, accessMode: String)
 }
 
 object LiteRandomIO {
-  def apply(pathname: String, accessMode: String) = {
-    new LiteRandomIO(new LiteReactor, pathname, accessMode)
+  def apply(reactor: LiteReactor, pathname: String, accessMode: String) = {
+    new LiteRandomIO(reactor, pathname, accessMode)
   }
 }
 

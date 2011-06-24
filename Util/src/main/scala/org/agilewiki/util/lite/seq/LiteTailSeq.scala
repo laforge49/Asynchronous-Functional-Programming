@@ -26,8 +26,8 @@ package util
 package lite
 package seq
 
-class LiteTailSeq[T, V](reactor: LiteReactor, liteSeq: SeqActor[T, V], start: T)
-  extends SeqActor[T, V](reactor) {
+class LiteTailSeq[T, V](liteSeq: SeqActor[T, V], start: T)
+  extends SeqActor[T, V](liteSeq.liteReactor) {
   override def comparator = liteSeq.comparator
 
   addRequestHandler {
@@ -53,8 +53,8 @@ class LiteTailSeq[T, V](reactor: LiteReactor, liteSeq: SeqActor[T, V], start: T)
   }
 }
 
-class LiteExtensionTailSeq[T, V](reactor: LiteReactor, seqExtensionActor: SeqExtensionActor[T, V], start: T)
-  extends SeqExtensionActor[T, V](reactor, new TailSeqExtension[T, V](seqExtensionActor.seqExtension, start))
+class LiteExtensionTailSeq[T, V](seqExtensionActor: SeqExtensionActor[T, V], start: T)
+  extends SeqExtensionActor[T, V](seqExtensionActor.liteReactor, new TailSeqExtension[T, V](seqExtensionActor.seqExtension, start))
 
 class TailSeqExtension[T, V](extension: SeqExtension[T, V], start: T)
   extends SeqExtension[T, V] {

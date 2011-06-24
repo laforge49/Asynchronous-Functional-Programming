@@ -25,7 +25,7 @@ package org.agilewiki
 package util
 package lite
 
-trait LiteResponder extends SystemContext {
+trait LiteResponder extends SystemContextGetter {
   private var _requestHandler: PartialFunction[Any, Unit] = null
 
   def requestHandler = _requestHandler
@@ -38,17 +38,19 @@ trait LiteResponder extends SystemContext {
 
   def liteReactor: LiteReactor
 
+  def systemContext = liteReactor.systemContext
+
+  def newReactor =liteReactor.newReactor
+
   def actor: LiteActor
 
   def isSafe(srcActor: LiteActor, dstActor: LiteActor) =
-    srcActor.liteReactor == dstActor.liteReactor
+    srcActor.liteReactor.eq(dstActor.liteReactor)
 
   def addExtension(ext: LiteExtension) {
     ext.actor(actor)
     addRequestHandler(ext.requestHandler)
   }
-
-  def systemContext = liteReactor.asInstanceOf[ContextReactor].systemContext
 
   def send(actor: LiteActor, content: Any)
           (responseProcess: PartialFunction[Any, Unit]) {

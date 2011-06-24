@@ -44,10 +44,10 @@ class DataInputStack(buf: Array[Byte])
   with DataStack {
   def inputPayload = this
 
-  def readRolonName: RolonName = {
-    check("ROLON")
-    val rolonUuid = readUTF
-    RolonName(rolonUuid)
+  def readId: ActorId = {
+    check("ID")
+    val id = readUTF
+    ActorId(id)
   }
 
   def readStringList: List[String] = {
@@ -75,10 +75,9 @@ class DataInputStack(buf: Array[Byte])
       (dis: DataInputStack) => dis.readMapMap)
   }
 
-  def readRolonList: List[RolonName] = {
-    readList[RolonName]("ROLON_LIST", (dis: DataInputStack) => {
-      val uuid = readUTF
-      RolonName(uuid)
+  def readIdList: List[ActorId] = {
+    readList[ActorId]("ID_LIST", (dis: DataInputStack) => {
+      readId
     })
   }
 

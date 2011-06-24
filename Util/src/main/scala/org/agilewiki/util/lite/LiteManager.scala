@@ -27,101 +27,60 @@ package lite
 
 import java.lang.ref.ReferenceQueue
 import cache.NamedWeakReference
-import java.util.{TimerTask, UUID, HashMap}
+import java.util.{TimerTask, HashMap}
 
-case class MapPutReq(actor: InternalAddressActor)
+case class MapPutReq(actor: LiteActor)
 
-case class MapGetReq(uuid: Uuid)
+case class MapGetReq(id: ActorId)
 
-case class MapGetRsp(actor: InternalAddressActor)
+case class MapGetRsp(actor: LiteActor)
 
-case class RememberReq(actor: InternalAddressActor, period: Int)
+case class RememberReq(actor: LiteActor, period: Int)
 
-case class ForgetReq(actor: InternalAddressActor)
+case class ForgetReq(actor: LiteActor)
 
-case class CreateReq(reactor: LiteReactor, className: ClassName)
+case class ForwardReq(id: ActorId, msg: Any)
 
-case class CreateRsp(actor: InternalAddressActor)
-
-case class CreateUuidReq(reactor: LiteReactor, className: ClassName, uuid: Uuid)
-
-case class CreateUuidRsp(actor: InternalAddressActor)
-
-case class CreateForwardReq(reactor: LiteReactor, className: ClassName, msg: Any)
-
-case class ForwardReq(uuid: Uuid, msg: Any)
-
-class LiteManager(systemContext: SystemComposite) extends LiteActor(new ContextReactor(systemContext)) {
-  private val referenceQueue = new ReferenceQueue[InternalAddressActor]
-  private val hashMap = new HashMap[String, NamedWeakReference[InternalAddressActor]]
+class LiteManager(reactor: LiteReactor) extends LiteActor(reactor) {
+  private val referenceQueue = new ReferenceQueue[LiteActor]
+  private val hashMap = new HashMap[String, NamedWeakReference[LiteActor]]
   private var longLivingActors = new java.util.HashMap[String, (LiteActor, TimerTask)]
-  private var factory = new LiteFactory
   private lazy val pinger = Lite(systemContext).pinger
 
   addRequestHandler {
-    case req: CreateReq => {
-      val uuid = Uuid(UUID.randomUUID.toString)
-      send(factory, CreateUuidReq(req.reactor, req.className, uuid)) {
-        case rsp: CreateRsp => {
-          mapPut(rsp.actor, uuid.value)
-          reply(rsp)
-        }
-      }
-    }
-    case req: CreateForwardReq => {
-      val uuid = Uuid(UUID.randomUUID.toString)
-      send(factory, CreateUuidReq(req.reactor, req.className, uuid)) {
-        case rsp: CreateRsp => {
-          val actor = rsp.actor
-          mapPut(actor, uuid.value)
-          send(actor, req.msg) {
-            case rsp => reply(rsp)
-          }
-        }
-      }
-    }
-    case req: CreateUuidReq => {
-      send(factory, req) {
-        case rsp: CreateRsp => {
-          val actor = rsp.actor
-          mapPut(actor, req.uuid.value)
-          reply(CreateUuidRsp(actor))
-        }
-      }
-    }
     case req: RememberReq => {
       val actor = req.actor
-      val uuid = actor.getUuid.value
+      val id = actor.id.value
       val retryReq = RetryReq(ForgetReq(actor), req.period)
       send(pinger, retryReq) {
         case pr: RetryRsp => {
           val tt = pr.tt
-          if (longLivingActors.containsKey(uuid)) {
-            val (actor2, tt2) = longLivingActors.remove(uuid)
+          if (longLivingActors.containsKey(id)) {
+            val (actor2, tt2) = longLivingActors.remove(id)
             tt2.cancel
           }
-          longLivingActors.put(uuid,(actor, tt))
+          longLivingActors.put(id,(actor, tt))
         }
       }
     }
     case req: ForgetReq => {
-      val (actor, tt) = longLivingActors.remove(req.actor.getUuid.value)
+      val (actor, tt) = longLivingActors.remove(req.actor.id.value)
       tt.cancel
     }
     case req: MapPutReq => {
       val actor = req.actor
-      mapPut(actor, actor.getUuid.value)
+      mapPut(actor, actor.id.value)
     }
     case req: MapGetReq => {
-      val nwr = hashMap.get(req.uuid.value)
-      var rv: InternalAddressActor = null
+      val nwr = hashMap.get(req.id.value)
+      var rv: LiteActor = null
       if (nwr != null) {
         rv = nwr.get
       }
       reply(MapGetRsp(rv))
     }
     case req: ForwardReq => {
-      val nwr = hashMap.get(req.uuid.value)
+      val nwr = hashMap.get(req.id.value)
       if (nwr != null) {
         val actor = nwr.get
         if (actor != null) {
@@ -133,12 +92,12 @@ class LiteManager(systemContext: SystemComposite) extends LiteActor(new ContextR
     }
   }
 
-  private def mapPut(item: InternalAddressActor, name: String) {
-    val nwr = new NamedWeakReference[InternalAddressActor](item, referenceQueue, name)
+  private def mapPut(item: LiteActor, name: String) {
+    val nwr = new NamedWeakReference[LiteActor](item, referenceQueue, name)
     hashMap.put(name, nwr)
     var more = true
     while (more) {
-      val x = referenceQueue.poll.asInstanceOf[NamedWeakReference[InternalAddressActor]]
+      val x = referenceQueue.poll.asInstanceOf[NamedWeakReference[LiteActor]]
       if (x == null) {
         more = false
       } else {

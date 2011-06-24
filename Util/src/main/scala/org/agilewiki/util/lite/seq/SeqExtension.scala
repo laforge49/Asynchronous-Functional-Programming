@@ -33,8 +33,13 @@ trait SeqExtension[T, V]
   with SeqComparator[T] {
 
   addRequestHandler{
-    case req: SeqFirstReq => reply(first)
-    case req: SeqCurrentReq[T] => reply(current(req.key))
+    case req: SeqFirstReq => {
+      reply(first)
+    }
+    case req: SeqCurrentReq[T] => {
+      val rsp = current(req.key)
+      reply(rsp)
+    }
     case req: SeqNextReq[T] => reply(next(req.key))
   }
 

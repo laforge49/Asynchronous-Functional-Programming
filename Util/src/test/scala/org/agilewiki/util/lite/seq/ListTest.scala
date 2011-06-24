@@ -17,7 +17,7 @@ class ListTest extends SpecificationWithJUnit {
       lst add "four"
       lst add "five"
       lst add "etc"
-      var seq = new LiteListSeq(new LiteReactor, lst)
+      var seq = new LiteListSeq(new LiteReactor(null), lst)
       FutureSeq(seq).firstMatch(0,"one") must be equalTo true
       FutureSeq(seq).currentMatch(2,2,"three") must be equalTo true
       FutureSeq(seq).nextMatch(4,5,"etc") must be equalTo true
