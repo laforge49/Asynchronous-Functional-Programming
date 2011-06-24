@@ -42,14 +42,12 @@ class LiteActor(reactor: LiteReactor)
     actorId = _id
   }
 
-  def factory = actorFactory
+  override def factory = actorFactory
 
   def factory(_factory: ActorFactory) {
     if (actorFactory != null) throw new UnsupportedOperationException
     actorFactory = _factory
   }
-
-  def factoryName = factory.name
 
   override def actor = this
 
