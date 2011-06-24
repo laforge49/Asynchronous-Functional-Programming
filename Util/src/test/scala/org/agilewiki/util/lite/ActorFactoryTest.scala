@@ -27,43 +27,50 @@ package lite
 
 import org.specs.SpecificationWithJUnit
 
-class SystemContextTest extends SpecificationWithJUnit {
-  "SystemContext" should {
-    "instantiate Lite" in {
-      val tcFactory = new TCFactory
-      val systemContext = new SystemContext(tcFactory)
-      val lite = Lite(systemContext)
-      println(lite)
-      systemContext.start
-      systemContext.close
-    }
+class TAActor(reactor: LiteReactor, text: String) extends LiteActor(reactor) {
+  def print {
+    println(text)
   }
 }
 
-class TCFactory
+class taActorFactory(name: FactoryName, text: String) extends ActorFactory(name) {
+  def instantiate(reactor: LiteReactor): LiteActor = {
+    new TAActor(reactor, text)
+  }
+}
+
+class TAFactory
   extends SystemComponentFactory {
   val actorFactories = new java.util.HashMap[String, ActorFactory]
-  val startMsg = "Hello world!"
-  val closeMsg = "Bye bye."
 
   addDependency(classOf[LiteFactory])
 
   override def configure(systemContext: SystemContext) {
     val liteFactory = LiteFactory(systemContext)
-    println(liteFactory)
+    liteFactory.addFactory(new taActorFactory(FactoryName("a"), "Apple"))
+    liteFactory.addFactory(new taActorFactory(FactoryName("b"), "Boy"))
   }
 
-  override def instantiate(systemContext: SystemContext) = new TC(systemContext, this)
+  override def instantiate(systemContext: SystemContext) = new TA(systemContext, this)
 }
 
-class TC(systemContext: SystemContext, tcFactory: TCFactory)
+class TA(systemContext: SystemContext, tcFactory: TAFactory)
   extends SystemComponent(systemContext) {
+}
 
-  override def start {
-    println(tcFactory.startMsg)
-  }
-
-  override def close {
-    println(tcFactory.closeMsg)
+class ActorFactoryTest extends SpecificationWithJUnit {
+  "ActorFactory" should {
+    "configure actors" in {
+      val taFactory = new TAFactory
+      val systemContext = new SystemContext(taFactory)
+      val lite = Lite(systemContext)
+      val reactor = systemContext.newReactor
+      val actor1 = lite.newActor(FactoryName("a"), reactor).asInstanceOf[TAActor]
+      println(actor1.factoryName.value)
+      actor1.print
+      val actor2 = lite.newActor(FactoryName("b"), reactor).asInstanceOf[TAActor]
+      println(actor2.factoryName.value)
+      actor2.print
+    }
   }
 }

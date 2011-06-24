@@ -51,6 +51,10 @@ object Lite {
 class Lite(systemContext: SystemContext, liteFactory: LiteFactory)
   extends SystemComponent(systemContext) {
 
-  def newActor(factoryName: FactoryName, reactor: LiteReactor) =
-    liteFactory.actorFactories.get(factoryName.value).instantiate(reactor)
+  def newActor(factoryName: FactoryName, reactor: LiteReactor) = {
+    val actorFactory = liteFactory.actorFactories.get(factoryName.value)
+    val actor = actorFactory.instantiate(reactor)
+    actor.factory(actorFactory)
+    actor
+  }
 }
