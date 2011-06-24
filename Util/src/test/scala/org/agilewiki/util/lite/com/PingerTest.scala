@@ -24,12 +24,13 @@
 package org.agilewiki
 package util
 package lite
+package com
 
 import org.specs.SpecificationWithJUnit
 
-case class PingerTestReq
+case class PingerTestReq()
 case class PingerTestRetryReq(count: Int)
-case class PingerTestRsp
+case class PingerTestRsp()
 
 class PingerTestActor(pinger: LiteActor)
   extends LiteActor(new LiteReactor(null)) {
@@ -41,7 +42,7 @@ class PingerTestActor(pinger: LiteActor)
     }
     case req: PingerTestRetryReq => {
       System.err.println(req.count)
-      if (req.count < 2) reply(PingerTestRsp)
+      if (req.count < 2) reply(PingerTestRsp())
       else send(pinger, RetryReq(PingerTestRetryReq(req.count - 1), 1)) {
         case rsp: RetryRsp =>
       }
