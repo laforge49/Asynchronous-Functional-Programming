@@ -55,6 +55,11 @@ class TCFactory
 
   addDependency(classOf[LiteFactory])
 
+  override def configure(systemContext: SystemContext) {
+    val liteFactory = LiteFactory(systemContext)
+    println(liteFactory)
+  }
+
   override def instantiate(systemContext: SystemContext) = new TC(systemContext, this)
 }
 
