@@ -30,10 +30,48 @@ import org.specs.SpecificationWithJUnit
 class SystemContextTest extends SpecificationWithJUnit {
   "SystemContext" should {
     "instantiate Lite" in {
-      val liteFactory = new LiteFactory
-      val systemContext = new SystemContext(liteFactory)
+      val tcFactory = new TCFactory
+      val systemContext = new SystemContext(tcFactory)
       val lite = Lite(systemContext)
       println(lite)
+      systemContext.start
+      systemContext.close
     }
+  }
+}
+
+
+object TCFactory {
+  def apply(systemContext: SystemContext) =
+    systemContext.factory(classOf[TCFactory])
+      .asInstanceOf[TCFactory]
+}
+
+class TCFactory
+  extends SystemComponentFactory {
+  val actorFactories = new java.util.HashMap[String, ActorFactory]
+  val startMsg = "Hello world!"
+  val closeMsg = "Bye bye."
+
+  addDependency(classOf[LiteFactory])
+
+  override def instantiate(systemContext: SystemContext) = new TC(systemContext, this)
+}
+
+object TC {
+  def apply(systemContext: SystemContext) =
+    systemContext.component(classOf[TCFactory])
+      .asInstanceOf[TC]
+}
+
+class TC(systemContext: SystemContext, tcFactory: TCFactory)
+  extends SystemComponent(systemContext) {
+
+  override def start {
+    println(tcFactory.startMsg)
+  }
+
+  override def close {
+    println(tcFactory.closeMsg)
   }
 }
