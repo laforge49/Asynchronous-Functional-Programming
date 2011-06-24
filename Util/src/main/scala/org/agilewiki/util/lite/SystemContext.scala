@@ -32,8 +32,6 @@ trait SystemContextGetter {
 case class SystemContextHolder(systemContext: SystemContext)
   extends SystemContextGetter
 
-case class SystemComponentName(name: String)
-
 abstract class SystemComponentFactory {
   val requiredFactoryClasses = new java.util.ArrayList[Class[_ <: SystemComponentFactory]]
 
@@ -46,7 +44,7 @@ abstract class SystemComponentFactory {
   def instantiate(systemContext: SystemContext): SystemComponent
 }
 
-abstract class SystemComponent(systemContext: SystemContext) extends SystemContextHolder(systemContext) {
+class SystemComponent(systemContext: SystemContext) extends SystemContextHolder(systemContext) {
   def start {}
 
   def close {}
@@ -59,24 +57,28 @@ class SystemContext(rootFactory: SystemComponentFactory) {
     new java.util.LinkedHashMap[Class[_ <: SystemComponentFactory], SystemComponentFactory]
   private val components = new java.util.LinkedHashMap[Class[_ <: SystemComponentFactory], SystemComponent]
 
-  include(rootFactory)
-  val fit = componentFactories.keySet.iterator
+  include(rootFactory, new scala.collection.immutable.HashSet)
+  private val fit = componentFactories.keySet.iterator
   while (fit.hasNext) {
     val factoryClass = fit.next
     val factory = componentFactories.get(factoryClass)
     val component = factory.instantiate(this)
     components.put(factoryClass, component)
   }
-  val componentList = new java.util.ArrayList(components.values)
+  private val componentList = new java.util.ArrayList(components.values)
 
-  private def include(factory: SystemComponentFactory) {
+  private def include(factory: SystemComponentFactory,
+                      _dependent: scala.collection.immutable.Set[Class[_ <: SystemComponentFactory]]) {
+    val factoryClass = factory.getClass.asInstanceOf[Class[_ <: SystemComponentFactory]]
+    val dependent = _dependent + (factoryClass)
     val requiredFactoryClasses = factory.requiredFactoryClasses
     var i = 0
     while (i < requiredFactoryClasses.size) {
       val requiredFactoryClass = requiredFactoryClasses.get(i)
+      if (dependent.contains(requiredFactoryClass)) throw new IllegalArgumentException("circular dependency")
       if (!componentFactories.containsKey(requiredFactoryClass)) {
         val requiredFactory = requiredFactoryClass.newInstance
-        include(requiredFactory)
+        include(requiredFactory, dependent)
       }
       i += 1
     }
