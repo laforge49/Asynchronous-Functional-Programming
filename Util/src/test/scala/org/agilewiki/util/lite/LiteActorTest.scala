@@ -39,7 +39,7 @@ class LiteTestActor(reactor: LiteReactor, next: LiteActor)
   }
 }
 
-class LiteTest extends SpecificationWithJUnit {
+class LiteActorTest extends SpecificationWithJUnit {
   "nba" should {
     "run 1000 * 1000" in {
       val M = 2
