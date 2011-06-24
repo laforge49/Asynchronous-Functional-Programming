@@ -27,7 +27,7 @@ package lite
 
 object LiteFactory {
   def apply(systemContext: SystemContext) =
-    systemContext.factory(classOf[LiteFactory].asInstanceOf[Class[SystemComponentFactory]])
+    systemContext.factory(classOf[LiteFactory])
       .asInstanceOf[LiteFactory]
 }
 
@@ -44,7 +44,7 @@ class LiteFactory
 
 object Lite {
   def apply(systemContext: SystemContext) =
-    systemContext.component(classOf[LiteFactory].asInstanceOf[Class[SystemComponentFactory]])
+    systemContext.component(classOf[LiteFactory])
       .asInstanceOf[Lite]
 }
 

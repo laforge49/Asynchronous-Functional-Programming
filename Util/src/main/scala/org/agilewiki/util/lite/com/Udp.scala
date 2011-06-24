@@ -36,7 +36,7 @@ object UdpFactory {
   val LOCAL_RESPONDER_FACTORY_NAME = FactoryName("localResponder")
 
   def apply(systemContext: SystemContext) =
-    systemContext.factory(classOf[UdpFactory].asInstanceOf[Class[SystemComponentFactory]])
+    systemContext.factory(classOf[UdpFactory])
       .asInstanceOf[UdpFactory]
 }
 
@@ -53,6 +53,8 @@ class UdpFactory
   var maxPayloadSize = 1000
   val servers = new java.util.TreeMap[String, HostPort]
 
+  addDependency(classOf[LiteFactory])
+
   override def configure(systemContext: SystemContext) {
     val liteFactory = LiteFactory(systemContext)
     liteFactory.addFactory(LocalResponderFactory())
@@ -63,7 +65,7 @@ class UdpFactory
 
 object Udp {
   def apply(systemContext: SystemContext) =
-    systemContext.component(classOf[UdpFactory].asInstanceOf[Class[SystemComponentFactory]])
+    systemContext.component(classOf[UdpFactory])
       .asInstanceOf[Udp]
 }
 

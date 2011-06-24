@@ -35,7 +35,11 @@ case class SystemContextHolder(systemContext: SystemContext)
 case class SystemComponentName(name: String)
 
 abstract class SystemComponentFactory {
-  val requiredFactoryClasses = new java.util.ArrayList[Class[SystemComponentFactory]]
+  val requiredFactoryClasses = new java.util.ArrayList[Class[_ <: SystemComponentFactory]]
+
+  def addDependency(requiredFactoryClass : Class[_ <: SystemComponentFactory]) {
+    requiredFactoryClasses.add(requiredFactoryClass)
+  }
 
   def configure(systemContext: SystemContext) {}
 
@@ -52,8 +56,8 @@ abstract class SystemComponent(systemContext: SystemContext) extends SystemConte
 
 class SystemContext(rootFactory: SystemComponentFactory) {
   private val componentFactories =
-    new java.util.LinkedHashMap[Class[SystemComponentFactory], SystemComponentFactory]
-  private val components = new java.util.LinkedHashMap[Class[SystemComponentFactory], SystemComponent]
+    new java.util.LinkedHashMap[Class[_ <: SystemComponentFactory], SystemComponentFactory]
+  private val components = new java.util.LinkedHashMap[Class[_ <: SystemComponentFactory], SystemComponent]
 
   include(rootFactory)
   val fit = componentFactories.keySet.iterator
@@ -80,9 +84,9 @@ class SystemContext(rootFactory: SystemComponentFactory) {
     factory.configure(this)
   }
 
-  def factory(factoryClass: Class[SystemComponentFactory]) = componentFactories.get(factoryClass)
+  def factory(factoryClass: Class[_ <: SystemComponentFactory]) = componentFactories.get(factoryClass)
 
-  def component(factoryClass: Class[SystemComponentFactory]) = components.get(factoryClass)
+  def component(factoryClass: Class[_ <: SystemComponentFactory]) = components.get(factoryClass)
 
   def start {
     var i = 0
