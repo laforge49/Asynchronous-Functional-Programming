@@ -35,7 +35,7 @@ class LiteFactory
   extends SystemComponentFactory {
   val actorFactories = new java.util.HashMap[String, ActorFactory]
 
-  def addActorFactory(factory: ActorFactory) {
+  def registerActorFactory(factory: ActorFactory) {
     actorFactories.put(factory.name.value, factory)
   }
 

@@ -27,12 +27,14 @@ package lite
 
 import org.specs.SpecificationWithJUnit
 
-class TAActor(reactor: LiteReactor) extends LiteActor(reactor) {
+class TAActor(reactor: LiteReactor)
+  extends LiteActor(reactor) {
   def taFactory = factory.asInstanceOf[TAActorFactory]
   def text = taFactory.text
 }
 
-class TAActorFactory(name: FactoryName, _text: String) extends ActorFactory(name) {
+class TAActorFactory(name: FactoryName, _text: String)
+  extends ActorFactory(name) {
   def text = _text
 
   def instantiate(reactor: LiteReactor): LiteActor = {
@@ -48,8 +50,8 @@ class TAFactory
 
   override def configure(systemContext: SystemContext) {
     val liteFactory = LiteFactory(systemContext)
-    liteFactory.addActorFactory(new TAActorFactory(FactoryName("a"), "Apple"))
-    liteFactory.addActorFactory(new TAActorFactory(FactoryName("b"), "Boy"))
+    liteFactory.registerActorFactory(new TAActorFactory(FactoryName("a"), "Apple"))
+    liteFactory.registerActorFactory(new TAActorFactory(FactoryName("b"), "Boy"))
   }
 
   override def instantiate(systemContext: SystemContext) = new TA(systemContext, this)

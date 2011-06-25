@@ -57,7 +57,7 @@ class UdpFactory
 
   override def configure(systemContext: SystemContext) {
     val liteFactory = LiteFactory(systemContext)
-    liteFactory.addActorFactory(LocalResponderFactory())
+    liteFactory.registerActorFactory(LocalResponderFactory())
   }
 
   override def instantiate(systemContext: SystemContext) = new Udp(systemContext)
