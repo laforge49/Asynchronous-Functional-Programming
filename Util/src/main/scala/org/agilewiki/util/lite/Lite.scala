@@ -35,11 +35,13 @@ class LiteFactory
   extends SystemComponentFactory {
   val actorFactories = new java.util.HashMap[String, ActorFactory]
 
-  def addFactory(factory: ActorFactory) {
+  def addActorFactory(factory: ActorFactory) {
     actorFactories.put(factory.name.value, factory)
   }
 
-  override def instantiate(systemContext: SystemContext) = new Lite(systemContext, this)
+  def getActorFactory(name: FactoryName) = actorFactories.get(name.value)
+
+  override def instantiate(systemContext: SystemContext) = new Lite(systemContext)
 }
 
 object Lite {
@@ -48,11 +50,12 @@ object Lite {
       .asInstanceOf[Lite]
 }
 
-class Lite(systemContext: SystemContext, liteFactory: LiteFactory)
+class Lite(systemContext: SystemContext)
   extends SystemComponent(systemContext) {
+  def liteFactory = componentFactory.asInstanceOf[LiteFactory]
 
   def newActor(factoryName: FactoryName, reactor: LiteReactor) = {
-    val actorFactory = liteFactory.actorFactories.get(factoryName.value)
+    val actorFactory = liteFactory.getActorFactory(factoryName)
     val actor = actorFactory.instantiate(reactor)
     actor.factory(actorFactory)
     actor

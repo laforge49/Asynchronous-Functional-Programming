@@ -27,15 +27,16 @@ package lite
 
 import org.specs.SpecificationWithJUnit
 
-class TAActor(reactor: LiteReactor, text: String) extends LiteActor(reactor) {
-  def print {
-    println(text)
-  }
+class TAActor(reactor: LiteReactor) extends LiteActor(reactor) {
+  def taFactory = factory.asInstanceOf[TAActorFactory]
+  def text = taFactory.text
 }
 
-class taActorFactory(name: FactoryName, text: String) extends ActorFactory(name) {
+class TAActorFactory(name: FactoryName, _text: String) extends ActorFactory(name) {
+  def text = _text
+
   def instantiate(reactor: LiteReactor): LiteActor = {
-    new TAActor(reactor, text)
+    new TAActor(reactor)
   }
 }
 
@@ -47,8 +48,8 @@ class TAFactory
 
   override def configure(systemContext: SystemContext) {
     val liteFactory = LiteFactory(systemContext)
-    liteFactory.addFactory(new taActorFactory(FactoryName("a"), "Apple"))
-    liteFactory.addFactory(new taActorFactory(FactoryName("b"), "Boy"))
+    liteFactory.addActorFactory(new TAActorFactory(FactoryName("a"), "Apple"))
+    liteFactory.addActorFactory(new TAActorFactory(FactoryName("b"), "Boy"))
   }
 
   override def instantiate(systemContext: SystemContext) = new TA(systemContext, this)
@@ -66,11 +67,11 @@ class ActorFactoryTest extends SpecificationWithJUnit {
       val lite = Lite(systemContext)
       val reactor = systemContext.newReactor
       val actor1 = lite.newActor(FactoryName("a"), reactor).asInstanceOf[TAActor]
-      println(actor1.factoryName.value)
-      actor1.print
+      actor1.factoryName.value must be equalTo("a")
+      actor1.text must be equalTo("Apple")
       val actor2 = lite.newActor(FactoryName("b"), reactor).asInstanceOf[TAActor]
-      println(actor2.factoryName.value)
-      actor2.print
+      actor2.factoryName.value must be equalTo("b")
+      actor2.text must be equalTo("Boy")
     }
   }
 }
