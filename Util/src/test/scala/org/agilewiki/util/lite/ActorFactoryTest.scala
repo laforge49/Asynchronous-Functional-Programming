@@ -27,9 +27,8 @@ package lite
 
 import org.specs.SpecificationWithJUnit
 
-class TAActor(reactor: LiteReactor, factory: TAActorFactory)
-  extends LiteActor(reactor, factory) {
-  def taFactory = factory.asInstanceOf[TAActorFactory]
+class TAActor(reactor: LiteReactor, taFactory: TAActorFactory)
+  extends LiteActor(reactor, taFactory) {
   def text = taFactory.text
 }
 
@@ -56,7 +55,7 @@ class TAComponentFactory
   override def instantiate(systemContext: SystemContext) = new TAComponent(systemContext, this)
 }
 
-class TAComponent(systemContext: SystemContext, tcFactory: TAComponentFactory)
+class TAComponent(systemContext: SystemContext, taFactory: TAComponentFactory)
   extends SystemComponent(systemContext) {
 }
 
