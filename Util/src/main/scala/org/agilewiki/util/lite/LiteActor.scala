@@ -25,10 +25,6 @@ package org.agilewiki
 package util
 package lite
 
-abstract case class ActorFactory(name: FactoryName) {
-  def instantiate(reactor: LiteReactor): LiteActor
-}
-
 class LiteActor(reactor: LiteReactor)
   extends LiteResponder
   with LiteSrc {

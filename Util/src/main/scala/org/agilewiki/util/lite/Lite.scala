@@ -25,6 +25,10 @@ package org.agilewiki
 package util
 package lite
 
+abstract case class ActorFactory(name: FactoryName) {
+  def instantiate(reactor: LiteReactor): LiteActor
+}
+
 object LiteFactory {
   def apply(systemContext: SystemContext) =
     systemContext.factory(classOf[LiteFactory])
