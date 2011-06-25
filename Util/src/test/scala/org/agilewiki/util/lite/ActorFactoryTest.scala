@@ -42,7 +42,7 @@ class TAActorFactory(name: FactoryName, _text: String)
   }
 }
 
-class TAFactory
+class TAComponentFactory
   extends SystemComponentFactory {
   val actorFactories = new java.util.HashMap[String, ActorFactory]
 
@@ -54,17 +54,17 @@ class TAFactory
     liteFactory.registerActorFactory(new TAActorFactory(FactoryName("b"), "Boy"))
   }
 
-  override def instantiate(systemContext: SystemContext) = new TA(systemContext, this)
+  override def instantiate(systemContext: SystemContext) = new TAComponent(systemContext, this)
 }
 
-class TA(systemContext: SystemContext, tcFactory: TAFactory)
+class TAComponent(systemContext: SystemContext, tcFactory: TAComponentFactory)
   extends SystemComponent(systemContext) {
 }
 
 class ActorFactoryTest extends SpecificationWithJUnit {
   "ActorFactory" should {
     "configure actors" in {
-      val taFactory = new TAFactory
+      val taFactory = new TAComponentFactory
       val systemContext = new SystemContext(taFactory)
       val lite = Lite(systemContext)
       val reactor = systemContext.newReactor
