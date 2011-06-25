@@ -43,7 +43,7 @@ object PacketResponder {
 }
 
 class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
-  extends LiteActor(reactor) {
+  extends LiteActor(reactor, null) {
   var outsideActor: LiteActor = null
   val requestsSent = new HashMap[String, LiteReqMsg]
   private val liteManager = Udp(systemContext).liteManager

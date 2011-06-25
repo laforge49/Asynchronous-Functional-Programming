@@ -27,8 +27,8 @@ package lite
 
 import java.io.{RandomAccessFile, File}
 
-class LiteRandomIO(reactor: LiteReactor, pathname: String, accessMode: String)
-  extends LiteActor(reactor) {
+class LiteRandomIO(reactor: LiteReactor, pathname: String, accessMode: String, factory: ActorFactory)
+  extends LiteActor(reactor, factory) {
   val file = new File(pathname)
   val randomAccessFile = new RandomAccessFile(file, accessMode)
   addRequestHandler {
@@ -68,7 +68,7 @@ class LiteRandomIO(reactor: LiteReactor, pathname: String, accessMode: String)
 
 object LiteRandomIO {
   def apply(reactor: LiteReactor, pathname: String, accessMode: String) = {
-    new LiteRandomIO(reactor, pathname, accessMode)
+    new LiteRandomIO(reactor, pathname, accessMode, null)
   }
 }
 

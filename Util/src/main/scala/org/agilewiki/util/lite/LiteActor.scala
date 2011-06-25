@@ -25,11 +25,11 @@ package org.agilewiki
 package util
 package lite
 
-class LiteActor(reactor: LiteReactor)
+
+class LiteActor(reactor: LiteReactor, _factory: ActorFactory)
   extends LiteResponder
   with LiteSrc {
   private var actorId: ActorId = null
-  private var actorFactory: ActorFactory = null
 
   def id = actorId
 
@@ -38,12 +38,7 @@ class LiteActor(reactor: LiteReactor)
     actorId = _id
   }
 
-  override def factory = actorFactory
-
-  def factory(_factory: ActorFactory) {
-    if (actorFactory != null) throw new UnsupportedOperationException
-    actorFactory = _factory
-  }
+  override def factory = _factory
 
   override def actor = this
 

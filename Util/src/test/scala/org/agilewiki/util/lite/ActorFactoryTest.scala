@@ -27,8 +27,8 @@ package lite
 
 import org.specs.SpecificationWithJUnit
 
-class TAActor(reactor: LiteReactor)
-  extends LiteActor(reactor) {
+class TAActor(reactor: LiteReactor, factory: TAActorFactory)
+  extends LiteActor(reactor, factory) {
   def taFactory = factory.asInstanceOf[TAActorFactory]
   def text = taFactory.text
 }
@@ -38,7 +38,7 @@ class TAActorFactory(name: FactoryName, _text: String)
   def text = _text
 
   def instantiate(reactor: LiteReactor): LiteActor = {
-    new TAActor(reactor)
+    new TAActor(reactor, this)
   }
 }
 

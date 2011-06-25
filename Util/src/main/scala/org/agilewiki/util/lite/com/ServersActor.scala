@@ -35,7 +35,7 @@ case class HostPortUpdateReq(serverName: ServerName, hostPort: HostPort)
 case class HostPortUpdateRsp()
 
 class ServersActor(reactor: LiteReactor, servers: java.util.TreeMap[String, HostPort])
-  extends LiteActor(reactor) {
+  extends LiteActor(reactor, null) {
   val serverSequenceActor = new LiteNavigableMapSeq(liteReactor, servers)
 
   addRequestHandler {

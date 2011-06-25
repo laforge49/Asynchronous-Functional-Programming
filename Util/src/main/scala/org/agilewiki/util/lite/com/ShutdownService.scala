@@ -27,7 +27,7 @@ package lite
 package com
 
 class ShutdownService(reactor: LiteReactor)
-  extends LiteActor(reactor) {
+  extends LiteActor(reactor, null) {
   addRequestHandler {
     case req: IncomingPacketReq => System.exit(0)
   }

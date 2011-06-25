@@ -29,7 +29,7 @@ package com
 import java.util.HashMap
 
 class PacketRouter(reactor: LiteReactor)
-  extends LiteActor(reactor) {
+  extends LiteActor(reactor, null) {
   val serversActor = Udp(systemContext).serversActor
   val serverSequenceActor = serversActor.serverSequenceActor
   val map = new HashMap[String, LiteActor]

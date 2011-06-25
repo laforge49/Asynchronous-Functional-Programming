@@ -25,6 +25,8 @@ package org.agilewiki
 package util
 package lite
 
+import seq.LiteNavigableMapSeq
+
 abstract case class ActorFactory(name: FactoryName) {
   def instantiate(reactor: LiteReactor): LiteActor
 }
@@ -37,7 +39,7 @@ object LiteFactory {
 
 class LiteFactory
   extends SystemComponentFactory {
-  val actorFactories = new java.util.HashMap[String, ActorFactory]
+  val actorFactories = new java.util.TreeMap[String, ActorFactory]
 
   def registerActorFactory(factory: ActorFactory) {
     actorFactories.put(factory.name.value, factory)
@@ -56,12 +58,24 @@ object Lite {
 
 class Lite(systemContext: SystemContext)
   extends SystemComponent(systemContext) {
+  val serviceReactor = newReactor
   def liteFactory = componentFactory.asInstanceOf[LiteFactory]
+
+  lazy val factorySequence = new LiteNavigableMapSeq(serviceReactor, liteFactory.actorFactories)
+
+  val actorRegistry = new ActorRegistry(serviceReactor)
 
   def newActor(factoryName: FactoryName, reactor: LiteReactor) = {
     val actorFactory = liteFactory.getActorFactory(factoryName)
     val actor = actorFactory.instantiate(reactor)
-    actor.factory(actorFactory)
     actor
+  }
+
+  def getActor(srcActor: LiteActor, name: ActorName, reactor: LiteReactor)
+              (pf: PartialFunction[Any, Unit]) {
+    name match {
+      case n: ActorId => actorRegistry.getActor(srcActor, n)(pf)
+      case n: FactoryName => pf(ActorRsp(newActor(n, reactor)))
+    }
   }
 }

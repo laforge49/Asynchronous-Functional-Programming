@@ -28,14 +28,12 @@ package com
 
 case class LocalResponderFactory() extends ActorFactory(UdpFactory.LOCAL_RESPONDER_FACTORY_NAME) {
   override def instantiate(reactor: LiteReactor) = {
-    val lr = new LocalResponder(reactor)
-    lr.factory(this)
-    lr
+    new LocalResponder(reactor, this)
   }
 }
 
-class LocalResponder(reactor: LiteReactor)
-  extends LiteActor(reactor) {
+class LocalResponder(reactor: LiteReactor, factory: LocalResponderFactory)
+  extends LiteActor(reactor, factory) {
   val udp = Udp(systemContext)
   private var maxPayloadSize = udp.maxPayloadSize
   private var retryLimit = udp.retryLimit

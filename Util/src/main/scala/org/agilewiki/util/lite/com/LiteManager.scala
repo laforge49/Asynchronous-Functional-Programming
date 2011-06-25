@@ -42,7 +42,8 @@ case class ForgetReq(actor: LiteActor)
 
 case class ForwardReq(id: ActorId, msg: Any)
 
-class LiteManager(reactor: LiteReactor) extends LiteActor(reactor) {
+class LiteManager(reactor: LiteReactor)
+  extends LiteActor(reactor, null) {
   private val referenceQueue = new ReferenceQueue[LiteActor]
   private val hashMap = new HashMap[String, NamedWeakReference[LiteActor]]
   private var longLivingActors = new java.util.HashMap[String, (LiteActor, TimerTask)]

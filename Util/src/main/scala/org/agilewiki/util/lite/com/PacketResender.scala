@@ -32,7 +32,7 @@ import cache.CanonicalMap
 class PacketResender(reactor: LiteReactor,
                      insideActor: LiteActor,
                      outsideActor: LiteActor)
-  extends LiteActor(reactor) {
+  extends LiteActor(reactor, null) {
   private val pinger = Udp(systemContext).pinger
   private val udp = Udp(systemContext)
   private val timeoutMin = udp.timeOutMin

@@ -27,7 +27,7 @@ package lite
 package com
 
 class RemoteAccess(reactor: LiteReactor, packetRouter: LiteActor)
-  extends LiteActor(reactor) {
+  extends LiteActor(reactor, null) {
   private val localServerName = LocalServerName(systemContext).name
   private var maxPayloadSize: Int = Udp(systemContext).maxPayloadSize
   private val liteManager = Udp(systemContext).liteManager

@@ -28,7 +28,7 @@ package lite
 import org.specs.SpecificationWithJUnit
 
 class LiteTestActor(reactor: LiteReactor, next: LiteActor)
-  extends LiteActor(reactor) {
+  extends LiteActor(reactor, null) {
   addRequestHandler {
     case reqContent => {
       if (next == null) reply(reqContent)

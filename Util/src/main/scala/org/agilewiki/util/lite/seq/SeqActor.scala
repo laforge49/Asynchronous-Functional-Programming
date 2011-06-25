@@ -27,7 +27,7 @@ package lite
 package seq
 
 abstract class SeqActor[T, V](reactor: LiteReactor)
-  extends LiteActor(reactor)
+  extends LiteActor(reactor, null)
   with SeqComparator[T] {
 
   addRequestHandler{

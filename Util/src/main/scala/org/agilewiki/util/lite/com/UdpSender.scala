@@ -29,7 +29,8 @@ package com
 
 import java.net.{DatagramPacket, DatagramSocket}
 
-class UdpSender(reactor: LiteReactor) extends LiteActor(reactor) {
+class UdpSender(reactor: LiteReactor)
+  extends LiteActor(reactor, null) {
   var socket: DatagramSocket = null
   val localServer = LocalServerName(systemContext).name
 
