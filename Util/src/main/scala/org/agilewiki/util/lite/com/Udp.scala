@@ -60,7 +60,7 @@ class UdpFactory
     liteFactory.registerActorFactory(LocalResponderFactory())
   }
 
-  override def instantiate(systemContext: SystemContext) = new Udp(systemContext)
+  override def instantiate(systemContext: SystemContext) = new Udp(systemContext, this)
 }
 
 object Udp {
@@ -69,9 +69,8 @@ object Udp {
       .asInstanceOf[Udp]
 }
 
-class Udp(systemContext: SystemContext)
+class Udp(systemContext: SystemContext, udpFactory: UdpFactory)
   extends SystemComponent(systemContext) {
-  def udpFactory = componentFactory.asInstanceOf[UdpFactory]
   val pinger = new Pinger(newReactor)
   val liteManager = new LiteManager(newReactor)
   val localServerName = ServerName(udpFactory.localServerName)

@@ -47,7 +47,7 @@ class LiteFactory
 
   def getActorFactory(name: FactoryName) = actorFactories.get(name.value)
 
-  override def instantiate(systemContext: SystemContext) = new Lite(systemContext)
+  override def instantiate(systemContext: SystemContext) = new Lite(systemContext, this)
 }
 
 object Lite {
@@ -56,10 +56,9 @@ object Lite {
       .asInstanceOf[Lite]
 }
 
-class Lite(systemContext: SystemContext)
+class Lite(systemContext: SystemContext, liteFactory: LiteFactory)
   extends SystemComponent(systemContext) {
   val serviceReactor = newReactor
-  def liteFactory = componentFactory.asInstanceOf[LiteFactory]
 
   lazy val factorySequence = new LiteNavigableMapSeq(serviceReactor, liteFactory.actorFactories)
 

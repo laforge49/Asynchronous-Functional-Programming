@@ -45,13 +45,6 @@ abstract class SystemComponentFactory {
 }
 
 class SystemComponent(systemContext: SystemContext) extends SystemContextHolder(systemContext) {
-  private var _componentFactory: SystemComponentFactory = null
-
-  def componentFactory = _componentFactory
-
-  def componentFactory(systemComponentFactory: SystemComponentFactory) {
-    _componentFactory = systemComponentFactory
-  }
 
   def start {}
 
@@ -71,7 +64,6 @@ class SystemContext(rootFactory: SystemComponentFactory) {
     val factoryClass = fit.next
     val factory = componentFactories.get(factoryClass)
     val component = factory.instantiate(this)
-    component.componentFactory(factory)
     components.put(factoryClass, component)
   }
   private val componentList = new java.util.ArrayList(components.values)
