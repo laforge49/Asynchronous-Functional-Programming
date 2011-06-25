@@ -44,7 +44,6 @@ class TAActorFactory(name: FactoryName, _text: String)
 
 class TAComponentFactory
   extends SystemComponentFactory {
-  val actorFactories = new java.util.HashMap[String, ActorFactory]
 
   addDependency(classOf[LiteFactory])
 
