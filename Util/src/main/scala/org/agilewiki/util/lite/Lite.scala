@@ -51,9 +51,24 @@ class LiteFactory
 }
 
 object Lite {
-  def apply(systemContext: SystemContext) =
+  def apply(implicit systemContext: SystemContext) =
     systemContext.component(classOf[LiteFactory])
       .asInstanceOf[Lite]
+
+  def serviceReactor(implicit systemContext: SystemContext) = apply(systemContext).serviceReactor
+
+  def factorySequence(implicit systemContext: SystemContext) = apply(systemContext).factorySequence
+
+  def actorRegistry(implicit systemContext: SystemContext) = apply(systemContext).actorRegistry
+
+  def newActor(factoryName: FactoryName, reactor: LiteReactor)
+              (implicit systemContext: SystemContext) =
+    apply(systemContext).newActor(factoryName, reactor)
+
+  def getActor(srcActor: LiteActor, name: ActorName, reactor: LiteReactor)
+              (pf: PartialFunction[Any, Unit])
+              (implicit systemContext: SystemContext) =
+    apply(systemContext).getActor(srcActor, name, reactor)(pf)
 }
 
 class Lite(systemContext: SystemContext, liteFactory: LiteFactory)

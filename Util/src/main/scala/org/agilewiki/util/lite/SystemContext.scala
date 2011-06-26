@@ -26,7 +26,7 @@ package util
 package lite
 
 trait SystemContextGetter {
-  def systemContext: SystemContext
+  implicit def systemContext: SystemContext
 }
 
 case class SystemContextHolder(systemContext: SystemContext)
