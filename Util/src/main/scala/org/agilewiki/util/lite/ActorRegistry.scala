@@ -27,19 +27,19 @@ package lite
 
 import seq.LiteNavigableMapSeq
 
-case class RegisterReq(actor: LiteActor)
+case class RegisterActorReq(actor: LiteActor)
 
-sealed abstract class RegisterRsp
+sealed abstract class RegisterActorRsp
 
-case class RegisteredRsp()
-  extends RegisterRsp
+case class RegisteredActorRsp()
+  extends RegisterActorRsp
 
-case class DuplicateIdRsp()
-  extends RegisterRsp
+case class DuplicateActorIdRsp()
+  extends RegisterActorRsp
 
-case class UnregisterReq(id: ActorId)
+case class UnregisterActorReq(id: ActorId)
 
-case class UnregisterRsp()
+case class UnregisteredActorRsp()
 
 case class GetActorReq(id: ActorId)
 
@@ -48,7 +48,7 @@ sealed abstract class GetActorRsp
 case class ActorRsp(actor: LiteActor)
   extends GetActorRsp
 
-case class NoActor()
+case class NoActorRsp()
   extends GetActorRsp
 
 class ActorRegistry(reactor: LiteReactor) extends LiteActor(reactor, null) {
@@ -56,16 +56,16 @@ class ActorRegistry(reactor: LiteReactor) extends LiteActor(reactor, null) {
 
   def actorSequence = new LiteNavigableMapSeq(reactor, actors)
 
-  def register(srcActor: LiteActor, actor: LiteActor)
+  def registerActor(srcActor: LiteActor, actor: LiteActor)
               (pf: PartialFunction[Any, Unit]) = {
-    if (isSafe(srcActor)) pf(_register(actor))
-    else srcActor.send(this, RegisterReq(actor))(pf)
+    if (isSafe(srcActor)) pf(_registerActor(actor))
+    else srcActor.send(this, RegisterActorReq(actor))(pf)
   }
 
-  def unregister(srcActor: LiteActor, id: ActorId)
+  def unregisterActor(srcActor: LiteActor, id: ActorId)
                 (pf: PartialFunction[Any, Unit]) {
-    if (isSafe(srcActor)) pf(_unregister(id))
-    else srcActor.send(this, UnregisterReq(id))(pf)
+    if (isSafe(srcActor)) pf(_unregisterActor(id))
+    else srcActor.send(this, UnregisterActorReq(id))(pf)
   }
 
   def getActor(srcActor: LiteActor, id: ActorId)
@@ -74,27 +74,27 @@ class ActorRegistry(reactor: LiteReactor) extends LiteActor(reactor, null) {
     else srcActor.send(this, GetActorReq(id))(pf)
   }
 
-  private def _register(actor: LiteActor): RegisterRsp = {
+  private def _registerActor(actor: LiteActor): RegisterActorRsp = {
     val _id = actor.id.value
-    if (actors.containsKey(_id)) return DuplicateIdRsp()
-    else return RegisteredRsp()
+    if (actors.containsKey(_id)) return DuplicateActorIdRsp()
+    else return RegisteredActorRsp()
   }
 
-  private def _unregister(id: ActorId): UnregisterRsp = {
+  private def _unregisterActor(id: ActorId): UnregisteredActorRsp = {
     val _id = id.value
     actors.remove(_id)
-    UnregisterRsp()
+    UnregisteredActorRsp()
   }
 
   private def _getActor(id: ActorId): GetActorRsp = {
     val _id = id.value
     if (actors.containsKey(_id)) return ActorRsp(actors.get(_id))
-    else return NoActor()
+    else return NoActorRsp()
   }
 
   addRequestHandler{
-    case req: RegisterReq => reply(_register(req.actor))
-    case req: UnregisterReq => reply(_unregister(req.id))
+    case req: RegisterActorReq => reply(_registerActor(req.actor))
+    case req: UnregisterActorReq => reply(_unregisterActor(req.id))
     case req: GetActorReq => reply(_getActor(req.id))
   }
 }

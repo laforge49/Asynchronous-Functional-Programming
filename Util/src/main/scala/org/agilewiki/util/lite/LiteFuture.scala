@@ -27,15 +27,6 @@ package lite
 
 import annotation.tailrec
 
-object LiteFuture {
-
-  def apply(actor: LiteActor, messageContent: Any) = {
-    val future = new LiteFuture
-    future.send(actor, messageContent)
-    future.get
-  }
-}
-
 class LiteFuture
   extends LiteSrc {
   @volatile private[this] var rsp: LiteRspMsg = _
@@ -64,5 +55,53 @@ class LiteFuture
       if (satisfied) return rsp.content
     }
     get
+  }
+}
+
+object LiteFuture {
+
+  def apply(actor: LiteActor, messageContent: Any) = {
+    val future = new LiteFuture
+    future.send(actor, messageContent)
+    future.get
+  }
+
+  def getActor(name: ActorName, reactor: LiteReactor)
+              (implicit systemContext: SystemContext): LiteActor = {
+    name match {
+      case n: FactoryName => return Lite.newActor(n, reactor)(systemContext)
+      case n: ActorId => return getActor(n)
+    }
+  }
+
+  def registerActor(actor: LiteActor)
+                   (implicit systemContext: SystemContext) {
+    val actorRegistry = Lite.actorRegistry(systemContext)
+    val rsp = apply(actorRegistry, RegisterActorReq(actor))
+    rsp match {
+      case r: RegisteredActorRsp =>
+      case r => throw new UnsupportedOperationException(r.toString)
+    }
+  }
+
+  def getActor(id: ActorId)
+              (implicit systemContext: SystemContext): LiteActor = {
+    val actorRegistry = Lite.actorRegistry(systemContext)
+    val rsp = apply(actorRegistry, GetActorReq(id))
+    rsp match {
+      case r: ActorRsp => return r.actor
+      case r: NoActorRsp => return null
+      case r => throw new UnsupportedOperationException(r.toString)
+    }
+  }
+
+  def unregisterActor(id: ActorId)
+                     (implicit systemContext: SystemContext) {
+    val actorRegistry = Lite.actorRegistry(systemContext)
+    val rsp = apply(actorRegistry, UnregisterActorReq(id))
+    rsp match {
+      case r: UnregisteredActorRsp =>
+      case r => throw new UnsupportedOperationException(r.toString)
+    }
   }
 }

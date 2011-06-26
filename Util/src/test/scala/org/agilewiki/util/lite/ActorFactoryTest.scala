@@ -71,9 +71,8 @@ class ActorFactoryTest extends SpecificationWithJUnit {
       val actor2 = Lite.newActor(FactoryName("b"), reactor).asInstanceOf[TAActor]
       actor2.factoryName.value must be equalTo("b")
       actor2.text must be equalTo("Boy")
-      Lite.getActor(null, FactoryName("a"), reactor) {
-        case msg: ActorRsp => println(msg.actor.asInstanceOf[TAActor].text)
-      }
+      val actor3 = LiteFuture.getActor(FactoryName("a"), reactor).asInstanceOf[TAActor]
+      actor3.text must be equalTo("Apple")
     }
   }
 }
