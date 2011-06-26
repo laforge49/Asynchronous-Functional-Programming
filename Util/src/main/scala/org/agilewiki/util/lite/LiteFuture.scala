@@ -41,9 +41,9 @@ class LiteFuture
   @volatile private[this] var rsp: LiteRspMsg = _
   @volatile private[this] var satisfied = false
 
-  def send(actor: LiteActor, messageContent: Any) {
-    val req = new LiteReqMsg(0, actor, null, null, messageContent, this)
-    val reactor = actor.liteReactor
+  def send(targetActor: LiteActor, messageContent: Any) {
+    val req = new LiteReqMsg(0, targetActor, null, null, messageContent, this)
+    val reactor = targetActor.liteReactor
     reactor.request(req)
   }
 

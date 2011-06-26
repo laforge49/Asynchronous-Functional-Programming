@@ -48,11 +48,8 @@ trait LiteResponder extends SystemContextGetter {
 
   def factoryName = factory.name
 
-  def isSafe(srcActor: LiteActor, dstActor: LiteActor): Boolean =
-    srcActor.liteReactor.eq(dstActor.liteReactor)
-
   def isSafe(srcActor: LiteActor): Boolean = {
-    isSafe(srcActor, actor)
+    srcActor.liteReactor.eq(actor.liteReactor)
   }
 
   def addExtension(ext: LiteExtension) {

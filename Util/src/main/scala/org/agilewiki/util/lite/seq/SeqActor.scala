@@ -189,17 +189,17 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
 
   override def comparator = seq.comparator
 
-  override def first(sourceActor: LiteActor)
+  override def first(src: LiteActor)
                     (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor, this)) {
+    if (isSafe(src)) {
       responseProcess(seq.first)
     }
-    else sourceActor.send(this, SeqFirstReq)(responseProcess)
+    else src.send(this, SeqFirstReq)(responseProcess)
   }
 
   override def current(sourceActor: LiteActor, key: T)
                       (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor, this)) {
+    if (isSafe(sourceActor)) {
       responseProcess(seq.current(key))
     }
     else sourceActor.send(this, SeqCurrentReq(key))(responseProcess)
@@ -207,7 +207,7 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
 
   override def next(sourceActor: LiteActor, key: T)
                    (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor, this)) {
+    if (isSafe(sourceActor)) {
       responseProcess(seq.next(key))
     }
     else sourceActor.send(this, SeqNextReq(key))(responseProcess)
@@ -215,7 +215,7 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
 
   override def fold(sourceActor: LiteActor, seed: V, f: (V, V) => V)
                    (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor, this)) {
+    if (isSafe(sourceActor)) {
       responseProcess(seq._fold(seed, f))
     }
     else sourceActor.send(this, FoldReq(seed, f))(responseProcess)
@@ -227,7 +227,7 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
 
   override def exists(sourceActor: LiteActor, e: V => Boolean)
                      (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor, this)) {
+    if (isSafe(sourceActor)) {
       responseProcess(seq._exists(e))
     }
     else sourceActor.send(this, ExistsReq(e))(responseProcess)
@@ -239,7 +239,7 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
 
   override def find(sourceActor: LiteActor, f: V => Boolean)
                    (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor, this)) {
+    if (isSafe(sourceActor)) {
       responseProcess(seq._find(f))
     }
     else sourceActor.send(this, FindReq(f))(responseProcess)

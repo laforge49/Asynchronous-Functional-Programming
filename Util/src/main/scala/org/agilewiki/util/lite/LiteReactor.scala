@@ -114,8 +114,7 @@ final case class LiteReactor(systemContext: SystemContext)
         oldReq,
         content,
         sender)
-      if (targetReactor == null) request(req)
-      else targetReactor.request(req)
+      targetReactor.request(req)
     }
     else {
       val req = new LiteReqMsg(

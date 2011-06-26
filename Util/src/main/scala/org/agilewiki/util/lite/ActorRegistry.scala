@@ -25,6 +25,8 @@ package org.agilewiki
 package util
 package lite
 
+import seq.LiteNavigableMapSeq
+
 case class RegisterReq(actor: LiteActor)
 
 sealed abstract class RegisterRsp
@@ -50,7 +52,9 @@ case class NoActor()
   extends GetActorRsp
 
 class ActorRegistry(reactor: LiteReactor) extends LiteActor(reactor, null) {
-  private var actors = new java.util.HashMap[String, LiteActor]
+  private var actors = new java.util.TreeMap[String, LiteActor]
+
+  def actorSequence = new LiteNavigableMapSeq(reactor, actors)
 
   def register(srcActor: LiteActor, actor: LiteActor)
               (pf: PartialFunction[Any, Unit]) = {
