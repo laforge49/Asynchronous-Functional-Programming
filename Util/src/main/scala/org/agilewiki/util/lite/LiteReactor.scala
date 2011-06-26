@@ -33,6 +33,8 @@ final case class LiteReactor(systemContext: SystemContext)
   private var curMsg: LiteMsg = null
   start
 
+  def isMailboxEmpty = mailboxSize == 0
+
   def newReactor = new LiteReactor(systemContext)
 
   override def scheduler = super.scheduler
