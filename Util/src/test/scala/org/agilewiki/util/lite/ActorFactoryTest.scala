@@ -63,13 +63,12 @@ class ActorFactoryTest extends SpecificationWithJUnit {
   "ActorFactory" should {
     "configure actors" in {
       val taFactory = new TAComponentFactory
-      val systemContext = new SystemContext(taFactory)
-      val lite = Lite(systemContext)
+      implicit val systemContext = new SystemContext(taFactory)
       val reactor = systemContext.newReactor
-      val actor1 = lite.newActor(FactoryName("a"), reactor).asInstanceOf[TAActor]
+      val actor1 = Lite.newActor(FactoryName("a"), reactor).asInstanceOf[TAActor]
       actor1.factoryName.value must be equalTo("a")
       actor1.text must be equalTo("Apple")
-      val actor2 = lite.newActor(FactoryName("b"), reactor).asInstanceOf[TAActor]
+      val actor2 = Lite.newActor(FactoryName("b"), reactor).asInstanceOf[TAActor]
       actor2.factoryName.value must be equalTo("b")
       actor2.text must be equalTo("Boy")
     }

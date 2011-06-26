@@ -51,7 +51,7 @@ class LiteFactory
 }
 
 object Lite {
-  def apply(implicit systemContext: SystemContext) =
+  def apply(systemContext: SystemContext) =
     systemContext.component(classOf[LiteFactory])
       .asInstanceOf[Lite]
 

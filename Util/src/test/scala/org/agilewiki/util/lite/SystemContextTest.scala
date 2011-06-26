@@ -32,8 +32,7 @@ class SystemContextTest extends SpecificationWithJUnit {
     "instantiate Lite" in {
       val tcFactory = new TCFactory
       val systemContext = new SystemContext(tcFactory)
-      val lite = Lite(systemContext)
-      println(lite)
+      println(Lite(systemContext))
       systemContext.start
       systemContext.close
     }
