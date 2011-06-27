@@ -77,7 +77,10 @@ class ActorRegistry(reactor: LiteReactor) extends LiteActor(reactor, null) {
   private def _registerActor(actor: LiteActor): RegisterActorRsp = {
     val _id = actor.id.value
     if (actors.containsKey(_id)) return DuplicateActorIdRsp()
-    else return RegisteredActorRsp()
+    else {
+      actors.put(_id, actor)
+      return RegisteredActorRsp()
+    }
   }
 
   private def _unregisterActor(id: ActorId): UnregisteredActorRsp = {
