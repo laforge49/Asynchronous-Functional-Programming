@@ -25,7 +25,7 @@ package org.agilewiki
 package util
 package lite
 
-import seq.LiteNavigableMapSeq
+import seq.{SeqActor, LiteNavigableMapSeq}
 
 case class RegisterActorReq(actor: LiteActor)
 
@@ -54,7 +54,7 @@ case class NoActorRsp()
 class ActorRegistry(reactor: LiteReactor) extends LiteActor(reactor, null) {
   private var actors = new java.util.TreeMap[String, LiteActor]
 
-  def actorSequence = new LiteNavigableMapSeq(reactor, actors)
+  lazy val actorSequence: SeqActor[String, LiteActor] = new LiteNavigableMapSeq(reactor, actors)
 
   def registerActor(srcActor: LiteActor, actor: LiteActor)
               (pf: PartialFunction[Any, Unit]) = {
