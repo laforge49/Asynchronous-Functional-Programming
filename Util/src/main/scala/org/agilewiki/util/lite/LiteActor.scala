@@ -31,7 +31,7 @@ class LiteActor(reactor: LiteReactor, _factory: ActorFactory)
   with LiteSrc {
   private var actorId: ActorId = null
 
-  def id = actorId
+  override def id = actorId
 
   def id(_id: ActorId) {
     if (actorId != null) throw new UnsupportedOperationException

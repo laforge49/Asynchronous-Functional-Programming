@@ -44,9 +44,14 @@ trait LiteResponder extends SystemContextGetter {
 
   def actor: LiteActor
 
+  def id: ActorId
+
   def factory: ActorFactory
 
-  def factoryName = factory.name
+  def factoryName = {
+    if (factory == null) null
+    else factory.name
+  }
 
   def isSafe(srcActor: LiteActor): Boolean = {
     srcActor.liteReactor.eq(actor.liteReactor)
