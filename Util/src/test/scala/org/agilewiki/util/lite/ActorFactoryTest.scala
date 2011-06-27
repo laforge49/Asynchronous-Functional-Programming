@@ -26,6 +26,7 @@ package util
 package lite
 
 import org.specs.SpecificationWithJUnit
+import seq.FutureSeq
 
 class TAActor(reactor: LiteReactor, taFactory: TAActorFactory)
   extends LiteActor(reactor, taFactory) {
@@ -73,6 +74,8 @@ class ActorFactoryTest extends SpecificationWithJUnit {
       actor2.text must be equalTo("Boy")
       val actor3 = LiteFuture.getActor(FactoryName("a"), reactor).asInstanceOf[TAActor]
       actor3.text must be equalTo("Apple")
+      val factorySequence = Lite.factorySequence
+      FutureSeq(factorySequence).firstMatch("a", actor1.factory) must be equalTo(true)
     }
   }
 }
