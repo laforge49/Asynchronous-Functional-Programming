@@ -137,6 +137,8 @@ final case class LiteReactor(systemContext: SystemContext)
 
   def reply(content: Any) {
     val req = currentRequestMessage
+    if (!req.active) return
+    req.active = false
     val sender = req.sender
     if (recursionDepth > 100 ||
       !sender.isInstanceOf[LiteActor] ||
@@ -187,6 +189,7 @@ final class LiteReqMsg(recursionDepth: Int,
                        data: Any,
                        src: LiteSrc)
   extends LiteMsg(recursionDepth, pf, oldReq, data) {
+  var active = true
 
   def sender = src
 
