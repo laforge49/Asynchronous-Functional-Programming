@@ -56,22 +56,25 @@ class ActorRegistry(reactor: LiteReactor) extends LiteActor(reactor, null) {
 
   lazy val actorSequence: SeqActor[String, LiteActor] = new LiteNavigableMapSeq(reactor, actors)
 
-  def registerActor(srcActor: LiteActor, actor: LiteActor)
-              (pf: PartialFunction[Any, Unit]) = {
+  def registerActor(actor: LiteActor)
+                   (pf: PartialFunction[Any, Unit])
+                   (implicit srcActor: ActiveActor) = {
     if (isSafe(srcActor)) pf(_registerActor(actor))
-    else srcActor.send(this, RegisterActorReq(actor))(pf)
+    else send(RegisterActorReq(actor))(pf)(srcActor)
   }
 
-  def unregisterActor(srcActor: LiteActor, id: ActorId)
-                (pf: PartialFunction[Any, Unit]) {
+  def unregisterActor(id: ActorId)
+                     (pf: PartialFunction[Any, Unit])
+                     (implicit srcActor: ActiveActor) {
     if (isSafe(srcActor)) pf(_unregisterActor(id))
-    else srcActor.send(this, UnregisterActorReq(id))(pf)
+    else send(UnregisterActorReq(id))(pf)(srcActor)
   }
 
-  def getActor(srcActor: LiteActor, id: ActorId)
-              (pf: PartialFunction[Any, Unit]) {
+  def getActor(id: ActorId)
+              (pf: PartialFunction[Any, Unit])
+              (implicit srcActor: ActiveActor) {
     if (isSafe(srcActor)) pf(_getActor(id))
-    else srcActor.send(this, GetActorReq(id))(pf)
+    else send(GetActorReq(id))(pf)(srcActor)
   }
 
   private def _registerActor(actor: LiteActor): RegisterActorRsp = {

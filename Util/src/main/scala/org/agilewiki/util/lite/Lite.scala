@@ -65,10 +65,10 @@ object Lite {
               (implicit systemContext: SystemContext) =
     apply(systemContext).newActor(factoryName, reactor)
 
-  def getActor(srcActor: LiteActor, name: ActorName, reactor: LiteReactor)
+  def getActor(name: ActorName, reactor: LiteReactor)
               (pf: PartialFunction[Any, Unit])
-              (implicit systemContext: SystemContext) =
-    apply(systemContext).getActor(srcActor, name, reactor)(pf)
+              (implicit srcActor: ActiveActor, systemContext: SystemContext) =
+    apply(systemContext).getActor(name, reactor)(pf)(srcActor)
 }
 
 class Lite(systemContext: SystemContext, liteFactory: LiteFactory)
@@ -85,10 +85,11 @@ class Lite(systemContext: SystemContext, liteFactory: LiteFactory)
     actor
   }
 
-  def getActor(srcActor: LiteActor, name: ActorName, reactor: LiteReactor)
-              (pf: PartialFunction[Any, Unit]) {
+  def getActor(name: ActorName, reactor: LiteReactor)
+              (pf: PartialFunction[Any, Unit])
+              (implicit srcActor: ActiveActor) {
     name match {
-      case n: ActorId => actorRegistry.getActor(srcActor, n)(pf)
+      case n: ActorId => actorRegistry.getActor(n)(pf)(srcActor)
       case n: FactoryName => pf(ActorRsp(newActor(n, reactor)))
     }
   }

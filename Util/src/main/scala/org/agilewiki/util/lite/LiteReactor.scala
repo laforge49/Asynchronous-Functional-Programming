@@ -98,6 +98,8 @@ final case class LiteReactor(systemContext: SystemContext)
       curMsg.asInstanceOf[LiteRspMsg].oldRequest
   }
 
+  def activeActor = currentRequestMessage.target
+
   def recursionDepth = currentRequestMessage.recursionDepth
 
   def send(targetActor: LiteActor, content: Any)

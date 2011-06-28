@@ -38,9 +38,11 @@ trait LiteResponder extends SystemContextGetter {
 
   def liteReactor: LiteReactor
 
+  implicit def activeActor = liteReactor.activeActor
+
   def systemContext = liteReactor.systemContext
 
-  def newReactor =liteReactor.newReactor
+  def newReactor = liteReactor.newReactor
 
   def actor: LiteActor
 
@@ -57,6 +59,10 @@ trait LiteResponder extends SystemContextGetter {
     srcActor.liteReactor.eq(actor.liteReactor)
   }
 
+  def isSafe(srcActor: ActiveActor): Boolean = {
+    isSafe(srcActor.actor)
+  }
+
   def addExtension(ext: LiteExtension) {
     ext.actor(actor)
     addRequestHandler(ext.requestHandler)
@@ -65,6 +71,12 @@ trait LiteResponder extends SystemContextGetter {
   def send(actor: LiteActor, content: Any)
           (responseProcess: PartialFunction[Any, Unit]) {
     liteReactor.send(actor, content)(responseProcess)
+  }
+
+  def send(content: Any)
+          (responseProcess: PartialFunction[Any, Unit])
+          (implicit activeActor: ActiveActor) {
+    activeActor.actor.liteReactor.send(actor, content)(responseProcess)
   }
 
   def reply(content: Any) {
