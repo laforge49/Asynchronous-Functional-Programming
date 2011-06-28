@@ -55,12 +55,12 @@ trait LiteResponder extends SystemContextGetter {
     else factory.name
   }
 
-  def isSafe(srcActor: LiteActor): Boolean = {
+  @deprecated def isSafe(srcActor: LiteActor): Boolean = {
     srcActor.liteReactor.eq(actor.liteReactor)
   }
 
   def isSafe(srcActor: ActiveActor): Boolean = {
-    isSafe(srcActor.actor)
+    srcActor.actor.liteReactor.eq(actor.liteReactor)
   }
 
   def addExtension(ext: LiteExtension) {
@@ -68,7 +68,7 @@ trait LiteResponder extends SystemContextGetter {
     addRequestHandler(ext.requestHandler)
   }
 
-  def send(actor: LiteActor, content: Any)
+  @deprecated def send(actor: LiteActor, content: Any)
           (responseProcess: PartialFunction[Any, Unit]) {
     liteReactor.send(actor, content)(responseProcess)
   }
