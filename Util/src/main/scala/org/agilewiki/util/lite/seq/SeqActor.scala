@@ -250,7 +250,7 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
   }
 
   override def filter(filter: V => Boolean) =
-    new LiteExtensionFilterSeq(this, filter)
+    new LiteExtensionFilterFunc(this, filter)
 
   override def tail(start: T) =
     new LiteExtensionTailSeq(this, start)
