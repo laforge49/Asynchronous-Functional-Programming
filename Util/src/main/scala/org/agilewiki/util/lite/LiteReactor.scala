@@ -45,7 +45,7 @@ final case class LiteReactor(systemContext: SystemContext)
         case msg: LiteReqMsg => {
           curMsg = msg
           val target = msg.target
-          (target.requestHandler orElse uncaughtMsg)(msg.content)
+          (target.actor.requestHandler orElse uncaughtMsg)(msg.content)
         }
         case msg: LiteRspMsg => {
           curMsg = msg
@@ -68,7 +68,7 @@ final case class LiteReactor(systemContext: SystemContext)
         reply(new UncaughtExceptionRsp(
           ex.toString,
           curReq.sender.getClass.getName,
-          curReq.target.getClass.getName))
+          curReq.target.actor.getClass.getName))
       }
     }
   }
@@ -103,13 +103,13 @@ final case class LiteReactor(systemContext: SystemContext)
   def send(targetActor: LiteActor, content: Any)
           (responseProcess: PartialFunction[Any, Unit]) {
     val oldReq = currentRequestMessage
-    val sender = oldReq.target
+    val sender = oldReq.target.actor
     val targetReactor = targetActor.liteReactor
     if (recursionDepth > 100 ||
       (!eq(targetReactor))) {
       val req = new LiteReqMsg(
         0,
-        targetActor,
+        ActiveActor(targetActor),
         responseProcess,
         oldReq,
         content,
@@ -119,7 +119,7 @@ final case class LiteReactor(systemContext: SystemContext)
     else {
       val req = new LiteReqMsg(
         recursionDepth + 1,
-        targetActor,
+        ActiveActor(targetActor),
         responseProcess,
         oldReq,
         content,
@@ -183,7 +183,7 @@ sealed abstract class LiteMsg(depth: Int,
 }
 
 final class LiteReqMsg(recursionDepth: Int,
-                       destination: LiteActor,
+                       destination: ActiveActor,
                        pf: PartialFunction[Any, Unit],
                        oldReq: LiteReqMsg,
                        data: Any,
@@ -201,3 +201,5 @@ final class LiteRspMsg(recursionDepth: Int,
                        oldReq: LiteReqMsg,
                        data: Any)
   extends LiteMsg(recursionDepth, pf, oldReq, data)
+
+case class ActiveActor(actor: LiteActor)

@@ -61,7 +61,7 @@ class Pinger(reactor: LiteReactor)
           oldRequest.oldRequest,
           notification,
           oldRequest.sender)
-        target.liteReactor.request(newReqMsg)
+        target.actor.liteReactor.request(newReqMsg)
       }
     }
     liteReactor.scheduler.execute {

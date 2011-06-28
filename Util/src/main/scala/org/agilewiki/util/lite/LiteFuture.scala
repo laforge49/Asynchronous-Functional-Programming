@@ -33,7 +33,7 @@ class LiteFuture
   @volatile private[this] var satisfied = false
 
   def send(targetActor: LiteActor, messageContent: Any) {
-    val req = new LiteReqMsg(0, targetActor, null, null, messageContent, this)
+    val req = new LiteReqMsg(0, ActiveActor(targetActor), null, null, messageContent, this)
     val reactor = targetActor.liteReactor
     reactor.request(req)
   }
