@@ -37,7 +37,7 @@ class LiteFilterFunc[T, V](liteSeq: SeqActor[T, V], filter: V => Boolean)
   }
 
   private def _filter(req: SeqReq) {
-    send(liteSeq, req) {
+    liteSeq.send(req) {
       case rsp: SeqEndRsp => {
         reply(SeqEndRsp())
       }
@@ -58,7 +58,7 @@ class LiteFilterSeq[T, V, V1](liteSeq: SeqActor[T, V], filter: SeqActor[V, V1])
   }
 
   private def _filter(req: SeqReq) {
-    send(liteSeq, req) {
+    liteSeq.send(req) {
       case rsp: SeqEndRsp => reply(SeqEndRsp())
       case rsp: SeqResultRsp[T, V] => {
         filter.hasKey(this, rsp.value) {
