@@ -31,7 +31,7 @@ class LiteMapSeq[T, V1, V2](liteSeq: SeqActor[T, V1], mapSeq: SeqActor[V1, V2])
   override def comparator = liteSeq.comparator
 
   addRequestHandler{
-    case req: SeqReq => send(liteSeq.asInstanceOf[LiteActor], req)(m)
+    case req: SeqReq => liteSeq.send(req)(m)
   }
 
   val m: PartialFunction[Any, Unit] = {
@@ -63,7 +63,7 @@ class LiteMapFunc[T, V1, V2](liteSeq: SeqActor[T, V1], map: V1 => V2)
   override def comparator = liteSeq.comparator
 
   addRequestHandler{
-    case req: SeqReq => send(liteSeq.asInstanceOf[LiteActor], req)(m)
+    case req: SeqReq => liteSeq.send(req)(m)
   }
 
   val m: PartialFunction[Any, Unit] = {
