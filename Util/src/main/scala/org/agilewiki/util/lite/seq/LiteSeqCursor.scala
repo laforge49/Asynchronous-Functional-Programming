@@ -68,7 +68,7 @@ class LiteSeqCursor[T, V](reactor: LiteReactor, wrappedSeq: SeqActor[T, V])
       else reply(SeqEndRsp())
     else {
       inited = true
-      send(wrappedSeq.asInstanceOf[LiteActor], req) {
+      wrappedSeq.send(req) {
         case rsp: SeqEndRsp => {
           lastResult = null
           _first = true
@@ -88,7 +88,7 @@ class LiteSeqCursor[T, V](reactor: LiteReactor, wrappedSeq: SeqActor[T, V])
     if (inited && lastResult != null && key == lastResult.key) reply(lastResult)
     else {
       inited = true
-      send(wrappedSeq.asInstanceOf[LiteActor], req) {
+      wrappedSeq.send(req) {
         case rsp: SeqEndRsp => {
           lastResult = null
           _first = false
@@ -106,7 +106,7 @@ class LiteSeqCursor[T, V](reactor: LiteReactor, wrappedSeq: SeqActor[T, V])
   private def next(req: SeqNextReq[T]) {
     var key = req.key
     inited = true
-    send(wrappedSeq.asInstanceOf[LiteActor], SeqNextReq(key)) {
+    wrappedSeq.send(SeqNextReq(key)) {
       case rsp: SeqEndRsp => {
         lastResult = null
         _first = false
