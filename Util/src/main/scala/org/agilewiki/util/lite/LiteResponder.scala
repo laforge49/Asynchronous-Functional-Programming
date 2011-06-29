@@ -64,11 +64,6 @@ trait LiteResponder extends SystemContextGetter {
     addRequestHandler(ext.requestHandler)
   }
 
-  @deprecated def send(actor: LiteActor, content: Any)
-          (responseProcess: PartialFunction[Any, Unit]) {
-    liteReactor.send(actor, content)(responseProcess)
-  }
-
   def send(content: Any)
           (responseProcess: PartialFunction[Any, Unit])
           (implicit activeActor: ActiveActor) {

@@ -69,7 +69,7 @@ class PacketResender(reactor: LiteReactor,
     }
     else
       sendRequests.put(msgUuid, liteReactor.currentRequestMessage)
-    send(outsideActor, packet) {
+    outsideActor.send(packet) {
       case rsp: OutgoingPacketRsp => reply(rsp)
     }
   }
@@ -85,7 +85,7 @@ class PacketResender(reactor: LiteReactor,
         val msgUuid = it.next
         val liteReqMsg = sendRequests.get(msgUuid)
         val rejectedPacket = liteReqMsg.content.asInstanceOf[OutgoingPacketReq]
-        send(insideActor, rejectedPacket) {
+        insideActor.send(rejectedPacket) {
           case null =>
         }
       }
@@ -94,7 +94,7 @@ class PacketResender(reactor: LiteReactor,
       timeoutDelay += timeoutInc
       if (timeoutDelay > timeoutMax) timeoutDelay = timeoutMax
       scheduleRetry
-      send(outsideActor, packet) {
+      outsideActor.send(packet) {
         case rsp: OutgoingPacketRsp =>
       }
     }
@@ -107,11 +107,11 @@ class PacketResender(reactor: LiteReactor,
       reply(IncomingPacketRsp())
     } else if (outgoingRspCache.has(msgUuid)) {
       val rspPacket = outgoingRspCache.get(msgUuid)
-      send(outsideActor, rspPacket) { case rsp: OutgoingPacketRsp => }
+      outsideActor.send(rspPacket) { case rsp: OutgoingPacketRsp => }
       reply(IncomingPacketRsp())
     } else {
       incomingReqUuids.add(msgUuid)
-      send(insideActor, packet) {
+      insideActor.send(packet) {
         case rsp: IncomingPacketRsp => reply(rsp)
       }
     }
@@ -122,7 +122,7 @@ class PacketResender(reactor: LiteReactor,
     val msgUuid = packet.msgUuid
     if (sendRequests.containsKey(msgUuid)) {
       sendRequests.remove(msgUuid)
-      send(insideActor, packet) {
+      insideActor.send(packet) {
         case rsp: IncomingPacketRsp => reply(rsp)
       }
     } else reply(IncomingPacketRsp())
@@ -140,7 +140,7 @@ class PacketResender(reactor: LiteReactor,
     val oldestUuid = sendRequests.keySet.iterator.next
     val oldestReq = sendRequests.get(oldestUuid)
     val extendedRetryReq = ExtendedRetryReq(oldestReq, oldestReq.content, timeoutDelay)
-    send(pinger, extendedRetryReq) {
+    pinger.send(extendedRetryReq) {
       case prsp: ExtendedRetryRsp => {
         val tt = prsp.tt
         if (pendingTimer == null) pendingTimer = tt

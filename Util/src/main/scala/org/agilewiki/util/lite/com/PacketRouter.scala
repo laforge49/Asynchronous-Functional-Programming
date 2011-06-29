@@ -38,7 +38,7 @@ class PacketRouter(reactor: LiteReactor)
     case req: PacketReq => {
       val server = req.server
       if (map.containsKey(server)) packetReq(req)
-      else send(serversActor, HostPortQueryReq(server)) {
+      else serversActor.send(HostPortQueryReq(server)) {
         case sar: HostPortQueryRsp => {
           add(server, sar.hostPort)
           packetReq(req)
@@ -48,7 +48,7 @@ class PacketRouter(reactor: LiteReactor)
     case req: IncomingPacketReq => {
       val server = req.server
       if (map.containsKey(server)) incomePacket(req)
-      else send(serversActor, HostPortQueryReq(server)) {
+      else serversActor.send(HostPortQueryReq(server)) {
         case sar: HostPortQueryRsp => {
           add(server, sar.hostPort)
           incomePacket(req)
@@ -66,13 +66,13 @@ class PacketRouter(reactor: LiteReactor)
     val server = req.server
     val packetResponder = map.get(server)
     if (packetResponder == null) throw new IllegalArgumentException("Unknown server: " + server.name)
-    send(packetResponder, req) { case prr => reply(prr)}
+    packetResponder.send(req) { case prr => reply(prr)}
   }
 
   private def incomePacket(req: IncomingPacketReq) {
     val server = req.server
     val packetResponder = map.get(server)
     if (packetResponder == null) throw new IllegalArgumentException("Unknown server: " + server.name)
-    send(packetResponder, req) { case prr => reply(prr)}
+    packetResponder.send(req) { case prr => reply(prr)}
   }
 }

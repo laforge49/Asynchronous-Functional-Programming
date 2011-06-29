@@ -38,10 +38,10 @@ class LocalResponder(reactor: LiteReactor, factory: LocalResponderFactory)
   private var maxPayloadSize = udp.maxPayloadSize
   private var retryLimit = udp.retryLimit
   val liteManager = Udp(systemContext).liteManager
-  send(liteManager, MapPutReq(this)) {
+  liteManager.send(MapPutReq(this)) {
     case rsp =>
   }
-  send(liteManager, RememberReq(this, retryLimit)) {
+  liteManager.send(RememberReq(this, retryLimit)) {
     case rsp =>
   }
   addRequestHandler {
@@ -89,12 +89,12 @@ class LocalResponder(reactor: LiteReactor, factory: LocalResponderFactory)
     req.actorName match {
       case rn: FactoryName => {
         val actor = Lite(systemContext).newActor(rn, newReactor)
-        send(actor, req) {
+        actor.send(req) {
           case rsp: DataOutputStack => packetRsp(rsp)
           case rsp => reply(rsp)
         }
       }
-      case rn: ActorId => send(liteManager, ForwardReq(rn, req)) {
+      case rn: ActorId => liteManager.send(ForwardReq(rn, req)) {
         case rsp: DataOutputStack => packetRsp(rsp)
         case rsp => reply(rsp)
       }
@@ -107,7 +107,7 @@ class LocalResponder(reactor: LiteReactor, factory: LocalResponderFactory)
   }
 
   def smallRsp(payload: DataOutputStack) {
-    send(liteManager, ForgetReq(this)) {
+    liteManager.send(ForgetReq(this)) {
       case _ =>
     }
     payload.writeInt(1)

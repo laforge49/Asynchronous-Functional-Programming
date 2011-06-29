@@ -27,13 +27,24 @@ package lite
 
 import org.specs.SpecificationWithJUnit
 
-class LiteTestActor(reactor: LiteReactor, next: LiteActor)
+class LiteTestActor(reactor: LiteReactor, next: LiteTestActor)
   extends LiteActor(reactor, null) {
+
+  def process(reqContent: Any)
+             (responseProcess: PartialFunction[Any, Unit])
+             (implicit sender: ActiveActor) {
+    if (isSafe(sender)) {
+      if (next == null) responseProcess(reqContent)
+      else next.process(reqContent)(responseProcess)(sender)
+    }
+    else send(reqContent)(responseProcess)(sender)
+  }
+
   addRequestHandler {
     case reqContent => {
       if (next == null) reply(reqContent)
-      else next.send(reqContent) {
-        case rspContent => reply(rspContent)
+      else next.process(reqContent) {
+        case rsp => reply(rsp)
       }
     }
   }
@@ -42,12 +53,12 @@ class LiteTestActor(reactor: LiteReactor, next: LiteActor)
 class LiteActorTest extends SpecificationWithJUnit {
   "nba" should {
     "run 1000 * 1000" in {
-      val M = 2
-      val N = 2
+      val M = 1000
+      val N = 1000
       val actors = new Array[LiteActor](M)
       var j = 0
       while (j < M) {
-        var actor: LiteActor = null
+        var actor: LiteTestActor = null
         val reactor = new LiteReactor(null)
         var i = 0
         while (i < N) {

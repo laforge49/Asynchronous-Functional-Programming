@@ -36,14 +36,14 @@ class PingerTestActor(pinger: LiteActor)
   extends LiteActor(new LiteReactor(null), null) {
   addRequestHandler {
     case req: PingerTestReq => {
-      send(pinger, RetryReq(PingerTestRetryReq(5), 1)) {
+      pinger.send(RetryReq(PingerTestRetryReq(5), 1)) {
         case rsp: RetryRsp =>
       }
     }
     case req: PingerTestRetryReq => {
       System.err.println(req.count)
       if (req.count < 2) reply(PingerTestRsp())
-      else send(pinger, RetryReq(PingerTestRetryReq(req.count - 1), 1)) {
+      else pinger.send(RetryReq(PingerTestRetryReq(req.count - 1), 1)) {
         case rsp: RetryRsp =>
       }
     }

@@ -44,11 +44,11 @@ class RemoteAccess(reactor: LiteReactor, packetRouter: LiteActor)
     pkt.actorName match {
       case rn: FactoryName => {
         val actor = Lite(systemContext).newActor(rn, newReactor)
-        send(actor, pkt) {
+        actor.send(pkt) {
           case rsp => reply(rsp)
         }
       }
-      case rn: ActorId => send(liteManager, ForwardReq(rn, pkt)) {
+      case rn: ActorId => liteManager.send(ForwardReq(rn, pkt)) {
         case rsp => reply(rsp)
       }
     }
@@ -64,7 +64,7 @@ class RemoteAccess(reactor: LiteReactor, packetRouter: LiteActor)
   private def smallReq(server: ServerName, outputPayload: DataOutputStack) {
     outputPayload.writeInt(1)
     val req = PacketReq(server, UdpFactory.LOCAL_RESPONDER_FACTORY_NAME, outputPayload)
-    send(packetRouter, req) {
+    packetRouter.send(req) {
       case rsp: DataStack => packetRsp(server, rsp)
       case rsp => reply(rsp)
     }
@@ -90,7 +90,7 @@ class RemoteAccess(reactor: LiteReactor, packetRouter: LiteActor)
     outputPayload.writeByte(last.asInstanceOf[Byte])
     outputPayload.writeInt(count)
     val req = PacketReq(server, actorName, outputPayload)
-    send(packetRouter, req) {
+    packetRouter.send(req) {
       case rsp: DataStack => {
         if (last) packetRsp(server, rsp)
         else {
@@ -127,7 +127,7 @@ class RemoteAccess(reactor: LiteReactor, packetRouter: LiteActor)
     payload.write(bytes)
     if (count > 1) {
       val req = PacketReq(server, responderName, new DataOutputStack)
-      send(packetRouter, req) {
+      packetRouter.send(req) {
         case rsp: DataStack => {
           partRsp(server, responderName, count - 1, payload, rsp.inputPayload)
         }

@@ -66,7 +66,7 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
       packet.server,
       packet.actorName,
       packet.payload)
-    send(outsideActor, externalPacket) {
+    outsideActor.send(externalPacket) {
       case rsp: OutgoingPacketRsp =>
     }
   }
@@ -84,16 +84,16 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
             new ErrorRsp("no such factory: "+rn.value, getClass.getName, ""),
             this)
         }
-        if (actor != null) send(actor, req) {
+        if (actor != null) actor.send(req) {
           case rsp: DataOutputStack => sendRsp(packet, rsp, actor)
           case error: ErrorRsp => sendErrorRsp(packet, error, actor)
         }
       }
-      case rn: ActorId => send(liteManager, MapGetReq(rn)) {
+      case rn: ActorId => liteManager.send(MapGetReq(rn)) {
         case rsp: MapGetRsp => {
           val actor = rsp.actor
           if (actor != null) {
-            send(rsp.actor, req) {
+            rsp.actor.send(req) {
               case rsp: DataOutputStack => sendRsp(packet, rsp, actor)
               case error: ErrorRsp => sendErrorRsp(packet, error, actor)
             }
@@ -114,7 +114,7 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
       incomingPacket.server,
       actor.id,
       outputPayload)
-    send(outsideActor, externalPacket) {
+    outsideActor.send(externalPacket) {
       case rsp => reply(rsp)
     }
   }
@@ -134,7 +134,7 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
       incomingPacket.server,
       actor.id,
       outputPayload)
-    send(outsideActor, externalPacket) {
+    outsideActor.send(externalPacket) {
       case rsp => reply(rsp)
     }
   }

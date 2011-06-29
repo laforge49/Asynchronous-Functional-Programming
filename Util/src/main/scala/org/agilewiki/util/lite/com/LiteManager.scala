@@ -54,7 +54,7 @@ class LiteManager(reactor: LiteReactor)
       val actor = req.actor
       val id = actor.id.value
       val retryReq = RetryReq(ForgetReq(actor), req.period)
-      send(pinger, retryReq) {
+      pinger.send(retryReq) {
         case pr: RetryRsp => {
           val tt = pr.tt
           if (longLivingActors.containsKey(id)) {
@@ -86,7 +86,7 @@ class LiteManager(reactor: LiteReactor)
       if (nwr != null) {
         val actor = nwr.get
         if (actor != null) {
-          send(actor, req.msg) {
+          actor.send(req.msg) {
             case rsp => reply(rsp)
           }
         }
