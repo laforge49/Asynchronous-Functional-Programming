@@ -32,21 +32,21 @@ class LiteTailSeq[T, V](liteSeq: SeqActor[T, V], start: T)
 
   addRequestHandler {
     case req: SeqFirstReq => {
-      send(liteSeq, SeqCurrentReq(start)) {
+      liteSeq.send(SeqCurrentReq(start)) {
         case rsp => reply(rsp)
       }
     }
     case req: SeqCurrentReq[T] => {
       if (comparator.compare(req.key, start) < 0) liteSeq.current(this, start) {
         case rsp => reply(rsp)
-      } else send(liteSeq, req) {
+      } else liteSeq.send(req) {
         case rsp => reply(rsp)
       }
     }
     case req: SeqNextReq[T] => {
       if (comparator.compare(req.key, start) < 0) liteSeq.current(this, start) {
         case rsp => reply(rsp)
-      } else send(liteSeq, req) {
+      } else liteSeq.send(req) {
         case rsp => reply(rsp)
       }
     }
@@ -54,7 +54,9 @@ class LiteTailSeq[T, V](liteSeq: SeqActor[T, V], start: T)
 }
 
 class LiteExtensionTailSeq[T, V](seqExtensionActor: SeqExtensionActor[T, V], start: T)
-  extends SeqExtensionActor[T, V](seqExtensionActor.liteReactor, new TailSeqExtension[T, V](seqExtensionActor.seqExtension, start))
+  extends SeqExtensionActor[T, V](
+    seqExtensionActor.liteReactor,
+    new TailSeqExtension[T, V](seqExtensionActor.seqExtension, start))
 
 class TailSeqExtension[T, V](extension: SeqExtension[T, V], start: T)
   extends SeqExtension[T, V] {
