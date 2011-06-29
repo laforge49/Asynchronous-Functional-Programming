@@ -32,14 +32,14 @@ class LiteHeadSeq[T, V](liteSeq: SeqActor[T, V], limit: T)
 
   addRequestHandler {
     case req: SeqFirstReq => {
-      send(liteSeq, req)(h)
+      liteSeq.send(req)(h)
     }
     case req: SeqCurrentReq[T] => {
-      if (comparator.compare(req.key, limit) < 0) send(liteSeq, req)(h)
+      if (comparator.compare(req.key, limit) < 0) liteSeq.send(req)(h)
       else reply(SeqEndRsp())
     }
     case req: SeqNextReq[T] => {
-      if (comparator.compare(req.key, limit) < 0) send(liteSeq, req)(h)
+      if (comparator.compare(req.key, limit) < 0) liteSeq.send(req)(h)
       else reply(SeqEndRsp())
     }
   }
