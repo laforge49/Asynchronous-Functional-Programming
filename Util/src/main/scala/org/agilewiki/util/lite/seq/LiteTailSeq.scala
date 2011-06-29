@@ -37,14 +37,14 @@ class LiteTailSeq[T, V](liteSeq: SeqActor[T, V], start: T)
       }
     }
     case req: SeqCurrentReq[T] => {
-      if (comparator.compare(req.key, start) < 0) liteSeq.current(this, start) {
+      if (comparator.compare(req.key, start) < 0) liteSeq.current(start) {
         case rsp => reply(rsp)
       } else liteSeq.send(req) {
         case rsp => reply(rsp)
       }
     }
     case req: SeqNextReq[T] => {
-      if (comparator.compare(req.key, start) < 0) liteSeq.current(this, start) {
+      if (comparator.compare(req.key, start) < 0) liteSeq.current(start) {
         case rsp => reply(rsp)
       } else liteSeq.send(req) {
         case rsp => reply(rsp)

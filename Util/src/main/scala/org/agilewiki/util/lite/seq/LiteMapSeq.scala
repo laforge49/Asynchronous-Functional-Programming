@@ -36,7 +36,7 @@ class LiteMapSeq[T, V1, V2](liteSeq: SeqActor[T, V1], mapSeq: SeqActor[V1, V2])
 
   val m: PartialFunction[Any, Unit] = {
     case r: SeqResultRsp[T, V1] => {
-      mapSeq.get(this, r.value) {
+      mapSeq.get(r.value) {
         case mr => {
           reply(SeqResultRsp(r.key, mr))
         }
@@ -46,16 +46,6 @@ class LiteMapSeq[T, V1, V2](liteSeq: SeqActor[T, V1], mapSeq: SeqActor[V1, V2])
       reply(r)
     }
   }
-
-  override def current(sourceActor: LiteActor, key: T)
-                      (responseProcess: PartialFunction[Any, Unit]) {
-    liteSeq.current(this, key)(m)
-  }
-
-  override def next(sourceActor: LiteActor, key: T)
-                   (responseProcess: PartialFunction[Any, Unit]) {
-    liteSeq.next(this, key)(m)
-  }
 }
 
 class LiteMapFunc[T, V1, V2](liteSeq: SeqActor[T, V1], map: V1 => V2)
@@ -63,23 +53,9 @@ class LiteMapFunc[T, V1, V2](liteSeq: SeqActor[T, V1], map: V1 => V2)
   override def comparator = liteSeq.comparator
 
   addRequestHandler{
-    case req: SeqReq => liteSeq.send(req)(m)
-  }
-
-  val m: PartialFunction[Any, Unit] = {
-    case r: SeqResultRsp[T, V1] => reply(SeqResultRsp(r.key, map(r.value)))
-    case r => {
-      reply(r)
+    case req: SeqReq => liteSeq.send(req) {
+      case r: SeqResultRsp[T, V1] => reply(SeqResultRsp(r.key, map(r.value)))
+      case r => reply(r)
     }
-  }
-
-  override def current(sourceActor: LiteActor, key: T)
-                      (responseProcess: PartialFunction[Any, Unit]) {
-    liteSeq.current(this, key)(m)
-  }
-
-  override def next(sourceActor: LiteActor, key: T)
-                   (responseProcess: PartialFunction[Any, Unit]) {
-    liteSeq.next(this, key)(m)
   }
 }

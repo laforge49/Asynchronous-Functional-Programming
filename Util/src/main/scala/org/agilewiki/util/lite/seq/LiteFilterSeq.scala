@@ -61,7 +61,7 @@ class LiteFilterSeq[T, V, V1](liteSeq: SeqActor[T, V], filter: SeqActor[V, V1])
     liteSeq.send(req) {
       case rsp: SeqEndRsp => reply(SeqEndRsp())
       case rsp: SeqResultRsp[T, V] => {
-        filter.hasKey(this, rsp.value) {
+        filter.hasKey(rsp.value) {
           case r: Boolean => {
             if (r) reply(rsp)
             else _filter(SeqNextReq[T](rsp.key))

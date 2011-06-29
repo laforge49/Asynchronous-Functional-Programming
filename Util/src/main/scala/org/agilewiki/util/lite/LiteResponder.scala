@@ -55,10 +55,6 @@ trait LiteResponder extends SystemContextGetter {
     else factory.name
   }
 
-  @deprecated def isSafe(srcActor: LiteActor): Boolean = {
-    srcActor.liteReactor.eq(actor.liteReactor)
-  }
-
   def isSafe(srcActor: ActiveActor): Boolean = {
     srcActor.actor.liteReactor.eq(actor.liteReactor)
   }

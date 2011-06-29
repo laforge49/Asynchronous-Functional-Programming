@@ -30,83 +30,90 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   extends LiteActor(reactor, null)
   with SeqComparator[T] {
 
+  def first(responseProcess: PartialFunction[Any, Unit])
+           (implicit sourceActor: ActiveActor) {
+    send(SeqFirstReq)(responseProcess)(sourceActor)
+  }
+
+  def current(key: T)
+             (responseProcess: PartialFunction[Any, Unit])
+             (implicit sourceActor: ActiveActor) {
+    send(SeqCurrentReq(key))(responseProcess)(sourceActor)
+  }
+
+  def next(key: T)
+          (responseProcess: PartialFunction[Any, Unit])
+          (implicit sourceActor: ActiveActor) {
+    send(SeqNextReq(key))(responseProcess)(sourceActor)
+  }
+
+  def hasKey(key: T)
+            (responseProcess: PartialFunction[Any, Unit])
+            (implicit sourceActor: ActiveActor) {
+    current(key)({
+      case rsp: SeqEndRsp => responseProcess(false)
+      case rsp: SeqResultRsp[T, V] => responseProcess(rsp.key == key)
+    })(sourceActor)
+  }
+
+  def get(key: T)
+         (responseProcess: PartialFunction[Any, Unit])
+         (implicit sourceActor: ActiveActor) {
+    current(key)({
+      case rsp: SeqEndRsp => reply(null.asInstanceOf[T])
+      case rsp: SeqResultRsp[T, V] => {
+        if (rsp.key == key) responseProcess(rsp.value)
+        else responseProcess(null.asInstanceOf[T])
+      }
+    })(sourceActor)
+  }
+
+  def exact(key: T)
+           (responseProcess: PartialFunction[Any, Unit])
+           (implicit sourceActor: ActiveActor) {
+    current(key)({
+      case rsp: SeqEndRsp => throw new IllegalArgumentException("not present: " + key)
+      case rsp: SeqResultRsp[T, V] => {
+        if (rsp.key == key) responseProcess(rsp.value)
+        else throw new IllegalArgumentException("not present: " + key)
+      }
+    })(sourceActor)
+  }
+
   addRequestHandler{
     case req: FoldReq[V] => _fold(req.seed, req.fold)
     case req: ExistsReq[V] => _exists(req.exists)
     case req: FindReq[V] => _find(req.find)
   }
 
-  def first(sourceActor: LiteActor)
-           (responseProcess: PartialFunction[Any, Unit]) {
-    sourceActor.send(this, SeqFirstReq)(responseProcess)
-  }
-
-  def current(sourceActor: LiteActor, key: T)
-             (responseProcess: PartialFunction[Any, Unit]) {
-    sourceActor.send(this, SeqCurrentReq(key))(responseProcess)
-  }
-
-  def next(sourceActor: LiteActor, key: T)
-          (responseProcess: PartialFunction[Any, Unit]) {
-    sourceActor.send(this, SeqNextReq(key))(responseProcess)
-  }
-
-  def hasKey(sourceActor: LiteActor, key: T)
-            (responseProcess: PartialFunction[Any, Unit]) {
-    current(sourceActor, key) {
-      case rsp: SeqEndRsp => responseProcess(false)
-      case rsp: SeqResultRsp[T, V] => responseProcess(rsp.key == key)
-    }
-  }
-
-  def get(sourceActor: LiteActor, key: T)
-         (responseProcess: PartialFunction[Any, Unit]) {
-    current(sourceActor, key) {
-      case rsp: SeqEndRsp => reply(null.asInstanceOf[T])
-      case rsp: SeqResultRsp[T, V] => {
-        if (rsp.key == key) responseProcess(rsp.value)
-        else responseProcess(null.asInstanceOf[T])
-      }
-    }
-  }
-
-  def exact(sourceActor: LiteActor, key: T)
-           (responseProcess: PartialFunction[Any, Unit]) {
-    current(sourceActor, key) {
-      case rsp: SeqEndRsp => throw new IllegalArgumentException("not present: " + key)
-      case rsp: SeqResultRsp[T, V] => {
-        if (rsp.key == key) responseProcess(rsp.value)
-        else throw new IllegalArgumentException("not present: " + key)
-      }
-    }
-  }
-
-  def fold(sourceActor: LiteActor, seed: V, f: (V, V) => V)
-          (responseProcess: PartialFunction[Any, Unit]) {
-    sourceActor.send(this, FoldReq(seed, f))(responseProcess)
+  def fold(seed: V, f: (V, V) => V)
+          (responseProcess: PartialFunction[Any, Unit])
+          (implicit sourceActor: ActiveActor) {
+    send(FoldReq(seed, f))(responseProcess)(sourceActor)
   }
 
   protected def _fold(seed: V, fold: (V, V) => V) {
-    first(this) {
+    first{
       case rsp: SeqEndRsp => reply(FoldRsp(seed))
       case rsp: SeqResultRsp[T, V] => _foldNext(rsp.key, fold(seed, rsp.value), fold)
     }
   }
 
   protected def _foldNext(key: T, seed: V, fold: (V, V) => V) {
-    next(this, key) {
+    next(key) {
       case rsp: SeqEndRsp => reply(FoldRsp(seed))
       case rsp: SeqResultRsp[T, V] => _foldNext(rsp.key, fold(seed, rsp.value), fold)
     }
   }
 
-  def exists(sourceActor: LiteActor, e: V => Boolean)
-            (responseProcess: PartialFunction[Any, Unit]) {
-    sourceActor.send(this, ExistsReq(e))(responseProcess)
+  def exists(e: V => Boolean)
+            (responseProcess: PartialFunction[Any, Unit])
+            (implicit sourceActor: ActiveActor) {
+    send(ExistsReq(e))(responseProcess)(sourceActor)
   }
 
   protected def _exists(exists: V => Boolean) {
-    first(this) {
+    first{
       case rsp: SeqEndRsp => reply(ExistsRsp(false))
       case rsp: SeqResultRsp[T, V] => {
         if (exists(rsp.value)) reply(ExistsRsp(true))
@@ -116,7 +123,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   }
 
   protected def _existsNext(key: T, exists: V => Boolean) {
-    next(this, key) {
+    next(key) {
       case rsp: SeqEndRsp => reply(ExistsRsp(false))
       case rsp: SeqResultRsp[T, V] => {
         if (exists(rsp.value)) reply(ExistsRsp(true))
@@ -125,13 +132,14 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     }
   }
 
-  def find(sourceActor: LiteActor, f: (V) => Boolean)
-          (responseProcess: PartialFunction[Any, Unit]) {
-    sourceActor.send(this, FindReq(f))(responseProcess)
+  def find(f: (V) => Boolean)
+          (responseProcess: PartialFunction[Any, Unit])
+          (implicit sourceActor: ActiveActor) {
+    send(FindReq(f))(responseProcess)(sourceActor)
   }
 
   protected def _find(find: V => Boolean) {
-    first(this) {
+    first{
       case rsp: SeqEndRsp => reply(NotFoundRsp())
       case rsp: SeqResultRsp[T, V] => {
         if (find(rsp.value)) reply(FoundRsp(rsp.value))
@@ -141,7 +149,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   }
 
   protected def _findNext(key: T, find: V => Boolean) {
-    next(this, key) {
+    next(key) {
       case rsp: SeqEndRsp => reply(NotFoundRsp())
       case rsp: SeqResultRsp[T, V] => {
         if (find(rsp.value)) reply(FoundRsp(rsp.value))
@@ -189,60 +197,59 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
 
   override def comparator = seq.comparator
 
-  override def first(src: LiteActor)
-                    (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(src)) {
-      responseProcess(seq.first)
+  override def first(responseProcess: PartialFunction[Any, Unit])
+                    (implicit src: ActiveActor) {
+    if (isSafe(src)) responseProcess(seq.first)
+    else send(SeqFirstReq)(responseProcess)(src)
+  }
+
+  override def current(key: T)
+                      (responseProcess: PartialFunction[Any, Unit])
+                      (implicit src: ActiveActor) {
+    if (isSafe(src)) responseProcess(seq.current(key))
+    else send(SeqCurrentReq(key))(responseProcess)(src)
+  }
+
+  override def next(key: T)
+                   (responseProcess: PartialFunction[Any, Unit])
+                   (implicit src: ActiveActor) {
+    if (isSafe(src)) responseProcess(seq.next(key))
+    else send(SeqNextReq(key))(responseProcess)(src)
+  }
+
+    override def fold(seed: V, f: (V, V) => V)
+            (responseProcess: PartialFunction[Any, Unit])
+            (implicit sourceActor: ActiveActor) {
+      if (isSafe(sourceActor)) {
+        responseProcess(seq._fold(seed, f))
+      }
+      else send(FoldReq(seed, f))(responseProcess)(sourceActor)
     }
-    else src.send(this, SeqFirstReq)(responseProcess)
-  }
 
-  override def current(sourceActor: LiteActor, key: T)
-                      (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor)) {
-      responseProcess(seq.current(key))
+    override protected def _fold(seed: V, fold: (V, V) => V) {
+      reply(seq._fold(seed, fold))
     }
-    else sourceActor.send(this, SeqCurrentReq(key))(responseProcess)
-  }
 
-  override def next(sourceActor: LiteActor, key: T)
-                   (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor)) {
-      responseProcess(seq.next(key))
-    }
-    else sourceActor.send(this, SeqNextReq(key))(responseProcess)
-  }
-
-  override def fold(sourceActor: LiteActor, seed: V, f: (V, V) => V)
-                   (responseProcess: PartialFunction[Any, Unit]) {
-    if (isSafe(sourceActor)) {
-      responseProcess(seq._fold(seed, f))
-    }
-    else sourceActor.send(this, FoldReq(seed, f))(responseProcess)
-  }
-
-  override protected def _fold(seed: V, fold: (V, V) => V) {
-    reply(seq._fold(seed, fold))
-  }
-
-  override def exists(sourceActor: LiteActor, e: V => Boolean)
-                     (responseProcess: PartialFunction[Any, Unit]) {
+  override def exists(e: V => Boolean)
+                     (responseProcess: PartialFunction[Any, Unit])
+                     (implicit sourceActor: ActiveActor) {
     if (isSafe(sourceActor)) {
       responseProcess(seq._exists(e))
     }
-    else sourceActor.send(this, ExistsReq(e))(responseProcess)
+    else send(ExistsReq(e))(responseProcess)(sourceActor)
   }
 
   override protected def _exists(exists: V => Boolean) {
     reply(seq._exists(exists))
   }
 
-  override def find(sourceActor: LiteActor, f: V => Boolean)
-                   (responseProcess: PartialFunction[Any, Unit]) {
+  override def find(f: V => Boolean)
+                   (responseProcess: PartialFunction[Any, Unit])
+                   (implicit sourceActor: ActiveActor) {
     if (isSafe(sourceActor)) {
       responseProcess(seq._find(f))
     }
-    else sourceActor.send(this, FindReq(f))(responseProcess)
+    else send(FindReq(f))(responseProcess)(sourceActor)
   }
 
   override protected def _find(find: V => Boolean) {
