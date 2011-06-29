@@ -32,7 +32,7 @@ class LiteTestActor(reactor: LiteReactor, next: LiteActor)
   addRequestHandler {
     case reqContent => {
       if (next == null) reply(reqContent)
-      else send(next, reqContent) {
+      else next.send(reqContent) {
         case rspContent => reply(rspContent)
       }
     }
