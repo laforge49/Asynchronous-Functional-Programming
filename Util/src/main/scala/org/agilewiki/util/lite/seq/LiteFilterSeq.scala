@@ -36,6 +36,10 @@ class LiteFilterFunc[T, V](liteSeq: SeqActor[T, V], filter: V => Boolean)
     case req: SeqReq => _filter(req)
   }
 
+  private def _filterNext(key: T) {
+    _filter(SeqNextReq(key))
+  }
+
   @tailrec private def _filter(req: SeqReq) {
     var async = false
     var sync = false
@@ -47,11 +51,8 @@ class LiteFilterFunc[T, V](liteSeq: SeqActor[T, V], filter: V => Boolean)
       case rsp: SeqResultRsp[T, V] => {
         if (filter(rsp.value)) reply(rsp)
         else {
-          if (async) {
-            send(SeqNextReq[T](rsp.key)) {
-              case r => reply(r)
-            }
-          } else {
+          if (async) _filterNext(rsp.key)
+          else {
             sync = true
             nextKey = rsp.key
           }
@@ -74,6 +75,10 @@ class LiteFilterSeq[T, V, V1](liteSeq: SeqActor[T, V], filter: SeqActor[V, V1])
     case req: SeqReq => _filter(req)
   }
 
+    private def _filterNext(key: T) {
+      _filter(SeqNextReq(key))
+    }
+
   @tailrec private def _filter(req: SeqReq) {
     var async = false
     var sync = false
@@ -86,11 +91,8 @@ class LiteFilterSeq[T, V, V1](liteSeq: SeqActor[T, V], filter: SeqActor[V, V1])
         filter.hasKey(rsp.value) {
           case true => reply(rsp)
           case false => {
-            if (async) {
-              send(SeqNextReq[T](rsp.key)) {
-                case r => reply(r)
-              }
-            } else {
+            if (async) _filterNext(rsp.key)
+            else {
               sync = true
               nextKey = rsp.key
             }
