@@ -56,34 +56,28 @@ class ActorRegistry(reactor: LiteReactor) extends LiteActor(reactor, null) {
 
   lazy val actorSequence: SeqActor[String, LiteActor] = new LiteNavigableMapSeq(reactor, actors)
 
-  def registerActor(actor: LiteActor)
-                   (pf: PartialFunction[Any, Unit])
-                   (implicit srcActor: ActiveActor) = {
-    if (isSafe(srcActor)) pf(_registerActor(actor))
-    else send(RegisterActorReq(actor))(pf)(srcActor)
+  addRequestHandler{
+    case req: RegisterActorReq => _registerActor(req.actor)(back)
+    case req: UnregisterActorReq => reply(_unregisterActor(req.id))
+    case req: GetActorReq => reply(_getActor(req.id))
   }
 
-  def unregisterActor(id: ActorId)
-                     (pf: PartialFunction[Any, Unit])
-                     (implicit srcActor: ActiveActor) {
-    if (isSafe(srcActor)) pf(_unregisterActor(id))
-    else send(UnregisterActorReq(id))(pf)(srcActor)
-  }
-
-  def getActor(id: ActorId)
-              (pf: PartialFunction[Any, Unit])
-              (implicit srcActor: ActiveActor) {
-    if (isSafe(srcActor)) pf(_getActor(id))
-    else send(GetActorReq(id))(pf)(srcActor)
-  }
-
-  private def _registerActor(actor: LiteActor): RegisterActorRsp = {
+  private def _registerActor(actor: LiteActor)
+                            (responseProcess: PartialFunction[Any, Unit])
+                            (implicit sender: ActiveActor) {
     val _id = actor.id.value
-    if (actors.containsKey(_id)) return DuplicateActorIdRsp()
+    if (actors.containsKey(_id)) responseProcess(DuplicateActorIdRsp())
     else {
       actors.put(_id, actor)
-      return RegisteredActorRsp()
+      responseProcess(RegisteredActorRsp())
     }
+  }
+
+  def registerActor(actor: LiteActor)
+                   (pf: PartialFunction[Any, Unit])
+                   (implicit src: ActiveActor) {
+    if (isSafe(src)) _registerActor(actor)(pf)(src)
+    else send(RegisterActorReq(actor))(pf)(src)
   }
 
   private def _unregisterActor(id: ActorId): UnregisteredActorRsp = {
@@ -98,9 +92,17 @@ class ActorRegistry(reactor: LiteReactor) extends LiteActor(reactor, null) {
     else return NoActorRsp()
   }
 
-  addRequestHandler{
-    case req: RegisterActorReq => reply(_registerActor(req.actor))
-    case req: UnregisterActorReq => reply(_unregisterActor(req.id))
-    case req: GetActorReq => reply(_getActor(req.id))
+  def unregisterActor(id: ActorId)
+                     (pf: PartialFunction[Any, Unit])
+                     (implicit srcActor: ActiveActor) {
+    if (isSafe(srcActor)) pf(_unregisterActor(id))
+    else send(UnregisterActorReq(id))(pf)(srcActor)
+  }
+
+  def getActor(id: ActorId)
+              (pf: PartialFunction[Any, Unit])
+              (implicit srcActor: ActiveActor) {
+    if (isSafe(srcActor)) pf(_getActor(id))
+    else send(GetActorReq(id))(pf)(srcActor)
   }
 }
