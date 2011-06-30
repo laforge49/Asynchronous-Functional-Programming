@@ -27,7 +27,7 @@ package lite
 
 import org.specs.SpecificationWithJUnit
 
-case class LTATestData(data : Any)
+case class LTATestData(data: Any)
 
 class LiteTestActor(reactor: LiteReactor, next: LiteTestActor)
   extends LiteActor(reactor, null) {
@@ -37,8 +37,8 @@ class LiteTestActor(reactor: LiteReactor, next: LiteTestActor)
   }
 
   private def handle(data: Any)
-            (responseProcess: PartialFunction[Any, Unit])
-            (implicit sender: ActiveActor) {
+                    (responseProcess: PartialFunction[Any, Unit])
+                    (implicit sender: ActiveActor) {
     if (next == null) responseProcess(data)
     else next.process(data)(responseProcess)(sender)
   }

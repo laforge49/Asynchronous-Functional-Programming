@@ -36,16 +36,32 @@ class LiteFilterFunc[T, V](liteSeq: SeqActor[T, V], filter: V => Boolean)
     case req: SeqReq => _filter(req)
   }
 
-  private def _filter(req: SeqReq) {
+  @tailrec private def _filter(req: SeqReq) {
+    var async = false
+    var sync = false
+    var nextKey = null.asInstanceOf[T]
     liteSeq.send(req) {
       case rsp: SeqEndRsp => {
         reply(SeqEndRsp())
       }
       case rsp: SeqResultRsp[T, V] => {
         if (filter(rsp.value)) reply(rsp)
-        else _filter(SeqNextReq[T](rsp.key))
+        else {
+          if (async) send(SeqNextReq[T](rsp.key)){
+            case r => reply(r)
+          }
+          else {
+            sync = true
+            nextKey = rsp.key
+          }
+        }
       }
     }
+    if (!sync) {
+      async = true
+      return
+    }
+    _filter(SeqNextReq[T](nextKey))
   }
 }
 
