@@ -27,26 +27,27 @@ package lite
 
 import org.specs.SpecificationWithJUnit
 
+case class TestData(data : Any)
+
 class LiteTestActor(reactor: LiteReactor, next: LiteTestActor)
   extends LiteActor(reactor, null) {
 
-  def process(reqContent: Any)
+  private def handle(reqContent: TestData)
+            (responseProcess: PartialFunction[Any, Unit])
+            (implicit sender: ActiveActor) {
+    if (next == null) responseProcess(reqContent)
+    else next.process(reqContent)(responseProcess)(sender)
+  }
+
+  def process(reqContent: TestData)
              (responseProcess: PartialFunction[Any, Unit])
              (implicit sender: ActiveActor) {
-    if (isSafe(sender)) {
-      if (next == null) responseProcess(reqContent)
-      else next.process(reqContent)(responseProcess)(sender)
-    }
+    if (isSafe(sender)) handle(reqContent)(responseProcess)(sender)
     else send(reqContent)(responseProcess)(sender)
   }
 
-  addRequestHandler {
-    case reqContent => {
-      if (next == null) reply(reqContent)
-      else next.process(reqContent) {
-        case rsp => reply(rsp)
-      }
-    }
+  addRequestHandler{
+    case reqContent: TestData => handle(reqContent)(back)
   }
 }
 
@@ -80,7 +81,7 @@ class LiteActorTest extends SpecificationWithJUnit {
       while (j < M) {
         val future = futures(j)
         val actor = actors(j)
-        future.send(actor, null)
+        future.send(actor, TestData(null))
         j = j + 1
       }
       j = 0
