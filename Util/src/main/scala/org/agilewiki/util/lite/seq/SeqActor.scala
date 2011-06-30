@@ -256,9 +256,6 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
     reply(seq._find(find))
   }
 
-  override def filter(filter: V => Boolean) =
-    new LiteExtensionFilterFunc(this, filter)
-
   override def tail(start: T) =
     new LiteExtensionTailSeq(this, start)
 

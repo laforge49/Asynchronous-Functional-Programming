@@ -87,33 +87,3 @@ class LiteFilterSeq[T, V, V1](liteSeq: SeqActor[T, V], filter: SeqActor[V, V1])
     }
   }
 }
-
-class LiteExtensionFilterFunc[T, V](seqExtensionActor: SeqExtensionActor[T, V], filter: V => Boolean)
-  extends SeqExtensionActor[T, V](seqExtensionActor.liteReactor, new FilterSeqExtension[T, V](seqExtensionActor.seqExtension, filter))
-
-class FilterSeqExtension[T, V](extension: SeqExtension[T, V], filter: V => Boolean)
-  extends SeqExtension[T, V] {
-
-  override def comparator = extension.comparator
-
-  override def first: SeqRsp = {
-    f(extension.first)
-  }
-
-  override def current(k: T): SeqRsp = {
-    f(extension.current(k))
-  }
-
-  override def next(k: T): SeqRsp = {
-    f(extension.next(k))
-  }
-
-  @tailrec private def f(rsp: SeqRsp): SeqRsp = {
-    if (!rsp.isInstanceOf[SeqResultRsp[T, V]]) return rsp
-    val r = rsp.asInstanceOf[SeqResultRsp[T, V]]
-    if (filter(r.value)) {
-      return rsp
-    }
-    f(extension.next(r.key))
-  }
-}
