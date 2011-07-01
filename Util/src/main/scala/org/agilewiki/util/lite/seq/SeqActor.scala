@@ -186,14 +186,30 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     }
   }
 
-  private def _findNext(key: T, find: V => Boolean) {
+  private def _ifindNext(key: T, find: V => Boolean) {
+    _findNext(key, find)
+  }
+
+  @tailrec private def _findNext(key: T, find: V => Boolean) {
+    var async = false
+    var sync = false
+    var nextKey = null.asInstanceOf[T]
     next(key) {
       case rsp: SeqEndRsp => reply(NotFoundRsp())
       case rsp: SeqResultRsp[T, V] => {
         if (find(rsp.value)) reply(FoundRsp(rsp.value))
-        else _findNext(rsp.key, find)
+        else if (async) _ifindNext(rsp.key, find)
+        else {
+          sync = true
+          nextKey = rsp.key
+        }
       }
     }
+    if (!sync) {
+      async = true
+      return
+    }
+    _findNext(nextKey, find)
   }
 
   def map[V2](_map: V => V2): SeqActor[T, V2] =
