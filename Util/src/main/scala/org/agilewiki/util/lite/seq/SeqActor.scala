@@ -94,7 +94,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     send(FoldReq(seed, f))(responseProcess)(sourceActor)
   }
 
-  protected def _fold(seed: V, fold: (V, V) => V) {
+  private def _fold(seed: V, fold: (V, V) => V) {
     first{
       case rsp: SeqEndRsp => reply(FoldRsp(seed))
       case rsp: SeqResultRsp[T, V] => _foldNext(rsp.key, fold(seed, rsp.value), fold)
@@ -134,7 +134,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     send(ExistsReq(e))(responseProcess)(sourceActor)
   }
 
-  protected def _exists(exists: V => Boolean) {
+  private def _exists(exists: V => Boolean) {
     first{
       case rsp: SeqEndRsp => reply(ExistsRsp(false))
       case rsp: SeqResultRsp[T, V] => {
@@ -144,14 +144,30 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     }
   }
 
-  protected def _existsNext(key: T, exists: V => Boolean) {
+  private def _iexistsNext(key: T, exists: V => Boolean) {
+    _existsNext(key, exists)
+  }
+
+  @tailrec private def _existsNext(key: T, exists: V => Boolean) {
+    var async = false
+    var sync = false
+    var nextKey = null.asInstanceOf[T]
     next(key) {
       case rsp: SeqEndRsp => reply(ExistsRsp(false))
       case rsp: SeqResultRsp[T, V] => {
         if (exists(rsp.value)) reply(ExistsRsp(true))
-        else _existsNext(rsp.key, exists)
+        else if (async) _iexistsNext(rsp.key, exists)
+        else {
+          sync = true
+          nextKey = rsp.key
+        }
       }
     }
+    if (!sync) {
+      async = true
+      return
+    }
+    _existsNext(nextKey, exists)
   }
 
   def find(f: (V) => Boolean)
@@ -160,7 +176,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     send(FindReq(f))(responseProcess)(sourceActor)
   }
 
-  protected def _find(find: V => Boolean) {
+  private def _find(find: V => Boolean) {
     first{
       case rsp: SeqEndRsp => reply(NotFoundRsp())
       case rsp: SeqResultRsp[T, V] => {
@@ -170,7 +186,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     }
   }
 
-  protected def _findNext(key: T, find: V => Boolean) {
+  private def _findNext(key: T, find: V => Boolean) {
     next(key) {
       case rsp: SeqEndRsp => reply(NotFoundRsp())
       case rsp: SeqResultRsp[T, V] => {
@@ -237,32 +253,6 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
                    (implicit src: ActiveActor) {
     if (isSafe(src)) responseProcess(seq.next(key))
     else send(SeqNextReq(key))(responseProcess)(src)
-  }
-
-  override def exists(e: V => Boolean)
-                     (responseProcess: PartialFunction[Any, Unit])
-                     (implicit sourceActor: ActiveActor) {
-    if (isSafe(sourceActor)) {
-      responseProcess(seq._exists(e))
-    }
-    else send(ExistsReq(e))(responseProcess)(sourceActor)
-  }
-
-  override protected def _exists(exists: V => Boolean) {
-    reply(seq._exists(exists))
-  }
-
-  override def find(f: V => Boolean)
-                   (responseProcess: PartialFunction[Any, Unit])
-                   (implicit sourceActor: ActiveActor) {
-    if (isSafe(sourceActor)) {
-      responseProcess(seq._find(f))
-    }
-    else send(FindReq(f))(responseProcess)(sourceActor)
-  }
-
-  override protected def _find(find: V => Boolean) {
-    reply(seq._find(find))
   }
 
   override def tail(start: T) =
