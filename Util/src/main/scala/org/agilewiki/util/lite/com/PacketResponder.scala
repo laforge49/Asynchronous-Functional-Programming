@@ -153,7 +153,7 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
       rsp = inputPayload
     }
     val actor = liteReqMsg.sender.asInstanceOf[LiteActor]
-    val liteRspMsg = new LiteRspMsg(0, liteReqMsg.responseProcess, liteReqMsg, rsp)
+    val liteRspMsg = new LiteRspMsg(liteReqMsg.responseProcess, liteReqMsg, rsp)
     actor.liteReactor.response(liteRspMsg)
   }
 
@@ -164,7 +164,7 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
       "timeout",
       this.getClass.getName,
       outsideActor.getClass.getName)
-    val liteRspMsg = new LiteRspMsg(0, liteReqMsg.responseProcess, liteReqMsg, error)
+    val liteRspMsg = new LiteRspMsg(liteReqMsg.responseProcess, liteReqMsg, error)
     actor.liteReactor.response(liteRspMsg)
   }
 }

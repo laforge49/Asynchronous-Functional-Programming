@@ -100,17 +100,13 @@ final case class LiteReactor(systemContext: SystemContext)
 
   def activeActor = currentRequestMessage.target
 
-  def recursionDepth = currentRequestMessage.recursionDepth
-
   def send(targetActor: LiteActor, content: Any)
           (responseProcess: PartialFunction[Any, Unit]) {
     val oldReq = currentRequestMessage
     val sender = oldReq.target.actor
     val targetReactor = targetActor.liteReactor
-    if (recursionDepth > 100 ||
-      (!eq(targetReactor))) {
+    if (!eq(targetReactor)) {
       val req = new LiteReqMsg(
-        0,
         ActiveActor(targetActor),
         responseProcess,
         oldReq,
@@ -120,7 +116,6 @@ final case class LiteReactor(systemContext: SystemContext)
     }
     else {
       val req = new LiteReqMsg(
-        recursionDepth + 1,
         ActiveActor(targetActor),
         responseProcess,
         oldReq,
@@ -142,11 +137,9 @@ final case class LiteReactor(systemContext: SystemContext)
     if (!req.active) return
     req.active = false
     val sender = req.sender
-    if (recursionDepth > 100 ||
-      !sender.isInstanceOf[LiteActor] ||
+    if (!sender.isInstanceOf[LiteActor] ||
       (!eq(sender.asInstanceOf[LiteActor].liteReactor))) {
       val rsp = new LiteRspMsg(
-        0,
         req.responseProcess,
         req.oldRequest,
         content)
@@ -154,7 +147,6 @@ final case class LiteReactor(systemContext: SystemContext)
     }
     else {
       val rsp = new LiteRspMsg(
-        recursionDepth + 1,
         req.responseProcess,
         req.oldRequest,
         content)
@@ -170,12 +162,9 @@ final case class LiteReactor(systemContext: SystemContext)
   }
 }
 
-sealed abstract class LiteMsg(depth: Int,
-                       pf: PartialFunction[Any, Unit],
-                       oldReq: LiteReqMsg,
-                       data: Any) {
-
-  def recursionDepth = depth
+sealed abstract class LiteMsg(pf: PartialFunction[Any, Unit],
+                              oldReq: LiteReqMsg,
+                              data: Any) {
 
   def responseProcess = pf
 
@@ -184,13 +173,12 @@ sealed abstract class LiteMsg(depth: Int,
   def content = data
 }
 
-final class LiteReqMsg(recursionDepth: Int,
-                       destination: ActiveActor,
+final class LiteReqMsg(destination: ActiveActor,
                        pf: PartialFunction[Any, Unit],
                        oldReq: LiteReqMsg,
                        data: Any,
                        src: LiteSrc)
-  extends LiteMsg(recursionDepth, pf, oldReq, data) {
+  extends LiteMsg(pf, oldReq, data) {
   var active = true
 
   def sender = src
@@ -198,10 +186,9 @@ final class LiteReqMsg(recursionDepth: Int,
   def target = destination
 }
 
-final class LiteRspMsg(recursionDepth: Int,
-                       pf: PartialFunction[Any, Unit],
+final class LiteRspMsg(pf: PartialFunction[Any, Unit],
                        oldReq: LiteReqMsg,
                        data: Any)
-  extends LiteMsg(recursionDepth, pf, oldReq, data)
+  extends LiteMsg(pf, oldReq, data)
 
 case class ActiveActor(actor: LiteActor)

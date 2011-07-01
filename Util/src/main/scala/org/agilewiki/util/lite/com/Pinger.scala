@@ -55,7 +55,6 @@ class Pinger(reactor: LiteReactor)
     val tt = new TimerTask {
       override def run {
         val newReqMsg = new LiteReqMsg(
-          0,
           target,
           oldRequest.responseProcess,
           oldRequest.oldRequest,
