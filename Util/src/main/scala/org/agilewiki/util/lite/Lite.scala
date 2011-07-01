@@ -89,7 +89,7 @@ class Lite(systemContext: SystemContext, liteFactory: LiteFactory)
               (pf: PartialFunction[Any, Unit])
               (implicit srcActor: ActiveActor) {
     name match {
-      case n: ActorId => actorRegistry.getActor(n)(pf)(srcActor)
+      case n: ActorId => actorRegistry.send(GetActorReq(n))(pf)(srcActor)
       case n: FactoryName => pf(ActorRsp(newActor(n, reactor)))
     }
   }

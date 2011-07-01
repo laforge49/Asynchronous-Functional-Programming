@@ -27,7 +27,6 @@ package lite
 
 import org.specs.SpecificationWithJUnit
 
-
 case class LTATestData(data: Any)
 
 class LiteTestActor(reactor: LiteReactor, next: LiteTestActor)

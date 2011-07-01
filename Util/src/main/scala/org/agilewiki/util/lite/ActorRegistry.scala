@@ -57,52 +57,37 @@ class ActorRegistry(reactor: LiteReactor) extends LiteActor(reactor, null) {
   lazy val actorSequence: SeqActor[String, LiteActor] = new LiteNavigableMapSeq(reactor, actors)
 
   addRequestHandler{
-    case req: RegisterActorReq => _registerActor(req.actor)(back)
-    case req: UnregisterActorReq => reply(_unregisterActor(req.id))
-    case req: GetActorReq => reply(_getActor(req.id))
+    case req: RegisterActorReq => registerActor(req)(back)
+    case req: UnregisterActorReq => unregisterActor(req)(back)
+    case req: GetActorReq => getActor(req)(back)
   }
 
-  private def _registerActor(actor: LiteActor)
-                            (responseProcess: PartialFunction[Any, Unit])
-                            (implicit sender: ActiveActor) {
-    val _id = actor.id.value
+  private def registerActor(req: RegisterActorReq)
+                           (responseProcess: PartialFunction[Any, Unit])
+                           (implicit src: ActiveActor) {
+    val _id = req.actor.id.value
     if (actors.containsKey(_id)) responseProcess(DuplicateActorIdRsp())
     else {
-      actors.put(_id, actor)
+      actors.put(_id, req.actor)
       responseProcess(RegisteredActorRsp())
     }
   }
 
-  def registerActor(actor: LiteActor)
-                   (pf: PartialFunction[Any, Unit])
-                   (implicit src: ActiveActor) {
-    if (isSafe(src)) _registerActor(actor)(pf)(src)
-    else send(RegisterActorReq(actor))(pf)(src)
-  }
-
-  private def _unregisterActor(id: ActorId): UnregisteredActorRsp = {
-    val _id = id.value
+  private def unregisterActor(req: UnregisterActorReq)
+                             (responseProcess: PartialFunction[Any, Unit])
+                             (implicit src: ActiveActor) {
+    val _id = req.id.value
     actors.remove(_id)
-    UnregisteredActorRsp()
+    responseProcess(UnregisteredActorRsp())
   }
 
-  private def _getActor(id: ActorId): GetActorRsp = {
-    val _id = id.value
-    if (actors.containsKey(_id)) return ActorRsp(actors.get(_id))
-    else return NoActorRsp()
-  }
-
-  def unregisterActor(id: ActorId)
-                     (pf: PartialFunction[Any, Unit])
-                     (implicit srcActor: ActiveActor) {
-    if (isSafe(srcActor)) pf(_unregisterActor(id))
-    else send(UnregisterActorReq(id))(pf)(srcActor)
-  }
-
-  def getActor(id: ActorId)
-              (pf: PartialFunction[Any, Unit])
-              (implicit srcActor: ActiveActor) {
-    if (isSafe(srcActor)) pf(_getActor(id))
-    else send(GetActorReq(id))(pf)(srcActor)
+  private def getActor(req: GetActorReq)
+                      (responseProcess: PartialFunction[Any, Unit])
+                      (implicit src: ActiveActor) {
+    val _id = req.id.value
+    responseProcess(
+      if (actors.containsKey(_id)) ActorRsp(actors.get(_id))
+      else NoActorRsp()
+    )
   }
 }
