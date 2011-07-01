@@ -70,11 +70,11 @@ trait LiteResponder extends SystemContextGetter {
     activeActor.actor.liteReactor.send(actor, content)(responseProcess)
   }
 
-  @deprecated def back: PartialFunction[Any, Unit] = {
+  def back: PartialFunction[Any, Unit] = {
     case msg => liteReactor.reply(msg)
   }
 
-  def reply(content: Any) {
+  @deprecated def reply(content: Any) {
     liteReactor.reply(content)
   }
 }
