@@ -31,50 +31,64 @@ class LiteRandomIO(reactor: LiteReactor, pathname: String, accessMode: String, f
   extends LiteActor(reactor, factory) {
   val file = new File(pathname)
   val randomAccessFile = new RandomAccessFile(file, accessMode)
-  addRequestHandler {
-    case req: ReadBlockReq => {
-      randomAccessFile.seek(req.blockOffset)
-      randomAccessFile.readFully(req.bytes)
-      reply(ReadBlockRsp)
-    }
-    case req: ReadVariableBlockReq => {
-      randomAccessFile.seek(req.blockOffset)
-      val len = randomAccessFile.readInt
-      val bytes = new Array[Byte](len)
-      randomAccessFile.readFully(bytes)
-      reply(ReadVariableBlockRsp(bytes))
-    }
-    case req: WriteBlockReq => {
-      randomAccessFile.seek(req.blockOffset)
-      randomAccessFile.write(req.bytes)
-      reply(WriteBlockRsp)
-    }
-    case req: WriteVariableBlockReq => {
-      randomAccessFile.seek(req.blockOffset)
-      randomAccessFile.writeInt(req.bytes.length)
-      randomAccessFile.write(req.bytes)
-      reply(WriteVariableBlockRsp)
-    }
-    case req: CloseReq => {
-      try {
-        randomAccessFile.close
-      } catch {
-        case unknown => {}
-      }
-      reply(CloseRsp)
-    }
+  addRequestHandler{
+    case req: ReadBlockReq => readBlock(req)(back)
+    case req: ReadVariableBlockReq => readVariableBlock(req)(back)
+    case req: WriteBlockReq => writeBlock(req)(back)
+    case req: WriteVariableBlockReq => writeVariableBlock(req)(back)
+    case req: CloseReq => close(req)(back)
   }
-}
 
-object LiteRandomIO {
-  def apply(reactor: LiteReactor, pathname: String, accessMode: String) = {
-    new LiteRandomIO(reactor, pathname, accessMode, null)
+  private def readBlock(req: ReadBlockReq)
+                       (responseProcess: PartialFunction[Any, Unit])
+                       (implicit src: ActiveActor) {
+    randomAccessFile.seek(req.blockOffset)
+    randomAccessFile.readFully(req.bytes)
+    responseProcess(ReadBlockRsp())
+  }
+
+  private def readVariableBlock(req: ReadVariableBlockReq)
+                               (responseProcess: PartialFunction[Any, Unit])
+                               (implicit src: ActiveActor) {
+    randomAccessFile.seek(req.blockOffset)
+    val len = randomAccessFile.readInt
+    val bytes = new Array[Byte](len)
+    randomAccessFile.readFully(bytes)
+    responseProcess(ReadVariableBlockRsp(bytes))
+  }
+
+  private def writeBlock(req: WriteBlockReq)
+                        (responseProcess: PartialFunction[Any, Unit])
+                        (implicit src: ActiveActor) {
+    randomAccessFile.seek(req.blockOffset)
+    randomAccessFile.write(req.bytes)
+    responseProcess(WriteBlockRsp())
+  }
+
+  private def writeVariableBlock(req: WriteVariableBlockReq)
+                                (responseProcess: PartialFunction[Any, Unit])
+                                (implicit src: ActiveActor) {
+    randomAccessFile.seek(req.blockOffset)
+    randomAccessFile.writeInt(req.bytes.length)
+    randomAccessFile.write(req.bytes)
+    responseProcess(WriteVariableBlockRsp())
+  }
+
+  private def close(req: CloseReq)
+                   (responseProcess: PartialFunction[Any, Unit])
+                   (implicit src: ActiveActor) {
+    try {
+      randomAccessFile.close
+    } catch {
+      case unknown => {}
+    }
+    responseProcess(CloseRsp())
   }
 }
 
 case class ReadBlockReq(blockOffset: Long, bytes: Array[Byte])
 
-case class ReadBlockRsp
+case class ReadBlockRsp()
 
 case class ReadVariableBlockReq(blockOffset: Long)
 
@@ -82,12 +96,12 @@ case class ReadVariableBlockRsp(bytes: Array[Byte])
 
 case class WriteBlockReq(blockOffset: Long, bytes: Array[Byte])
 
-case class WriteBlockRsp
+case class WriteBlockRsp()
 
 case class WriteVariableBlockReq(blockOffset: Long, bytes: Array[Byte])
 
-case class WriteVariableBlockRsp
+case class WriteVariableBlockRsp()
 
-case class CloseReq
+case class CloseReq()
 
-case class CloseRsp
+case class CloseRsp()
