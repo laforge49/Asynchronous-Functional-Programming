@@ -33,7 +33,28 @@ class LiteFilterFunc[T, V](liteSeq: SeqActor[T, V], filter: V => Boolean)
   override def comparator = liteSeq.comparator
 
   addRequestHandler{
-    case req: SeqReq => _filter(req)(back)
+    case req: SeqFirstReq => _first(req)(back)
+    case req: SeqCurrentReq[T] => _current(req)(back)
+    case req: SeqNextReq[T] => _next(req)(back)
+  }
+
+  protected def _first(req: SeqFirstReq)
+                    (responseProcess: PartialFunction[Any, Unit])
+                    (implicit src: ActiveActor) {
+    _filter(req)(responseProcess)(src)
+  }
+
+  protected def _current(req: SeqCurrentReq[T])
+                      (responseProcess: PartialFunction[Any, Unit])
+                      (implicit src: ActiveActor) {
+    _filter(req)(responseProcess)(src)
+
+  }
+
+  protected def _next(req: SeqNextReq[T])
+                   (responseProcess: PartialFunction[Any, Unit])
+                   (implicit src: ActiveActor) {
+    _filter(req)(responseProcess)(src)
   }
 
   private def _filterNext(key: T)

@@ -32,6 +32,12 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   extends LiteActor(reactor, null)
   with SeqComparator[T] {
 
+  addRequestHandler{
+    case req: FoldReq[V] => _fold(req.seed, req.fold)
+    case req: ExistsReq[V] => _exists(req.exists)
+    case req: FindReq[V] => _find(req.find)
+  }
+
   def first(responseProcess: PartialFunction[Any, Unit])
            (implicit sourceActor: ActiveActor) {
     send(SeqFirstReq())(responseProcess)(sourceActor)
@@ -80,12 +86,6 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
         else throw new IllegalArgumentException("not present: " + key)
       }
     })(sourceActor)
-  }
-
-  addRequestHandler{
-    case req: FoldReq[V] => _fold(req.seed, req.fold)
-    case req: ExistsReq[V] => _exists(req.exists)
-    case req: FindReq[V] => _find(req.find)
   }
 
   def fold(seed: V, f: (V, V) => V)
