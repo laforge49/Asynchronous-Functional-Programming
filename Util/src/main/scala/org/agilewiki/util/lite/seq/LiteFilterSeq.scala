@@ -75,9 +75,9 @@ class LiteFilterSeq[T, V, V1](liteSeq: SeqActor[T, V], filter: SeqActor[V, V1])
     case req: SeqReq => _filter(req)
   }
 
-    private def _filterNext(key: T) {
-      _filter(SeqNextReq(key))
-    }
+  private def _filterNext(key: T) {
+    _filter(SeqNextReq(key))
+  }
 
   @tailrec private def _filter(req: SeqReq) {
     var async = false

@@ -26,6 +26,8 @@ package util
 package lite
 package seq
 
+import annotation.tailrec
+
 abstract class SeqActor[T, V](reactor: LiteReactor)
   extends LiteActor(reactor, null)
   with SeqComparator[T] {
@@ -99,11 +101,31 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     }
   }
 
-  protected def _foldNext(key: T, seed: V, fold: (V, V) => V) {
+  private def _ifoldNext(key: T, seed: V, fold: (V, V) => V) {
+    _foldNext(key, seed, fold)
+  }
+
+  @tailrec private def _foldNext(key: T, seed: V, fold: (V, V) => V) {
+    var async = false
+    var sync = false
+    var nextKey = null.asInstanceOf[T]
+    var nextValue = null.asInstanceOf[V]
     next(key) {
       case rsp: SeqEndRsp => reply(FoldRsp(seed))
-      case rsp: SeqResultRsp[T, V] => _foldNext(rsp.key, fold(seed, rsp.value), fold)
+      case rsp: SeqResultRsp[T, V] => {
+        if (async) _ifoldNext(rsp.key, fold(seed, rsp.value), fold)
+        else {
+          sync = true
+          nextKey = rsp.key
+          nextValue = rsp.value
+        }
+      }
     }
+    if (!sync) {
+      async = true
+      return
+    }
+    _foldNext(nextKey, fold(seed, nextValue), fold)
   }
 
   def exists(e: V => Boolean)
@@ -216,19 +238,6 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
     if (isSafe(src)) responseProcess(seq.next(key))
     else send(SeqNextReq(key))(responseProcess)(src)
   }
-
-    override def fold(seed: V, f: (V, V) => V)
-            (responseProcess: PartialFunction[Any, Unit])
-            (implicit sourceActor: ActiveActor) {
-      if (isSafe(sourceActor)) {
-        responseProcess(seq._fold(seed, f))
-      }
-      else send(FoldReq(seed, f))(responseProcess)(sourceActor)
-    }
-
-    override protected def _fold(seed: V, fold: (V, V) => V) {
-      reply(seq._fold(seed, fold))
-    }
 
   override def exists(e: V => Boolean)
                      (responseProcess: PartialFunction[Any, Unit])
