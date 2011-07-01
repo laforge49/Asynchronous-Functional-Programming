@@ -42,20 +42,20 @@ class NavigableSetSeqExtension[T](navigableSet: NavigableSet[T])
     c
   }
 
-  override def first: SeqRsp = {
+  override def _first: SeqRsp = {
     if (navigableSet.isEmpty) return SeqEndRsp()
     val key = navigableSet.first
     return SeqResultRsp(key, key)
   }
 
-  override def current(k: T): SeqRsp = {
+  override def _current(k: T): SeqRsp = {
     if (navigableSet.isEmpty) return SeqEndRsp()
     val key = navigableSet.ceiling(k)
     if (key == null) return SeqEndRsp()
     SeqResultRsp(key, key)
   }
 
-  override def next(k: T): SeqRsp = {
+  override def _next(k: T): SeqRsp = {
     if (navigableSet.isEmpty) return SeqEndRsp()
     val key = navigableSet.higher(k)
     if (key == null) return SeqEndRsp()

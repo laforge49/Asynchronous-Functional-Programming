@@ -34,18 +34,18 @@ trait SeqExtension[T, V]
 
   addRequestHandler{
     case req: SeqFirstReq => {
-      reply(first)
+      reply(_first)
     }
     case req: SeqCurrentReq[T] => {
-      val rsp = current(req.key)
+      val rsp = _current(req.key)
       reply(rsp)
     }
-    case req: SeqNextReq[T] => reply(next(req.key))
+    case req: SeqNextReq[T] => reply(_next(req.key))
   }
 
-  def first: SeqRsp
+  def _first: SeqRsp
 
-  def current(key: T): SeqRsp
+  def _current(key: T): SeqRsp
 
-  def next(key: T): SeqRsp
+  def _next(key: T): SeqRsp
 }

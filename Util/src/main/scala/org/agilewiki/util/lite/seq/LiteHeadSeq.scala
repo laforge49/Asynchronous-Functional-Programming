@@ -61,15 +61,15 @@ class HeadSeqExtension[T, V](extension: SeqExtension[T, V], limit: T)
 
   override def comparator = extension.comparator
 
-  override def first: SeqRsp = h(extension.first)
+  override def _first: SeqRsp = h(extension._first)
 
-  override def current(k: T): SeqRsp = {
-    if (comparator.compare(k, limit) < 0) h(extension.current(k))
+  override def _current(k: T): SeqRsp = {
+    if (comparator.compare(k, limit) < 0) h(extension._current(k))
     else SeqEndRsp()
   }
 
-  override def next(k: T): SeqRsp = {
-    if (comparator.compare(k, limit) < 0) h(extension.next(k))
+  override def _next(k: T): SeqRsp = {
+    if (comparator.compare(k, limit) < 0) h(extension._next(k))
     else SeqEndRsp()
   }
 

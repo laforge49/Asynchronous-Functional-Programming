@@ -63,15 +63,15 @@ class TailSeqExtension[T, V](extension: SeqExtension[T, V], start: T)
 
   override def comparator = extension.comparator
 
-  override def first: SeqRsp = extension.current(start)
+  override def _first: SeqRsp = extension._current(start)
 
-  override def current(k: T): SeqRsp = {
-    if (comparator.compare(k, start) < 0) extension.current(start)
-    else extension.current(k)
+  override def _current(k: T): SeqRsp = {
+    if (comparator.compare(k, start) < 0) extension._current(start)
+    else extension._current(k)
   }
 
-  override def next(k: T): SeqRsp = {
-    if (comparator.compare(k, start) < 0) extension.current(start)
-    else extension.next(k)
+  override def _next(k: T): SeqRsp = {
+    if (comparator.compare(k, start) < 0) extension._current(start)
+    else extension._next(k)
   }
 }
