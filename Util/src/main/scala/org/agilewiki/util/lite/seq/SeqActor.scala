@@ -282,10 +282,4 @@ class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
     if (isSafe(src)) responseProcess(seq._next(key))
     else send(SeqNextReq(key))(responseProcess)(src)
   }
-
-  override def tail(start: T) =
-    new LiteExtensionTailSeq(this, start)
-
-  override def head(limit: T) =
-    new LiteExtensionHeadSeq(this, limit)
 }

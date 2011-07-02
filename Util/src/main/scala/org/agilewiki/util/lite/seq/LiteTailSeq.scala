@@ -30,34 +30,34 @@ class LiteTailSeq[T, V](liteSeq: SeqActor[T, V], start: T)
   extends SeqActor[T, V](liteSeq.liteReactor) {
   override def comparator = liteSeq.comparator
 
-    addRequestHandler{
-      case req: SeqFirstReq => _first(req)(back)
-      case req: SeqCurrentReq[T] => _current(req)(back)
-      case req: SeqNextReq[T] => _next(req)(back)
-    }
+  addRequestHandler{
+    case req: SeqFirstReq => _first(req)(back)
+    case req: SeqCurrentReq[T] => _current(req)(back)
+    case req: SeqNextReq[T] => _next(req)(back)
+  }
 
-    protected def _first(req: SeqFirstReq)
+  protected def _first(req: SeqFirstReq)
+                      (responseProcess: PartialFunction[Any, Unit]) {
+    liteSeq.current(start) {
+      case rsp => responseProcess(rsp)
+    }
+  }
+
+  protected def _current(req: SeqCurrentReq[T])
                         (responseProcess: PartialFunction[Any, Unit]) {
-      liteSeq.send(req) {
-        case rsp => responseProcess(rsp)
-      }
+    if (comparator.compare(req.key, start) < 0) liteSeq.current(start) {
+      case rsp => responseProcess(rsp)
+    } else liteSeq.send(req) {
+      case rsp => responseProcess(rsp)
     }
+  }
 
-    protected def _current(req: SeqCurrentReq[T])
-                          (responseProcess: PartialFunction[Any, Unit]) {
-      if (comparator.compare(req.key, start) < 0) liteSeq.current(start) {
-        case rsp => responseProcess(rsp)
-      } else liteSeq.send(req) {
-        case rsp => responseProcess(rsp)
-      }
+  protected def _next(req: SeqNextReq[T])
+                     (responseProcess: PartialFunction[Any, Unit]) {
+    if (comparator.compare(req.key, start) < 0) liteSeq.current(start) {
+      case rsp => responseProcess(rsp)
+    } else liteSeq.send(req) {
+      case rsp => responseProcess(rsp)
     }
-
-    protected def _next(req: SeqNextReq[T])
-                       (responseProcess: PartialFunction[Any, Unit]) {
-      if (comparator.compare(req.key, start) < 0) liteSeq.current(start) {
-        case rsp => responseProcess(rsp)
-      } else liteSeq.send(req) {
-        case rsp => responseProcess(rsp)
-      }
-    }
+  }
 }

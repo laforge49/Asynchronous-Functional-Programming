@@ -27,28 +27,40 @@ package lite
 package seq
 
 class LiteListSeq[V](reactor: LiteReactor, list: java.util.List[V])
-  extends SeqExtensionActor[Int,V](reactor, new ListSeqExtension[V](list))
+  extends SeqActor[Int, V](reactor) {
 
-class ListSeqExtension[V](list: java.util.List[V])
-  extends SeqExtension[Int, V] {
-
-  override def _first: SeqRsp = {
-    if (list.isEmpty) return SeqEndRsp()
-    SeqResultRsp(0, list.get(0))
+  addRequestHandler{
+    case req: SeqFirstReq => _first(req)(back)
+    case req: SeqCurrentReq[Int] => _current(req)(back)
+    case req: SeqNextReq[Int] => _next(req)(back)
   }
 
-    override def _current(key: Int): SeqRsp = {
-      var k = key
-      if (k < 0) k = 0
-      if (k + 1 > list.size) return SeqEndRsp()
-      SeqResultRsp(k, list.get(k))
-    }
+  protected def _first(req: SeqFirstReq)
+                      (responseProcess: PartialFunction[Any, Unit]) {
+    responseProcess(
+      if (list.isEmpty) SeqEndRsp()
+      else SeqResultRsp(0, list.get(0))
+    )
+  }
 
-  override def _next(key: Int): SeqRsp = {
-    var k = key
+  protected def _current(req: SeqCurrentReq[Int])
+                        (responseProcess: PartialFunction[Any, Unit]) {
+    var k = req.key
+    if (k < 0) k = 0
+    responseProcess(
+      if (k + 1 > list.size) SeqEndRsp()
+      else SeqResultRsp(k, list.get(k))
+    )
+  }
+
+  protected def _next(req: SeqNextReq[Int])
+                     (responseProcess: PartialFunction[Any, Unit]) {
+    var k = req.key
     if (k < 0) k = 0
     else k = k + 1
-    if (k + 1 > list.size) return SeqEndRsp()
-    SeqResultRsp(k, list.get(k))
+    responseProcess(
+      if (k + 1 > list.size) SeqEndRsp()
+      else SeqResultRsp(k, list.get(k))
+    )
   }
 }
