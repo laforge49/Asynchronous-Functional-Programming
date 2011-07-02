@@ -29,10 +29,7 @@ package seq
 import java.util.{Comparator, NavigableSet}
 
 class LiteNavigableSetSeq[T](reactor: LiteReactor, navigableSet: NavigableSet[T])
-  extends SeqExtensionActor[T, T](reactor, new NavigableSetSeqExtension[T](navigableSet))
-
-class NavigableSetSeqExtension[T](navigableSet: NavigableSet[T])
-  extends SeqExtension[T, T] {
+  extends SeqActor[T, T](reactor) {
 
   override def comparator = {
     var c = navigableSet.comparator.asInstanceOf[Comparator[T]]
@@ -42,23 +39,42 @@ class NavigableSetSeqExtension[T](navigableSet: NavigableSet[T])
     c
   }
 
-  override def _first: SeqRsp = {
-    if (navigableSet.isEmpty) return SeqEndRsp()
-    val key = navigableSet.first
-    return SeqResultRsp(key, key)
+  addRequestHandler{
+    case req: SeqFirstReq => _first(req)(back)
+    case req: SeqCurrentReq[T] => _current(req)(back)
+    case req: SeqNextReq[T] => _next(req)(back)
   }
 
-  override def _current(k: T): SeqRsp = {
-    if (navigableSet.isEmpty) return SeqEndRsp()
-    val key = navigableSet.ceiling(k)
-    if (key == null) return SeqEndRsp()
-    SeqResultRsp(key, key)
+  protected def _first(req: SeqFirstReq)
+                      (responseProcess: PartialFunction[Any, Unit]) {
+    if (navigableSet.isEmpty) responseProcess(SeqEndRsp())
+    else {
+      val key = navigableSet.first
+      responseProcess(SeqResultRsp(key, key))
+    }
   }
 
-  override def _next(k: T): SeqRsp = {
-    if (navigableSet.isEmpty) return SeqEndRsp()
-    val key = navigableSet.higher(k)
-    if (key == null) return SeqEndRsp()
-    SeqResultRsp(key, key)
+  protected def _current(req: SeqCurrentReq[T])
+                        (responseProcess: PartialFunction[Any, Unit]) {
+    if (navigableSet.isEmpty) responseProcess(SeqEndRsp())
+    else {
+      val key = navigableSet.ceiling(req.key)
+      responseProcess(
+        if (key == null) SeqEndRsp()
+        else SeqResultRsp(key, key)
+      )
+    }
+  }
+
+  protected def _next(req: SeqNextReq[T])
+                     (responseProcess: PartialFunction[Any, Unit]) {
+    if (navigableSet.isEmpty) responseProcess(SeqEndRsp())
+    else {
+      val key = navigableSet.higher(req.key)
+      responseProcess(
+        if (key == null) SeqEndRsp()
+        else SeqResultRsp(key, key)
+      )
+    }
   }
 }

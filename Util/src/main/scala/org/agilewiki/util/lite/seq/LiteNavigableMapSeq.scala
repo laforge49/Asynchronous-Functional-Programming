@@ -29,10 +29,7 @@ package seq
 import java.util.{Comparator, NavigableMap}
 
 class LiteNavigableMapSeq[T, V](reactor: LiteReactor, navigableMap: NavigableMap[T, V])
-  extends SeqExtensionActor[T, V](reactor, new NavigableMapSeqExtension[T, V](navigableMap))
-
-class NavigableMapSeqExtension[T, V](navigableMap: NavigableMap[T, V])
-  extends SeqExtension[T, V] {
+  extends SeqActor[T, V](reactor) {
 
   override def comparator = {
     var c = navigableMap.comparator.asInstanceOf[Comparator[T]]
@@ -42,23 +39,42 @@ class NavigableMapSeqExtension[T, V](navigableMap: NavigableMap[T, V])
     c
   }
 
-  override def _first: SeqRsp = {
-    if (navigableMap.isEmpty) return SeqEndRsp()
-    val key = navigableMap.firstKey
-    return SeqResultRsp(key, navigableMap.get(key))
+  addRequestHandler{
+    case req: SeqFirstReq => _first(req)(back)
+    case req: SeqCurrentReq[T] => _current(req)(back)
+    case req: SeqNextReq[T] => _next(req)(back)
   }
 
-  override def _current(k: T): SeqRsp = {
-    if (navigableMap.isEmpty) return SeqEndRsp()
-    val key = navigableMap.ceilingKey(k)
-    if (key == null) return SeqEndRsp()
-    SeqResultRsp(key, navigableMap.get(key))
+  protected def _first(req: SeqFirstReq)
+                      (responseProcess: PartialFunction[Any, Unit]) {
+    if (navigableMap.isEmpty) responseProcess(SeqEndRsp())
+    else {
+      val key = navigableMap.firstKey
+      responseProcess(SeqResultRsp(key, navigableMap.get(key)))
+    }
   }
 
-  override def _next(k: T): SeqRsp = {
-    if (navigableMap.isEmpty) return SeqEndRsp()
-    val key = navigableMap.higherKey(k)
-    if (key == null) return SeqEndRsp()
-    SeqResultRsp(key, navigableMap.get(key))
+  protected def _current(req: SeqCurrentReq[T])
+                        (responseProcess: PartialFunction[Any, Unit]) {
+    if (navigableMap.isEmpty) responseProcess(SeqEndRsp())
+    else {
+      val key = navigableMap.ceilingKey(req.key)
+      responseProcess(
+        if (key == null) SeqEndRsp()
+        else SeqResultRsp(key, navigableMap.get(key))
+      )
+    }
+  }
+
+  protected def _next(req: SeqNextReq[T])
+                     (responseProcess: PartialFunction[Any, Unit]) {
+    if (navigableMap.isEmpty) responseProcess(SeqEndRsp())
+    else {
+      val key = navigableMap.higherKey(req.key)
+      responseProcess(
+        if (key == null) SeqEndRsp()
+        else SeqResultRsp(key, navigableMap.get(key))
+      )
+    }
   }
 }
