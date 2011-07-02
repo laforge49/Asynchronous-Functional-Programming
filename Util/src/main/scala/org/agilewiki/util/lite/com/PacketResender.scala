@@ -48,14 +48,25 @@ class PacketResender(reactor: LiteReactor,
   private val incomingReqUuids = new HashSet[String]
   private val outgoingRspCache = new CanonicalMap[OutgoingPacketReq](cacheSize)
 
-  addRequestHandler {
-    case packet: OutgoingPacketReq if packet.retry => resend(packet)
-    case packet: OutgoingPacketReq if !packet.retry => sendOut(packet)
-    case packet: IncomingPacketReq if packet.isReply => forwardInReply(packet)
-    case packet: IncomingPacketReq if !packet.isReply => forwardInReq(packet)
+  addRequestHandler{
+    case packet: OutgoingPacketReq => _outgoingPacket(packet)(back)
+    case packet: IncomingPacketReq => _incomingPacket(packet)(back)
   }
 
-  def sendOut(packet: OutgoingPacketReq) {
+  private def _outgoingPacket(packet: OutgoingPacketReq)
+                             (responseProcess: PartialFunction[Any, Unit]) {
+    if (packet.retry) resend(packet)(responseProcess)
+    else sendOut(packet)(responseProcess)
+  }
+
+  private def _incomingPacket(packet: IncomingPacketReq)
+                             (responseProcess: PartialFunction[Any, Unit]) {
+    if (packet.isReply) forwardInReply(packet)(responseProcess)
+    else forwardInReq(packet)(responseProcess)
+  }
+
+  def sendOut(packet: OutgoingPacketReq)
+             (responseProcess: PartialFunction[Any, Unit]) {
     packet.retry = true
     timeLastMsgReceived = System.currentTimeMillis
     if (pendingTimer == null) {
@@ -70,11 +81,12 @@ class PacketResender(reactor: LiteReactor,
     else
       sendRequests.put(msgUuid, liteReactor.currentRequestMessage)
     outsideActor.send(packet) {
-      case rsp: OutgoingPacketRsp => reply(rsp)
+      case rsp: OutgoingPacketRsp => responseProcess(rsp)
     }
   }
 
-  def resend(packet: OutgoingPacketReq) {
+  def resend(packet: OutgoingPacketReq)
+            (responseProcess: PartialFunction[Any, Unit]) {
     val currentTime = System.currentTimeMillis.asInstanceOf[Long]
     val expireTime = timeLastMsgReceived + limit
     pendingTimer = null
@@ -100,32 +112,36 @@ class PacketResender(reactor: LiteReactor,
     }
   }
 
-  def forwardInReq(packet: IncomingPacketReq) {
+  def forwardInReq(packet: IncomingPacketReq)
+                  (responseProcess: PartialFunction[Any, Unit]) {
     timeLastMsgReceived = System.currentTimeMillis
     val msgUuid = packet.msgUuid
     if (incomingReqUuids.contains(msgUuid)) {
-      reply(IncomingPacketRsp())
+      responseProcess(IncomingPacketRsp())
     } else if (outgoingRspCache.has(msgUuid)) {
       val rspPacket = outgoingRspCache.get(msgUuid)
-      outsideActor.send(rspPacket) { case rsp: OutgoingPacketRsp => }
-      reply(IncomingPacketRsp())
+      outsideActor.send(rspPacket) {
+        case rsp: OutgoingPacketRsp =>
+      }
+      responseProcess(IncomingPacketRsp())
     } else {
       incomingReqUuids.add(msgUuid)
       insideActor.send(packet) {
-        case rsp: IncomingPacketRsp => reply(rsp)
+        case rsp: IncomingPacketRsp => responseProcess(rsp)
       }
     }
   }
 
-  def forwardInReply(packet: IncomingPacketReq) {
+  def forwardInReply(packet: IncomingPacketReq)
+                    (responseProcess: PartialFunction[Any, Unit]) {
     timeLastMsgReceived = System.currentTimeMillis
     val msgUuid = packet.msgUuid
     if (sendRequests.containsKey(msgUuid)) {
       sendRequests.remove(msgUuid)
       insideActor.send(packet) {
-        case rsp: IncomingPacketRsp => reply(rsp)
+        case rsp: IncomingPacketRsp => responseProcess(rsp)
       }
-    } else reply(IncomingPacketRsp())
+    } else responseProcess(IncomingPacketRsp())
     if (pendingTimer != null) {
       pendingTimer.cancel
       pendingTimer = null
