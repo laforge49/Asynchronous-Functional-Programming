@@ -30,53 +30,34 @@ class LiteHeadSeq[T, V](liteSeq: SeqActor[T, V], limit: T)
   extends SeqActor[T, V](liteSeq.liteReactor) {
   override def comparator = liteSeq.comparator
 
-  addRequestHandler {
-    case req: SeqFirstReq => {
-      liteSeq.send(req)(h)
-    }
-    case req: SeqCurrentReq[T] => {
-      if (comparator.compare(req.key, limit) < 0) liteSeq.send(req)(h)
-      else reply(SeqEndRsp())
-    }
-    case req: SeqNextReq[T] => {
-      if (comparator.compare(req.key, limit) < 0) liteSeq.send(req)(h)
-      else reply(SeqEndRsp())
-    }
+  addRequestHandler{
+    case req: SeqFirstReq => _first(req)(back)
+    case req: SeqCurrentReq[T] => _current(req)(back)
+    case req: SeqNextReq[T] => _next(req)(back)
   }
 
-  def h: PartialFunction[Any, Unit] = {
-    case rsp:SeqEndRsp => reply(rsp)
+  protected def _first(req: SeqFirstReq)
+                      (responseProcess: PartialFunction[Any, Unit]) {
+    liteSeq.send(req)(h(responseProcess))
+  }
+
+  protected def _current(req: SeqCurrentReq[T])
+                        (responseProcess: PartialFunction[Any, Unit]) {
+    if (comparator.compare(req.key, limit) < 0) liteSeq.send(req)(h(responseProcess))
+    else responseProcess(SeqEndRsp())
+  }
+
+  protected def _next(req: SeqNextReq[T])
+                     (responseProcess: PartialFunction[Any, Unit]) {
+    if (comparator.compare(req.key, limit) < 0) liteSeq.send(req)(h(responseProcess))
+    else responseProcess(SeqEndRsp())
+  }
+
+  def h(responseProcess: PartialFunction[Any, Unit]): PartialFunction[Any, Unit] = {
+    case rsp: SeqEndRsp => responseProcess(rsp)
     case rsp: SeqResultRsp[T, V] => {
-      if (comparator.compare(rsp.key, limit) < 0) reply(rsp)
-      else reply(SeqEndRsp())
+      if (comparator.compare(rsp.key, limit) < 0) responseProcess(rsp)
+      else responseProcess(SeqEndRsp())
     }
-  }
-}
-
-class LiteExtensionHeadSeq[T, V](seqExtensionActor: SeqExtensionActor[T, V], limit: T)
-  extends SeqExtensionActor[T, V](seqExtensionActor.liteReactor, new HeadSeqExtension[T, V](seqExtensionActor.seqExtension, limit))
-
-class HeadSeqExtension[T, V](extension: SeqExtension[T, V], limit: T)
-  extends SeqExtension[T, V] {
-
-  override def comparator = extension.comparator
-
-  override def _first: SeqRsp = h(extension._first)
-
-  override def _current(k: T): SeqRsp = {
-    if (comparator.compare(k, limit) < 0) h(extension._current(k))
-    else SeqEndRsp()
-  }
-
-  override def _next(k: T): SeqRsp = {
-    if (comparator.compare(k, limit) < 0) h(extension._next(k))
-    else SeqEndRsp()
-  }
-
-  def h(rsp: SeqRsp): SeqRsp = {
-    if (!rsp.isInstanceOf[SeqResultRsp[T,V]]) return rsp
-    val r = rsp.asInstanceOf[SeqResultRsp[T, V]]
-    if (comparator.compare(r.key, limit) < 0) return rsp
-    SeqEndRsp()
   }
 }
