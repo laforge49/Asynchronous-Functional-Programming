@@ -252,34 +252,3 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   def head(limit: T): SeqActor[T, V] =
     new LiteHeadSeq(this, limit)
 }
-
-
-class SeqExtensionActor[T, V](reactor: LiteReactor, seq: SeqExtension[T, V])
-  extends SeqActor[T, V](reactor) {
-
-  addExtension(seq)
-
-  def seqExtension = seq
-
-  override def comparator = seq.comparator
-
-  override def first(responseProcess: PartialFunction[Any, Unit])
-                    (implicit src: ActiveActor) {
-    if (isSafe(src)) responseProcess(seq._first)
-    else send(SeqFirstReq())(responseProcess)(src)
-  }
-
-  override def current(key: T)
-                      (responseProcess: PartialFunction[Any, Unit])
-                      (implicit src: ActiveActor) {
-    if (isSafe(src)) responseProcess(seq._current(key))
-    else send(SeqCurrentReq(key))(responseProcess)(src)
-  }
-
-  override def next(key: T)
-                   (responseProcess: PartialFunction[Any, Unit])
-                   (implicit src: ActiveActor) {
-    if (isSafe(src)) responseProcess(seq._next(key))
-    else send(SeqNextReq(key))(responseProcess)(src)
-  }
-}
