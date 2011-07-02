@@ -31,20 +31,35 @@ class LiteMapSeq[T, V1, V2](liteSeq: SeqActor[T, V1], mapSeq: SeqActor[V1, V2])
   override def comparator = liteSeq.comparator
 
   addRequestHandler{
-    case req: SeqReq => liteSeq.send(req)(m)
+    case req: SeqFirstReq => _first(req)(back)
+    case req: SeqCurrentReq[T] => _current(req)(back)
+    case req: SeqNextReq[T] => _next(req)(back)
   }
 
-  val m: PartialFunction[Any, Unit] = {
+  protected def _first(req: SeqFirstReq)
+                      (responseProcess: PartialFunction[Any, Unit]) {
+    liteSeq.send(req)(m(responseProcess))
+  }
+
+  protected def _current(req: SeqCurrentReq[T])
+                        (responseProcess: PartialFunction[Any, Unit]) {
+    liteSeq.send(req)(m(responseProcess))
+  }
+
+  protected def _next(req: SeqNextReq[T])
+                     (responseProcess: PartialFunction[Any, Unit]) {
+    liteSeq.send(req)(m(responseProcess))
+  }
+
+  def m(responseProcess: PartialFunction[Any, Unit]): PartialFunction[Any, Unit] = {
     case r: SeqResultRsp[T, V1] => {
       mapSeq.get(r.value) {
         case mr => {
-          reply(SeqResultRsp(r.key, mr))
+          responseProcess(SeqResultRsp(r.key, mr))
         }
       }
     }
-    case r => {
-      reply(r)
-    }
+    case r => responseProcess(r)
   }
 }
 
@@ -53,9 +68,28 @@ class LiteMapFunc[T, V1, V2](liteSeq: SeqActor[T, V1], map: V1 => V2)
   override def comparator = liteSeq.comparator
 
   addRequestHandler{
-    case req: SeqReq => liteSeq.send(req) {
-      case r: SeqResultRsp[T, V1] => reply(SeqResultRsp(r.key, map(r.value)))
-      case r => reply(r)
-    }
+    case req: SeqFirstReq => _first(req)(back)
+    case req: SeqCurrentReq[T] => _current(req)(back)
+    case req: SeqNextReq[T] => _next(req)(back)
+  }
+
+  protected def _first(req: SeqFirstReq)
+                      (responseProcess: PartialFunction[Any, Unit]) {
+    liteSeq.send(req)(m(responseProcess))
+  }
+
+  protected def _current(req: SeqCurrentReq[T])
+                        (responseProcess: PartialFunction[Any, Unit]) {
+    liteSeq.send(req)(m(responseProcess))
+  }
+
+  protected def _next(req: SeqNextReq[T])
+                     (responseProcess: PartialFunction[Any, Unit]) {
+    liteSeq.send(req)(m(responseProcess))
+  }
+
+  def m(responseProcess: PartialFunction[Any, Unit]): PartialFunction[Any, Unit] = {
+    case r: SeqResultRsp[T, V1] => responseProcess(SeqResultRsp(r.key, map(r.value)))
+    case r => responseProcess(r)
   }
 }
