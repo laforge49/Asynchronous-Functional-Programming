@@ -32,13 +32,19 @@ import java.util.{TimerTask, HashMap}
 
 case class MapPutReq(actor: LiteActor)
 
+case class MapPutRsp()
+
 case class MapGetReq(id: ActorId)
 
 case class MapGetRsp(actor: LiteActor)
 
 case class RememberReq(actor: LiteActor, period: Int)
 
+case class RememberRsp()
+
 case class ForgetReq(actor: LiteActor)
+
+case class ForgetRsp()
 
 case class ForwardReq(id: ActorId, msg: Any)
 
@@ -50,45 +56,63 @@ class LiteManager(reactor: LiteReactor)
   private lazy val pinger = Udp(systemContext).pinger
 
   addRequestHandler {
-    case req: RememberReq => {
-      val actor = req.actor
-      val id = actor.id.value
-      val retryReq = RetryReq(ForgetReq(actor), req.period)
-      pinger.send(retryReq) {
-        case pr: RetryRsp => {
-          val tt = pr.tt
-          if (longLivingActors.containsKey(id)) {
-            val (actor2, tt2) = longLivingActors.remove(id)
-            tt2.cancel
-          }
-          longLivingActors.put(id,(actor, tt))
+    case req: RememberReq => _rememberReq(req)(back)
+    case req: ForgetReq => _forgetReq(req)(back)
+    case req: MapPutReq => _mapPutReq(req)(back)
+    case req: MapGetReq => _mapGetReq(req)(back)
+    case req: ForwardReq => _forwardReq(req)(back)
+  }
+
+  private def _rememberReq(req: RememberReq)
+                      (responseProcess: PartialFunction[Any, Unit]) {
+    val actor = req.actor
+    val id = actor.id.value
+    val retryReq = RetryReq(ForgetReq(actor), req.period)
+    pinger.send(retryReq) {
+      case pr: RetryRsp => {
+        val tt = pr.tt
+        if (longLivingActors.containsKey(id)) {
+          val (actor2, tt2) = longLivingActors.remove(id)
+          tt2.cancel
         }
+        longLivingActors.put(id,(actor, tt))
       }
     }
-    case req: ForgetReq => {
-      val (actor, tt) = longLivingActors.remove(req.actor.id.value)
-      tt.cancel
+    responseProcess(RememberRsp())
+  }
+
+  private def _forgetReq(req: ForgetReq)
+                      (responseProcess: PartialFunction[Any, Unit]) {
+    val (actor, tt) = longLivingActors.remove(req.actor.id.value)
+    tt.cancel
+    responseProcess(ForgetRsp())
+  }
+
+  private def _mapPutReq(req: MapPutReq)
+                      (responseProcess: PartialFunction[Any, Unit]) {
+    val actor = req.actor
+    mapPut(actor, actor.id.value)
+    responseProcess(MapPutRsp())
+  }
+
+  private def _mapGetReq(req: MapGetReq)
+                      (responseProcess: PartialFunction[Any, Unit]) {
+    val nwr = hashMap.get(req.id.value)
+    var rv: LiteActor = null
+    if (nwr != null) {
+      rv = nwr.get
     }
-    case req: MapPutReq => {
-      val actor = req.actor
-      mapPut(actor, actor.id.value)
-    }
-    case req: MapGetReq => {
-      val nwr = hashMap.get(req.id.value)
-      var rv: LiteActor = null
-      if (nwr != null) {
-        rv = nwr.get
-      }
-      reply(MapGetRsp(rv))
-    }
-    case req: ForwardReq => {
-      val nwr = hashMap.get(req.id.value)
-      if (nwr != null) {
-        val actor = nwr.get
-        if (actor != null) {
-          actor.send(req.msg) {
-            case rsp => reply(rsp)
-          }
+    responseProcess(MapGetRsp(rv))
+  }
+
+  private def _forwardReq(req: ForwardReq)
+                      (responseProcess: PartialFunction[Any, Unit]) {
+    val nwr = hashMap.get(req.id.value)
+    if (nwr != null) {
+      val actor = nwr.get
+      if (actor != null) {
+        actor.send(req.msg) {
+          case rsp => responseProcess(rsp)
         }
       }
     }
