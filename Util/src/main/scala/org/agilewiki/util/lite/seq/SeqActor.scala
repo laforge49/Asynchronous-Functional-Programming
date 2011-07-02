@@ -32,12 +32,6 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   extends LiteActor(reactor, null)
   with SeqComparator[T] {
 
-  addRequestHandler{
-    case req: FoldReq[V] => _fold(req.seed, req.fold)
-    case req: ExistsReq[V] => _exists(req.exists)
-    case req: FindReq[V] => _find(req.find)
-  }
-
   def first(responseProcess: PartialFunction[Any, Unit])
            (implicit sourceActor: ActiveActor) {
     send(SeqFirstReq())(responseProcess)(sourceActor)
@@ -88,32 +82,42 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     })(sourceActor)
   }
 
+  addRequestHandler{
+    case req: FoldReq[V] => _fold(req)(back)
+    case req: ExistsReq[V] => _exists(req.exists)
+    case req: FindReq[V] => _find(req.find)
+  }
+
   def fold(seed: V, f: (V, V) => V)
           (responseProcess: PartialFunction[Any, Unit])
           (implicit sourceActor: ActiveActor) {
     send(FoldReq(seed, f))(responseProcess)(sourceActor)
   }
 
-  private def _fold(seed: V, fold: (V, V) => V) {
+  private def _fold(req: FoldReq[V])
+                   (responseProcess: PartialFunction[Any, Unit]) {
     first{
-      case rsp: SeqEndRsp => reply(FoldRsp(seed))
-      case rsp: SeqResultRsp[T, V] => _foldNext(rsp.key, fold(seed, rsp.value), fold)
+      case rsp: SeqEndRsp => responseProcess(FoldRsp(req.seed))
+      case rsp: SeqResultRsp[T, V] =>
+        _foldNext(rsp.key, req.fold(req.seed, rsp.value), req.fold)(responseProcess)
     }
   }
 
-  private def _ifoldNext(key: T, seed: V, fold: (V, V) => V) {
-    _foldNext(key, seed, fold)
+  private def _ifoldNext(key: T, seed: V, fold: (V, V) => V)
+                        (responseProcess: PartialFunction[Any, Unit]) {
+    _foldNext(key, seed, fold)(responseProcess)
   }
 
-  @tailrec private def _foldNext(key: T, seed: V, fold: (V, V) => V) {
+  @tailrec private def _foldNext(key: T, seed: V, fold: (V, V) => V)
+                                (responseProcess: PartialFunction[Any, Unit]) {
     var async = false
     var sync = false
     var nextKey = null.asInstanceOf[T]
     var nextValue = null.asInstanceOf[V]
     next(key) {
-      case rsp: SeqEndRsp => reply(FoldRsp(seed))
+      case rsp: SeqEndRsp => responseProcess(FoldRsp(seed))
       case rsp: SeqResultRsp[T, V] => {
-        if (async) _ifoldNext(rsp.key, fold(seed, rsp.value), fold)
+        if (async) _ifoldNext(rsp.key, fold(seed, rsp.value), fold)(responseProcess)
         else {
           sync = true
           nextKey = rsp.key
@@ -125,7 +129,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
       async = true
       return
     }
-    _foldNext(nextKey, fold(seed, nextValue), fold)
+    _foldNext(nextKey, fold(seed, nextValue), fold)(responseProcess)
   }
 
   def exists(e: V => Boolean)
