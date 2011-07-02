@@ -34,25 +34,31 @@ class PacketRouter(reactor: LiteReactor)
   val serverSequenceActor = serversActor.serverSequenceActor
   val map = new HashMap[String, LiteActor]
 
-  addRequestHandler {
-    case req: PacketReq => {
-      val server = req.server
-      if (map.containsKey(server)) packetReq(req)
-      else serversActor.send(HostPortQueryReq(server)) {
-        case sar: HostPortQueryRsp => {
-          add(server, sar.hostPort)
-          packetReq(req)
-        }
+  addRequestHandler{
+    case req: PacketReq => _packet(req)(back)
+    case req: IncomingPacketReq => _incomingPacket(req)(back)
+  }
+
+  private def _packet(req: PacketReq)
+                     (responseProcess: PartialFunction[Any, Unit]) {
+    val server = req.server
+    if (map.containsKey(server)) packetReq(req)(responseProcess)
+    else serversActor.send(HostPortQueryReq(server)) {
+      case sar: HostPortQueryRsp => {
+        add(server, sar.hostPort)
+        packetReq(req)(responseProcess)
       }
     }
-    case req: IncomingPacketReq => {
-      val server = req.server
-      if (map.containsKey(server)) incomePacket(req)
-      else serversActor.send(HostPortQueryReq(server)) {
-        case sar: HostPortQueryRsp => {
-          add(server, sar.hostPort)
-          incomePacket(req)
-        }
+  }
+
+  private def _incomingPacket(req: IncomingPacketReq)
+                             (responseProcess: PartialFunction[Any, Unit]) {
+    val server = req.server
+    if (map.containsKey(server)) incomePacket(req)(responseProcess)
+    else serversActor.send(HostPortQueryReq(server)) {
+      case sar: HostPortQueryRsp => {
+        add(server, sar.hostPort)
+        incomePacket(req)(responseProcess)
       }
     }
   }
@@ -62,17 +68,23 @@ class PacketRouter(reactor: LiteReactor)
     map.put(server.name, packetResponder)
   }
 
-  private def packetReq(req: PacketReq) {
+  private def packetReq(req: PacketReq)
+                       (responseProcess: PartialFunction[Any, Unit]) {
     val server = req.server
     val packetResponder = map.get(server)
     if (packetResponder == null) throw new IllegalArgumentException("Unknown server: " + server.name)
-    packetResponder.send(req) { case prr => reply(prr)}
+    packetResponder.send(req) {
+      case prr => responseProcess(prr)
+    }
   }
 
-  private def incomePacket(req: IncomingPacketReq) {
+  private def incomePacket(req: IncomingPacketReq)
+                          (responseProcess: PartialFunction[Any, Unit]) {
     val server = req.server
     val packetResponder = map.get(server)
     if (packetResponder == null) throw new IllegalArgumentException("Unknown server: " + server.name)
-    packetResponder.send(req) { case prr => reply(prr)}
+    packetResponder.send(req) {
+      case prr => responseProcess(prr)
+    }
   }
 }
