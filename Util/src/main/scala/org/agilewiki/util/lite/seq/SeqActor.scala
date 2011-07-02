@@ -85,7 +85,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   addRequestHandler{
     case req: FoldReq[V] => _fold(req)(back)
     case req: ExistsReq[V] => _exists(req)(back)
-    case req: FindReq[V] => _find(req.find)
+    case req: FindReq[V] => _find(req)(back)
   }
 
   def fold(seed: V, f: (V, V) => V)
@@ -184,29 +184,33 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     send(FindReq(f))(responseProcess)(sourceActor)
   }
 
-  private def _find(find: V => Boolean) {
+  private def _find(req: FindReq[V])
+                   (responseProcess: PartialFunction[Any, Unit]) {
+    val find = req.find
     first{
-      case rsp: SeqEndRsp => reply(NotFoundRsp())
+      case rsp: SeqEndRsp => responseProcess(NotFoundRsp())
       case rsp: SeqResultRsp[T, V] => {
-        if (find(rsp.value)) reply(FoundRsp(rsp.value))
-        else _findNext(rsp.key, find)
+        if (find(rsp.value)) responseProcess(FoundRsp(rsp.value))
+        else _findNext(rsp.key, find)(responseProcess)
       }
     }
   }
 
-  private def _ifindNext(key: T, find: V => Boolean) {
-    _findNext(key, find)
+  private def _ifindNext(key: T, find: V => Boolean)
+                        (responseProcess: PartialFunction[Any, Unit]) {
+    _findNext(key, find)(responseProcess)
   }
 
-  @tailrec private def _findNext(key: T, find: V => Boolean) {
+  @tailrec private def _findNext(key: T, find: V => Boolean)
+                                (responseProcess: PartialFunction[Any, Unit]) {
     var async = false
     var sync = false
     var nextKey = null.asInstanceOf[T]
     next(key) {
-      case rsp: SeqEndRsp => reply(NotFoundRsp())
+      case rsp: SeqEndRsp => responseProcess(NotFoundRsp())
       case rsp: SeqResultRsp[T, V] => {
-        if (find(rsp.value)) reply(FoundRsp(rsp.value))
-        else if (async) _ifindNext(rsp.key, find)
+        if (find(rsp.value)) responseProcess(FoundRsp(rsp.value))
+        else if (async) _ifindNext(rsp.key, find)(responseProcess)
         else {
           sync = true
           nextKey = rsp.key
@@ -217,7 +221,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
       async = true
       return
     }
-    _findNext(nextKey, find)
+    _findNext(nextKey, find)(responseProcess)
   }
 
   def map[V2](_map: V => V2): SeqActor[T, V2] =
