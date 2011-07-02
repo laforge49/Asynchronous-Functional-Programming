@@ -84,7 +84,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
 
   addRequestHandler{
     case req: FoldReq[V] => _fold(req)(back)
-    case req: ExistsReq[V] => _exists(req.exists)
+    case req: ExistsReq[V] => _exists(req)(back)
     case req: FindReq[V] => _find(req.find)
   }
 
@@ -138,29 +138,33 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     send(ExistsReq(e))(responseProcess)(sourceActor)
   }
 
-  private def _exists(exists: V => Boolean) {
+  private def _exists(req: ExistsReq[V])
+                     (responseProcess: PartialFunction[Any, Unit]) {
+    val exists = req.exists
     first{
-      case rsp: SeqEndRsp => reply(ExistsRsp(false))
+      case rsp: SeqEndRsp => responseProcess(ExistsRsp(false))
       case rsp: SeqResultRsp[T, V] => {
-        if (exists(rsp.value)) reply(ExistsRsp(true))
-        else _existsNext(rsp.key, exists)
+        if (exists(rsp.value)) responseProcess(ExistsRsp(true))
+        else _existsNext(rsp.key, exists)(responseProcess)
       }
     }
   }
 
-  private def _iexistsNext(key: T, exists: V => Boolean) {
-    _existsNext(key, exists)
+  private def _iexistsNext(key: T, exists: V => Boolean)
+                     (responseProcess: PartialFunction[Any, Unit]) {
+    _existsNext(key, exists)(responseProcess)
   }
 
-  @tailrec private def _existsNext(key: T, exists: V => Boolean) {
+  @tailrec private def _existsNext(key: T, exists: V => Boolean)
+                     (responseProcess: PartialFunction[Any, Unit]) {
     var async = false
     var sync = false
     var nextKey = null.asInstanceOf[T]
     next(key) {
-      case rsp: SeqEndRsp => reply(ExistsRsp(false))
+      case rsp: SeqEndRsp => responseProcess(ExistsRsp(false))
       case rsp: SeqResultRsp[T, V] => {
-        if (exists(rsp.value)) reply(ExistsRsp(true))
-        else if (async) _iexistsNext(rsp.key, exists)
+        if (exists(rsp.value)) responseProcess(ExistsRsp(true))
+        else if (async) _iexistsNext(rsp.key, exists)(responseProcess)
         else {
           sync = true
           nextKey = rsp.key
@@ -171,7 +175,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
       async = true
       return
     }
-    _existsNext(nextKey, exists)
+    _existsNext(nextKey, exists)(responseProcess)
   }
 
   def find(f: (V) => Boolean)
