@@ -39,56 +39,51 @@ class LiteFilterFunc[T, V](liteSeq: SeqActor[T, V], filter: V => Boolean)
   }
 
   protected def _first(req: SeqFirstReq)
-                    (responseProcess: PartialFunction[Any, Unit])
-                    (implicit src: ActiveActor) {
-    _filter(req)(responseProcess)(src)
+                      (responseProcess: PartialFunction[Any, Unit]) {
+    _filter(req)(responseProcess)
   }
 
   protected def _current(req: SeqCurrentReq[T])
-                      (responseProcess: PartialFunction[Any, Unit])
-                      (implicit src: ActiveActor) {
-    _filter(req)(responseProcess)(src)
+                        (responseProcess: PartialFunction[Any, Unit]) {
+    _filter(req)(responseProcess)
 
   }
 
   protected def _next(req: SeqNextReq[T])
-                   (responseProcess: PartialFunction[Any, Unit])
-                   (implicit src: ActiveActor) {
-    _filter(req)(responseProcess)(src)
+                     (responseProcess: PartialFunction[Any, Unit]) {
+    _filter(req)(responseProcess)
   }
 
   private def _filterNext(key: T)
-                         (responseProcess: PartialFunction[Any, Unit])
-                         (implicit src: ActiveActor) {
-    _filter(SeqNextReq(key))(responseProcess)(src)
+                         (responseProcess: PartialFunction[Any, Unit]) {
+    _filter(SeqNextReq(key))(responseProcess)
   }
 
   @tailrec private def _filter(req: SeqReq)
-                              (responseProcess: PartialFunction[Any, Unit])
-                              (implicit src: ActiveActor) {
+                              (responseProcess: PartialFunction[Any, Unit]) {
     var async = false
     var sync = false
     var nextKey = null.asInstanceOf[T]
-    liteSeq.send(req)({
+    liteSeq.send(req) {
       case rsp: SeqEndRsp => {
         responseProcess(SeqEndRsp())
       }
       case rsp: SeqResultRsp[T, V] => {
         if (filter(rsp.value)) responseProcess(rsp)
         else {
-          if (async) _filterNext(rsp.key)(responseProcess)(src)
+          if (async) _filterNext(rsp.key)(responseProcess)
           else {
             sync = true
             nextKey = rsp.key
           }
         }
       }
-    })(src)
+    }
     if (!sync) {
       async = true
       return
     }
-    _filter(SeqNextReq[T](nextKey))(responseProcess)(src)
+    _filter(SeqNextReq[T](nextKey))(responseProcess)
   }
 }
 
@@ -97,42 +92,58 @@ class LiteFilterSeq[T, V, V1](liteSeq: SeqActor[T, V], filter: SeqActor[V, V1])
   override def comparator = liteSeq.comparator
 
   addRequestHandler{
-    case req: SeqReq => _filter(req)(back)
+    case req: SeqFirstReq => _first(req)(back)
+    case req: SeqCurrentReq[T] => _current(req)(back)
+    case req: SeqNextReq[T] => _next(req)(back)
+  }
+
+  protected def _first(req: SeqFirstReq)
+                      (responseProcess: PartialFunction[Any, Unit]) {
+    _filter(req)(responseProcess)
+  }
+
+  protected def _current(req: SeqCurrentReq[T])
+                        (responseProcess: PartialFunction[Any, Unit]) {
+    _filter(req)(responseProcess)
+
+  }
+
+  protected def _next(req: SeqNextReq[T])
+                     (responseProcess: PartialFunction[Any, Unit]) {
+    _filter(req)(responseProcess)
   }
 
   private def _filterNext(key: T)
-                         (responseProcess: PartialFunction[Any, Unit])
-                         (implicit src: ActiveActor) {
-    _filter(SeqNextReq(key))(responseProcess)(src)
+                         (responseProcess: PartialFunction[Any, Unit]) {
+    _filter(SeqNextReq(key))(responseProcess)
   }
 
   @tailrec private def _filter(req: SeqReq)
-                              (responseProcess: PartialFunction[Any, Unit])
-                              (implicit src: ActiveActor) {
+                              (responseProcess: PartialFunction[Any, Unit]) {
     var async = false
     var sync = false
     var nextKey = null.asInstanceOf[T]
-    liteSeq.send(req)({
+    liteSeq.send(req){
       case rsp: SeqEndRsp => {
         responseProcess(SeqEndRsp())
       }
       case rsp: SeqResultRsp[T, V] => {
-        filter.hasKey(rsp.value)({
+        filter.hasKey(rsp.value){
           case true => responseProcess(rsp)
           case false => {
-            if (async) _filterNext(rsp.key)(responseProcess)(src)
+            if (async) _filterNext(rsp.key)(responseProcess)
             else {
               sync = true
               nextKey = rsp.key
             }
           }
-        })(src)
+        }
       }
-    })(src)
+    }
     if (!sync) {
       async = true
       return
     }
-    _filter(SeqNextReq[T](nextKey))(responseProcess)(src)
+    _filter(SeqNextReq[T](nextKey))(responseProcess)
   }
 }

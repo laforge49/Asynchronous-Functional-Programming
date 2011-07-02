@@ -63,8 +63,7 @@ class ActorRegistry(reactor: LiteReactor) extends LiteActor(reactor, null) {
   }
 
   private def registerActor(req: RegisterActorReq)
-                           (responseProcess: PartialFunction[Any, Unit])
-                           (implicit src: ActiveActor) {
+                           (responseProcess: PartialFunction[Any, Unit]) {
     val _id = req.actor.id.value
     if (actors.containsKey(_id)) responseProcess(DuplicateActorIdRsp())
     else {
@@ -74,16 +73,14 @@ class ActorRegistry(reactor: LiteReactor) extends LiteActor(reactor, null) {
   }
 
   private def unregisterActor(req: UnregisterActorReq)
-                             (responseProcess: PartialFunction[Any, Unit])
-                             (implicit src: ActiveActor) {
+                             (responseProcess: PartialFunction[Any, Unit]) {
     val _id = req.id.value
     actors.remove(_id)
     responseProcess(UnregisteredActorRsp())
   }
 
   private def getActor(req: GetActorReq)
-                      (responseProcess: PartialFunction[Any, Unit])
-                      (implicit src: ActiveActor) {
+                      (responseProcess: PartialFunction[Any, Unit]) {
     val _id = req.id.value
     responseProcess(
       if (actors.containsKey(_id)) ActorRsp(actors.get(_id))

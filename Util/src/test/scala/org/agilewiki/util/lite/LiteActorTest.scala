@@ -37,16 +37,15 @@ class LiteTestActor(reactor: LiteReactor, next: LiteTestActor)
   }
 
   private def handle(data: Any)
-                    (responseProcess: PartialFunction[Any, Unit])
-                    (implicit sender: ActiveActor) {
+                    (responseProcess: PartialFunction[Any, Unit]) {
     if (next == null) responseProcess(data)
-    else next.process(data)(responseProcess)(sender)
+    else next.process(data)(responseProcess)
   }
 
   def process(data: Any)
              (responseProcess: PartialFunction[Any, Unit])
              (implicit sender: ActiveActor) {
-    if (isSafe(sender)) handle(data)(responseProcess)(sender)
+    if (isSafe(sender)) handle(data)(responseProcess)
     else send(LTATestData(data))(responseProcess)(sender)
   }
 }
