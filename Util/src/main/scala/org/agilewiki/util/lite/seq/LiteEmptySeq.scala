@@ -27,13 +27,26 @@ package lite
 package seq
 
 class LiteEmptySeq[T, V](reactor: LiteReactor)
-  extends SeqExtensionActor[T, V](reactor, new EmptySeqExtension[T, V])
+  extends SeqActor[T, V](reactor) {
 
-class EmptySeqExtension[T, V]
-  extends SeqExtension[T, V] {
-  override def _first = {
-    SeqEndRsp()
+  addRequestHandler{
+    case req: SeqFirstReq => _first(req)(back)
+    case req: SeqCurrentReq[T] => _current(req)(back)
+    case req: SeqNextReq[T] => _next(req)(back)
   }
-  override def _current(key: T) = SeqEndRsp()
-  override def _next(key: T) = SeqEndRsp()
+
+  protected def _first(req: SeqFirstReq)
+                      (responseProcess: PartialFunction[Any, Unit]) {
+    responseProcess(SeqEndRsp())
+  }
+
+  protected def _current(req: SeqCurrentReq[T])
+                        (responseProcess: PartialFunction[Any, Unit]) {
+    responseProcess(SeqEndRsp())
+  }
+
+  protected def _next(req: SeqNextReq[T])
+                     (responseProcess: PartialFunction[Any, Unit]) {
+    responseProcess(SeqEndRsp())
+  }
 }
