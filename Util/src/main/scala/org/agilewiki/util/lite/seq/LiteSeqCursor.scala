@@ -57,65 +57,68 @@ class LiteSeqCursor[T, V](reactor: LiteReactor, wrappedSeq: SeqActor[T, V])
   }
 
   addRequestHandler{
-    case req: SeqFirstReq => first(req)
-    case req: SeqCurrentReq[T] => current(req)
-    case req: SeqNextReq[T] => next(req)
+    case req: SeqFirstReq => _first(req)(back)
+    case req: SeqCurrentReq[T] => _current(req)(back)
+    case req: SeqNextReq[T] => _next(req)(back)
   }
 
-  private def first(req: SeqFirstReq) {
+  protected def _first(req: SeqFirstReq)
+                      (responseProcess: PartialFunction[Any, Unit]) {
     if (inited && _first)
-      if (lastResult != null) reply(lastResult)
-      else reply(SeqEndRsp())
+      if (lastResult != null) responseProcess(lastResult)
+      else responseProcess(SeqEndRsp())
     else {
       inited = true
       wrappedSeq.send(req) {
         case rsp: SeqEndRsp => {
           lastResult = null
           _first = true
-          reply(rsp)
+          responseProcess(rsp)
         }
         case rsp: SeqResultRsp[T, V] => {
           lastResult = rsp
           _first = true
-          reply(rsp)
+          responseProcess(rsp)
         }
       }
     }
   }
 
-  private def current(req: SeqCurrentReq[T]) {
+  protected def _current(req: SeqCurrentReq[T])
+                        (responseProcess: PartialFunction[Any, Unit]) {
     val key = req.key
-    if (inited && lastResult != null && key == lastResult.key) reply(lastResult)
+    if (inited && lastResult != null && key == lastResult.key) responseProcess(lastResult)
     else {
       inited = true
       wrappedSeq.send(req) {
         case rsp: SeqEndRsp => {
           lastResult = null
           _first = false
-          reply(rsp)
+          responseProcess(rsp)
         }
         case rsp: SeqResultRsp[T, V] => {
           lastResult = rsp
           _first = false
-          reply(rsp)
+          responseProcess(rsp)
         }
       }
     }
   }
 
-  private def next(req: SeqNextReq[T]) {
+  protected def _next(req: SeqNextReq[T])
+                     (responseProcess: PartialFunction[Any, Unit]) {
     var key = req.key
     inited = true
     wrappedSeq.send(SeqNextReq(key)) {
       case rsp: SeqEndRsp => {
         lastResult = null
         _first = false
-        reply(rsp)
+        responseProcess(rsp)
       }
       case rsp: SeqResultRsp[T, V] => {
         lastResult = rsp
         _first = false
-        reply(rsp)
+        responseProcess(rsp)
       }
     }
   }

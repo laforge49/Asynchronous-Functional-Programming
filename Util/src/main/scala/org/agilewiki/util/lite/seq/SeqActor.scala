@@ -88,6 +88,15 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     case req: FindReq[V] => _find(req)(back)
   }
 
+    protected def _first(req: SeqFirstReq)
+                        (responseProcess: PartialFunction[Any, Unit])
+
+    protected def _current(req: SeqCurrentReq[T])
+                          (responseProcess: PartialFunction[Any, Unit])
+
+    protected def _next(req: SeqNextReq[T])
+                       (responseProcess: PartialFunction[Any, Unit])
+
   def fold(seed: V, f: (V, V) => V)
           (responseProcess: PartialFunction[Any, Unit])
           (implicit sourceActor: ActiveActor) {
