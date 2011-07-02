@@ -30,48 +30,34 @@ class LiteTailSeq[T, V](liteSeq: SeqActor[T, V], start: T)
   extends SeqActor[T, V](liteSeq.liteReactor) {
   override def comparator = liteSeq.comparator
 
-  addRequestHandler {
-    case req: SeqFirstReq => {
-      liteSeq.send(SeqCurrentReq(start)) {
-        case rsp => reply(rsp)
+    addRequestHandler{
+      case req: SeqFirstReq => _first(req)(back)
+      case req: SeqCurrentReq[T] => _current(req)(back)
+      case req: SeqNextReq[T] => _next(req)(back)
+    }
+
+    protected def _first(req: SeqFirstReq)
+                        (responseProcess: PartialFunction[Any, Unit]) {
+      liteSeq.send(req) {
+        case rsp => responseProcess(rsp)
       }
     }
-    case req: SeqCurrentReq[T] => {
+
+    protected def _current(req: SeqCurrentReq[T])
+                          (responseProcess: PartialFunction[Any, Unit]) {
       if (comparator.compare(req.key, start) < 0) liteSeq.current(start) {
-        case rsp => reply(rsp)
+        case rsp => responseProcess(rsp)
       } else liteSeq.send(req) {
-        case rsp => reply(rsp)
+        case rsp => responseProcess(rsp)
       }
     }
-    case req: SeqNextReq[T] => {
+
+    protected def _next(req: SeqNextReq[T])
+                       (responseProcess: PartialFunction[Any, Unit]) {
       if (comparator.compare(req.key, start) < 0) liteSeq.current(start) {
-        case rsp => reply(rsp)
+        case rsp => responseProcess(rsp)
       } else liteSeq.send(req) {
-        case rsp => reply(rsp)
+        case rsp => responseProcess(rsp)
       }
     }
-  }
-}
-
-class LiteExtensionTailSeq[T, V](seqExtensionActor: SeqExtensionActor[T, V], start: T)
-  extends SeqExtensionActor[T, V](
-    seqExtensionActor.liteReactor,
-    new TailSeqExtension[T, V](seqExtensionActor.seqExtension, start))
-
-class TailSeqExtension[T, V](extension: SeqExtension[T, V], start: T)
-  extends SeqExtension[T, V] {
-
-  override def comparator = extension.comparator
-
-  override def _first: SeqRsp = extension._current(start)
-
-  override def _current(k: T): SeqRsp = {
-    if (comparator.compare(k, start) < 0) extension._current(start)
-    else extension._current(k)
-  }
-
-  override def _next(k: T): SeqRsp = {
-    if (comparator.compare(k, start) < 0) extension._current(start)
-    else extension._next(k)
-  }
 }
