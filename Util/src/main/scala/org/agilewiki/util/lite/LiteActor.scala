@@ -47,4 +47,19 @@ class LiteActor(reactor: LiteReactor, _factory: ActorFactory)
   override def response(msg: LiteRspMsg) {
     liteReactor.response(msg)
   }
+
+  def eval(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val reqFunction = messageFunctions.get(msg.getClass)
+    reqFunction(msg, responseProcess)
+  }
+
+  def send(msg: AnyRef)
+          (responseProcess: PartialFunction[Any, Unit])
+          (implicit activeActor: ActiveActor) {
+    val reqFunction = messageFunctions.get(msg.getClass)
+    if ((reactor == null || activeActor.actor.liteReactor.eq(reactor)) &&
+      reqFunction != null)
+      reqFunction(msg, responseProcess)
+    else activeActor.actor.liteReactor.send(actor, msg)(responseProcess)
+  }
 }

@@ -32,7 +32,7 @@ class LiteFuture
   @volatile private[this] var rsp: LiteRspMsg = _
   @volatile private[this] var satisfied = false
 
-  def send(targetActor: LiteActor, messageContent: Any) {
+  def send(targetActor: LiteActor, messageContent: AnyRef) {
     val req = new LiteReqMsg(ActiveActor(targetActor), null, null, messageContent, this)
     val reactor = targetActor.liteReactor
     reactor.request(req)
@@ -60,7 +60,7 @@ class LiteFuture
 
 object LiteFuture {
 
-  def apply(actor: LiteActor, messageContent: Any) = {
+  def apply(actor: LiteActor, messageContent: AnyRef) = {
     val future = new LiteFuture
     future.send(actor, messageContent)
     future.get

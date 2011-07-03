@@ -45,7 +45,9 @@ final case class LiteReactor(systemContext: SystemContext)
         case msg: LiteReqMsg => {
           curMsg = msg
           val target = msg.target
-          (target.actor.requestHandler orElse uncaughtMsg)(msg.content)
+          val reqFunction = target.actor.messageFunctions.get(msg.content.getClass)
+          if (reqFunction != null) reqFunction(msg.content, target.actor.back)
+          else (target.actor.requestHandler orElse uncaughtMsg)(msg.content)
         }
         case msg: LiteRspMsg => {
           curMsg = msg
@@ -100,95 +102,66 @@ final case class LiteReactor(systemContext: SystemContext)
 
   def activeActor = currentRequestMessage.target
 
-  def send(targetActor: LiteActor, content: Any)
+  def send(targetActor: LiteActor, content: AnyRef)
           (responseProcess: PartialFunction[Any, Unit]) {
     val oldReq = currentRequestMessage
     val sender = oldReq.target.actor
     val targetReactor = targetActor.liteReactor
-    if (!eq(targetReactor)) {
-      val req = new LiteReqMsg(
-        ActiveActor(targetActor),
-        responseProcess,
-        oldReq,
-        content,
-        sender)
-      targetReactor.request(req)
-    }
-    else {
-      val req = new LiteReqMsg(
-        ActiveActor(targetActor),
-        responseProcess,
-        oldReq,
-        content,
-        sender)
-      val oldMsg = curMsg
-      curMsg = req
-      try {
-        (targetActor.requestHandler orElse uncaughtMsg)(content)
-      } catch {
-        case ex: Exception => exceptionHandler(ex)
-      }
-      curMsg = oldMsg
-    }
+    val req = new LiteReqMsg(
+      ActiveActor(targetActor),
+      responseProcess,
+      oldReq,
+      content,
+      sender)
+    targetReactor.request(req)
   }
 
-  def reply(content: Any) {
+  private def reply(content: Any) {
     val req = currentRequestMessage
     if (!req.active) return
     req.active = false
     val sender = req.sender
-    if (!sender.isInstanceOf[LiteActor] ||
-      (!eq(sender.asInstanceOf[LiteActor].liteReactor))) {
-      val rsp = new LiteRspMsg(
-        req.responseProcess,
-        req.oldRequest,
-        content)
-      sender.response(rsp)
-    }
-    else {
-      val rsp = new LiteRspMsg(
-        req.responseProcess,
-        req.oldRequest,
-        content)
-      val oldMsg = curMsg
-      curMsg = rsp
-      try {
-        (req.responseProcess orElse uncaughtMsg)(content)
-      } catch {
-        case ex: Exception => exceptionHandler(ex)
-      }
-      curMsg = oldMsg
-    }
+    val rsp = new LiteRspMsg(
+      req.responseProcess,
+      req.oldRequest,
+      content)
+    sender.response(rsp)
+  }
+
+  def back: PartialFunction[Any, Unit] = {
+    case msg => reply(msg)
   }
 }
 
 sealed abstract class LiteMsg(pf: PartialFunction[Any, Unit],
-                              oldReq: LiteReqMsg,
-                              data: Any) {
+                              oldReq: LiteReqMsg) {
 
   def responseProcess = pf
 
   def oldRequest = oldReq
-
-  def content = data
 }
 
 final class LiteReqMsg(destination: ActiveActor,
                        pf: PartialFunction[Any, Unit],
                        oldReq: LiteReqMsg,
-                       data: Any,
+                       data: AnyRef,
                        src: LiteSrc)
-  extends LiteMsg(pf, oldReq, data) {
+  extends LiteMsg(pf, oldReq) {
   var active = true
 
   def sender = src
 
   def target = destination
+
+  def content = data
 }
 
 final class LiteRspMsg(pf: PartialFunction[Any, Unit],
                        oldReq: LiteReqMsg,
                        data: Any)
-  extends LiteMsg(pf, oldReq, data)
+  extends LiteMsg(pf, oldReq) {
+
+  def content = data
+}
 
 case class ActiveActor(actor: LiteActor)

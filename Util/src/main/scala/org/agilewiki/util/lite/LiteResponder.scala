@@ -27,6 +27,11 @@ package lite
 
 trait LiteResponder extends SystemContextGetter {
   private var _requestHandler: PartialFunction[Any, Unit] = null
+  val messageFunctions = new java.util.HashMap[Class[_ <: AnyRef], (AnyRef, PartialFunction[Any, Unit]) => Unit]
+
+  protected def bind(reqClass: Class[_ <: AnyRef], reqFunction: (AnyRef, PartialFunction[Any, Unit]) => Unit) {
+    messageFunctions.put(reqClass, reqFunction)
+  }
 
   def requestHandler = _requestHandler
 
@@ -55,22 +60,10 @@ trait LiteResponder extends SystemContextGetter {
     else factory.name
   }
 
-  def isSafe(srcActor: ActiveActor): Boolean = {
-    srcActor.actor.liteReactor.eq(actor.liteReactor)
-  }
-
   def addExtension(ext: LiteExtension) {
     ext.actor(actor)
     addRequestHandler(ext.requestHandler)
   }
 
-  def send(content: Any)
-          (responseProcess: PartialFunction[Any, Unit])
-          (implicit activeActor: ActiveActor) {
-    activeActor.actor.liteReactor.send(actor, content)(responseProcess)
-  }
-
-  def back: PartialFunction[Any, Unit] = {
-    case msg => liteReactor.reply(msg)
-  }
+  def back: PartialFunction[Any, Unit] = liteReactor.back
 }

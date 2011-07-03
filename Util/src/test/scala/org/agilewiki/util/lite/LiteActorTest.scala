@@ -29,24 +29,17 @@ import org.specs.SpecificationWithJUnit
 
 case class LTATestData(data: Any)
 
-class LiteTestActor(reactor: LiteReactor, next: LiteTestActor)
+class LiteTestActor(reactor: LiteReactor, next: LiteActor)
   extends LiteActor(reactor, null) {
 
-  addRequestHandler{
-    case req: LTATestData => handle(req.data)(back)
-  }
+  bind(classOf[LTATestData], handle)
 
-  private def handle(data: Any)
-                    (responseProcess: PartialFunction[Any, Unit]) {
-    if (next == null) responseProcess(data)
-    else next.process(data)(responseProcess)
-  }
-
-  def process(data: Any)
-             (responseProcess: PartialFunction[Any, Unit])
-             (implicit sender: ActiveActor) {
-    if (isSafe(sender)) handle(data)(responseProcess)
-    else send(LTATestData(data))(responseProcess)(sender)
+  private def handle(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[LTATestData]
+    if (next == null) responseProcess(req.data)
+    else next.send(req) {
+      case r => responseProcess(r)
+    }
   }
 }
 

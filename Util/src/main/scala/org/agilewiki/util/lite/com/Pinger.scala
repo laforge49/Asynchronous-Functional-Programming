@@ -28,11 +28,11 @@ package com
 
 import java.util.{TimerTask, Timer}
 
-case class RetryReq(notification: Any, timeout: Long)
+case class RetryReq(notification: AnyRef, timeout: Long)
 
 case class RetryRsp(tt: TimerTask)
 
-case class ExtendedRetryReq(retry: LiteReqMsg, notification: Any, timeout: Long)
+case class ExtendedRetryReq(retry: LiteReqMsg, notification: AnyRef, timeout: Long)
 
 case class ExtendedRetryRsp(tt: TimerTask)
 
@@ -55,7 +55,7 @@ class Pinger(reactor: LiteReactor)
     responseProcess(ExtendedRetryRsp(retry(req.timeout, req.retry, req.notification)))
   }
 
-  private def retry(timeout: Long, reqMsg: LiteReqMsg, notification: Any) = {
+  private def retry(timeout: Long, reqMsg: LiteReqMsg, notification: AnyRef) = {
     val oldRequest = reqMsg.oldRequest
     val target = oldRequest.target
     val tt = new TimerTask {

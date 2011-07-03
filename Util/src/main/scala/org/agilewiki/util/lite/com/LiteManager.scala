@@ -46,7 +46,7 @@ case class ForgetReq(actor: LiteActor)
 
 case class ForgetRsp()
 
-case class ForwardReq(id: ActorId, msg: Any)
+case class ForwardReq(id: ActorId, msg: AnyRef)
 
 class LiteManager(reactor: LiteReactor)
   extends LiteActor(reactor, null) {
