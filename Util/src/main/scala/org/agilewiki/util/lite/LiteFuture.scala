@@ -29,19 +29,29 @@ import annotation.tailrec
 
 class LiteFuture
   extends LiteSrc {
-  @volatile private[this] var rsp: LiteRspMsg = _
+  @volatile private[this] var rsp: Any = _
   @volatile private[this] var satisfied = false
 
   def send(targetActor: LiteActor, messageContent: AnyRef) {
-    val req = new LiteReqMsg(ActiveActor(targetActor), null, null, messageContent, this)
     val reactor = targetActor.liteReactor
-    reactor.request(req)
+    if (reactor == null) targetActor.send(messageContent)(synchronousResponse)(null)
+    else {
+      val req = new LiteReqMsg(ActiveActor(targetActor), null, null, messageContent, this)
+      reactor.request(req)
+    }
+  }
+
+  def synchronousResponse: PartialFunction[Any, Unit] = {
+    case msg => {
+      rsp = msg
+      satisfied = true
+    }
   }
 
   override def response(msg: LiteRspMsg) {
     synchronized{
       if (!satisfied) {
-        rsp = msg
+        rsp = msg.content
         satisfied = true
       }
       notifyAll()
@@ -50,9 +60,9 @@ class LiteFuture
 
   @tailrec final def get: Any = {
     synchronized{
-      if (satisfied) return rsp.content
+      if (satisfied) return rsp
       this.wait()
-      if (satisfied) return rsp.content
+      if (satisfied) return rsp
     }
     get
   }
