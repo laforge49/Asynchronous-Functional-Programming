@@ -73,8 +73,4 @@ trait LiteResponder extends SystemContextGetter {
   def back: PartialFunction[Any, Unit] = {
     case msg => liteReactor.reply(msg)
   }
-
-  @deprecated def reply(content: Any) {
-    liteReactor.reply(content)
-  }
 }
