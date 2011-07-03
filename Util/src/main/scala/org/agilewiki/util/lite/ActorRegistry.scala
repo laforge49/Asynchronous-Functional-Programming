@@ -56,14 +56,12 @@ class ActorRegistry(reactor: LiteReactor) extends LiteActor(reactor, null) {
 
   lazy val actorSequence: SeqActor[String, LiteActor] = new LiteNavigableMapSeq(reactor, actors)
 
-  addRequestHandler{
-    case req: RegisterActorReq => registerActor(req)(back)
-    case req: UnregisterActorReq => unregisterActor(req)(back)
-    case req: GetActorReq => getActor(req)(back)
-  }
+  bind(classOf[RegisterActorReq], registerActor)
+  bind(classOf[UnregisterActorReq], unregisterActor)
+  bind(classOf[GetActorReq], getActor)
 
-  private def registerActor(req: RegisterActorReq)
-                           (responseProcess: PartialFunction[Any, Unit]) {
+  private def registerActor(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[RegisterActorReq]
     val _id = req.actor.id.value
     if (actors.containsKey(_id)) responseProcess(DuplicateActorIdRsp())
     else {
@@ -72,15 +70,15 @@ class ActorRegistry(reactor: LiteReactor) extends LiteActor(reactor, null) {
     }
   }
 
-  private def unregisterActor(req: UnregisterActorReq)
-                             (responseProcess: PartialFunction[Any, Unit]) {
+  private def unregisterActor(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[UnregisterActorReq]
     val _id = req.id.value
     actors.remove(_id)
     responseProcess(UnregisteredActorRsp())
   }
 
-  private def getActor(req: GetActorReq)
-                      (responseProcess: PartialFunction[Any, Unit]) {
+  private def getActor(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[GetActorReq]
     val _id = req.id.value
     responseProcess(
       if (actors.containsKey(_id)) ActorRsp(actors.get(_id))
