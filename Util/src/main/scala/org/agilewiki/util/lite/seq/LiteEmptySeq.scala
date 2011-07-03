@@ -26,27 +26,14 @@ package util
 package lite
 package seq
 
-class LiteEmptySeq[T, V](reactor: LiteReactor)
-  extends SeqActor[T, V](reactor) {
+class LiteEmptySeq[T, V]
+  extends SeqActor[T, V](null) {
 
-  addRequestHandler{
-    case req: SeqFirstReq => _first(req)(back)
-    case req: SeqCurrentReq[T] => _current(req)(back)
-    case req: SeqNextReq[T] => _next(req)(back)
-  }
+  bind(classOf[SeqFirstReq], _seq)
+  bind(classOf[SeqCurrentReq[T]], _seq)
+  bind(classOf[SeqNextReq[T]], _seq)
 
-  protected def _first(req: SeqFirstReq)
-                      (responseProcess: PartialFunction[Any, Unit]) {
-    responseProcess(SeqEndRsp())
-  }
-
-  protected def _current(req: SeqCurrentReq[T])
-                        (responseProcess: PartialFunction[Any, Unit]) {
-    responseProcess(SeqEndRsp())
-  }
-
-  protected def _next(req: SeqNextReq[T])
-                     (responseProcess: PartialFunction[Any, Unit]) {
+  protected def _seq(msg: Any, responseProcess: PartialFunction[Any, Unit]) {
     responseProcess(SeqEndRsp())
   }
 }
