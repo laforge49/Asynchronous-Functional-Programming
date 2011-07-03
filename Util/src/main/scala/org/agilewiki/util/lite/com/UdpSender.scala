@@ -34,17 +34,18 @@ class UdpSender(reactor: LiteReactor)
   var socket: DatagramSocket = null
   val localServer = LocalServerName(systemContext).name
 
-  addRequestHandler {
-    case packetReq: OutgoingPacketReq => send(packetReq)
+  addRequestHandler{
+    case packetReq: OutgoingPacketReq => send(packetReq)(back)
   }
 
-  private def send(packetReq: OutgoingPacketReq) {
+  private def send(packetReq: OutgoingPacketReq)
+                  (responseProcess: PartialFunction[Any, Unit]) {
     val payload = packetReq.outputPayload
-    payload.writeUTF(packetReq.actorName.toString)          //dest actor name
-    payload.writeUTF(packetReq.server.name)                      //dest server
-    payload.writeUTF(packetReq.msgUuid)               //message UUID
+    payload.writeUTF(packetReq.actorName.toString) //dest actor name
+    payload.writeUTF(packetReq.server.name) //dest server
+    payload.writeUTF(packetReq.msgUuid) //message UUID
     payload.writeByte(packetReq.isReply.asInstanceOf[Byte]) //message type
-    payload.writeUTF(localServer)                           //sender server
+    payload.writeUTF(localServer) //sender server
     val buffer = payload.getBytes
     //TODO: must throw an exception when the buffer is truncated
     //woops! sorry, no exceptions should be thrown. Only we need to send errors.
@@ -55,7 +56,7 @@ class UdpSender(reactor: LiteReactor)
       hostPort.inetAddress, hostPort.port)
     if (socket == null) socket = new DatagramSocket
     socket send packet
-    reply(OutgoingPacketRsp())
+    responseProcess(OutgoingPacketRsp())
   }
 
   def stopUdp {
