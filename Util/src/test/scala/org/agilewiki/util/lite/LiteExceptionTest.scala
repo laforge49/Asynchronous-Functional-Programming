@@ -40,8 +40,4 @@ class LiteExceptionTest extends SpecificationWithJUnit {
 }
 
 class LiteExceptionActor
-  extends LiteActor(new LiteReactor(null), null) {
-  addRequestHandler {
-    case req: Int =>
-  }
-}
+  extends LiteActor(new LiteReactor(null), null)

@@ -47,7 +47,9 @@ final case class LiteReactor(systemContext: SystemContext)
           val target = msg.target
           val reqFunction = target.actor.messageFunctions.get(msg.content.getClass)
           if (reqFunction != null) reqFunction(msg.content, target.actor.back)
-          else (target.actor.requestHandler orElse uncaughtMsg)(msg.content)
+          else if (target.actor.requestHandler != null)
+            (target.actor.requestHandler orElse uncaughtMsg)(msg.content)
+          else throw new IllegalArgumentException(msg.content.getClass.getName)
         }
         case msg: LiteRspMsg => {
           curMsg = msg
