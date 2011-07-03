@@ -82,20 +82,18 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     })(sourceActor)
   }
 
-  addRequestHandler{
-    case req: FoldReq[V] => _fold(req)(back)
-    case req: ExistsReq[V] => _exists(req)(back)
-    case req: FindReq[V] => _find(req)(back)
-  }
+  bind(classOf[FoldReq[V]], _fold)
+  bind(classOf[ExistsReq[V]], _exists)
+  bind(classOf[FindReq[V]], _find)
 
-    protected def _first(req: SeqFirstReq)
+  protected def _first(req: SeqFirstReq)
+                      (responseProcess: PartialFunction[Any, Unit])
+
+  protected def _current(req: SeqCurrentReq[T])
                         (responseProcess: PartialFunction[Any, Unit])
 
-    protected def _current(req: SeqCurrentReq[T])
-                          (responseProcess: PartialFunction[Any, Unit])
-
-    protected def _next(req: SeqNextReq[T])
-                       (responseProcess: PartialFunction[Any, Unit])
+  protected def _next(req: SeqNextReq[T])
+                     (responseProcess: PartialFunction[Any, Unit])
 
   def fold(seed: V, f: (V, V) => V)
           (responseProcess: PartialFunction[Any, Unit])
@@ -103,8 +101,8 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     send(FoldReq(seed, f))(responseProcess)(sourceActor)
   }
 
-  private def _fold(req: FoldReq[V])
-                   (responseProcess: PartialFunction[Any, Unit]) {
+  private def _fold(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[FoldReq[V]]
     first{
       case rsp: SeqEndRsp => responseProcess(FoldRsp(req.seed))
       case rsp: SeqResultRsp[T, V] =>
@@ -147,8 +145,8 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     send(ExistsReq(e))(responseProcess)(sourceActor)
   }
 
-  private def _exists(req: ExistsReq[V])
-                     (responseProcess: PartialFunction[Any, Unit]) {
+  private def _exists(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[ExistsReq[V]]
     val exists = req.exists
     first{
       case rsp: SeqEndRsp => responseProcess(ExistsRsp(false))
@@ -160,12 +158,12 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
   }
 
   private def _iexistsNext(key: T, exists: V => Boolean)
-                     (responseProcess: PartialFunction[Any, Unit]) {
+                          (responseProcess: PartialFunction[Any, Unit]) {
     _existsNext(key, exists)(responseProcess)
   }
 
   @tailrec private def _existsNext(key: T, exists: V => Boolean)
-                     (responseProcess: PartialFunction[Any, Unit]) {
+                                  (responseProcess: PartialFunction[Any, Unit]) {
     var async = false
     var sync = false
     var nextKey = null.asInstanceOf[T]
@@ -193,8 +191,8 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
     send(FindReq(f))(responseProcess)(sourceActor)
   }
 
-  private def _find(req: FindReq[V])
-                   (responseProcess: PartialFunction[Any, Unit]) {
+  private def _find(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[FindReq[V]]
     val find = req.find
     first{
       case rsp: SeqEndRsp => responseProcess(NotFoundRsp())
