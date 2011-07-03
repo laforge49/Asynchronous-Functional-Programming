@@ -29,22 +29,30 @@ package com
 import seq.LiteNavigableMapSeq
 
 case class HostPortQueryReq(serverName: ServerName)
+
 case class HostPortQueryRsp(hostPort: HostPort)
 
 case class HostPortUpdateReq(serverName: ServerName, hostPort: HostPort)
+
 case class HostPortUpdateRsp()
 
 class ServersActor(reactor: LiteReactor, servers: java.util.TreeMap[String, HostPort])
   extends LiteActor(reactor, null) {
   val serverSequenceActor = new LiteNavigableMapSeq(liteReactor, servers)
 
-  addRequestHandler {
-    case req: HostPortQueryReq => {
-      reply(HostPortQueryRsp(servers.get(req.serverName.name)))
-    }
-    case req: HostPortUpdateReq => {
-      servers.put(req.serverName.name, req.hostPort)
-      reply(HostPortUpdateRsp())
-    }
+  addRequestHandler{
+    case req: HostPortQueryReq => _hostPortQuery(req)(back)
+    case req: HostPortUpdateReq => _hostPortUpdate(req)(back)
+  }
+
+  private def _hostPortQuery(req: HostPortQueryReq)
+                            (responseProcess: PartialFunction[Any, Unit]) {
+    responseProcess(HostPortQueryRsp(servers.get(req.serverName.name)))
+  }
+
+  private def _hostPortUpdate(req: HostPortUpdateReq)
+                             (responseProcess: PartialFunction[Any, Unit]) {
+    servers.put(req.serverName.name, req.hostPort)
+    responseProcess(HostPortUpdateRsp())
   }
 }
