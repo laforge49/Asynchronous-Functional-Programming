@@ -35,7 +35,7 @@ trait LiteResponder extends SystemContextGetter {
 
   def requestHandler = _requestHandler
 
-  def addRequestHandler(rh: PartialFunction[Any, Unit]) {
+  @deprecated def addRequestHandler(rh: PartialFunction[Any, Unit]) {
     if (rh == null) return
     if (_requestHandler == null) _requestHandler = rh
     else _requestHandler = requestHandler orElse rh
@@ -62,7 +62,13 @@ trait LiteResponder extends SystemContextGetter {
 
   def addExtension(ext: LiteExtension) {
     ext.actor(actor)
-    addRequestHandler(ext.requestHandler)
+    val extMsgFunctions = ext.messageFunctions
+    var it = extMsgFunctions.keySet.iterator
+    while (it.hasNext) {
+      val k = it.next
+      val v = extMsgFunctions.get(k)
+      messageFunctions.put(k, v)
+    }
   }
 
   def back: PartialFunction[Any, Unit] = liteReactor.back
