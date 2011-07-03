@@ -40,13 +40,19 @@ class Pinger(reactor: LiteReactor)
   extends LiteActor(reactor, null) {
   private val timer = new Timer
 
-  addRequestHandler {
-    case req: RetryReq => {
-      reply(RetryRsp(retry(req.timeout, liteReactor.currentRequestMessage, req.notification)))
-    }
-    case req: ExtendedRetryReq => {
-      reply(ExtendedRetryRsp(retry(req.timeout, req.retry, req.notification)))
-    }
+  addRequestHandler{
+    case req: RetryReq => _retry(req)(back)
+    case req: ExtendedRetryReq => _extendedRetry(req)(back)
+  }
+
+  private def _retry(req: RetryReq)
+                    (responseProcess: PartialFunction[Any, Unit]) {
+    responseProcess(RetryRsp(retry(req.timeout, liteReactor.currentRequestMessage, req.notification)))
+  }
+
+  private def _extendedRetry(req: ExtendedRetryReq)
+                            (responseProcess: PartialFunction[Any, Unit]) {
+    responseProcess(ExtendedRetryRsp(retry(req.timeout, req.retry, req.notification)))
   }
 
   private def retry(timeout: Long, reqMsg: LiteReqMsg, notification: Any) = {
@@ -63,7 +69,7 @@ class Pinger(reactor: LiteReactor)
         target.actor.liteReactor.request(newReqMsg)
       }
     }
-    liteReactor.scheduler.execute {
+    liteReactor.scheduler.execute{
       timer.schedule(tt, timeout)
     }
     tt
