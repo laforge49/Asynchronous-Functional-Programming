@@ -44,9 +44,11 @@ class LocalResponder(reactor: LiteReactor, factory: LocalResponderFactory)
   liteManager.send(RememberReq(this, retryLimit)) {
     case rsp =>
   }
+
   addRequestHandler {
     case req: PacketReq => packetReq(req)
   }
+
   var largeReqPayload: DataOutputStack = null
   var largeRspBytes: Array[Byte] = null
   var rspPos = 0

@@ -35,19 +35,25 @@ case class PingerTestRsp()
 class PingerTestActor(pinger: LiteActor)
   extends LiteActor(new LiteReactor(null), null) {
   addRequestHandler {
-    case req: PingerTestReq => {
+    case req: PingerTestReq => _test(req)(back)
+    case req: PingerTestRetryReq => _retry(req)(back)
+  }
+
+    private def _test(req: PingerTestReq)
+                     (responseProcess: PartialFunction[Any, Unit]) {
       pinger.send(RetryReq(PingerTestRetryReq(5), 1)) {
         case rsp: RetryRsp =>
       }
     }
-    case req: PingerTestRetryReq => {
+
+    private def _retry(req: PingerTestRetryReq)
+                     (responseProcess: PartialFunction[Any, Unit]) {
       System.err.println(req.count)
-      if (req.count < 2) reply(PingerTestRsp())
+      if (req.count < 2) responseProcess(PingerTestRsp())
       else pinger.send(RetryReq(PingerTestRetryReq(req.count - 1), 1)) {
         case rsp: RetryRsp =>
       }
     }
-  }
 }
 
 class PingerTest extends SpecificationWithJUnit {

@@ -62,7 +62,7 @@ abstract class SeqActor[T, V](reactor: LiteReactor)
          (responseProcess: PartialFunction[Any, Unit])
          (implicit sourceActor: ActiveActor) {
     current(key)({
-      case rsp: SeqEndRsp => reply(null.asInstanceOf[T])
+      case rsp: SeqEndRsp => responseProcess(null.asInstanceOf[T])
       case rsp: SeqResultRsp[T, V] => {
         if (rsp.key == key) responseProcess(rsp.value)
         else responseProcess(null.asInstanceOf[T])
