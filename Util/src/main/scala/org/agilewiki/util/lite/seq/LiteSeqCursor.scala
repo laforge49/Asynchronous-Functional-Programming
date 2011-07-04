@@ -56,14 +56,12 @@ class LiteSeqCursor[T, V](reactor: LiteReactor, wrappedSeq: SeqActor[T, V])
     compareTo(other) == 0
   }
 
-  addRequestHandler{
-    case req: SeqFirstReq => _first(req)(back)
-    case req: SeqCurrentReq[T] => _current(req)(back)
-    case req: SeqNextReq[T] => _next(req)(back)
-  }
+  bind(classOf[SeqFirstReq], _first)
+  bind(classOf[SeqCurrentReq[T]], _current)
+  bind(classOf[SeqNextReq[T]], _next)
 
-  protected def _first(req: SeqFirstReq)
-                      (responseProcess: PartialFunction[Any, Unit]) {
+  private def _first(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[SeqFirstReq]
     if (inited && _first)
       if (lastResult != null) responseProcess(lastResult)
       else responseProcess(SeqEndRsp())
@@ -84,8 +82,8 @@ class LiteSeqCursor[T, V](reactor: LiteReactor, wrappedSeq: SeqActor[T, V])
     }
   }
 
-  protected def _current(req: SeqCurrentReq[T])
-                        (responseProcess: PartialFunction[Any, Unit]) {
+  private def _current(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[SeqCurrentReq[T]]
     val key = req.key
     if (inited && lastResult != null && key == lastResult.key) responseProcess(lastResult)
     else {
@@ -105,8 +103,8 @@ class LiteSeqCursor[T, V](reactor: LiteReactor, wrappedSeq: SeqActor[T, V])
     }
   }
 
-  protected def _next(req: SeqNextReq[T])
-                     (responseProcess: PartialFunction[Any, Unit]) {
+  private def _next(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[SeqNextReq[T]]
     var key = req.key
     inited = true
     wrappedSeq.send(SeqNextReq(key)) {
