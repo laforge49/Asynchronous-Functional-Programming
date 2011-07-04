@@ -30,24 +30,12 @@ class LiteMapSeq[T, V1, V2](liteSeq: SeqActor[T, V1], mapSeq: SeqActor[V1, V2])
   extends SeqActor[T, V2](liteSeq.liteReactor) {
   override def comparator = liteSeq.comparator
 
-  addRequestHandler{
-    case req: SeqFirstReq => _first(req)(back)
-    case req: SeqCurrentReq[T] => _current(req)(back)
-    case req: SeqNextReq[T] => _next(req)(back)
-  }
+  bind(classOf[SeqFirstReq], _map)
+  bind(classOf[SeqCurrentReq[T]], _map)
+  bind(classOf[SeqNextReq[T]], _map)
 
-  protected def _first(req: SeqFirstReq)
-                      (responseProcess: PartialFunction[Any, Unit]) {
-    liteSeq.send(req)(m(responseProcess))
-  }
-
-  protected def _current(req: SeqCurrentReq[T])
-                        (responseProcess: PartialFunction[Any, Unit]) {
-    liteSeq.send(req)(m(responseProcess))
-  }
-
-  protected def _next(req: SeqNextReq[T])
-                     (responseProcess: PartialFunction[Any, Unit]) {
+  protected def _map(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[SeqReq]
     liteSeq.send(req)(m(responseProcess))
   }
 
@@ -67,24 +55,12 @@ class LiteMapFunc[T, V1, V2](liteSeq: SeqActor[T, V1], map: V1 => V2)
   extends SeqActor[T, V2](liteSeq.liteReactor) {
   override def comparator = liteSeq.comparator
 
-  addRequestHandler{
-    case req: SeqFirstReq => _first(req)(back)
-    case req: SeqCurrentReq[T] => _current(req)(back)
-    case req: SeqNextReq[T] => _next(req)(back)
-  }
+  bind(classOf[SeqFirstReq], _map)
+  bind(classOf[SeqCurrentReq[T]], _map)
+  bind(classOf[SeqNextReq[T]], _map)
 
-  protected def _first(req: SeqFirstReq)
-                      (responseProcess: PartialFunction[Any, Unit]) {
-    liteSeq.send(req)(m(responseProcess))
-  }
-
-  protected def _current(req: SeqCurrentReq[T])
-                        (responseProcess: PartialFunction[Any, Unit]) {
-    liteSeq.send(req)(m(responseProcess))
-  }
-
-  protected def _next(req: SeqNextReq[T])
-                     (responseProcess: PartialFunction[Any, Unit]) {
+  protected def _map(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[SeqReq]
     liteSeq.send(req)(m(responseProcess))
   }
 
