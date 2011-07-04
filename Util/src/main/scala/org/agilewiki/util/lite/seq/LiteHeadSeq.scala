@@ -30,30 +30,28 @@ class LiteHeadSeq[T, V](liteSeq: SeqActor[T, V], limit: T)
   extends SeqActor[T, V](liteSeq.liteReactor) {
   override def comparator = liteSeq.comparator
 
-  addRequestHandler{
-    case req: SeqFirstReq => _first(req)(back)
-    case req: SeqCurrentReq[T] => _current(req)(back)
-    case req: SeqNextReq[T] => _next(req)(back)
-  }
+  bind(classOf[SeqFirstReq], _first)
+  bind(classOf[SeqCurrentReq[T]], _current)
+  bind(classOf[SeqNextReq[T]], _next)
 
-  protected def _first(req: SeqFirstReq)
-                      (responseProcess: PartialFunction[Any, Unit]) {
+  private def _first(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[SeqFirstReq]
     liteSeq.send(req)(h(responseProcess))
   }
 
-  protected def _current(req: SeqCurrentReq[T])
-                        (responseProcess: PartialFunction[Any, Unit]) {
+  private def _current(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[SeqCurrentReq[T]]
     if (comparator.compare(req.key, limit) < 0) liteSeq.send(req)(h(responseProcess))
     else responseProcess(SeqEndRsp())
   }
 
-  protected def _next(req: SeqNextReq[T])
-                     (responseProcess: PartialFunction[Any, Unit]) {
+  private def _next(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[SeqNextReq[T]]
     if (comparator.compare(req.key, limit) < 0) liteSeq.send(req)(h(responseProcess))
     else responseProcess(SeqEndRsp())
   }
 
-  def h(responseProcess: PartialFunction[Any, Unit]): PartialFunction[Any, Unit] = {
+  private def h(responseProcess: PartialFunction[Any, Unit]): PartialFunction[Any, Unit] = {
     case rsp: SeqEndRsp => responseProcess(rsp)
     case rsp: SeqResultRsp[T, V] => {
       if (comparator.compare(rsp.key, limit) < 0) responseProcess(rsp)

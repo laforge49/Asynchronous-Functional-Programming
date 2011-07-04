@@ -34,12 +34,12 @@ class LiteMapSeq[T, V1, V2](liteSeq: SeqActor[T, V1], mapSeq: SeqActor[V1, V2])
   bind(classOf[SeqCurrentReq[T]], _map)
   bind(classOf[SeqNextReq[T]], _map)
 
-  protected def _map(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+  private def _map(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
     val req = msg.asInstanceOf[SeqReq]
     liteSeq.send(req)(m(responseProcess))
   }
 
-  def m(responseProcess: PartialFunction[Any, Unit]): PartialFunction[Any, Unit] = {
+  private def m(responseProcess: PartialFunction[Any, Unit]): PartialFunction[Any, Unit] = {
     case r: SeqResultRsp[T, V1] => {
       mapSeq.get(r.value) {
         case mr => {
@@ -59,12 +59,12 @@ class LiteMapFunc[T, V1, V2](liteSeq: SeqActor[T, V1], map: V1 => V2)
   bind(classOf[SeqCurrentReq[T]], _map)
   bind(classOf[SeqNextReq[T]], _map)
 
-  protected def _map(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+  private def _map(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
     val req = msg.asInstanceOf[SeqReq]
     liteSeq.send(req)(m(responseProcess))
   }
 
-  def m(responseProcess: PartialFunction[Any, Unit]): PartialFunction[Any, Unit] = {
+  private def m(responseProcess: PartialFunction[Any, Unit]): PartialFunction[Any, Unit] = {
     case r: SeqResultRsp[T, V1] => responseProcess(SeqResultRsp(r.key, map(r.value)))
     case r => responseProcess(r)
   }
