@@ -33,7 +33,7 @@ class LiteListSeq[V](reactor: LiteReactor, list: java.util.List[V])
   bind(classOf[SeqCurrentReq[Int]], _current)
   bind(classOf[SeqNextReq[Int]], _next)
 
-  protected def _first(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+  private def _first(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
     val req = msg.asInstanceOf[SeqFirstReq]
     responseProcess(
       if (list.isEmpty) SeqEndRsp()
@@ -41,7 +41,7 @@ class LiteListSeq[V](reactor: LiteReactor, list: java.util.List[V])
     )
   }
 
-  protected def _current(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+  private def _current(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
     val req = msg.asInstanceOf[SeqCurrentReq[Int]]
     var k = req.key
     if (k < 0) k = 0
@@ -51,7 +51,7 @@ class LiteListSeq[V](reactor: LiteReactor, list: java.util.List[V])
     )
   }
 
-  protected def _next(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+  private def _next(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
     val req = msg.asInstanceOf[SeqNextReq[Int]]
     var k = req.key
     if (k < 0) k = 0

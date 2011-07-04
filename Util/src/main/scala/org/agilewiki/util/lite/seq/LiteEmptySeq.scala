@@ -33,7 +33,7 @@ class LiteEmptySeq[T, V]
   bind(classOf[SeqCurrentReq[T]], _seq)
   bind(classOf[SeqNextReq[T]], _seq)
 
-  protected def _seq(msg: Any, responseProcess: PartialFunction[Any, Unit]) {
+  private def _seq(msg: Any, responseProcess: PartialFunction[Any, Unit]) {
     responseProcess(SeqEndRsp())
   }
 }
