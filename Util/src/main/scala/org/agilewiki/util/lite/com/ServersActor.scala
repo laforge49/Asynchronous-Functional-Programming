@@ -40,18 +40,16 @@ class ServersActor(reactor: LiteReactor, servers: java.util.TreeMap[String, Host
   extends LiteActor(reactor, null) {
   val serverSequenceActor = new LiteNavigableMapSeq(liteReactor, servers)
 
-  addRequestHandler{
-    case req: HostPortQueryReq => _hostPortQuery(req)(back)
-    case req: HostPortUpdateReq => _hostPortUpdate(req)(back)
-  }
+  bind(classOf[HostPortQueryReq], _hostPortQuery)
+  bind(classOf[HostPortUpdateReq], _hostPortUpdate)
 
-  private def _hostPortQuery(req: HostPortQueryReq)
-                            (responseProcess: PartialFunction[Any, Unit]) {
+  private def _hostPortQuery(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[HostPortQueryReq]
     responseProcess(HostPortQueryRsp(servers.get(req.serverName.name)))
   }
 
-  private def _hostPortUpdate(req: HostPortUpdateReq)
-                             (responseProcess: PartialFunction[Any, Unit]) {
+  private def _hostPortUpdate(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[HostPortUpdateReq]
     servers.put(req.serverName.name, req.hostPort)
     responseProcess(HostPortUpdateRsp())
   }

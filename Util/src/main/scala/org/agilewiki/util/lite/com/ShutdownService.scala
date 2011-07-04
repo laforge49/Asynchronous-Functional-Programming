@@ -29,12 +29,9 @@ package com
 class ShutdownService(reactor: LiteReactor)
   extends LiteActor(reactor, null) {
 
-  addRequestHandler{
-    case req: IncomingPacketReq => _shutdown(req)(back)
-  }
+  bind(classOf[IncomingPacketReq], _shutdown)
 
-  private def _shutdown(req: IncomingPacketReq)
-                       (responseProcess: PartialFunction[Any, Unit]) {
+  private def _shutdown(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
     System.exit(0)
   }
 }

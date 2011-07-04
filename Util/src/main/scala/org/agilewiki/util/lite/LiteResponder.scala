@@ -26,19 +26,10 @@ package util
 package lite
 
 trait LiteResponder extends SystemContextGetter {
-  private var _requestHandler: PartialFunction[Any, Unit] = null
   val messageFunctions = new java.util.HashMap[Class[_ <: AnyRef], (AnyRef, PartialFunction[Any, Unit]) => Unit]
 
   protected def bind(reqClass: Class[_ <: AnyRef], reqFunction: (AnyRef, PartialFunction[Any, Unit]) => Unit) {
     messageFunctions.put(reqClass, reqFunction)
-  }
-
-  def requestHandler = _requestHandler
-
-  @deprecated def addRequestHandler(rh: PartialFunction[Any, Unit]) {
-    if (rh == null) return
-    if (_requestHandler == null) _requestHandler = rh
-    else _requestHandler = requestHandler orElse rh
   }
 
   def liteReactor: LiteReactor

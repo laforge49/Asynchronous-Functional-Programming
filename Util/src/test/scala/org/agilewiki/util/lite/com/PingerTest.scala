@@ -29,31 +29,32 @@ package com
 import org.specs.SpecificationWithJUnit
 
 case class PingerTestReq()
+
 case class PingerTestRetryReq(count: Int)
+
 case class PingerTestRsp()
 
 class PingerTestActor(pinger: LiteActor)
   extends LiteActor(new LiteReactor(null), null) {
-  addRequestHandler {
-    case req: PingerTestReq => _test(req)(back)
-    case req: PingerTestRetryReq => _retry(req)(back)
+
+  bind(classOf[PingerTestReq], _test)
+  bind(classOf[PingerTestRetryReq], _retry)
+
+  private def _test(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[PingerTestReq]
+    pinger.send(RetryReq(PingerTestRetryReq(5), 1)) {
+      case rsp: RetryRsp =>
+    }
   }
 
-    private def _test(req: PingerTestReq)
-                     (responseProcess: PartialFunction[Any, Unit]) {
-      pinger.send(RetryReq(PingerTestRetryReq(5), 1)) {
-        case rsp: RetryRsp =>
-      }
+  private def _retry(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[PingerTestRetryReq]
+    System.err.println(req.count)
+    if (req.count < 2) responseProcess(PingerTestRsp())
+    else pinger.send(RetryReq(PingerTestRetryReq(req.count - 1), 1)) {
+      case rsp: RetryRsp =>
     }
-
-    private def _retry(req: PingerTestRetryReq)
-                     (responseProcess: PartialFunction[Any, Unit]) {
-      System.err.println(req.count)
-      if (req.count < 2) responseProcess(PingerTestRsp())
-      else pinger.send(RetryReq(PingerTestRetryReq(req.count - 1), 1)) {
-        case rsp: RetryRsp =>
-      }
-    }
+  }
 }
 
 class PingerTest extends SpecificationWithJUnit {

@@ -45,32 +45,28 @@ class LocalResponder(reactor: LiteReactor, factory: LocalResponderFactory)
     case rsp =>
   }
 
-  addRequestHandler{
-    case req: PacketReq => packetReq(req)(back)
-  }
+  bind(classOf[PacketReq], packetReq)
 
   var largeReqPayload: DataOutputStack = null
   var largeRspBytes: Array[Byte] = null
   var rspPos = 0
 
-  def packetReq(req: PacketReq)
-               (responseProcess: PartialFunction[Any, Unit]) {
+  def packetReq(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[PacketReq]
     val inputPayload = req.inputPayload
     if (inputPayload.size == 0) more(responseProcess)
     val count = inputPayload.readInt
-    if (count > 1) largeReq(count, req.server, inputPayload)(responseProcess)
-    else smallReq(req.server, inputPayload)(responseProcess)
+    if (count > 1) largeReq(count, req.server, inputPayload, responseProcess)
+    else smallReq(req.server, inputPayload, responseProcess)
   }
 
-  def smallReq(server: ServerName, inputPayload: DataInputStack)
-              (responseProcess: PartialFunction[Any, Unit]) {
+  def smallReq(server: ServerName, inputPayload: DataInputStack, responseProcess: PartialFunction[Any, Unit]) {
     val id = inputPayload.readId
     val pkt = new PacketReq(server, id, inputPayload)
-    process(pkt)(responseProcess)
+    process(pkt, responseProcess)
   }
 
-  def largeReq(count: Int, server: ServerName, inputPayload: DataInputStack)
-              (responseProcess: PartialFunction[Any, Unit]) {
+  def largeReq(count: Int, server: ServerName, inputPayload: DataInputStack, responseProcess: PartialFunction[Any, Unit]) {
     if (largeReqPayload == null) largeReqPayload = new DataOutputStack
     val last = inputPayload.readByte.asInstanceOf[Boolean]
     val size = inputPayload.size
@@ -86,35 +82,32 @@ class LocalResponder(reactor: LiteReactor, factory: LocalResponderFactory)
       largeReqPayload = null
       val id = reqPayload.readId
       val pkt = new PacketReq(server, id, reqPayload)
-      process(pkt)(responseProcess)
+      process(pkt, responseProcess)
     }
   }
 
-  def process(req: PacketReq)
-             (responseProcess: PartialFunction[Any, Unit]) {
+  def process(req: PacketReq, responseProcess: PartialFunction[Any, Unit]) {
     req.actorName match {
       case rn: FactoryName => {
         val actor = Lite(systemContext).newActor(rn, newReactor)
         actor.send(req) {
-          case rsp: DataOutputStack => packetRsp(rsp)(responseProcess)
+          case rsp: DataOutputStack => packetRsp(rsp, responseProcess)
           case rsp => responseProcess(rsp)
         }
       }
       case rn: ActorId => liteManager.send(ForwardReq(rn, req)) {
-        case rsp: DataOutputStack => packetRsp(rsp)(responseProcess)
+        case rsp: DataOutputStack => packetRsp(rsp, responseProcess)
         case rsp => responseProcess(rsp)
       }
     }
   }
 
-  def packetRsp(rsp: DataOutputStack)
-               (responseProcess: PartialFunction[Any, Unit]) {
-    if (rsp.size <= maxPayloadSize) smallRsp(rsp)(responseProcess)
-    else largeRsp(rsp)(responseProcess)
+  def packetRsp(rsp: DataOutputStack, responseProcess: PartialFunction[Any, Unit]) {
+    if (rsp.size <= maxPayloadSize) smallRsp(rsp, responseProcess)
+    else largeRsp(rsp, responseProcess)
   }
 
-  def smallRsp(payload: DataOutputStack)
-              (responseProcess: PartialFunction[Any, Unit]) {
+  def smallRsp(payload: DataOutputStack, responseProcess: PartialFunction[Any, Unit]) {
     liteManager.send(ForgetReq(this)) {
       case _ =>
     }
@@ -122,8 +115,7 @@ class LocalResponder(reactor: LiteReactor, factory: LocalResponderFactory)
     responseProcess(payload)
   }
 
-  def largeRsp(payload: DataOutputStack)
-              (responseProcess: PartialFunction[Any, Unit]) {
+  def largeRsp(payload: DataOutputStack, responseProcess: PartialFunction[Any, Unit]) {
     val size = payload.size
     largeRspBytes = new Array[Byte](size)
     val count: Int = (size + maxPayloadSize - 1) / maxPayloadSize

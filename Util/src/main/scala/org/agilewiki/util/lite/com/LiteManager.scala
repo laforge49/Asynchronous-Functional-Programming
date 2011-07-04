@@ -55,16 +55,14 @@ class LiteManager(reactor: LiteReactor)
   private var longLivingActors = new java.util.HashMap[String, (LiteActor, TimerTask)]
   private lazy val pinger = Udp(systemContext).pinger
 
-  addRequestHandler {
-    case req: RememberReq => _rememberReq(req)(back)
-    case req: ForgetReq => _forgetReq(req)(back)
-    case req: MapPutReq => _mapPutReq(req)(back)
-    case req: MapGetReq => _mapGetReq(req)(back)
-    case req: ForwardReq => _forwardReq(req)(back)
-  }
+  bind(classOf[RememberReq], _remember)
+  bind(classOf[ForgetReq], _forget)
+  bind(classOf[MapPutReq], _mapPut)
+  bind(classOf[MapGetReq], _mapGet)
+  bind(classOf[ForwardReq], _forward)
 
-  private def _rememberReq(req: RememberReq)
-                      (responseProcess: PartialFunction[Any, Unit]) {
+  private def _remember(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[RememberReq]
     val actor = req.actor
     val id = actor.id.value
     val retryReq = RetryReq(ForgetReq(actor), req.period)
@@ -81,22 +79,22 @@ class LiteManager(reactor: LiteReactor)
     responseProcess(RememberRsp())
   }
 
-  private def _forgetReq(req: ForgetReq)
-                      (responseProcess: PartialFunction[Any, Unit]) {
+  private def _forget(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[ForgetReq]
     val (actor, tt) = longLivingActors.remove(req.actor.id.value)
     tt.cancel
     responseProcess(ForgetRsp())
   }
 
-  private def _mapPutReq(req: MapPutReq)
-                      (responseProcess: PartialFunction[Any, Unit]) {
+  private def _mapPut(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[MapPutReq]
     val actor = req.actor
     mapPut(actor, actor.id.value)
     responseProcess(MapPutRsp())
   }
 
-  private def _mapGetReq(req: MapGetReq)
-                      (responseProcess: PartialFunction[Any, Unit]) {
+  private def _mapGet(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[MapGetReq]
     val nwr = hashMap.get(req.id.value)
     var rv: LiteActor = null
     if (nwr != null) {
@@ -105,8 +103,8 @@ class LiteManager(reactor: LiteReactor)
     responseProcess(MapGetRsp(rv))
   }
 
-  private def _forwardReq(req: ForwardReq)
-                      (responseProcess: PartialFunction[Any, Unit]) {
+  private def _forward(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[ForwardReq]
     val nwr = hashMap.get(req.id.value)
     if (nwr != null) {
       val actor = nwr.get

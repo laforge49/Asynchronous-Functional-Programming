@@ -49,36 +49,33 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
   private val liteManager = Udp(systemContext).liteManager
   private val defaultReactor = newReactor
 
-  addRequestHandler{
-    case packet: PacketReq => forwardOutgoingRequest(packet)(back)
-    case packet: IncomingPacketReq => _incomingPacket(packet)(back)
-    case packet: OutgoingPacketReq => timeout(packet)(back)
+  bind(classOf[PacketReq], forwardOutgoingRequest)
+  bind(classOf[IncomingPacketReq], _incomingPacket)
+  bind(classOf[OutgoingPacketReq], timeout)
+
+  private def _incomingPacket(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[IncomingPacketReq]
+    if (req.isReply) incomingReply(req, responseProcess)
+    else incomingRequest(req, responseProcess)
   }
 
-  private def _incomingPacket(packet: IncomingPacketReq)
-                             (responseProcess: PartialFunction[Any, Unit]) {
-    if (packet.isReply) incomingReply(packet)(responseProcess)
-    else incomingRequest(packet)(responseProcess)
-  }
-
-  def forwardOutgoingRequest(packet: PacketReq)
-                            (responseProcess: PartialFunction[Any, Unit]) {
+  private def forwardOutgoingRequest(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[PacketReq]
     val msgUuid = UUID.randomUUID.toString
     requestsSent.put(msgUuid, liteReactor.currentRequestMessage)
     val externalPacket = OutgoingPacketReq(
       false,
       msgUuid,
       hostPort,
-      packet.server,
-      packet.actorName,
-      packet.payload)
+      req.server,
+      req.actorName,
+      req.payload)
     outsideActor.send(externalPacket) {
       case rsp: OutgoingPacketRsp =>
     }
   }
 
-  def incomingRequest(packet: IncomingPacketReq)
-                     (responseProcess: PartialFunction[Any, Unit]) {
+  def incomingRequest(packet: IncomingPacketReq, responseProcess: PartialFunction[Any, Unit]) {
     val req = PacketReq(packet.server, packet.actorName, packet.payload)
     packet.actorName match {
       case rn: FactoryName => {
@@ -89,11 +86,11 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
           case ex: Exception => sendErrorRsp(
             packet,
             new ErrorRsp("no such factory: " + rn.value, getClass.getName, ""),
-            this)(responseProcess)
+            this, responseProcess)
         }
         if (actor != null) actor.send(req) {
-          case rsp: DataOutputStack => sendRsp(packet, rsp, actor)(responseProcess)
-          case error: ErrorRsp => sendErrorRsp(packet, error, actor)(responseProcess)
+          case rsp: DataOutputStack => sendRsp(packet, rsp, actor, responseProcess)
+          case error: ErrorRsp => sendErrorRsp(packet, error, actor, responseProcess)
         }
       }
       case rn: ActorId => liteManager.send(MapGetReq(rn)) {
@@ -101,8 +98,8 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
           val actor = rsp.actor
           if (actor != null) {
             rsp.actor.send(req) {
-              case rsp: DataOutputStack => sendRsp(packet, rsp, actor)(responseProcess)
-              case error: ErrorRsp => sendErrorRsp(packet, error, actor)(responseProcess)
+              case rsp: DataOutputStack => sendRsp(packet, rsp, actor, responseProcess)
+              case error: ErrorRsp => sendErrorRsp(packet, error, actor, responseProcess)
             }
           } else throw new IllegalArgumentException
         }
@@ -112,8 +109,8 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
 
   private def sendRsp(incomingPacket: IncomingPacketReq,
                       outputPayload: DataOutputStack,
-                      actor: LiteActor)
-                     (responseProcess: PartialFunction[Any, Unit]) {
+                      actor: LiteActor,
+                      responseProcess: PartialFunction[Any, Unit]) {
     outputPayload.writeByte(false.asInstanceOf[Byte])
     val externalPacket = OutgoingPacketReq(
       true,
@@ -129,8 +126,8 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
 
   private def sendErrorRsp(incomingPacket: IncomingPacketReq,
                            error: ErrorRsp,
-                           actor: LiteActor)
-                          (responseProcess: PartialFunction[Any, Unit]) {
+                           actor: LiteActor,
+                           responseProcess: PartialFunction[Any, Unit]) {
     val outputPayload = DataOutputStack()
     outputPayload.writeUTF(error.target.toString)
     outputPayload.writeUTF(error.source.toString)
@@ -148,8 +145,7 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
     }
   }
 
-  def incomingReply(packet: IncomingPacketReq)
-                   (responseProcess: PartialFunction[Any, Unit]) {
+  def incomingReply(packet: IncomingPacketReq, responseProcess: PartialFunction[Any, Unit]) {
     val liteReqMsg = requestsSent.remove(packet.msgUuid)
     val inputPayload = packet.inputPayload
     val isError = inputPayload.readByte.asInstanceOf[Boolean]
@@ -167,9 +163,9 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
     actor.liteReactor.response(liteRspMsg)
   }
 
-  def timeout(packet: OutgoingPacketReq)
-             (responseProcess: PartialFunction[Any, Unit]) {
-    val liteReqMsg = requestsSent.remove(packet.msgUuid)
+  private def timeout(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[OutgoingPacketReq]
+    val liteReqMsg = requestsSent.remove(req.msgUuid)
     val actor = liteReqMsg.sender.asInstanceOf[LiteActor]
     val error = new ErrorRsp(
       "timeout",

@@ -48,25 +48,22 @@ class PacketResender(reactor: LiteReactor,
   private val incomingReqUuids = new HashSet[String]
   private val outgoingRspCache = new CanonicalMap[OutgoingPacketReq](cacheSize)
 
-  addRequestHandler{
-    case packet: OutgoingPacketReq => _outgoingPacket(packet)(back)
-    case packet: IncomingPacketReq => _incomingPacket(packet)(back)
+  bind(classOf[OutgoingPacketReq], _outgoingPacket)
+  bind(classOf[IncomingPacketReq], _incomingPacket)
+
+  private def _outgoingPacket(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[OutgoingPacketReq]
+    if (req.retry) resend(req, responseProcess)
+    else sendOut(req, responseProcess)
   }
 
-  private def _outgoingPacket(packet: OutgoingPacketReq)
-                             (responseProcess: PartialFunction[Any, Unit]) {
-    if (packet.retry) resend(packet)(responseProcess)
-    else sendOut(packet)(responseProcess)
+  private def _incomingPacket(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[IncomingPacketReq]
+    if (req.isReply) forwardInReply(req, responseProcess)
+    else forwardInReq(req, responseProcess)
   }
 
-  private def _incomingPacket(packet: IncomingPacketReq)
-                             (responseProcess: PartialFunction[Any, Unit]) {
-    if (packet.isReply) forwardInReply(packet)(responseProcess)
-    else forwardInReq(packet)(responseProcess)
-  }
-
-  def sendOut(packet: OutgoingPacketReq)
-             (responseProcess: PartialFunction[Any, Unit]) {
+  def sendOut(packet: OutgoingPacketReq, responseProcess: PartialFunction[Any, Unit]) {
     packet.retry = true
     timeLastMsgReceived = System.currentTimeMillis
     if (pendingTimer == null) {
@@ -85,8 +82,7 @@ class PacketResender(reactor: LiteReactor,
     }
   }
 
-  def resend(packet: OutgoingPacketReq)
-            (responseProcess: PartialFunction[Any, Unit]) {
+  def resend(packet: OutgoingPacketReq, responseProcess: PartialFunction[Any, Unit]) {
     val currentTime = System.currentTimeMillis.asInstanceOf[Long]
     val expireTime = timeLastMsgReceived + limit
     pendingTimer = null
@@ -112,8 +108,7 @@ class PacketResender(reactor: LiteReactor,
     }
   }
 
-  def forwardInReq(packet: IncomingPacketReq)
-                  (responseProcess: PartialFunction[Any, Unit]) {
+  def forwardInReq(packet: IncomingPacketReq, responseProcess: PartialFunction[Any, Unit]) {
     timeLastMsgReceived = System.currentTimeMillis
     val msgUuid = packet.msgUuid
     if (incomingReqUuids.contains(msgUuid)) {
@@ -132,8 +127,7 @@ class PacketResender(reactor: LiteReactor,
     }
   }
 
-  def forwardInReply(packet: IncomingPacketReq)
-                    (responseProcess: PartialFunction[Any, Unit]) {
+  def forwardInReply(packet: IncomingPacketReq, responseProcess: PartialFunction[Any, Unit]) {
     timeLastMsgReceived = System.currentTimeMillis
     val msgUuid = packet.msgUuid
     if (sendRequests.containsKey(msgUuid)) {
