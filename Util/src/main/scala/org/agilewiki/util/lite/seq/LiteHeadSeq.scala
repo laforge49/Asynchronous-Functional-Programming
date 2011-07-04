@@ -35,8 +35,7 @@ class LiteHeadSeq[T, V](liteSeq: SeqActor[T, V], limit: T)
   bind(classOf[SeqNextReq[T]], _next)
 
   private def _first(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
-    val req = msg.asInstanceOf[SeqFirstReq]
-    liteSeq.send(req)(h(responseProcess))
+    liteSeq.send(msg)(h(responseProcess))
   }
 
   private def _current(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
