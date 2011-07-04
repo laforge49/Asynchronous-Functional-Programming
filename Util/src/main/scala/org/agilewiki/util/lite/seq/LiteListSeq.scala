@@ -29,22 +29,20 @@ package seq
 class LiteListSeq[V](reactor: LiteReactor, list: java.util.List[V])
   extends SeqActor[Int, V](reactor) {
 
-  addRequestHandler{
-    case req: SeqFirstReq => _first(req)(back)
-    case req: SeqCurrentReq[Int] => _current(req)(back)
-    case req: SeqNextReq[Int] => _next(req)(back)
-  }
+  bind(classOf[SeqFirstReq], _first)
+  bind(classOf[SeqCurrentReq[Int]], _current)
+  bind(classOf[SeqNextReq[Int]], _next)
 
-  protected def _first(req: SeqFirstReq)
-                      (responseProcess: PartialFunction[Any, Unit]) {
+  protected def _first(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[SeqFirstReq]
     responseProcess(
       if (list.isEmpty) SeqEndRsp()
       else SeqResultRsp(0, list.get(0))
     )
   }
 
-  protected def _current(req: SeqCurrentReq[Int])
-                        (responseProcess: PartialFunction[Any, Unit]) {
+  protected def _current(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[SeqCurrentReq[Int]]
     var k = req.key
     if (k < 0) k = 0
     responseProcess(
@@ -53,8 +51,8 @@ class LiteListSeq[V](reactor: LiteReactor, list: java.util.List[V])
     )
   }
 
-  protected def _next(req: SeqNextReq[Int])
-                     (responseProcess: PartialFunction[Any, Unit]) {
+  protected def _next(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = msg.asInstanceOf[SeqNextReq[Int]]
     var k = req.key
     if (k < 0) k = 0
     else k = k + 1
