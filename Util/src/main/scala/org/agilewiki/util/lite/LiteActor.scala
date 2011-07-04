@@ -48,11 +48,6 @@ class LiteActor(reactor: LiteReactor, _factory: ActorFactory)
     liteReactor.response(msg)
   }
 
-  def eval(msg: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
-    val reqFunction = messageFunctions.get(msg.getClass)
-    reqFunction(msg, responseProcess)
-  }
-
   def send(msg: AnyRef)
           (responseProcess: PartialFunction[Any, Unit])
           (implicit activeActor: ActiveActor) {
