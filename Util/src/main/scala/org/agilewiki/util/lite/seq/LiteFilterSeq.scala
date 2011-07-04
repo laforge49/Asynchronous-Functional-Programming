@@ -32,35 +32,16 @@ class LiteFilterFunc[T, V](liteSeq: SeqActor[T, V], filter: V => Boolean)
   extends SeqActor[T, V](liteSeq.liteReactor) {
   override def comparator = liteSeq.comparator
 
-  addRequestHandler{
-    case req: SeqFirstReq => _first(req)(back)
-    case req: SeqCurrentReq[T] => _current(req)(back)
-    case req: SeqNextReq[T] => _next(req)(back)
+  bind(classOf[SeqFirstReq], _filter)
+  bind(classOf[SeqCurrentReq[T]], _filter)
+  bind(classOf[SeqNextReq[T]], _filter)
+
+  private def _filterNext(key: T, responseProcess: PartialFunction[Any, Unit]) {
+    _filter(SeqNextReq(key), responseProcess)
   }
 
-  protected def _first(req: SeqFirstReq)
-                      (responseProcess: PartialFunction[Any, Unit]) {
-    _filter(req)(responseProcess)
-  }
-
-  protected def _current(req: SeqCurrentReq[T])
-                        (responseProcess: PartialFunction[Any, Unit]) {
-    _filter(req)(responseProcess)
-
-  }
-
-  protected def _next(req: SeqNextReq[T])
-                     (responseProcess: PartialFunction[Any, Unit]) {
-    _filter(req)(responseProcess)
-  }
-
-  private def _filterNext(key: T)
-                         (responseProcess: PartialFunction[Any, Unit]) {
-    _filter(SeqNextReq(key))(responseProcess)
-  }
-
-  @tailrec private def _filter(req: SeqReq)
-                              (responseProcess: PartialFunction[Any, Unit]) {
+  @tailrec private def _filter(map: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = map.asInstanceOf[SeqReq]
     var async = false
     var sync = false
     var nextKey = null.asInstanceOf[T]
@@ -71,7 +52,7 @@ class LiteFilterFunc[T, V](liteSeq: SeqActor[T, V], filter: V => Boolean)
       case rsp: SeqResultRsp[T, V] => {
         if (filter(rsp.value)) responseProcess(rsp)
         else {
-          if (async) _filterNext(rsp.key)(responseProcess)
+          if (async) _filterNext(rsp.key, responseProcess)
           else {
             sync = true
             nextKey = rsp.key
@@ -83,7 +64,7 @@ class LiteFilterFunc[T, V](liteSeq: SeqActor[T, V], filter: V => Boolean)
       async = true
       return
     }
-    _filter(SeqNextReq[T](nextKey))(responseProcess)
+    _filter(SeqNextReq[T](nextKey), responseProcess)
   }
 }
 
@@ -91,35 +72,16 @@ class LiteFilterSeq[T, V, V1](liteSeq: SeqActor[T, V], filter: SeqActor[V, V1])
   extends SeqActor[T, V](liteSeq.liteReactor) {
   override def comparator = liteSeq.comparator
 
-  addRequestHandler{
-    case req: SeqFirstReq => _first(req)(back)
-    case req: SeqCurrentReq[T] => _current(req)(back)
-    case req: SeqNextReq[T] => _next(req)(back)
+  bind(classOf[SeqFirstReq], _filter)
+  bind(classOf[SeqCurrentReq[T]], _filter)
+  bind(classOf[SeqNextReq[T]], _filter)
+
+  private def _filterNext(key: T, responseProcess: PartialFunction[Any, Unit]) {
+    _filter(SeqNextReq(key), responseProcess)
   }
 
-  protected def _first(req: SeqFirstReq)
-                      (responseProcess: PartialFunction[Any, Unit]) {
-    _filter(req)(responseProcess)
-  }
-
-  protected def _current(req: SeqCurrentReq[T])
-                        (responseProcess: PartialFunction[Any, Unit]) {
-    _filter(req)(responseProcess)
-
-  }
-
-  protected def _next(req: SeqNextReq[T])
-                     (responseProcess: PartialFunction[Any, Unit]) {
-    _filter(req)(responseProcess)
-  }
-
-  private def _filterNext(key: T)
-                         (responseProcess: PartialFunction[Any, Unit]) {
-    _filter(SeqNextReq(key))(responseProcess)
-  }
-
-  @tailrec private def _filter(req: SeqReq)
-                              (responseProcess: PartialFunction[Any, Unit]) {
+  @tailrec private def _filter(map: AnyRef, responseProcess: PartialFunction[Any, Unit]) {
+    val req = map.asInstanceOf[SeqReq]
     var async = false
     var sync = false
     var nextKey = null.asInstanceOf[T]
@@ -131,7 +93,7 @@ class LiteFilterSeq[T, V, V1](liteSeq: SeqActor[T, V], filter: SeqActor[V, V1])
         filter.hasKey(rsp.value){
           case true => responseProcess(rsp)
           case false => {
-            if (async) _filterNext(rsp.key)(responseProcess)
+            if (async) _filterNext(rsp.key, responseProcess)
             else {
               sync = true
               nextKey = rsp.key
@@ -144,6 +106,6 @@ class LiteFilterSeq[T, V, V1](liteSeq: SeqActor[T, V], filter: SeqActor[V, V1])
       async = true
       return
     }
-    _filter(SeqNextReq[T](nextKey))(responseProcess)
+    _filter(SeqNextReq[T](nextKey), responseProcess)
   }
 }
