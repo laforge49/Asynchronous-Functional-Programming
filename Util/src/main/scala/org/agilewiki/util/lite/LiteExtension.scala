@@ -34,6 +34,8 @@ trait LiteExtension
     _actor = a
   }
 
+  implicit def activeActor: ActiveActor = actor.activeActor
+
   def actor = _actor
 
   override def id = actor.id

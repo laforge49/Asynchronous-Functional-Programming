@@ -45,7 +45,7 @@ class UdpListener(localHostPort: HostPort, insideActor: LiteActor)
   }
 
   def send(actor: LiteActor, messageContent: AnyRef) {
-    val req = new LiteReqMsg(ActiveActor(actor), null, null, messageContent, this)
+    val req = new LiteReqMsg(actor, null, null, messageContent, this)
     val reactor = actor.liteReactor
     reactor.request(req)
   }

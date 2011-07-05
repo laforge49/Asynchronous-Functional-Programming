@@ -45,8 +45,8 @@ final case class LiteReactor(systemContext: SystemContext)
         case msg: LiteReqMsg => {
           curMsg = msg
           val target = msg.target
-          val reqFunction = target.actor.messageFunctions.get(msg.content.getClass)
-          if (reqFunction != null) reqFunction(msg.content, target.actor.back)
+          val reqFunction = target.messageFunctions.get(msg.content.getClass)
+          if (reqFunction != null) reqFunction(msg.content, back)
           else throw new IllegalArgumentException(msg.content.getClass.getName)
         }
         case msg: LiteRspMsg => {
@@ -70,7 +70,7 @@ final case class LiteReactor(systemContext: SystemContext)
         reply(new UncaughtExceptionRsp(
           ex.toString,
           curReq.sender.getClass.getName,
-          curReq.target.actor.getClass.getName))
+          curReq.target.getClass.getName))
       }
     }
   }
@@ -100,15 +100,13 @@ final case class LiteReactor(systemContext: SystemContext)
       curMsg.asInstanceOf[LiteRspMsg].oldRequest
   }
 
-  def activeActor = currentRequestMessage.target
-
   def send(targetActor: LiteActor, content: AnyRef)
           (responseProcess: PartialFunction[Any, Unit]) {
     val oldReq = currentRequestMessage
-    val sender = oldReq.target.actor
+    val sender = oldReq.target
     val targetReactor = targetActor.liteReactor
     val req = new LiteReqMsg(
-      ActiveActor(targetActor),
+      targetActor,
       responseProcess,
       oldReq,
       content,
@@ -141,7 +139,7 @@ sealed abstract class LiteMsg(pf: PartialFunction[Any, Unit],
   def oldRequest = oldReq
 }
 
-final class LiteReqMsg(destination: ActiveActor,
+final class LiteReqMsg(destination: LiteActor,
                        pf: PartialFunction[Any, Unit],
                        oldReq: LiteReqMsg,
                        data: AnyRef,

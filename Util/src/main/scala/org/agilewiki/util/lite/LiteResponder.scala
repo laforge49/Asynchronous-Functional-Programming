@@ -34,8 +34,6 @@ trait LiteResponder extends SystemContextGetter {
 
   def liteReactor: LiteReactor
 
-  implicit def activeActor = liteReactor.activeActor
-
   def systemContext = liteReactor.systemContext
 
   def newReactor = liteReactor.newReactor
@@ -61,6 +59,4 @@ trait LiteResponder extends SystemContextGetter {
       messageFunctions.put(k, v)
     }
   }
-
-  def back: PartialFunction[Any, Unit] = liteReactor.back
 }

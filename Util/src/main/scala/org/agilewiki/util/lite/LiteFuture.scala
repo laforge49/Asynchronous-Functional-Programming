@@ -36,7 +36,7 @@ class LiteFuture
     val reactor = targetActor.liteReactor
     if (reactor == null) targetActor.send(messageContent)(synchronousResponse)(null)
     else {
-      val req = new LiteReqMsg(ActiveActor(targetActor), null, null, messageContent, this)
+      val req = new LiteReqMsg(targetActor, null, null, messageContent, this)
       reactor.request(req)
     }
   }

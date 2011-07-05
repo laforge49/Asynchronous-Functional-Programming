@@ -30,6 +30,9 @@ class LiteActor(reactor: LiteReactor, _factory: ActorFactory)
   extends LiteResponder
   with LiteSrc {
   private var actorId: ActorId = null
+  private val _activeActor = ActiveActor(this)
+
+  implicit def activeActor: ActiveActor = _activeActor
 
   override def id = actorId
 
