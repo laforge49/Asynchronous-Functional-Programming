@@ -53,15 +53,4 @@ trait LiteResponder extends SystemContextGetter {
     if (factory == null) null
     else factory.name
   }
-
-  def addExtension(ext: LiteExtension) {
-    ext.actor(actor)
-    val extMsgFunctions = ext.messageFunctions
-    var it = extMsgFunctions.keySet.iterator
-    while (it.hasNext) {
-      val k = it.next
-      val v = extMsgFunctions.get(k)
-      messageFunctions.put(k, v)
-    }
-  }
 }

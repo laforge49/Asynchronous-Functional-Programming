@@ -49,6 +49,23 @@ class LiteActor(reactor: LiteReactor, _factory: ActorFactory)
 
   override def liteReactor = reactor
 
+  def addExtension(ext: LiteExtension) {
+    ext.actor(this)
+    val extMsgFunctions = ext.messageFunctions
+    var it = extMsgFunctions.keySet.iterator
+    while (it.hasNext) {
+      val k = it.next
+      if (extMsgFunctions.containsKey(k)) {
+        throw new IllegalArgumentException("bind conflict on actor " +
+          getClass.getName +
+          "message " +
+          k.getName)
+      }
+      val v = extMsgFunctions.get(k)
+      messageFunctions.put(k, v)
+    }
+  }
+
   override def response(msg: LiteRspMsg) {
     liteReactor.response(msg)
   }
@@ -101,6 +118,7 @@ class LiteActor(reactor: LiteReactor, _factory: ActorFactory)
   }
 
   private lazy val msgFS = new LiteNavigableMapSeq(reactor, messageFunctions)
+
   def messageFunctionSeq = msgFS
 }
 
