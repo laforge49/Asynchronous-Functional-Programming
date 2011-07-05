@@ -107,5 +107,9 @@ class SystemContext(rootFactory: SystemComponentFactory) {
     }
   }
 
-  def newReactor = new LiteReactor(this)
+  def newReactor = {
+    val r = new LiteReactor
+    r.systemContext(this)
+    r
+  }
 }

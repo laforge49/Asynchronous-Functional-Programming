@@ -35,7 +35,7 @@ case class PingerTestRetryReq(count: Int)
 case class PingerTestRsp()
 
 class PingerTestActor(pinger: LiteActor)
-  extends LiteActor(new LiteReactor(null), null) {
+  extends LiteActor(new LiteReactor, null) {
 
   bind(classOf[PingerTestReq], _test)
   bind(classOf[PingerTestRetryReq], _retry)
@@ -60,7 +60,7 @@ class PingerTestActor(pinger: LiteActor)
 class PingerTest extends SpecificationWithJUnit {
   "pinger test" should {
     "count down from 5" in {
-      LiteFuture(new PingerTestActor(new Pinger(new LiteReactor(null))), PingerTestReq())
+      LiteFuture(new PingerTestActor(new Pinger(new LiteReactor)), PingerTestReq())
     }
   }
 }

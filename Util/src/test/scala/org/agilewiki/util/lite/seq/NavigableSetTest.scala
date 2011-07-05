@@ -16,7 +16,7 @@ class NavigableSetTest extends SpecificationWithJUnit {
       lst add "four"
       lst add "five"
       lst add "etc"
-      var seq = new LiteNavigableSetSeq(new LiteReactor(null), lst)
+      var seq = new LiteNavigableSetSeq(new LiteReactor, lst)
       FutureSeq(seq).firstMatch("etc", "etc") must be equalTo true
       FutureSeq(seq).currentMatch("f", "five", "five") must be equalTo true
       FutureSeq(seq).nextMatch("three", "two", "two") must be equalTo true

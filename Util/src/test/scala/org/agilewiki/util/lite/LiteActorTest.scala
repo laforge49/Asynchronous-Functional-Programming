@@ -52,7 +52,7 @@ class LiteActorTest extends SpecificationWithJUnit {
       var j = 0
       while (j < M) {
         var actor: LiteTestActor = null
-        val reactor = new LiteReactor(null)
+        val reactor = new LiteReactor
         var i = 0
         while (i < N) {
           actor = new LiteTestActor(reactor, actor)

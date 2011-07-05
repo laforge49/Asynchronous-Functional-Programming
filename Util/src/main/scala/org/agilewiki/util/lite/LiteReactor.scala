@@ -27,15 +27,26 @@ package lite
 
 import scala.actors.Reactor
 
-final case class LiteReactor(systemContext: SystemContext)
+final case class LiteReactor
   extends Reactor[LiteMsg]
   with SystemContextGetter {
   private var curMsg: LiteMsg = null
+  private var _systemContext: SystemContext = null
+
   start
+
+  def systemContext = _systemContext
+
+  def systemContext(sc: SystemContext) {
+    _systemContext = sc
+  }
 
   def isMailboxEmpty = mailboxSize == 0
 
-  def newReactor = new LiteReactor(systemContext)
+  def newReactor = {
+    if (_systemContext == null) new LiteReactor
+    else _systemContext.newReactor
+  }
 
   override def scheduler = super.scheduler
 

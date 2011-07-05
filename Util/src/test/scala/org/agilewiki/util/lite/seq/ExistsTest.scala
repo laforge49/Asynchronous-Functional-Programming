@@ -13,7 +13,7 @@ class ExistsTest extends SpecificationWithJUnit {
       list.add(1)
       list.add(2)
       list.add(3)
-      var seq = new LiteListSeq(new LiteReactor(null), list)
+      var seq = new LiteListSeq(new LiteReactor, list)
       FutureSeq(seq).exists((x: Int) => x % 2 == 0) must be equalTo(true)
       FutureSeq(seq).exists((x: Int) => x % 4 == 0) must be equalTo(false)
     }
