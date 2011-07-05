@@ -25,6 +25,8 @@ package org.agilewiki
 package util
 package lite
 
+import seq.LiteNavigableMapSeq
+
 
 class LiteActor(reactor: LiteReactor, _factory: ActorFactory)
   extends LiteResponder
@@ -97,6 +99,9 @@ class LiteActor(reactor: LiteReactor, _factory: ActorFactory)
     }
     case data => throw new IllegalArgumentException
   }
+
+  private lazy val msgFS = new LiteNavigableMapSeq(reactor, messageFunctions)
+  def messageFunctionSeq = msgFS
 }
 
 class WrappedException(text: String) extends Exception(text)

@@ -24,44 +24,10 @@
 package org.agilewiki
 package util
 package lite
+package seq
 
-import seq.ClassComparator
+import java.util.Comparator
 
-trait LiteResponder extends SystemContextGetter {
-  val messageFunctions =
-    new java.util.TreeMap[Class[_ <: AnyRef], (AnyRef, PartialFunction[Any, Unit]) => Unit](
-      new ClassComparator
-    )
-
-  protected def bind(reqClass: Class[_ <: AnyRef], reqFunction: (AnyRef, PartialFunction[Any, Unit]) => Unit) {
-    messageFunctions.put(reqClass, reqFunction)
-  }
-
-  def liteReactor: LiteReactor
-
-  def systemContext = liteReactor.systemContext
-
-  def newReactor = liteReactor.newReactor
-
-  def actor: LiteActor
-
-  def id: ActorId
-
-  def factory: ActorFactory
-
-  def factoryName = {
-    if (factory == null) null
-    else factory.name
-  }
-
-  def addExtension(ext: LiteExtension) {
-    ext.actor(actor)
-    val extMsgFunctions = ext.messageFunctions
-    var it = extMsgFunctions.keySet.iterator
-    while (it.hasNext) {
-      val k = it.next
-      val v = extMsgFunctions.get(k)
-      messageFunctions.put(k, v)
-    }
-  }
+class ClassComparator extends Comparator[Class[_ <: AnyRef]] {
+  override def compare(a: Class[_ <: AnyRef], b: Class[_ <: AnyRef]) = a.getName.compare(b.getName)
 }
