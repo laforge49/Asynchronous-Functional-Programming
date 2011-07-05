@@ -85,12 +85,12 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
         } catch {
           case ex: Exception => sendErrorRsp(
             packet,
-            new ExceptionWrapper("no such factory: " + rn.value),
+            new ErrorRsp("no such factory: " + rn.value),
             this, responseProcess)
         }
         if (actor != null) actor.send(req) {
           case rsp: DataOutputStack => sendRsp(packet, rsp, actor, responseProcess)
-          case error: ExceptionWrapper => sendErrorRsp(packet, error, actor, responseProcess)
+          case error: ErrorRsp => sendErrorRsp(packet, error, actor, responseProcess)
         }
       }
       case rn: ActorId => liteManager.send(MapGetReq(rn)) {
@@ -99,7 +99,7 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
           if (actor != null) {
             rsp.actor.send(req) {
               case rsp: DataOutputStack => sendRsp(packet, rsp, actor, responseProcess)
-              case error: ExceptionWrapper => sendErrorRsp(packet, error, actor, responseProcess)
+              case error: ErrorRsp => sendErrorRsp(packet, error, actor, responseProcess)
             }
           } else throw new IllegalArgumentException
         }
@@ -125,7 +125,7 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
   }
 
   private def sendErrorRsp(incomingPacket: IncomingPacketReq,
-                           error: ExceptionWrapper,
+                           error: ErrorRsp,
                            actor: LiteActor,
                            responseProcess: PartialFunction[Any, Unit]) {
     val outputPayload = DataOutputStack()
@@ -150,7 +150,7 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
     var rsp: AnyRef = null
     if (isError) {
       val message = inputPayload.readUTF
-      rsp = new ExceptionWrapper(message)
+      rsp = new ErrorRsp(message)
     } else {
       rsp = inputPayload
     }
@@ -163,7 +163,7 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
     val req = msg.asInstanceOf[OutgoingPacketReq]
     val liteReqMsg = requestsSent.remove(req.msgUuid)
     val actor = liteReqMsg.sender.asInstanceOf[LiteActor]
-    val error = new ExceptionWrapper("timeout")
+    val error = new ErrorRsp("timeout")
     val liteRspMsg = new LiteRspMsg(liteReqMsg.responseProcess, liteReqMsg, error)
     actor.liteReactor.response(liteRspMsg)
   }

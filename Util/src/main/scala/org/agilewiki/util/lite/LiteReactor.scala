@@ -63,11 +63,11 @@ final case class LiteReactor(systemContext: SystemContext)
 
   override def exceptionHandler: PartialFunction[Exception, Unit] = {
     case ex: TransparentException => {
-      reply(ExceptionWrapper(ex.toString))
+      reply(ErrorRsp(ex.toString))
     }
     case ex: Exception => {
       ex.printStackTrace
-      reply(ExceptionWrapper(ex.toString))
+      reply(ErrorRsp(ex.toString))
     }
   }
 

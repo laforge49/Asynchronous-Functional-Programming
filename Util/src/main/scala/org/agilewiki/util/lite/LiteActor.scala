@@ -71,7 +71,7 @@ class LiteActor(reactor: LiteReactor, _factory: ActorFactory)
         case ex: TransparentException => throw new WrappedException(ex.getMessage)
         case ex: Exception => {
           ex.printStackTrace
-          rp(ExceptionWrapper(ex.toString))
+          rp(ErrorRsp(ex.toString))
         }
       }
     }
@@ -91,7 +91,7 @@ class LiteActor(reactor: LiteReactor, _factory: ActorFactory)
   }
 
   private def uncaughtMsg: PartialFunction[Any, Unit] = {
-    case data: ExceptionWrapper => throw new WrappedException(data.text)
+    case data: ErrorRsp => throw new WrappedException(data.text)
     case data: AnyRef => {
       throw new IllegalArgumentException(data.getClass.getName)
     }

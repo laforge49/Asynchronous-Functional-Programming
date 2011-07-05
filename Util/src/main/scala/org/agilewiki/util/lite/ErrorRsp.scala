@@ -25,7 +25,7 @@ package org.agilewiki
 package util
 package lite
 
-object ExceptionWrapper {
+object ErrorRsp {
   def apply(exception: Exception) {
     try {
       throw exception
@@ -34,8 +34,8 @@ object ExceptionWrapper {
         _ex.printStackTrace
       }
     }
-    ExceptionWrapper(exception.toString)
+    ErrorRsp(exception.toString)
   }
 }
 
-case class ExceptionWrapper(text: String)
+case class ErrorRsp(text: String)
