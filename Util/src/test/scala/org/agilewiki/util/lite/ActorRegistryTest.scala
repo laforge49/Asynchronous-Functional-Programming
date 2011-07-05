@@ -41,7 +41,7 @@ class TARComponentFactory
 }
 
 class TARComponent(systemContext: SystemContext, tarFactory: TARComponentFactory)
-  extends SystemComponent(systemContext) {
+  extends SystemComponent {
 }
 
 class ActorRegistryTest extends SpecificationWithJUnit {

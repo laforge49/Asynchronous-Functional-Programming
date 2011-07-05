@@ -44,16 +44,16 @@ abstract class SystemComponentFactory {
   def instantiate(systemContext: SystemContext): SystemComponent
 }
 
-class SystemComponent(systemContext: SystemContext) extends SystemContextHolder(systemContext) {
+class SystemComponent extends LiteExtension {
 
   def start {}
 
   def close {}
-
-  def newReactor = systemContext.newReactor
 }
 
-class SystemContext(rootFactory: SystemComponentFactory) {
+class SystemContext(rootFactory: SystemComponentFactory)
+  extends LiteActor(new LiteReactor, null) {
+  liteReactor.systemContext(this)
   private val componentFactories =
     new java.util.LinkedHashMap[Class[_ <: SystemComponentFactory], SystemComponentFactory]
   private val components = new java.util.LinkedHashMap[Class[_ <: SystemComponentFactory], SystemComponent]
@@ -65,6 +65,7 @@ class SystemContext(rootFactory: SystemComponentFactory) {
     val factory = componentFactories.get(factoryClass)
     val component = factory.instantiate(this)
     components.put(factoryClass, component)
+    addExtension(component)
   }
   private val componentList = new java.util.ArrayList(components.values)
 
@@ -107,7 +108,7 @@ class SystemContext(rootFactory: SystemComponentFactory) {
     }
   }
 
-  def newReactor = {
+  override def newReactor = {
     val r = new LiteReactor
     r.systemContext(this)
     r

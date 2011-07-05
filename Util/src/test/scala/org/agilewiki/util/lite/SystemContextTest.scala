@@ -56,7 +56,7 @@ class TCFactory
 }
 
 class TC(systemContext: SystemContext, tcFactory: TCFactory)
-  extends SystemComponent(systemContext) {
+  extends SystemComponent {
 
   override def start {
     println(tcFactory.startMsg)

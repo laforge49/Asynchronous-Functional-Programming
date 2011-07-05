@@ -57,7 +57,7 @@ class TAComponentFactory
 }
 
 class TAComponent(systemContext: SystemContext, taFactory: TAComponentFactory)
-  extends SystemComponent(systemContext) {
+  extends SystemComponent {
 }
 
 class ActorFactoryTest extends SpecificationWithJUnit {

@@ -43,7 +43,7 @@ final case class LiteReactor
 
   def isMailboxEmpty = mailboxSize == 0
 
-  def newReactor = {
+  def newReactor: LiteReactor = {
     if (_systemContext == null) new LiteReactor
     else _systemContext.newReactor
   }

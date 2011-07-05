@@ -55,8 +55,6 @@ object Lite {
     systemContext.component(classOf[LiteFactory])
       .asInstanceOf[Lite]
 
-  def serviceReactor(implicit systemContext: SystemContext) = apply(systemContext).serviceReactor
-
   def factorySequence(implicit systemContext: SystemContext) = apply(systemContext).factorySequence
 
   def actorRegistry(implicit systemContext: SystemContext) = apply(systemContext).actorRegistry
@@ -72,12 +70,11 @@ object Lite {
 }
 
 class Lite(systemContext: SystemContext, liteFactory: LiteFactory)
-  extends SystemComponent(systemContext) {
-  val serviceReactor = newReactor
+  extends SystemComponent {
 
-  lazy val factorySequence = new LiteNavigableMapSeq(serviceReactor, liteFactory.actorFactories)
+  lazy val factorySequence = new LiteNavigableMapSeq(liteReactor, liteFactory.actorFactories)
 
-  val actorRegistry = new ActorRegistry(serviceReactor)
+  val actorRegistry = new ActorRegistry(systemContext.liteReactor)
 
   def newActor(factoryName: FactoryName, reactor: LiteReactor) = {
     val actorFactory = liteFactory.getActorFactory(factoryName)

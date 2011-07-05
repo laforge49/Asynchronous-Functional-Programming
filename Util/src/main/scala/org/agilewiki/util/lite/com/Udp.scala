@@ -70,7 +70,7 @@ object Udp {
 }
 
 class Udp(systemContext: SystemContext, udpFactory: UdpFactory)
-  extends SystemComponent(systemContext) {
+  extends SystemComponent {
   val pinger = new Pinger(newReactor)
   val liteManager = new LiteManager(newReactor)
   val localServerName = ServerName(udpFactory.localServerName)
