@@ -54,10 +54,51 @@ class LiteActor(reactor: LiteReactor, _factory: ActorFactory)
   def send(msg: AnyRef)
           (responseProcess: PartialFunction[Any, Unit])
           (implicit activeActor: ActiveActor) {
+    val senderReactor = {
+      if (activeActor == null) null
+      else activeActor.actor.liteReactor
+    }
+    if (senderReactor == null && reactor != null) throw new UnsupportedOperationException(
+      "synchronous actor can only send to another synchronous actor"
+    )
     val reqFunction = messageFunctions.get(msg.getClass)
-    if ((reactor == null || activeActor.actor.liteReactor.eq(reactor)) &&
-      reqFunction != null)
-      reqFunction(msg, responseProcess)
-    else activeActor.actor.liteReactor.send(actor, msg)(responseProcess)
+    if (reqFunction == null) throw new UnsupportedOperationException(msg.getClass.getName)
+    if ((reactor == null || senderReactor.eq(reactor))) {
+      val rp = responseWrapper(responseProcess orElse uncaughtMsg)
+      try {
+        reqFunction(msg, rp)
+      } catch {
+        case ex: TransparentException => throw new WrappedException(ex.getMessage)
+        case ex: Exception => {
+          ex.printStackTrace
+          rp(ExceptionWrapper(ex.toString))
+        }
+      }
+    }
+    else senderReactor.send(actor, msg)(responseProcess orElse uncaughtMsg)
+  }
+
+  private def responseWrapper(responseProcess: PartialFunction[Any, Unit]): PartialFunction[Any, Unit] = {
+    case msg => {
+      try {
+        responseProcess(msg)
+      } catch {
+        case ex: Exception => {
+          throw new TransparentException(ex.toString)
+        }
+      }
+    }
+  }
+
+  private def uncaughtMsg: PartialFunction[Any, Unit] = {
+    case data: ExceptionWrapper => throw new WrappedException(data.text)
+    case data: AnyRef => {
+      throw new IllegalArgumentException(data.getClass.getName)
+    }
+    case data => throw new IllegalArgumentException
   }
 }
+
+class WrappedException(text: String) extends Exception(text)
+
+class TransparentException(text: String) extends Exception(text)

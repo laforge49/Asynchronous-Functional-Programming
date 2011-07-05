@@ -46,13 +46,12 @@ final case class LiteReactor(systemContext: SystemContext)
           curMsg = msg
           val target = msg.target
           val reqFunction = target.messageFunctions.get(msg.content.getClass)
-          if (reqFunction != null) reqFunction(msg.content, back)
-          else throw new IllegalArgumentException(msg.content.getClass.getName)
+          reqFunction(msg.content, back)
         }
         case msg: LiteRspMsg => {
           curMsg = msg
           val sender = currentRequestMessage.sender
-          (msg.responseProcess orElse uncaughtMsg)(msg.content)
+          msg.responseProcess(msg.content)
         }
         case msg => {
           curMsg = null
@@ -63,24 +62,13 @@ final case class LiteReactor(systemContext: SystemContext)
   }
 
   override def exceptionHandler: PartialFunction[Exception, Unit] = {
+    case ex: TransparentException => {
+      reply(ExceptionWrapper(ex.toString))
+    }
     case ex: Exception => {
       ex.printStackTrace
-      if (curMsg != null) {
-        val curReq = currentRequestMessage
-        reply(new UncaughtExceptionRsp(
-          ex.toString,
-          curReq.sender.getClass.getName,
-          curReq.target.getClass.getName))
-      }
+      reply(ExceptionWrapper(ex.toString))
     }
-  }
-
-  def uncaughtMsg: PartialFunction[Any, Unit] = {
-    case data: ErrorRsp => reply(data)
-    case data: Object => {
-      throw new IllegalArgumentException(data.getClass.getName)
-    }
-    case data => throw new IllegalArgumentException
   }
 
   def request(msg: LiteReqMsg) {

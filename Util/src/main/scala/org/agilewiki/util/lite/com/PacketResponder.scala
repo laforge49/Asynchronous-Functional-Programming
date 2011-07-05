@@ -85,12 +85,12 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
         } catch {
           case ex: Exception => sendErrorRsp(
             packet,
-            new ErrorRsp("no such factory: " + rn.value, getClass.getName, ""),
+            new ExceptionWrapper("no such factory: " + rn.value),
             this, responseProcess)
         }
         if (actor != null) actor.send(req) {
           case rsp: DataOutputStack => sendRsp(packet, rsp, actor, responseProcess)
-          case error: ErrorRsp => sendErrorRsp(packet, error, actor, responseProcess)
+          case error: ExceptionWrapper => sendErrorRsp(packet, error, actor, responseProcess)
         }
       }
       case rn: ActorId => liteManager.send(MapGetReq(rn)) {
@@ -99,7 +99,7 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
           if (actor != null) {
             rsp.actor.send(req) {
               case rsp: DataOutputStack => sendRsp(packet, rsp, actor, responseProcess)
-              case error: ErrorRsp => sendErrorRsp(packet, error, actor, responseProcess)
+              case error: ExceptionWrapper => sendErrorRsp(packet, error, actor, responseProcess)
             }
           } else throw new IllegalArgumentException
         }
@@ -125,12 +125,10 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
   }
 
   private def sendErrorRsp(incomingPacket: IncomingPacketReq,
-                           error: ErrorRsp,
+                           error: ExceptionWrapper,
                            actor: LiteActor,
                            responseProcess: PartialFunction[Any, Unit]) {
     val outputPayload = DataOutputStack()
-    outputPayload.writeUTF(error.target.toString)
-    outputPayload.writeUTF(error.source.toString)
     outputPayload.writeUTF(error.text)
     outputPayload.writeByte(true.asInstanceOf[Byte])
     val externalPacket = OutgoingPacketReq(
@@ -151,10 +149,8 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
     val isError = inputPayload.readByte.asInstanceOf[Boolean]
     var rsp: AnyRef = null
     if (isError) {
-      val txt = inputPayload.readUTF
-      val src = inputPayload.readId
-      val target = inputPayload.readId
-      rsp = new ErrorRsp(txt, src.value, target.value)
+      val message = inputPayload.readUTF
+      rsp = new ExceptionWrapper(message)
     } else {
       rsp = inputPayload
     }
@@ -167,10 +163,7 @@ class PacketResponder(reactor: LiteReactor, hostPort: HostPort)
     val req = msg.asInstanceOf[OutgoingPacketReq]
     val liteReqMsg = requestsSent.remove(req.msgUuid)
     val actor = liteReqMsg.sender.asInstanceOf[LiteActor]
-    val error = new ErrorRsp(
-      "timeout",
-      this.getClass.getName,
-      outsideActor.getClass.getName)
+    val error = new ExceptionWrapper("timeout")
     val liteRspMsg = new LiteRspMsg(liteReqMsg.responseProcess, liteReqMsg, error)
     actor.liteReactor.response(liteRspMsg)
   }

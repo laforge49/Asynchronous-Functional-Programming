@@ -25,12 +25,17 @@ package org.agilewiki
 package util
 package lite
 
-class ErrorRsp(_text: String, _source: String, _target: String) {
-  def text = _text
-  def source = _source
-  def target = _target
-  override def toString = text + "; source=" + source + "; target=" + target
+object ExceptionWrapper {
+  def apply(exception: Exception) {
+    try {
+      throw exception
+    } catch {
+      case _ex: Exception => {
+        _ex.printStackTrace
+      }
+    }
+    ExceptionWrapper(exception.toString)
+  }
 }
 
-class UncaughtExceptionRsp(text: String, source: String, target: String)
-  extends ErrorRsp(text, source, target)
+case class ExceptionWrapper(text: String)
