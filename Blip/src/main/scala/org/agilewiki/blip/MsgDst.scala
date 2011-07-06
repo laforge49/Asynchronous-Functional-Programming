@@ -30,4 +30,8 @@ trait MsgDst extends SystemContextGetter {
   protected def bind(reqClass: Class[_ <: AnyRef], reqFunction: (AnyRef, Any => Unit) => Unit) {
     messageFunctions.put(reqClass, reqFunction)
   }
+
+  def mailbox: Mailbox
+
+  def newMailbox = mailbox.newMailbox
 }

@@ -24,6 +24,27 @@
 package org.agilewiki
 package blip
 
-trait MsgSrc {
-  def response(msg: MailboxRsp) {}
+sealed abstract class MailboxMsg(rf: Any => Unit,
+                                 oldReq: MailboxReq) {
+  def responseFunction = rf
+  def oldRequest = oldReq
+}
+
+final class MailboxReq(dst: Actor,
+                       rf: Any => Unit,
+                       oldReq: MailboxReq,
+                       data: AnyRef,
+                       src: MsgSrc)
+  extends MailboxMsg(rf, oldReq) {
+  var active = true
+  def sender = src
+  def target = dst
+  def req = data
+}
+
+final class MailboxRsp(rf: Any => Unit,
+                       oldReq: MailboxReq,
+                       data: Any)
+  extends MailboxMsg(rf, oldReq) {
+  def rsp = data
 }

@@ -24,7 +24,106 @@
 package org.agilewiki
 package blip
 
-class Mailbox extends SystemContextGetter {
+import scala.actors.Reactor
+
+class Mailbox
+  extends Reactor[MailboxMsg]
+  with SystemContextGetter {
+
+  def isMailboxEmpty = mailboxSize == 0
+
+  override def scheduler = super.scheduler
+
   private var _systemContext: SystemContext = null
+
+  def systemContext(sc: SystemContext) {
+    _systemContext = sc
+  }
+
   def systemContext = _systemContext
+
+  def newMailbox: Mailbox = {
+    if (_systemContext == null) new Mailbox
+    else _systemContext.newMailbox
+  }
+
+  private var curMsg: MailboxMsg = null
+
+  def currentMessage = curMsg
+
+  def currentRequestMessage = {
+    if (curMsg.isInstanceOf[MailboxReq])
+      curMsg.asInstanceOf[MailboxReq]
+    else
+      curMsg.asInstanceOf[MailboxRsp].oldRequest
+  }
+
+  override def act {
+    loop{
+      react{
+        case msg: Exception => throw msg
+        case msg: MailboxReq => {
+          curMsg = msg
+          val target = msg.target
+          val reqFunction = target.messageFunctions.get(msg.req.getClass)
+          reqFunction(msg.req, reply)
+        }
+        case msg: MailboxRsp => {
+          curMsg = msg
+          val sender = currentRequestMessage.sender
+          msg.responseFunction(msg.rsp)
+        }
+        case msg => {
+          curMsg = null
+          throw new IllegalArgumentException
+        }
+      }
+    }
+  }
+
+  override def exceptionHandler: PartialFunction[Exception, Unit] = {
+    case ex: TransparentException => {
+      reply(ex.getCause)
+    }
+    case ex: Exception => {
+      ex.printStackTrace
+      reply(ex)
+    }
+  }
+
+  def send(targetActor: Actor, content: AnyRef)
+          (responseFunction: Any => Unit) {
+    val oldReq = currentRequestMessage
+    val sender = oldReq.target
+    val targetMailbox = targetActor.mailbox
+    val req = new MailboxReq(
+      targetActor,
+      responseFunction,
+      oldReq,
+      content,
+      sender)
+    targetMailbox.request(req)
+  }
+
+  private def reply(content: Any) {
+    val req = currentRequestMessage
+    if (!req.active) return
+    req.active = false
+    val sender = req.sender
+    val rsp = new MailboxRsp(
+      req.responseFunction,
+      req.oldRequest,
+      content)
+    sender.response(rsp)
+  }
+
+  def request(msg: MailboxReq) {
+    this ! msg
+  }
+
+  def response(msg: MailboxRsp) {
+    this ! msg
+  }
+
+  start
 }

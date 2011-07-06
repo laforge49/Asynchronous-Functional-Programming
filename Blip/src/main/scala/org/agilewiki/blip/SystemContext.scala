@@ -24,4 +24,11 @@
 package org.agilewiki
 package blip
 
-class SystemContext extends Actor(new Mailbox, null)
+class SystemContext extends Actor(new Mailbox, null) {
+
+  override def newMailbox = {
+    val mb = new Mailbox
+    mb.systemContext(this)
+    mb
+  }
+}

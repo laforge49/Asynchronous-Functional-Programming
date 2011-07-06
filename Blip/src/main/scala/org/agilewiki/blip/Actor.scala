@@ -31,15 +31,15 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends MsgDst with MsgSrc {
 
   def systemContext = _mailbox.systemContext
 
-  def exceptionHandler: PartialFunction[Throwable, Unit] = {
+  def exceptionHandler: PartialFunction[Exception, Unit] = {
     case null =>
   }
 
-  private def defaultExceptionHandler: PartialFunction[Throwable, Unit] = {
+  private def defaultExceptionHandler: PartialFunction[Exception, Unit] = {
     case ex => throw ex
   }
 
-  private def processException(ex: Throwable) {
+  private def processException(ex: Exception) {
     exceptionHandler orElse defaultExceptionHandler
   }
 
@@ -69,8 +69,11 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends MsgDst with MsgSrc {
         }
       })
     } catch {
-      case ex: TransparentException => processException(ex.getCause)
-      case ex: Exception => processException(ex)
+      case ex: TransparentException => processException(ex.getCause.asInstanceOf[Exception])
+      case ex: Exception => {
+        ex.printStackTrace()
+        processException(ex)
+      }
     }
   }
 
