@@ -154,7 +154,7 @@
     
     <!-- Sub projects -->
     <modules>
-        <module>Util</module>
+        <module>Blip</module>
         <!--
         <module>AW5Kernel</module>
 	    <module>AW5Core</module>
