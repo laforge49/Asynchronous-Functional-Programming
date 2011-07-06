@@ -28,12 +28,23 @@ package lite
 import seq.ClassComparator
 
 trait LiteResponder extends SystemContextGetter {
+  val safeMessageFunctions =
+    new java.util.TreeMap[Class[_ <: AnyRef], (AnyRef, PartialFunction[Any, Unit], ActiveActor) => Unit](
+      new ClassComparator
+    )
+
   val messageFunctions =
     new java.util.TreeMap[Class[_ <: AnyRef], (AnyRef, PartialFunction[Any, Unit]) => Unit](
       new ClassComparator
     )
 
-  protected def bind(reqClass: Class[_ <: AnyRef], reqFunction: (AnyRef, PartialFunction[Any, Unit]) => Unit) {
+  protected def bindSafe(reqClass: Class[_ <: AnyRef],
+                         reqFunction: (AnyRef, PartialFunction[Any, Unit], ActiveActor) => Unit) {
+    safeMessageFunctions.put(reqClass, reqFunction)
+  }
+
+  protected def bind(reqClass: Class[_ <: AnyRef],
+                     reqFunction: (AnyRef, PartialFunction[Any, Unit]) => Unit) {
     messageFunctions.put(reqClass, reqFunction)
   }
 

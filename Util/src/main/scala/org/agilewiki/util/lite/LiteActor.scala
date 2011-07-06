@@ -27,7 +27,6 @@ package lite
 
 import seq.LiteNavigableMapSeq
 
-
 class LiteActor(reactor: LiteReactor, _factory: ActorFactory)
   extends LiteResponder
   with LiteSrc {
@@ -64,6 +63,19 @@ class LiteActor(reactor: LiteReactor, _factory: ActorFactory)
       val v = extMsgFunctions.get(k)
       messageFunctions.put(k, v)
     }
+    val extSafeMsgFunctions = ext.safeMessageFunctions
+    var its = extSafeMsgFunctions.keySet.iterator
+    while (its.hasNext) {
+      val k = its.next
+      if (extSafeMsgFunctions.containsKey(k)) {
+        throw new IllegalArgumentException("bindSafe conflict on actor " +
+          getClass.getName +
+          "message " +
+          k.getName)
+      }
+      val v = extSafeMsgFunctions.get(k)
+      safeMessageFunctions.put(k, v)
+    }
   }
 
   override def response(msg: LiteRspMsg) {
@@ -80,6 +92,22 @@ class LiteActor(reactor: LiteReactor, _factory: ActorFactory)
     if (senderReactor == null && reactor != null) throw new UnsupportedOperationException(
       "synchronous actor can only send to another synchronous actor"
     )
+    if (safeMessageFunctions.size > 0) {
+      val reqSafeFunction = safeMessageFunctions.get(msg.getClass)
+      if (reqSafeFunction != null) {
+        val rp = responseWrapper(responseProcess orElse uncaughtMsg)
+        try {
+          reqSafeFunction(msg, rp, activeActor)
+        } catch {
+          case ex: TransparentException => throw new WrappedException(ex.getMessage)
+          case ex: Exception => {
+            ex.printStackTrace
+            rp(ErrorRsp(ex.toString))
+          }
+        }
+        return
+      }
+    }
     val reqFunction = messageFunctions.get(msg.getClass)
     if (reqFunction == null) throw new UnsupportedOperationException(msg.getClass.getName)
     if ((reactor == null || senderReactor.eq(reactor))) {
@@ -93,8 +121,9 @@ class LiteActor(reactor: LiteReactor, _factory: ActorFactory)
           rp(ErrorRsp(ex.toString))
         }
       }
+      return
     }
-    else senderReactor.send(actor, msg)(responseProcess orElse uncaughtMsg)
+    senderReactor.send(actor, msg)(responseProcess orElse uncaughtMsg)
   }
 
   private def responseWrapper(responseProcess: PartialFunction[Any, Unit]): PartialFunction[Any, Unit] = {

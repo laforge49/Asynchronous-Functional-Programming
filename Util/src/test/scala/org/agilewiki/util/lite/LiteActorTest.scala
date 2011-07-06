@@ -45,9 +45,9 @@ class LiteTestActor(reactor: LiteReactor, next: LiteActor)
 
 class LiteActorTest extends SpecificationWithJUnit {
   "nba" should {
-    "run 1000 * 1000" in {
+    "run 2000 * 500" in {
       val M = 1000
-      val N = 1000
+      val N = 900
       val actors = new Array[LiteActor](M)
       var j = 0
       while (j < M) {
