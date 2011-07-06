@@ -27,7 +27,7 @@ package lite
 
 import scala.actors.Reactor
 
-final case class LiteReactor
+class LiteReactor
   extends Reactor[LiteMsg]
   with SystemContextGetter {
   private var curMsg: LiteMsg = null

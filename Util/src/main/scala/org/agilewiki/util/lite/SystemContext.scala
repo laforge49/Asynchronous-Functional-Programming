@@ -90,7 +90,7 @@ class SystemContext(rootFactory: SystemComponentFactory)
 
   def factory(factoryClass: Class[_ <: SystemComponentFactory]) = componentFactories.get(factoryClass)
 
-  def component(factoryClass: Class[_ <: SystemComponentFactory]) = components.get(factoryClass)
+  @deprecated def component(factoryClass: Class[_ <: SystemComponentFactory]) = components.get(factoryClass)
 
   def start {
     var i = 0
