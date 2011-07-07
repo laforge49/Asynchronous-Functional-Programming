@@ -24,14 +24,24 @@
 package org.agilewiki
 package blip
 
-trait MsgDst extends SystemContextGetter {
+trait Responder extends SystemContextGetter {
   val messageFunctions =
     new java.util.TreeMap[Class[_ <: AnyRef], (AnyRef, Any => Unit) => Unit](new ClassComparator)
+
   protected def bind(reqClass: Class[_ <: AnyRef], reqFunction: (AnyRef, Any => Unit) => Unit) {
     messageFunctions.put(reqClass, reqFunction)
   }
 
   def mailbox: Mailbox
 
-  def newMailbox = mailbox.newMailbox
+  implicit def activeActor: ActiveActor
+
+  def id: ActorId
+
+  def factory: Factory
+
+  def factoryName = {
+    if (factory == null) null
+    else factory.name
+  }
 }

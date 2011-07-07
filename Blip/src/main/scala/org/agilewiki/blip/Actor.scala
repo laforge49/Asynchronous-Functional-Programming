@@ -24,12 +24,17 @@
 package org.agilewiki
 package blip
 
-class Actor(_mailbox: Mailbox, _factory: Factory) extends MsgDst with MsgSrc {
-  val mailbox = _mailbox
-  val factory = _factory
-  implicit val activeActor = ActiveActor(this)
+class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc {
+  override def mailbox = _mailbox
 
-  def systemContext = _mailbox.systemContext
+  override def factory = _factory
+
+  override implicit def activeActor = ActiveActor(this)
+  private var actorId: ActorId = null
+
+  override def id = actorId
+
+  override def systemContext: SystemContext = null
 
   var exceptionHandler: PartialFunction[Exception, Unit] = null
 

@@ -27,25 +27,11 @@ package blip
 import scala.actors.Reactor
 
 class Mailbox
-  extends Reactor[MailboxMsg]
-  with SystemContextGetter {
+  extends Reactor[MailboxMsg] {
 
   def isMailboxEmpty = mailboxSize == 0
 
   override def scheduler = super.scheduler
-
-  private var _systemContext: SystemContext = null
-
-  def systemContext(sc: SystemContext) {
-    _systemContext = sc
-  }
-
-  def systemContext = _systemContext
-
-  def newMailbox: Mailbox = {
-    if (_systemContext == null) new Mailbox
-    else _systemContext.newMailbox
-  }
 
   private var curMsg: MailboxMsg = null
 

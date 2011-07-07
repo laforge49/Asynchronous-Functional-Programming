@@ -33,7 +33,7 @@ class TimingTest extends SpecificationWithJUnit {
       println(Future(a, TimingReq("hello world")))
     }
     "do more" in {
-      val c = 1000000000
+      val c = 10000000
       val a = new RepeatingActor(null, new TimingActor(null, null), c)
       Future(a, TimingReq("hello world"))
       val t0 = System.currentTimeMillis
