@@ -41,12 +41,23 @@ class Future extends MsgSrc {
   }
 
   def sendAsynchronous(dst: Actor, msg: AnyRef) {
-    throw new UnsupportedOperationException
+    val req = new MailboxReq(dst, null, null, msg, this)
+    dst.mailbox.request(req)
   }
 
   def synchronousResponse(_rsp: Any) {
     rsp = _rsp
     satisfied = true
+  }
+
+  override def response(msg: MailboxRsp) {
+    synchronized{
+      if (!satisfied) {
+        rsp = msg.rsp
+        satisfied = true
+      }
+      notify()
+    }
   }
 
   @tailrec final def get: Any = {

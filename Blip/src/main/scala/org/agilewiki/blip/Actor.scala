@@ -111,4 +111,8 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc 
       }
     }
   }
+
+  override def response(msg: MailboxRsp) {
+    mailbox.response(msg)
+  }
 }
