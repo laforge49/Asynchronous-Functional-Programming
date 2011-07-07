@@ -31,16 +31,15 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends MsgDst with MsgSrc {
 
   def systemContext = _mailbox.systemContext
 
-  def exceptionHandler: PartialFunction[Exception, Unit] = {
-    case null =>
-  }
+  var exceptionHandler: PartialFunction[Exception, Unit] = null
 
   private def defaultExceptionHandler: PartialFunction[Exception, Unit] = {
     case ex => throw ex
   }
 
   private def processException(ex: Exception) {
-    exceptionHandler orElse defaultExceptionHandler
+    if (exceptionHandler == null) defaultExceptionHandler
+    else (exceptionHandler orElse defaultExceptionHandler)(ex)
   }
 
   def apply(msg: AnyRef)
@@ -60,7 +59,8 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends MsgDst with MsgSrc {
   def sendSynchronous(msg: AnyRef, responseFunction: Any => Unit) {
     val reqFunction = messageFunctions.get(msg.getClass)
     if (reqFunction == null) throw new UnsupportedOperationException(msg.getClass.getName)
-    try {
+    if (exceptionHandler == null) reqFunction(msg, responseFunction)
+    else try {
       reqFunction(msg, rsp => {
         try {
           responseFunction(rsp)
