@@ -27,17 +27,30 @@ package blip
 class ParallelAsyncActor(_mailbox: Mailbox, count: Int) extends Actor(_mailbox, null) {
   bind(classOf[TimingReq], timing)
   def timing(msg: AnyRef, rf: Any => Unit) {
+    var i = 4
     var a1 = new TimingActor(new Mailbox, null)
     var a2 = new RepeatingActor(new Mailbox, a1, count)
-    a2(msg)(rf)
+    a2(msg){ r =>
+      i -= 1
+      if (i == 0) rf(msg)
+    }
     a1 = new TimingActor(new Mailbox, null)
     a2 = new RepeatingActor(new Mailbox, a1, count)
-    a2(msg)(rf)
+    a2(msg){ r =>
+      i -= 1
+      if (i == 0) rf(msg)
+    }
     a1 = new TimingActor(new Mailbox, null)
     a2 = new RepeatingActor(new Mailbox, a1, count)
-    a2(msg)(rf)
+    a2(msg){ r =>
+      i -= 1
+      if (i == 0) rf(msg)
+    }
     a1 = new TimingActor(new Mailbox, null)
     a2 = new RepeatingActor(new Mailbox, a1, count)
-    a2(msg)(rf)
+    a2(msg){ r =>
+      i -= 1
+      if (i == 0) rf(msg)
+    }
   }
 }
