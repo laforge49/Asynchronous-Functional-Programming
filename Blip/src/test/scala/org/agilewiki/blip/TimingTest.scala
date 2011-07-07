@@ -28,18 +28,43 @@ import org.specs.SpecificationWithJUnit
 
 class TimingTest extends SpecificationWithJUnit {
   "TimingTest" should {
-    "do the hello world thing" in {
+    "synchronous hello world" in {
       val a = new TimingActor(null, null)
-      println(Future(a, TimingReq("hello world")))
+      println(Future(a, TimingReq("synchronous hello world")))
     }
-    "do more" in {
+    "asynchronous hello world" in {
+      val a = new TimingActor(new Mailbox, null)
+      println(Future(a, TimingReq("asynchronous hello world")))
+    }
+    "synchronous timing" in {
       val c = 10000000
-      val a = new RepeatingActor(null, new TimingActor(null, null), c)
+      val m = new Mailbox
+      val a1 = new TimingActor(m, null)
+      val a = new RepeatingActor(m, a1, c)
       Future(a, TimingReq("hello world"))
       val t0 = System.currentTimeMillis
       Future(a, TimingReq("hello world"))
       val t1 = System.currentTimeMillis
-      println("msgs per sec = "+(c * 2L * 1000L / (t1 - t0)))
+      println("sync msgs per sec = "+(c * 2L * 1000L / (t1 - t0)))
+    }
+    "quad-synchronous timing" in {
+      val c = 10000000
+      val m = new Mailbox
+      val a = new ParallelActor(m, c)
+      Future(a, TimingReq("hello world"))
+      val t0 = System.currentTimeMillis
+      Future(a, TimingReq("hello world"))
+      val t1 = System.currentTimeMillis
+      println("quad sync msgs per sec = "+(c * 4L * 2L * 1000L / (t1 - t0)))
+    }
+    "asynchronous timing" in {
+      val c = 1000000
+      val a = new RepeatingActor(new Mailbox, new TimingActor(new Mailbox, null), c)
+      Future(a, TimingReq("hello world"))
+      val t0 = System.currentTimeMillis
+      Future(a, TimingReq("hello world"))
+      val t1 = System.currentTimeMillis
+      println("async msgs per sec = "+(c * 2L * 1000L / (t1 - t0)))
     }
   }
 }
