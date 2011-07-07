@@ -29,10 +29,18 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc 
 
   override def factory = _factory
 
-  override implicit def activeActor = ActiveActor(this)
+  private val _activeActor = ActiveActor(this)
+
+  implicit def activeActor: ActiveActor = _activeActor
+
   private var actorId: ActorId = null
 
   override def id = actorId
+
+  def id(_id: ActorId) {
+    if (actorId != null) throw new UnsupportedOperationException
+    actorId = _id
+  }
 
   override def systemContext: SystemContext = null
 
@@ -57,8 +65,9 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc 
     if (srcMailbox == null && mailbox != null) throw new UnsupportedOperationException(
       "An immutable actor can only send to another immutable actor."
     )
-    if (mailbox == null || mailbox == srcMailbox) sendSynchronous(msg, responseFunction)
-    else sendAsynchronous(msg, responseFunction, srcActor)
+    if (safeMessageFunctions.containsKey(msg.getClass)) sendSafe(msg, responseFunction, srcActor)
+    else if (mailbox == null || mailbox == srcMailbox) sendSynchronous(msg, responseFunction)
+    else srcMailbox.send(this, msg)(responseFunction)
   }
 
   def sendSynchronous(msg: AnyRef, responseFunction: Any => Unit) {
@@ -82,7 +91,24 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc 
     }
   }
 
-  def sendAsynchronous(msg: AnyRef, responseFunction: Any => Unit, srcActor: ActiveActor) {
-    throw new UnsupportedOperationException
+  def sendSafe(msg: AnyRef, responseFunction: Any => Unit, srcActor: ActiveActor) {
+    val safeReqFunction = safeMessageFunctions.get(msg.getClass)
+    if (safeReqFunction == null) throw new UnsupportedOperationException(msg.getClass.getName)
+    if (exceptionHandler == null) safeReqFunction(msg, responseFunction, activeActor)
+    else try {
+      safeReqFunction(msg, rsp => {
+        try {
+          responseFunction(rsp)
+        } catch {
+          case ex: Exception => throw new TransparentException(ex)
+        }
+      }, activeActor)
+    } catch {
+      case ex: TransparentException => processException(ex.getCause.asInstanceOf[Exception])
+      case ex: Exception => {
+        ex.printStackTrace()
+        processException(ex)
+      }
+    }
   }
 }
