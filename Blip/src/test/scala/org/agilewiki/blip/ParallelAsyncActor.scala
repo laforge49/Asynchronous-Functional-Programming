@@ -24,24 +24,20 @@
 package org.agilewiki
 package blip
 
-class ParallelActor(_mailbox: Mailbox, count: Int) extends Actor(_mailbox, null) {
+class ParallelAsyncActor(_mailbox: Mailbox, count: Int) extends Actor(_mailbox, null) {
   bind(classOf[TimingReq], timing)
   def timing(msg: AnyRef, rf: Any => Unit) {
-    var m1 = new Mailbox
-    var a1 = new TimingActor(m1, null)
-    var a2 = new RepeatingActor(m1, a1, count)
+    var a1 = new TimingActor(new Mailbox, null)
+    var a2 = new RepeatingActor(new Mailbox, a1, count)
     a2(msg)(rf)
-    m1 = new Mailbox
-    a1 = new TimingActor(m1, null)
-    a2 = new RepeatingActor(m1, a1, count)
+    a1 = new TimingActor(new Mailbox, null)
+    a2 = new RepeatingActor(new Mailbox, a1, count)
     a2(msg)(rf)
-    m1 = new Mailbox
-    a1 = new TimingActor(m1, null)
-    a2 = new RepeatingActor(m1, a1, count)
+    a1 = new TimingActor(new Mailbox, null)
+    a2 = new RepeatingActor(new Mailbox, a1, count)
     a2(msg)(rf)
-    m1 = new Mailbox
-    a1 = new TimingActor(m1, null)
-    a2 = new RepeatingActor(m1, a1, count)
+    a1 = new TimingActor(new Mailbox, null)
+    a2 = new RepeatingActor(new Mailbox, a1, count)
     a2(msg)(rf)
   }
 }
