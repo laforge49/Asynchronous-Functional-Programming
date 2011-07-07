@@ -27,7 +27,6 @@ class B(mb: Mailbox) extends Actor(mb, null) {
   }
 }
 
-
 class BimodalTest extends SpecificationWithJUnit {
   "Bimodal" should {
     "print differently" in {
