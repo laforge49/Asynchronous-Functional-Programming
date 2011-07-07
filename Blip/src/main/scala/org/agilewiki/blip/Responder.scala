@@ -32,6 +32,16 @@ trait Responder extends SystemContextGetter {
     messageFunctions.put(reqClass, reqFunction)
   }
 
+  val safeMessageFunctions =
+    new java.util.TreeMap[Class[_ <: AnyRef], (AnyRef, Any => Unit, ActiveActor) => Unit](
+      new ClassComparator
+    )
+
+  protected def bindSafe(reqClass: Class[_ <: AnyRef],
+                         safeReqFunction: (AnyRef, Any => Unit, ActiveActor) => Unit) {
+    safeMessageFunctions.put(reqClass, safeReqFunction)
+  }
+
   def mailbox: Mailbox
 
   implicit def activeActor: ActiveActor
