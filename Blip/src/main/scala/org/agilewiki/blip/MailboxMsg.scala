@@ -34,10 +34,12 @@ final class MailboxReq(dst: Actor,
                        rf: Any => Unit,
                        oldReq: MailboxReq,
                        data: AnyRef,
-                       src: MsgSrc)
+                       src: MsgSrc,
+                       srcEH: Exception => Unit)
   extends MailboxMsg(rf, oldReq) {
   var active = true
   def sender = src
+  def senderExceptionHandler = srcEH
   def target = dst
   def req = data
 }

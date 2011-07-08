@@ -51,12 +51,16 @@ class Mailbox
         case msg: MailboxReq => {
           curMsg = msg
           val target = msg.target
+          target.exceptionHandler = null
           val reqFunction = target.messageFunctions.get(msg.req.getClass)
           reqFunction(msg.req, reply)
         }
         case msg: MailboxRsp => {
           curMsg = msg
           val sender = currentRequestMessage.sender
+          sender match {
+            case a: Actor => a.exceptionHandler = currentRequestMessage.senderExceptionHandler
+          }
           msg.responseFunction(msg.rsp)
         }
         case msg => {
@@ -72,7 +76,6 @@ class Mailbox
       reply(ex.getCause)
     }
     case ex: Exception => {
-      ex.printStackTrace
       reply(ex)
     }
   }
@@ -87,7 +90,8 @@ class Mailbox
       responseFunction,
       oldReq,
       content,
-      sender)
+      sender,
+      sender.exceptionHandler)
     targetMailbox.request(req)
   }
 

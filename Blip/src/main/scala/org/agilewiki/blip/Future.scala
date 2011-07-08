@@ -41,7 +41,7 @@ class Future extends MsgSrc {
   }
 
   def sendAsynchronous(dst: Actor, msg: AnyRef) {
-    val req = new MailboxReq(dst, null, null, msg, this)
+    val req = new MailboxReq(dst, null, null, msg, this, null)
     dst.mailbox.request(req)
   }
 

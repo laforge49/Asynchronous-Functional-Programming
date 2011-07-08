@@ -26,16 +26,28 @@ package blip
 
 trait Responder extends SystemContextGetter {
   val messageFunctions =
-    new java.util.TreeMap[Class[_ <: AnyRef], (AnyRef, Any => Unit) => Unit](new ClassComparator)
+    new java.util.HashMap[Class[_ <: AnyRef], (AnyRef, Any => Unit) => Unit]
+  lazy val sortedMessageFunctions = {
+    val smf = new java.util.TreeMap[Class[_ <: AnyRef], (AnyRef, Any => Unit) => Unit](
+      new ClassComparator
+    )
+    smf.putAll(messageFunctions)
+    smf
+  }
 
-  protected def bind(reqClass: Class[_ <: AnyRef], reqFunction: (AnyRef, Any => Unit) => Unit) {
-    messageFunctions.put(reqClass, reqFunction)
+  protected def bind(reqClass: Class[_ <: AnyRef], messageFunction: (AnyRef, Any => Unit) => Unit) {
+    messageFunctions.put(reqClass, messageFunction)
   }
 
   val safeMessageFunctions =
-    new java.util.TreeMap[Class[_ <: AnyRef], (AnyRef, Any => Unit, ActiveActor) => Unit](
+    new java.util.HashMap[Class[_ <: AnyRef], (AnyRef, Any => Unit, ActiveActor) => Unit]
+  lazy val sortedSafeMessageFunctions = {
+    val ssmf = new java.util.TreeMap[Class[_ <: AnyRef], (AnyRef, Any => Unit, ActiveActor) => Unit](
       new ClassComparator
     )
+    ssmf.putAll(safeMessageFunctions)
+    ssmf
+  }
 
   protected def bindSafe(reqClass: Class[_ <: AnyRef],
                          safeReqFunction: (AnyRef, Any => Unit, ActiveActor) => Unit) {
@@ -53,5 +65,27 @@ trait Responder extends SystemContextGetter {
   def factoryName = {
     if (factory == null) null
     else factory.name
+  }
+
+  def exceptionHandler(msg: AnyRef,
+                       responseFunction: Any => Unit,
+                       messageFunction: (AnyRef, Any => Unit) => Unit)
+                      (eh: Exception => Unit) {
+    if (mailbox == null) throw
+      new UnsupportedOperationException("Immutable actors can not use excepton handlers")
+    val actor = activeActor.actor
+    actor.exceptionHandler = eh
+    try {
+      messageFunction(msg, rsp => {
+        try {
+          responseFunction(rsp)
+        } catch {
+          case ex: Exception => throw new TransparentException(ex)
+        }
+      })
+    } catch {
+      case ex: TransparentException => actor.processException(ex.getCause.asInstanceOf[Exception])
+      case ex: Exception => actor.processException(ex)
+    }
   }
 }

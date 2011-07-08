@@ -44,15 +44,11 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc 
 
   override def systemContext: SystemContext = null
 
-  var exceptionHandler: PartialFunction[Exception, Unit] = null
+  var exceptionHandler: Exception => Unit = null
 
-  private def defaultExceptionHandler: PartialFunction[Exception, Unit] = {
-    case ex => throw ex
-  }
-
-  private def processException(ex: Exception) {
-    if (exceptionHandler == null) defaultExceptionHandler
-    else (exceptionHandler orElse defaultExceptionHandler)(ex)
+  def processException(ex: Exception) {
+    if (exceptionHandler == null || ex.isInstanceOf[TransparentException]) throw ex
+    exceptionHandler(ex)
   }
 
   def apply(msg: AnyRef)
@@ -73,43 +69,14 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc 
   def sendSynchronous(msg: AnyRef, responseFunction: Any => Unit) {
     val reqFunction = messageFunctions.get(msg.getClass)
     if (reqFunction == null) throw new UnsupportedOperationException(msg.getClass.getName)
-    if (exceptionHandler == null) reqFunction(msg, responseFunction)
-    else try {
-      reqFunction(msg, rsp => {
-        try {
-          responseFunction(rsp)
-        } catch {
-          case ex: Exception => throw new TransparentException(ex)
-        }
-      })
-    } catch {
-      case ex: TransparentException => processException(ex.getCause.asInstanceOf[Exception])
-      case ex: Exception => {
-        ex.printStackTrace()
-        processException(ex)
-      }
-    }
+    exceptionHandler = null
+    reqFunction(msg, responseFunction)
   }
 
   def sendSafe(msg: AnyRef, responseFunction: Any => Unit, srcActor: ActiveActor) {
     val safeReqFunction = safeMessageFunctions.get(msg.getClass)
     if (safeReqFunction == null) throw new UnsupportedOperationException(msg.getClass.getName)
-    if (exceptionHandler == null) safeReqFunction(msg, responseFunction, activeActor)
-    else try {
-      safeReqFunction(msg, rsp => {
-        try {
-          responseFunction(rsp)
-        } catch {
-          case ex: Exception => throw new TransparentException(ex)
-        }
-      }, activeActor)
-    } catch {
-      case ex: TransparentException => processException(ex.getCause.asInstanceOf[Exception])
-      case ex: Exception => {
-        ex.printStackTrace()
-        processException(ex)
-      }
-    }
+    safeReqFunction(msg, responseFunction, activeActor)
   }
 
   override def response(msg: MailboxRsp) {
