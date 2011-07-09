@@ -11,8 +11,12 @@ class S(mailbox: Mailbox) extends Actor(mailbox, null) {
   private def se(msg: AnyRef, rf: Any => Unit) {
     throw new IllegalStateException
   }
-  bind(classOf[SNE], sne)
-  private def sne(msg: AnyRef, rf: Any => Unit) {rf(null)}
+  bind(classOf[SNE], {(msg, rf) =>
+    exceptionHandler(msg, rf, se){ex =>
+      println("S got exception "+ex.toString)
+      rf(null)
+    }
+  })
 }
 
 case class AsyncServerEx()
@@ -22,47 +26,47 @@ case class SyncRspEx()
 
 class D extends Actor(new Mailbox, null) {
   bind(classOf[AsyncServerEx],{(msg, rf) =>
-    exceptionHandler(msg, rf, asyncServerEx){exceptionHandler =>
-      println("got exception")
+    exceptionHandler(msg, rf, asyncServerEx){ex =>
+      println("D got exception "+ex.toString)
       rf(null)
     }
   })
   def asyncServerEx(msg: AnyRef, rf: Any => Unit) {
     val s = new S(new Mailbox)
-    s(SE())(rf)
+    s(SE())(rsp => rf)
   }
 
   bind(classOf[SyncServerEx],{(msg, rf) =>
-    exceptionHandler(msg, rf, syncServerEx){exceptionHandler =>
-      println("got exception")
+    exceptionHandler(msg, rf, syncServerEx){ex =>
+      println("D got exception "+ex.toString)
       rf(null)
     }
   })
   def syncServerEx(msg: AnyRef, rf: Any => Unit) {
     val s = new S(mailbox)
-    s(SE())(rf)
+    s(SE())(rsp => rf)
   }
 
   bind(classOf[AsyncRspEx],{(msg, rf) =>
-    exceptionHandler(msg, rf, asyncRspEx){exceptionHandler =>
-      println("got exception")
+    exceptionHandler(msg, rf, asyncRspEx){ex =>
+      println("D got exception "+ex.toString)
       rf(null)
     }
   })
   def asyncRspEx(msg: AnyRef, rf: Any => Unit) {
     val s = new S(new Mailbox)
-    s(SNE()){throw new IllegalAccessException}
+    s(SNE()){rsp => throw new IllegalAccessException}
   }
 
   bind(classOf[SyncRspEx],{(msg, rf) =>
-    exceptionHandler(msg, rf, syncRspEx){exceptionHandler =>
-      println("got exception")
+    exceptionHandler(msg, rf, syncRspEx){ex =>
+      println("D got exception "+ex.toString)
       rf(null)
     }
   })
   def syncRspEx(msg: AnyRef, rf: Any => Unit) {
     val s = new S(mailbox)
-    s(SNE()){throw new IllegalAccessException}
+    s(SNE()){rsp => throw new IllegalAccessException}
   }
 }
 
