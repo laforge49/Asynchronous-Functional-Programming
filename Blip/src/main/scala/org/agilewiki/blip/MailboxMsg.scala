@@ -25,9 +25,11 @@ package org.agilewiki
 package blip
 
 sealed abstract class MailboxMsg(rf: Any => Unit,
-                                 oldReq: MailboxReq) {
+                                 oldReq: MailboxReq,
+                                 sef: Exception => Unit) {
   def responseFunction = rf
   def oldRequest = oldReq
+  def senderExceptionFunction = sef
 }
 
 final class MailboxReq(dst: Actor,
@@ -35,18 +37,18 @@ final class MailboxReq(dst: Actor,
                        oldReq: MailboxReq,
                        data: AnyRef,
                        src: MsgSrc,
-                       srcEH: Exception => Unit)
-  extends MailboxMsg(rf, oldReq) {
+                       srcEF: Exception => Unit)
+  extends MailboxMsg(rf, oldReq, srcEF) {
   var active = true
   def sender = src
-  def senderExceptionHandler = srcEH
   def target = dst
   def req = data
 }
 
 final class MailboxRsp(rf: Any => Unit,
                        oldReq: MailboxReq,
-                       data: Any)
-  extends MailboxMsg(rf, oldReq) {
+                       data: Any,
+                       srcEF: Exception => Unit)
+  extends MailboxMsg(rf, oldReq, srcEF) {
   def rsp = data
 }

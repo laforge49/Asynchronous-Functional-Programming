@@ -37,7 +37,7 @@ class TimingTest extends SpecificationWithJUnit {
       println(Future(a, TimingReq("asynchronous hello world")))
     }
     "synchronous timing" in {
-      val c = 10000000
+      val c = 10000//0000
       val m = new Mailbox
       val a1 = new TimingActor(m, null)
       val a = new RepeatingActor(m, a1, c)
@@ -48,7 +48,7 @@ class TimingTest extends SpecificationWithJUnit {
       println("sync msgs per sec = "+(c * 2L * 1000L / (t1 - t0)))
     }
     "quad-synchronous timing" in {
-      val c = 10000000
+      val c = 10000//0000
       val m = new Mailbox
       val a = new ParallelSyncActor(m, c)
       Future(a, TimingReq("hello world"))
@@ -58,7 +58,7 @@ class TimingTest extends SpecificationWithJUnit {
       println("quad sync msgs per sec = "+(c * 4L * 2L * 1000L / (t1 - t0)))
     }
     "asynchronous timing" in {
-      val c = 10000
+      val c = 1000//00
       val m = new Mailbox
       val a = new ParallelAsyncActor(m, c)
       Future(a, TimingReq("hello world"))

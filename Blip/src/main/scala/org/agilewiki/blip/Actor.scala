@@ -44,13 +44,6 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc 
 
   override def systemContext: SystemContext = null
 
-  var exceptionHandler: Exception => Unit = null
-
-  def processException(ex: Exception) {
-    if (exceptionHandler == null || ex.isInstanceOf[TransparentException]) throw ex
-    exceptionHandler(ex)
-  }
-
   def apply(msg: AnyRef)
            (responseFunction: Any => Unit)
            (implicit srcActor: ActiveActor) {
@@ -69,7 +62,6 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc 
   def sendSynchronous(msg: AnyRef, responseFunction: Any => Unit) {
     val reqFunction = messageFunctions.get(msg.getClass)
     if (reqFunction == null) throw new UnsupportedOperationException(msg.getClass.getName)
-    exceptionHandler = null
     reqFunction(msg, responseFunction)
   }
 

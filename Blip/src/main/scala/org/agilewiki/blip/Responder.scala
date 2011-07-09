@@ -70,11 +70,12 @@ trait Responder extends SystemContextGetter {
   def exceptionHandler(msg: AnyRef,
                        responseFunction: Any => Unit,
                        messageFunction: (AnyRef, Any => Unit) => Unit)
-                      (eh: Exception => Unit) {
+                      (exceptionFunction: Exception => Unit) {
     if (mailbox == null) throw
       new UnsupportedOperationException("Immutable actors can not use excepton handlers")
     val actor = activeActor.actor
-    actor.exceptionHandler = eh
+    val oldExceptionFunction = mailbox.exceptionFunction
+    mailbox.exceptionFunction = exceptionFunction
     try {
       messageFunction(msg, rsp => {
         try {
@@ -84,8 +85,13 @@ trait Responder extends SystemContextGetter {
         }
       })
     } catch {
-      case ex: TransparentException => actor.processException(ex.getCause.asInstanceOf[Exception])
-      case ex: Exception => actor.processException(ex)
+      case ex: TransparentException => {
+        exceptionFunction(ex.getCause.asInstanceOf[Exception])
+      }
+      case ex: Exception =>
+        exceptionFunction(ex)
+    } finally {
+      mailbox.exceptionFunction = oldExceptionFunction
     }
   }
 }

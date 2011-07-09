@@ -44,39 +44,43 @@ class Mailbox
       curMsg.asInstanceOf[MailboxRsp].oldRequest
   }
 
+  var exceptionFunction: Exception => Unit = null
+
+  def reqExceptionFunction(ex: Exception) {reply(ex)}
+
   override def act {
     loop{
       react{
-        case msg: Exception => throw msg
         case msg: MailboxReq => {
           curMsg = msg
           val target = msg.target
-          target.exceptionHandler = null
+          exceptionFunction = reqExceptionFunction
           val reqFunction = target.messageFunctions.get(msg.req.getClass)
-          reqFunction(msg.req, reply)
+          try {
+            reqFunction(msg.req, reply)
+          } catch {
+            case ex: Exception => {
+              reply(ex)
+            }
+          }
         }
         case msg: MailboxRsp => {
           curMsg = msg
-          val sender = currentRequestMessage.sender
-          sender match {
-            case a: Actor => a.exceptionHandler = currentRequestMessage.senderExceptionHandler
+          exceptionFunction = msg.senderExceptionFunction
+          if (msg.rsp.isInstanceOf[Exception]) {
+            exceptionFunction(msg.rsp.asInstanceOf[Exception])
           }
-          msg.responseFunction(msg.rsp)
-        }
-        case msg => {
-          curMsg = null
-          throw new IllegalArgumentException
+          else {
+            try {
+              msg.responseFunction(msg.rsp)
+            } catch {
+              case ex: Exception => {
+                exceptionFunction(ex)
+              }
+            }
+          }
         }
       }
-    }
-  }
-
-  override def exceptionHandler: PartialFunction[Exception, Unit] = {
-    case ex: TransparentException => {
-      reply(ex.getCause)
-    }
-    case ex: Exception => {
-      reply(ex)
     }
   }
 
@@ -91,7 +95,7 @@ class Mailbox
       oldReq,
       content,
       sender,
-      sender.exceptionHandler)
+      exceptionFunction)
     targetMailbox.request(req)
   }
 
@@ -103,7 +107,8 @@ class Mailbox
     val rsp = new MailboxRsp(
       req.responseFunction,
       req.oldRequest,
-      content)
+      content,
+      req.senderExceptionFunction)
     sender.response(rsp)
   }
 

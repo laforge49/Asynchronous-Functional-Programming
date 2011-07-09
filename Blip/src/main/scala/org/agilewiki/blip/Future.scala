@@ -51,7 +51,7 @@ class Future extends MsgSrc {
   }
 
   override def response(msg: MailboxRsp) {
-    synchronized{
+    synchronized {
       if (!satisfied) {
         rsp = msg.rsp
         satisfied = true
