@@ -26,32 +26,32 @@ package blip
 
 import java.util.UUID
 
-object ActorName {
-  def apply(s: String): ActorName = {
+object Name {
+  def apply(s: String): Name = {
     s match {
-      case res if res.startsWith("LAID:") => ActorId(res)
-      case res if res.startsWith("FACT:") => FactoryName(res)
+      case res if res.startsWith("AID:") => ActorId(res)
+      case res if res.startsWith("FID:") => FactoryId(res)
       case _ => throw new IllegalArgumentException("Wrong resource name format: " + s)
     }
   }
 }
 
-sealed abstract class ActorName {
+sealed abstract class Name {
   def value:String
 }
 
-case class ActorId(id: String) extends ActorName {
-  override def toString = "LAID:"+ value
-  override def value = if(id.startsWith("LAID:")) id.substring(5) else id
+case class ActorId(id: String) extends Name {
+  override def toString = "AID:"+ value
+  override def value = if(id.startsWith("AID:")) id.substring(4) else id
 }
 
 object ActorId {
   def generate = ActorId(UUID.randomUUID.toString)
 }
 
-case class FactoryId(name: String) extends ActorName {
+case class FactoryId(name: String) extends Name {
 
-  override def value = if(name.startsWith("FACT:")) name.substring(5) else name
+  override def value = if(name.startsWith("FID:")) name.substring(4) else name
 
-  override def toString = "FACT:"+value
+  override def toString = "FID:"+value
 }
