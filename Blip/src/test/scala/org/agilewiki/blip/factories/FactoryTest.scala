@@ -5,7 +5,7 @@ import org.specs.SpecificationWithJUnit
 
 abstract class UserFactory(id: FactoryId) extends Factory(id) {
   def accountName: String
-  override def instantiate(mailbox: Mailbox) = {
+  override protected def instantiate(mailbox: Mailbox) = {
     val actor = new UserActor(mailbox, this)
     actor.singleton
     actor
