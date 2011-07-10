@@ -26,7 +26,7 @@ class UserActor(mailbox: Mailbox, userFactory: UserFactory) extends Actor(mailbo
 class FactoryTest extends SpecificationWithJUnit {
   "FactoryTest" should {
     "create and configure" in {
-      val fred = (new FredFactory).instantiate(null)
+      val fred = (new FredFactory).newActor(null)
       println("actor id = " + fred.id.value)
       println("account name = " + Future(fred, AccountName()))
     }

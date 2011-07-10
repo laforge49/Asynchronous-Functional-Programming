@@ -25,8 +25,6 @@ package org.agilewiki
 package blip
 
 class SystemServices(mailbox: Mailbox, factory: SystemServicesFactory) extends Actor(mailbox, factory) {
-  override def systemServices = this
-
   private val systemComponentList = new java.util.ArrayList[SystemComponent]
 
   override def addComponent(componentFactory: ComponentFactory) = {

@@ -55,6 +55,7 @@ class SystemServicesFactory(factoryId: FactoryId, rootSystemComponentFactory: Sy
 
   def instantiate(mailbox: Mailbox) = {
     val systemServices = new SystemServices(mailbox, this)
+    systemServices.systemServices(systemServices)
     systemServices.singleton
     val fit = componentFactories.keySet.iterator
     while (fit.hasNext) {

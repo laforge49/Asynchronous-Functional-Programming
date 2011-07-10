@@ -51,7 +51,11 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc 
     _isSingleton = true
   }
 
-  override def systemServices: SystemServices = null
+  var _systemServices: SystemServices = null
+
+  def systemServices(systemServices: SystemServices) {_systemServices = systemServices}
+
+  override def systemServices: SystemServices = _systemServices
 
   def apply(msg: AnyRef)
            (responseFunction: Any => Unit)

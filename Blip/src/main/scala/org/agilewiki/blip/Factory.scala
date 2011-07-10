@@ -26,5 +26,12 @@ package blip
 
 abstract class Factory(_id: FactoryId) {
   def id = _id
-  def instantiate(mailbox: Mailbox): Actor
+  private var systemServices: SystemServices = null
+  def systemServices(_systemServices: SystemServices) {systemServices = _systemServices}
+  protected def instantiate(mailbox: Mailbox): Actor
+  def newActor(mailbox: Mailbox) = {
+    val actor = instantiate(mailbox)
+    actor.systemServices(systemServices)
+    actor
+  }
 }
