@@ -62,9 +62,9 @@ trait Responder extends SystemContextGetter {
 
   def factory: Factory
 
-  def factoryName = {
+  def factoryId = {
     if (factory == null) null
-    else factory.name
+    else factory.id
   }
 
   def exceptionHandler(msg: AnyRef,

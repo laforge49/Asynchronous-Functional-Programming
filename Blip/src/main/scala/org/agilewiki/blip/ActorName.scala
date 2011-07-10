@@ -24,6 +24,8 @@
 package org.agilewiki
 package blip
 
+import java.util.UUID
+
 object ActorName {
   def apply(s: String): ActorName = {
     s match {
@@ -43,7 +45,11 @@ case class ActorId(id: String) extends ActorName {
   override def value = if(id.startsWith("LAID:")) id.substring(5) else id
 }
 
-case class FactoryName(name: String) extends ActorName {
+object ActorId {
+  def generate = ActorId(UUID.randomUUID.toString)
+}
+
+case class FactoryId(name: String) extends ActorName {
 
   override def value = if(name.startsWith("FACT:")) name.substring(5) else name
 

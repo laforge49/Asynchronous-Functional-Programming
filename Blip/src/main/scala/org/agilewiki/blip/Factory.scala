@@ -24,7 +24,7 @@
 package org.agilewiki
 package blip
 
-abstract class Factory(_name: FactoryName) {
-  def name = _name
+abstract class Factory(_id: FactoryId) {
+  def id = _id
   def instantiate(mailbox: Mailbox): Actor
 }

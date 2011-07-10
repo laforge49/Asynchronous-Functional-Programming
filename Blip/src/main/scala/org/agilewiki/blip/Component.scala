@@ -24,49 +24,41 @@
 package org.agilewiki
 package blip
 
-trait Component extends Responder {
-  private var _activeActor: ActiveActor = null
-
-  def activeActor(aa: ActiveActor) {
-    if (_activeActor != null) throw new UnsupportedOperationException
-    _activeActor = aa
+class Component(actor: Actor) extends Responder {
+  val actorMsgFunctions = actor.messageFunctions
+  var it = messageFunctions.keySet.iterator
+  while (it.hasNext) {
+    val k = it.next
+    if (actorMsgFunctions.containsKey(k)) {
+      throw new IllegalArgumentException("bind conflict on actor " +
+        getClass.getName +
+        "message " +
+        k.getName)
+    }
+    val v = messageFunctions.get(k)
+    actorMsgFunctions.put(k, v)
+  }
+  val safeActorMsgFunctions = actor.safeMessageFunctions
+  var its = safeMessageFunctions.keySet.iterator
+  while (its.hasNext) {
+    val k = its.next
+    if (safeActorMsgFunctions.containsKey(k)) {
+      throw new IllegalArgumentException("bindSafe conflict on actor " +
+        getClass.getName +
+        "message " +
+        k.getName)
+    }
+    val v = safeMessageFunctions.get(k)
+    safeActorMsgFunctions.put(k, v)
   }
 
-  implicit def activeActor = _activeActor
+  override implicit def activeActor = actor.activeActor
 
-  override def mailbox = activeActor.actor.mailbox
+  override def mailbox = actor.mailbox
 
-  override def id = activeActor.actor.id
+  override def id = actor.id
 
-  override def factory = activeActor.actor.factory
+  override def factory = actor.factory
 
-  def aggregate(actor: Actor) {
-    activeActor(actor.activeActor)
-    val actorMsgFunctions = actor.messageFunctions
-    var it = messageFunctions.keySet.iterator
-    while (it.hasNext) {
-      val k = it.next
-      if (actorMsgFunctions.containsKey(k)) {
-        throw new IllegalArgumentException("bind conflict on actor " +
-          getClass.getName +
-          "message " +
-          k.getName)
-      }
-      val v = messageFunctions.get(k)
-      actorMsgFunctions.put(k, v)
-    }
-    val safeActorMsgFunctions = actor.safeMessageFunctions
-    var its = safeMessageFunctions.keySet.iterator
-    while (its.hasNext) {
-      val k = its.next
-      if (safeActorMsgFunctions.containsKey(k)) {
-        throw new IllegalArgumentException("bindSafe conflict on actor " +
-          getClass.getName +
-          "message " +
-          k.getName)
-      }
-      val v = safeMessageFunctions.get(k)
-      safeActorMsgFunctions.put(k, v)
-    }
-  }
+  override def systemContext = actor.systemContext
 }
