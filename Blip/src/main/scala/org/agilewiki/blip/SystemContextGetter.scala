@@ -25,5 +25,5 @@ package org.agilewiki
 package blip
 
 trait SystemContextGetter {
-  implicit def systemContext: SystemContext
+  implicit def systemServices: SystemServices
 }

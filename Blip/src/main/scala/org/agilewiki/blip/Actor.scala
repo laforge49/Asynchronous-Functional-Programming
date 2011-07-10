@@ -42,7 +42,7 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc 
     actorId = _id
   }
 
-  override def systemContext: SystemContext = null
+  override def systemServices: SystemServices = null
 
   def apply(msg: AnyRef)
            (responseFunction: Any => Unit)

@@ -60,5 +60,5 @@ class Component(actor: Actor) extends Responder {
 
   override def factory = actor.factory
 
-  override def systemContext = actor.systemContext
+  override def systemServices = actor.systemServices
 }
