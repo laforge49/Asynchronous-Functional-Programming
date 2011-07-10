@@ -3,21 +3,21 @@ package factories
 
 import org.specs.SpecificationWithJUnit
 
-abstract class SomeFactory(id: FactoryId) extends Factory(id) {
+abstract class UserFactory(id: FactoryId) extends Factory(id) {
   def accountName: String
-  override def instantiate(mailbox: Mailbox) = new SomeActor(mailbox, this)
+  override def instantiate(mailbox: Mailbox) = new UserActor(mailbox, this)
 }
 
-class FredFactory extends SomeFactory(FactoryId("Fred")) {
+class FredFactory extends UserFactory(FactoryId("Fred")) {
   override def accountName = "fredforall"
 }
 
 case class AccountName()
 
-class SomeActor(mailbox: Mailbox, someFactory: SomeFactory) extends Actor(mailbox, someFactory) {
+class UserActor(mailbox: Mailbox, userFactory: UserFactory) extends Actor(mailbox, userFactory) {
   id(ActorId(factory.id.value))
   bind(classOf[AccountName], accountName)
-  private def accountName(msg: AnyRef, rf: Any => Unit) {rf(someFactory.accountName)}
+  private def accountName(msg: AnyRef, rf: Any => Unit) {rf(userFactory.accountName)}
 }
 
 class FactoryTest extends SpecificationWithJUnit {
