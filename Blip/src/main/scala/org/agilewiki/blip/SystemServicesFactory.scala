@@ -24,6 +24,44 @@
 package org.agilewiki
 package blip
 
-class SystemServicesFactory(factoryId: FactoryId) extends Factory(factoryId) {
-  def instantiate(mailbox: Mailbox) = new SystemServices(mailbox, this)
+class SystemServicesFactory(factoryId: FactoryId, rootSystemComponentFactory: SystemComponentFactory)
+  extends Factory(factoryId) {
+  private val componentFactories =
+    new java.util.LinkedHashMap[Class[_ <: SystemComponentFactory], SystemComponentFactory]
+
+  include(rootSystemComponentFactory, new scala.collection.immutable.HashSet)
+
+  private def include(factory: SystemComponentFactory,
+                      _dependent: scala.collection.immutable.Set[Class[_ <: SystemComponentFactory]]) {
+    val factoryClass = factory.getClass.asInstanceOf[Class[_ <: SystemComponentFactory]]
+    val dependent = _dependent + (factoryClass)
+    val requiredFactoryClasses = factory.requiredFactoryClasses
+    var i = 0
+    while (i < requiredFactoryClasses.size) {
+      val requiredFactoryClass = requiredFactoryClasses.get(i)
+      if (dependent.contains(requiredFactoryClass)) throw new IllegalArgumentException("circular dependency")
+      if (!componentFactories.containsKey(requiredFactoryClass)) {
+        val requiredFactory = requiredFactoryClass.newInstance
+        include(requiredFactory, dependent)
+      }
+      i += 1
+    }
+    componentFactories.put(factory.getClass.asInstanceOf[Class[SystemComponentFactory]], factory)
+    factory.configure(this)
+  }
+
+  def componentFactory(factoryClass: Class[_ <: SystemComponentFactory]) =
+    componentFactories.get(factoryClass)
+
+  def instantiate(mailbox: Mailbox) = {
+    val systemServices = new SystemServices(mailbox, this)
+    systemServices.singleton
+    val fit = componentFactories.keySet.iterator
+    while (fit.hasNext) {
+      val componentFactoryClass = fit.next
+      val componentFactory = componentFactories.get(componentFactoryClass)
+      systemServices.addComponent(componentFactory)
+    }
+    systemServices
+  }
 }
