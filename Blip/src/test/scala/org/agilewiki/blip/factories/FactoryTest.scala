@@ -15,7 +15,7 @@ class FredFactory extends UserFactory(FactoryId("Fred")) {
 case class AccountName()
 
 class UserActor(mailbox: Mailbox, userFactory: UserFactory) extends Actor(mailbox, userFactory) {
-  id(ActorId(factory.id.value))
+  id(ActorId(factoryId.value))
   bind(classOf[AccountName], accountName)
   private def accountName(msg: AnyRef, rf: Any => Unit) {rf(userFactory.accountName)}
 }
