@@ -24,19 +24,6 @@
 package org.agilewiki
 package blip
 
-class Component(actor: Actor, _componentFactory: ComponentFactory) extends Responder {
-
-  def componentFactory = _componentFactory
-
-  override implicit def activeActor = actor.activeActor
-
-  override def mailbox = actor.mailbox
-
-  override def id = actor.id
-
-  def isSingleton = actor.isSingleton
-
-  override def factory = actor.factory
-
-  override def systemServices = actor.systemServices
+abstract class ComponentFactory {
+  def instantiate: Component
 }

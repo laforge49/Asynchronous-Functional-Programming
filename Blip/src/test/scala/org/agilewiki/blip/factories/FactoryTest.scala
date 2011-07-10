@@ -5,7 +5,11 @@ import org.specs.SpecificationWithJUnit
 
 abstract class UserFactory(id: FactoryId) extends Factory(id) {
   def accountName: String
-  override def instantiate(mailbox: Mailbox) = new UserActor(mailbox, this)
+  override def instantiate(mailbox: Mailbox) = {
+    val actor = new UserActor(mailbox, this)
+    actor.singleton
+    actor
+  }
 }
 
 class FredFactory extends UserFactory(FactoryId("Fred")) {
@@ -15,7 +19,6 @@ class FredFactory extends UserFactory(FactoryId("Fred")) {
 case class AccountName()
 
 class UserActor(mailbox: Mailbox, userFactory: UserFactory) extends Actor(mailbox, userFactory) {
-  id(ActorId(factoryId.value))
   bind(classOf[AccountName], accountName)
   private def accountName(msg: AnyRef, rf: Any => Unit) {rf(userFactory.accountName)}
 }

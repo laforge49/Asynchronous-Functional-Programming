@@ -24,6 +24,10 @@
 package org.agilewiki
 package blip
 
-trait SystemContextGetter {
-  implicit def systemServices: SystemServices
+class SystemComponent(systemServices: SystemServices, systemComponentFactory: SystemComponentFactory)
+  extends Component(systemServices, systemComponentFactory) {
+
+  def start {}
+
+  def close {}
 }

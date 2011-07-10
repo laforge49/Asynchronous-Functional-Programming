@@ -24,19 +24,12 @@
 package org.agilewiki
 package blip
 
-class Component(actor: Actor, _componentFactory: ComponentFactory) extends Responder {
+abstract class SystemComponentFactory extends ComponentFactory {
+  val requiredFactoryClasses = new java.util.ArrayList[Class[_ <: SystemComponentFactory]]
 
-  def componentFactory = _componentFactory
+  def addDependency(requiredFactoryClass : Class[_ <: SystemComponentFactory]) {
+    requiredFactoryClasses.add(requiredFactoryClass)
+  }
 
-  override implicit def activeActor = actor.activeActor
-
-  override def mailbox = actor.mailbox
-
-  override def id = actor.id
-
-  def isSingleton = actor.isSingleton
-
-  override def factory = actor.factory
-
-  override def systemServices = actor.systemServices
+  def configure(systemServicesFactory: SystemServicesFactory) {}
 }

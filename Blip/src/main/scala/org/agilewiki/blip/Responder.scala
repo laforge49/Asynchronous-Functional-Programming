@@ -24,7 +24,7 @@
 package org.agilewiki
 package blip
 
-trait Responder extends SystemContextGetter {
+trait Responder extends SystemServicesGetter {
   val messageFunctions =
     new java.util.HashMap[Class[_ <: AnyRef], (AnyRef, Any => Unit) => Unit]
   lazy val sortedMessageFunctions = {
