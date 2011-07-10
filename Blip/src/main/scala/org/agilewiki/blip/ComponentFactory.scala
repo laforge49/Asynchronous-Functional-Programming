@@ -25,5 +25,6 @@ package org.agilewiki
 package blip
 
 abstract class ComponentFactory {
-  def instantiate: Component
+  protected def instantiate: Component
+  def newComponent = instantiate
 }

@@ -89,7 +89,7 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc 
   }
 
   def addComponent(componentFactory: ComponentFactory) = {
-    val component = componentFactory.instantiate
+    val component = componentFactory.newComponent
     val componentMsgFunctions = component.messageFunctions
     var it = componentMsgFunctions.keySet.iterator
     while (it.hasNext) {

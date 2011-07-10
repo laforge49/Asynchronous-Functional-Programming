@@ -53,7 +53,7 @@ class SystemServicesFactory(factoryId: FactoryId, rootSystemComponentFactory: Sy
   def componentFactory(factoryClass: Class[_ <: SystemComponentFactory]) =
     componentFactories.get(factoryClass)
 
-  def instantiate(mailbox: Mailbox) = {
+  protected def instantiate(mailbox: Mailbox) = {
     val systemServices = new SystemServices(mailbox, this)
     systemServices.systemServices(systemServices)
     systemServices.singleton
