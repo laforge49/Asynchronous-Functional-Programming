@@ -27,11 +27,11 @@ package blip
 trait Responder extends SystemServicesGetter {
   val messageFunctions =
     new java.util.HashMap[Class[_ <: AnyRef], (AnyRef, Any => Unit) => Unit]
-  lazy val sortedMessageFunctions = {
-    val smf = new java.util.TreeMap[Class[_ <: AnyRef], (AnyRef, Any => Unit) => Unit](
+  lazy val sortedMessages = {
+    val smf = new java.util.TreeSet[Class[_ <: AnyRef]](
       new ClassComparator
     )
-    smf.putAll(messageFunctions)
+    smf.addAll(messageFunctions.keySet)
     smf
   }
 
@@ -39,19 +39,19 @@ trait Responder extends SystemServicesGetter {
     messageFunctions.put(reqClass, messageFunction)
   }
 
-  val safeMessageFunctions =
-    new java.util.HashMap[Class[_ <: AnyRef], (AnyRef, Any => Unit, ActiveActor) => Unit]
-  lazy val sortedSafeMessageFunctions = {
-    val ssmf = new java.util.TreeMap[Class[_ <: AnyRef], (AnyRef, Any => Unit, ActiveActor) => Unit](
+  val safes =
+    new java.util.HashMap[Class[_ <: AnyRef], Safe]
+  lazy val sortedSafeMessages = {
+    val ssmf = new java.util.TreeSet[Class[_ <: AnyRef]](
       new ClassComparator
     )
-    ssmf.putAll(safeMessageFunctions)
+    ssmf.addAll(safes.keySet)
     ssmf
   }
 
   protected def bindSafe(reqClass: Class[_ <: AnyRef],
-                         safeReqFunction: (AnyRef, Any => Unit, ActiveActor) => Unit) {
-    safeMessageFunctions.put(reqClass, safeReqFunction)
+                         safe: Safe) {
+    safes.put(reqClass, safe)
   }
 
   def mailbox: Mailbox

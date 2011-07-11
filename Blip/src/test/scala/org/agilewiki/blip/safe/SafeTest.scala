@@ -20,6 +20,16 @@ class Driver extends Actor(new Mailbox, null) {
   }
 }
 
+case class SafePrintEven(safeActor: SafeActor)
+  extends Safe {
+  def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+    val printEven = msg.asInstanceOf[PrintEven]
+    val value = printEven.value
+    if (value % 2 == 0) safeActor(Print(value))(rf)
+    else rf(null)
+  }
+}
+
 class SafeActor extends Actor(new Mailbox, null) {
   bind(classOf[Print], printFunc)
 
@@ -28,14 +38,7 @@ class SafeActor extends Actor(new Mailbox, null) {
     rf(null)
   }
 
-  bindSafe(classOf[PrintEven], printEvenFunc)
-
-  private def printEvenFunc(msg: AnyRef, rf: Any => Unit, sender: ActiveActor) {
-    val printEven = msg.asInstanceOf[PrintEven]
-    val value = printEven.value
-    if (value % 2 == 0) this(Print(value))(rf)(sender)
-    else rf(null)
-  }
+  bindSafe(classOf[PrintEven], SafePrintEven(this))
 }
 
 class SafeTest extends SpecificationWithJUnit {

@@ -67,7 +67,7 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc 
     if (srcMailbox == null && mailbox != null) throw new UnsupportedOperationException(
       "An immutable actor can only send to another immutable actor."
     )
-    if (safeMessageFunctions.containsKey(msg.getClass)) sendSafe(msg, responseFunction, srcActor)
+    if (safes.containsKey(msg.getClass)) sendSafe(msg, responseFunction, srcActor)
     else if (mailbox == null || mailbox == srcMailbox) sendSynchronous(msg, responseFunction)
     else srcMailbox.send(this, msg)(responseFunction)
   }
@@ -79,43 +79,12 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc 
   }
 
   def sendSafe(msg: AnyRef, responseFunction: Any => Unit, srcActor: ActiveActor) {
-    val safeReqFunction = safeMessageFunctions.get(msg.getClass)
-    if (safeReqFunction == null) throw new UnsupportedOperationException(msg.getClass.getName)
-    safeReqFunction(msg, responseFunction, activeActor)
+    val safe = safes.get(msg.getClass)
+    if (safe == null) throw new UnsupportedOperationException(msg.getClass.getName)
+    safe.func(msg, responseFunction)(srcActor)
   }
 
   override def response(msg: MailboxRsp) {
     mailbox.response(msg)
-  }
-
-  def addComponent(componentFactory: ComponentFactory) = {
-    val component = componentFactory.newComponent
-    val componentMsgFunctions = component.messageFunctions
-    var it = componentMsgFunctions.keySet.iterator
-    while (it.hasNext) {
-      val k = it.next
-      if (messageFunctions.containsKey(k)) {
-        throw new IllegalArgumentException("bind conflict on actor " +
-          getClass.getName +
-          "message " +
-          k.getName)
-      }
-      val v = componentMsgFunctions.get(k)
-      messageFunctions.put(k, v)
-    }
-    val safeComponentMsgFunctions = component.safeMessageFunctions
-    var its = safeComponentMsgFunctions.keySet.iterator
-    while (its.hasNext) {
-      val k = its.next
-      if (safeMessageFunctions.containsKey(k)) {
-        throw new IllegalArgumentException("bindSafe conflict on actor " +
-          getClass.getName +
-          "message " +
-          k.getName)
-      }
-      val v = safeComponentMsgFunctions.get(k)
-      safeMessageFunctions.put(k, v)
-    }
-    component
   }
 }
