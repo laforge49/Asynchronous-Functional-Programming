@@ -25,29 +25,25 @@ package org.agilewiki
 package blip
 
 class SystemServices(mailbox: Mailbox, factory: SystemServicesFactory) extends Actor(mailbox, factory) {
-  private val systemComponentList = new java.util.ArrayList[SystemComponent]
-
-  override def addComponent(componentFactory: ComponentFactory) = {
-    val component = super.addComponent(componentFactory)
-    component match {
-      case systemComponent: SystemComponent => systemComponentList.add(systemComponent)
-    }
-    component
-  }
+  private val componentList = factory.componentList
 
   def start {
     var i = 0
-    while (i < systemComponentList.size) {
-      systemComponentList.get(i).start
+    while (i < componentList.size) {
+      componentList.get(i) match {
+        case systemComponent: SystemComponent => systemComponent.start
+      }
       i += 1
     }
   }
 
   def close {
-    var i = systemComponentList.size
+    var i = componentList.size
     while (i > 0) {
       i -= 1
-      systemComponentList.get(i).close
+      componentList.get(i) match {
+        case systemComponent: SystemComponent => systemComponent.close
+      }
     }
   }
 }

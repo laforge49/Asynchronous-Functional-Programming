@@ -24,8 +24,8 @@
 package org.agilewiki
 package blip
 
-class SystemComponent(systemServices: SystemServices, systemComponentFactory: SystemComponentFactory)
-  extends Component(systemServices, systemComponentFactory) {
+class SystemComponent(systemServices: SystemServices, componentFactory: ComponentFactory)
+  extends Component(systemServices, componentFactory) {
 
   def start {}
 

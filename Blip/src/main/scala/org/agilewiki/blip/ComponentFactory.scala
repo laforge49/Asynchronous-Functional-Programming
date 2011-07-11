@@ -25,6 +25,15 @@ package org.agilewiki
 package blip
 
 abstract class ComponentFactory {
+  val requiredComponentFactoryClasses = new java.util.ArrayList[Class[_ <: ComponentFactory]]
+
+  def addDependency(requiredComponentFactoryClass: Class[_ <: ComponentFactory]) {
+    requiredComponentFactoryClasses.add(requiredComponentFactoryClass)
+  }
+
+  def configure(compositeFactory: CompositeFactory) {}
+
   protected def instantiate: Component
+
   def newComponent = instantiate
 }

@@ -26,12 +26,49 @@ package blip
 
 abstract class Factory(_id: FactoryId) {
   def id = _id
+
   private var systemServices: SystemServices = null
-  def systemServices(_systemServices: SystemServices) {systemServices = _systemServices}
+
+  def systemServices(_systemServices: SystemServices) {
+    systemServices = _systemServices
+  }
+
   protected def instantiate(mailbox: Mailbox): Actor
+
   def newActor(mailbox: Mailbox) = {
     val actor = instantiate(mailbox)
     actor.systemServices(systemServices)
     actor
+  }
+
+  def addComponent(actor: Actor, component: Component) {
+    val actorMsgFunctions = actor.messageFunctions
+    val componentMsgFunctions = component.messageFunctions
+    var it = componentMsgFunctions.keySet.iterator
+    while (it.hasNext) {
+      val k = it.next
+      if (actorMsgFunctions.containsKey(k)) {
+        throw new IllegalArgumentException("bind conflict on actor " +
+          getClass.getName +
+          "message " +
+          k.getName)
+      }
+      val v = componentMsgFunctions.get(k)
+      actorMsgFunctions.put(k, v)
+    }
+    val safeActorMsgFunctions = actor.safeMessageFunctions
+    val safeComponentMsgFunctions = component.safeMessageFunctions
+    var its = safeComponentMsgFunctions.keySet.iterator
+    while (its.hasNext) {
+      val k = its.next
+      if (safeActorMsgFunctions.containsKey(k)) {
+        throw new IllegalArgumentException("bindSafe conflict on actor " +
+          getClass.getName +
+          "message " +
+          k.getName)
+      }
+      val v = safeComponentMsgFunctions.get(k)
+      safeActorMsgFunctions.put(k, v)
+    }
   }
 }
