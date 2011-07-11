@@ -33,7 +33,7 @@ abstract class ComponentFactory {
 
   def configure(compositeFactory: CompositeFactory) {}
 
-  protected def instantiate: Component
+  protected def instantiate(actor: Actor): Component
 
-  def newComponent = instantiate
+  def newComponent(actor: Actor) = instantiate(actor)
 }

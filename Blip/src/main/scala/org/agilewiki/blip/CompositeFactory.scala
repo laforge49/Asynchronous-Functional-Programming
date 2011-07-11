@@ -61,7 +61,7 @@ abstract class CompositeFactory(factoryId: FactoryId)
     while (fit.hasNext) {
       val componentFactoryClass = fit.next
       val componentFactory = componentFactories.get(componentFactoryClass)
-      val component = componentFactory.newComponent
+      val component = componentFactory.newComponent(actor)
       addComponent(actor, component)
     }
     actor
