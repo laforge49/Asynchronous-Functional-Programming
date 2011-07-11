@@ -87,4 +87,35 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc 
   override def response(msg: MailboxRsp) {
     mailbox.response(msg)
   }
+
+  def addComponent(componentFactory: ComponentFactory) = {
+    val component = componentFactory.newComponent
+    val componentMsgFunctions = component.messageFunctions
+    var it = componentMsgFunctions.keySet.iterator
+    while (it.hasNext) {
+      val k = it.next
+      if (messageFunctions.containsKey(k)) {
+        throw new IllegalArgumentException("bind conflict on actor " +
+          getClass.getName +
+          "message " +
+          k.getName)
+      }
+      val v = componentMsgFunctions.get(k)
+      messageFunctions.put(k, v)
+    }
+    val safeComponentMsgFunctions = component.safeMessageFunctions
+    var its = safeComponentMsgFunctions.keySet.iterator
+    while (its.hasNext) {
+      val k = its.next
+      if (safeMessageFunctions.containsKey(k)) {
+        throw new IllegalArgumentException("bindSafe conflict on actor " +
+          getClass.getName +
+          "message " +
+          k.getName)
+      }
+      val v = safeComponentMsgFunctions.get(k)
+      safeMessageFunctions.put(k, v)
+    }
+    component
+  }
 }
