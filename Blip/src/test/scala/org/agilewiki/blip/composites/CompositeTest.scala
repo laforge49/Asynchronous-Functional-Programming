@@ -1,5 +1,5 @@
 package org.agilewiki.blip
-package componentFactories
+package composites
 
 import org.specs.SpecificationWithJUnit
 
@@ -51,7 +51,7 @@ class DoubleFactory extends CompositeFactory(null) {
   include(new DoubleComponentFactory)
 }
 
-class ComponentFactoryTest extends SpecificationWithJUnit {
+class CompositeTest extends SpecificationWithJUnit {
   "SimpleActor" should {
     "double" in {
       val doubleFactory = new DoubleFactory
