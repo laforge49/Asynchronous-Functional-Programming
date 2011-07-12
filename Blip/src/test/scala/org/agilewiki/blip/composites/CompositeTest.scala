@@ -47,7 +47,7 @@ class DoubleComponent(actor: Actor, cf: DoubleComponentFactory) extends Componen
   }
 }
 
-class DoubleFactory extends CompositeFactory(null) {
+class DoubleFactory extends Factory(null) {
   include(new DoubleComponentFactory)
 }
 

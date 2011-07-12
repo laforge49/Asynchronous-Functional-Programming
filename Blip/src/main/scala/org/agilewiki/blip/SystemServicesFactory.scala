@@ -25,7 +25,7 @@ package org.agilewiki
 package blip
 
 class SystemServicesFactory(factoryId: FactoryId, rootComponentFactory: ComponentFactory)
-  extends CompositeFactory(factoryId) {
+  extends Factory(factoryId) {
 
   include(rootComponentFactory)
 

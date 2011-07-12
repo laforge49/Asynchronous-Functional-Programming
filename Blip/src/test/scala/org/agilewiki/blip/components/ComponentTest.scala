@@ -36,7 +36,7 @@ class DoubleComponent(saver: Saver) extends Component(saver, null) {
 }
 
 class DoubleFactory extends Factory(null) {
-  protected def instantiate(mailbox: Mailbox) = {
+  override protected def instantiate(mailbox: Mailbox) = {
     val saver = new Saver(mailbox, this)
     val doubleComponent = new DoubleComponent(saver)
     addComponent(saver, doubleComponent)

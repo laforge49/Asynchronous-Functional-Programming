@@ -31,7 +31,7 @@ abstract class ComponentFactory {
     requiredComponentFactoryClasses.add(requiredComponentFactoryClass)
   }
 
-  def configure(compositeFactory: CompositeFactory) {}
+  def configure(compositeFactory: Factory) {}
 
   protected def instantiate(actor: Actor): Component
 

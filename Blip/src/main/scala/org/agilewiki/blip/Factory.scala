@@ -33,11 +33,25 @@ abstract class Factory(_id: FactoryId) {
     systemServices = _systemServices
   }
 
-  protected def instantiate(mailbox: Mailbox): Actor
+  private val componentFactories =
+    new java.util.LinkedHashMap[Class[_ <: ComponentFactory], ComponentFactory]
+
+  protected def instantiate(mailbox: Mailbox) = new Actor(mailbox, this)
 
   def newActor(mailbox: Mailbox) = {
     val actor = instantiate(mailbox)
     actor.systemServices(systemServices)
+    val fit = componentFactories.keySet.iterator
+    while (fit.hasNext) {
+      val componentFactoryClass = fit.next
+      val componentFactory = componentFactories.get(componentFactoryClass)
+      val component = componentFactory.newComponent(actor)
+      addComponent(actor, component)
+      val componentClass = component.getClass.asInstanceOf[Class[Component]]
+      if (actor.components.containsKey(componentClass))
+        throw new IllegalArgumentException("Duplicate component: " + componentClass.getName)
+      actor.components.put(componentClass, component)
+    }
     actor
   }
 
@@ -71,4 +85,30 @@ abstract class Factory(_id: FactoryId) {
       actorSafes.put(k, v)
     }
   }
+
+  protected def include(componentFactory: ComponentFactory) {
+    include(componentFactory, new scala.collection.immutable.HashSet)
+  }
+
+  private def include(componentFactory: ComponentFactory,
+                      _dependent: scala.collection.immutable.Set[Class[_ <: ComponentFactory]]) {
+    val componentFactoryClass = componentFactory.getClass.asInstanceOf[Class[_ <: ComponentFactory]]
+    val dependent = _dependent + (componentFactoryClass)
+    val requiredComponentFactoryClasses = componentFactory.requiredComponentFactoryClasses
+    var i = 0
+    while (i < requiredComponentFactoryClasses.size) {
+      val requiredFactoryClass = requiredComponentFactoryClasses.get(i)
+      if (dependent.contains(requiredFactoryClass)) throw new IllegalArgumentException("circular dependency")
+      if (!componentFactories.containsKey(requiredFactoryClass)) {
+        val requiredFactory = requiredFactoryClass.newInstance
+        include(requiredFactory, dependent)
+      }
+      i += 1
+    }
+    componentFactories.put(componentFactoryClass, componentFactory)
+    componentFactory.configure(this)
+  }
+
+  def componentFactory(componentFactoryClass: Class[_ <: ComponentFactory]) =
+    componentFactories.get(componentFactoryClass)
 }
