@@ -27,12 +27,10 @@ package blip
 class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc {
   val components = new java.util.LinkedHashMap[Class[_ <: ComponentFactory], Component]
 
-  def component(componentFactoryClass: AnyRef) = {
-    if (!componentFactoryClass.isInstanceOf[Class[Component]])
-      throw new IllegalArgumentException("not a component factory class: " + componentFactoryClass)
+  def component(componentFactoryClass: Class[_ <: ComponentFactory]) = {
     val c = components.get(componentFactoryClass)
     if (c == null) throw new IllegalArgumentException("Component not found: " +
-      componentFactoryClass.asInstanceOf[Class[AnyRef]].getName)
+      componentFactoryClass.getName)
     c
   }
 
