@@ -37,7 +37,7 @@ class DoubleComponentFactory extends ComponentFactory {
 }
 
 class DoubleComponent(actor: Actor, cf: DoubleComponentFactory) extends Component(actor, cf) {
-  val saver = actor.components.get(classOf[SaverComponent]).asInstanceOf[SaverComponent]
+  val saver = actor.component(classOf[SaverComponentFactory]).asInstanceOf[SaverComponent]
 
   bind(classOf[Times2], doubleFunc)
 

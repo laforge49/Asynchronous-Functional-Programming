@@ -25,7 +25,16 @@ package org.agilewiki
 package blip
 
 class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc {
-  val components = new java.util.LinkedHashMap[Class[_ <: Component], Component]
+  val components = new java.util.LinkedHashMap[Class[_ <: ComponentFactory], Component]
+
+  def component(componentFactoryClass: AnyRef) = {
+    if (!componentFactoryClass.isInstanceOf[Class[Component]])
+      throw new IllegalArgumentException("not a component factory class: " + componentFactoryClass)
+    val c = components.get(componentFactoryClass)
+    if (c == null) throw new IllegalArgumentException("Component not found: " +
+      componentFactoryClass.asInstanceOf[Class[AnyRef]].getName)
+    c
+  }
 
   override def mailbox = _mailbox
 
