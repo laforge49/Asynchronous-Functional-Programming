@@ -40,24 +40,27 @@ class DoubleComponent(actor: Actor, cf: DoubleComponentFactory) extends Componen
   bind(classOf[Times2], doubleFunc)
 
   private def doubleFunc(msg: AnyRef, rf: Any => Unit) {
-    actor(Get()){ rsp =>
-      val i = rsp.asInstanceOf[Int]
-      actor(Set(i * 2)){ rsp2 =>
-        rf(null)
-      }
+    actor(Get()) {
+      rsp =>
+        val i = rsp.asInstanceOf[Int]
+        actor(Set(i * 2)) {
+          rsp2 =>
+            rf(null)
+        }
     }
   }
 }
 
 class DoubleFactory extends CompositeFactory(null) {
+  include(new DoubleComponentFactory)
+
   protected def instantiate(mailbox: Mailbox) = {
     val actor = new Actor(mailbox, this)
-    include(new SaverComponentFactory)
     actor
   }
 }
 
-class ComponentTest extends SpecificationWithJUnit {
+class ComponentFactoryTest extends SpecificationWithJUnit {
   "SimpleActor" should {
     "double" in {
       val doubleFactory = new DoubleFactory
