@@ -28,11 +28,11 @@ class SystemServices(mailbox: Mailbox, factory: SystemServicesFactory)
   extends Actor(mailbox, factory) {
   private lazy val componentList = new java.util.ArrayList[Component](components.values)
 
-  def start {
+  def open {
     var i = 0
     while (i < componentList.size) {
       componentList.get(i) match {
-        case systemComponent: SystemComponent => systemComponent.start
+        case systemComponent: SystemComponent => systemComponent.open
       }
       i += 1
     }
