@@ -74,6 +74,11 @@ object Future {
   def apply(actor: Actor, msg: AnyRef) = {
     val future = new Future
     future.send(actor, msg)
-    future.get
+    val rv = future.get
+    rv match {
+      case ex: Exception => throw ex
+      case _ =>
+    }
+    rv
   }
 }
