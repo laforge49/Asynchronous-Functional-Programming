@@ -47,10 +47,6 @@ abstract class Factory(_id: FactoryId) {
       val componentFactory = componentFactories.get(componentFactoryClass)
       val component = componentFactory.newComponent(actor)
       addComponent(actor, component)
-      val componentClass = component.getClass.asInstanceOf[Class[Component]]
-      if (actor.components.containsKey(componentClass))
-        throw new IllegalArgumentException("Duplicate component: " + componentClass.getName)
-      actor.components.put(componentClass, component)
     }
     actor
   }
@@ -84,6 +80,10 @@ abstract class Factory(_id: FactoryId) {
       val v = componentSafes.get(k)
       actorSafes.put(k, v)
     }
+    val componentClass = component.getClass.asInstanceOf[Class[Component]]
+    if (actor.components.containsKey(componentClass))
+      throw new IllegalArgumentException("Duplicate component: " + componentClass.getName)
+    actor.components.put(componentClass, component)
   }
 
   protected def include(componentFactory: ComponentFactory) {
