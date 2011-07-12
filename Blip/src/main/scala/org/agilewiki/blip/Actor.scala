@@ -62,7 +62,7 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc 
 
   var _systemServices: SystemServices = null
 
-  def systemServices(systemServices: SystemServices) {
+  def setSystemServices(systemServices: SystemServices) {
     _systemServices = systemServices
   }
 

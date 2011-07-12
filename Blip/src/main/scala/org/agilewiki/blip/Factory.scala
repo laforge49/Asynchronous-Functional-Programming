@@ -29,7 +29,7 @@ abstract class Factory(_id: FactoryId) {
 
   private var systemServices: SystemServices = null
 
-  def systemServices(_systemServices: SystemServices) {
+  def setSystemServices(_systemServices: SystemServices) {
     systemServices = _systemServices
   }
 
@@ -40,7 +40,7 @@ abstract class Factory(_id: FactoryId) {
 
   def newActor(mailbox: Mailbox) = {
     val actor = instantiate(mailbox)
-    actor.systemServices(systemServices)
+    actor.setSystemServices(systemServices)
     val fit = componentFactories.keySet.iterator
     while (fit.hasNext) {
       val componentFactoryClass = fit.next
