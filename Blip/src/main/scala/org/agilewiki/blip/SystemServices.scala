@@ -25,7 +25,7 @@ package org.agilewiki
 package blip
 
 class SystemServices(mailbox: Mailbox, factory: SystemServicesFactory)
-  extends Composite(mailbox, factory) {
+  extends Actor(mailbox, factory) {
   private lazy val componentList = new java.util.ArrayList[Component](components.values)
 
   def start {

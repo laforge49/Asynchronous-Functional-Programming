@@ -55,21 +55,21 @@ abstract class CompositeFactory(factoryId: FactoryId)
   def componentFactory(componentFactoryClass: Class[_ <: ComponentFactory]) =
     componentFactories.get(componentFactoryClass)
 
-  protected def instantiate(mailbox: Mailbox) = new Composite(mailbox, this)
+  protected def instantiate(mailbox: Mailbox) = new Actor(mailbox, this)
 
   override def newActor(mailbox: Mailbox) = {
-    val composite = super.newActor(mailbox).asInstanceOf[Composite]
+    val actor = super.newActor(mailbox)
     val fit = componentFactories.keySet.iterator
     while (fit.hasNext) {
       val componentFactoryClass = fit.next
       val componentFactory = componentFactories.get(componentFactoryClass)
-      val component = componentFactory.newComponent(composite)
-      addComponent(composite, component)
+      val component = componentFactory.newComponent(actor)
+      addComponent(actor, component)
       val componentClass = component.getClass.asInstanceOf[Class[Component]]
-      if (composite.components.containsKey(componentClass))
+      if (actor.components.containsKey(componentClass))
         throw new IllegalArgumentException("Duplicate component: "+componentClass.getName)
-      composite.components.put(componentClass, component)
+      actor.components.put(componentClass, component)
     }
-    composite
+    actor
   }
 }

@@ -25,6 +25,8 @@ package org.agilewiki
 package blip
 
 class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc {
+  val components = new java.util.LinkedHashMap[Class[_ <: Component], Component]
+
   override def mailbox = _mailbox
 
   override def factory = _factory
@@ -53,7 +55,9 @@ class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc 
 
   var _systemServices: SystemServices = null
 
-  def systemServices(systemServices: SystemServices) {_systemServices = systemServices}
+  def systemServices(systemServices: SystemServices) {
+    _systemServices = systemServices
+  }
 
   override def systemServices: SystemServices = _systemServices
 
