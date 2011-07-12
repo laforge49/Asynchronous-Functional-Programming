@@ -24,27 +24,7 @@
 package org.agilewiki
 package blip
 
-class SystemServices(mailbox: Mailbox, factory: SystemServicesFactory)
-  extends Composite(mailbox, factory) {
-  private lazy val componentList = new java.util.ArrayList[Component](components.values)
-
-  def start {
-    var i = 0
-    while (i < componentList.size) {
-      componentList.get(i) match {
-        case systemComponent: SystemComponent => systemComponent.start
-      }
-      i += 1
-    }
-  }
-
-  def close {
-    var i = componentList.size
-    while (i > 0) {
-      i -= 1
-      componentList.get(i) match {
-        case systemComponent: SystemComponent => systemComponent.close
-      }
-    }
-  }
+class Composite(mailbox: Mailbox, compositeFactory: CompositeFactory)
+  extends Actor(mailbox, compositeFactory) {
+  val components = new java.util.LinkedHashMap[Class[_ <: Component], Component]
 }

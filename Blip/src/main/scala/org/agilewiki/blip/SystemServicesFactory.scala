@@ -26,14 +26,8 @@ package blip
 
 class SystemServicesFactory(factoryId: FactoryId, rootComponentFactory: ComponentFactory)
   extends CompositeFactory(factoryId) {
-  val componentList = new java.util.ArrayList[Component]
 
   include(rootComponentFactory)
 
-  override def addComponent(actor: Actor, component: Component) {
-    super.addComponent(actor, component)
-    componentList.add(component)
-  }
-
-  protected def instantiate(mailbox: Mailbox) = new SystemServices(mailbox, this)
+  override protected def instantiate(mailbox: Mailbox) = new SystemServices(mailbox, this)
 }
