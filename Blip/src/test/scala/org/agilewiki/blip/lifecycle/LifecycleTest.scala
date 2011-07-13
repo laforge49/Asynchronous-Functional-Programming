@@ -1,5 +1,5 @@
 package org.agilewiki.blip
-package systemComponents
+package lifecycle
 
 import org.specs.SpecificationWithJUnit
 
@@ -9,7 +9,7 @@ class SC1Factory extends ComponentFactory {
   override protected def instantiate(actor: Actor) = new SC1(actor, this)
 }
 
-class SC1(actor: Actor, componentFactory: ComponentFactory) extends SystemComponent(actor, componentFactory) {
+class SC1(actor: Actor, componentFactory: ComponentFactory) extends Component(actor, componentFactory) {
   override def open {
     println("SC1 open")
   }
@@ -23,7 +23,7 @@ class SC2Factory extends ComponentFactory {
   override protected def instantiate(actor: Actor) = new SC2(actor, this)
 }
 
-class SC2(actor: Actor, componentFactory: ComponentFactory) extends SystemComponent(actor, componentFactory) {
+class SC2(actor: Actor, componentFactory: ComponentFactory) extends Component(actor, componentFactory) {
   override def open {
     println("SC2 open")
   }
@@ -34,7 +34,7 @@ class SC2(actor: Actor, componentFactory: ComponentFactory) extends SystemCompon
 }
 
 
-class SystemComponentTest extends SpecificationWithJUnit {
+class LifecycleTest extends SpecificationWithJUnit {
   "system components" should {
     "print open and close" in {
       val systemServices = SystemServices(new SC1Factory)

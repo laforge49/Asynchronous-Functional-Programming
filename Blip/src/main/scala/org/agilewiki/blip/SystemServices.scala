@@ -31,9 +31,7 @@ class SystemServices(mailbox: Mailbox, factory: SystemServicesFactory)
   def open {
     var i = 0
     while (i < componentList.size) {
-      componentList.get(i) match {
-        case systemComponent: SystemComponent => systemComponent.open
-      }
+      componentList.get(i).open
       i += 1
     }
   }
@@ -42,9 +40,7 @@ class SystemServices(mailbox: Mailbox, factory: SystemServicesFactory)
     var i = componentList.size
     while (i > 0) {
       i -= 1
-      componentList.get(i) match {
-        case systemComponent: SystemComponent => systemComponent.close
-      }
+      componentList.get(i).close
     }
   }
 }

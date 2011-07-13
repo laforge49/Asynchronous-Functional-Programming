@@ -39,4 +39,8 @@ class Component(actor: Actor, _componentFactory: ComponentFactory) extends Respo
   override def factory = actor.factory
 
   override def systemServices = actor.systemServices
+
+  def open {}
+
+  def close {}
 }
