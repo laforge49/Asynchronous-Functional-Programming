@@ -24,7 +24,8 @@
 package org.agilewiki
 package blip
 
-class Actor(_mailbox: Mailbox, _factory: Factory) extends Responder with MsgSrc {
+class Actor(_mailbox: Mailbox, _factory: Factory)
+  extends Responder with MsgSrc {
   val components = new java.util.LinkedHashMap[Class[_ <: ComponentFactory], Component]
 
   def component(componentFactoryClass: Class[_ <: ComponentFactory]) = {
