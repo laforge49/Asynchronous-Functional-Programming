@@ -19,5 +19,17 @@ class ListTest extends SpecificationWithJUnit {
       println(Future(factSeq, Next(3)))
       println(Future(factSeq, Next(4)))
     }
+    "work asynchronously, too" in {
+      val fact = new java.util.ArrayList[Int]
+      fact.add(0)
+      fact.add(1)
+      fact.add(2)
+      fact.add(6)
+      fact.add(24)
+      val factSeq = new ListSeq(new Mailbox, null, fact)
+      println(Future(factSeq, Next(4)))
+      fact.add(120)
+      println(Future(factSeq, Next(4)))
+    }
   }
 }
