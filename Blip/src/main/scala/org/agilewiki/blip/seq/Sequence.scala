@@ -31,9 +31,7 @@ case class Current[K](key: K)
 
 case class Next[K](key: K)
 
-case class Result[K, V](key: K, value: V)
-
-case class End()
+case class KVPair[K, V](key: K, value: V)
 
 abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
   extends Actor(mailbox, factory) {

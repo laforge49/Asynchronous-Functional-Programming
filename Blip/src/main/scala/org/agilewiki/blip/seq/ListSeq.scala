@@ -25,17 +25,26 @@ package org.agilewiki
 package blip
 package seq
 
-class EmptySeq
-  extends Sequence(null, null) {
-  def first(msg: AnyRef, rf: Any => Unit) {
-    rf(null)
+class ListSeq[V](mailbox: Mailbox, factory: Factory, list: java.util.List[V])
+  extends Sequence(mailbox, factory) {
+
+  override def first(msg: AnyRef, rf: Any => Unit) {
+    if (list.isEmpty) rf(null)
+    else rf(KVPair(0, list.get(0)))
   }
 
-  def current(msg: AnyRef, rf: Any => Unit) {
-    rf(null)
+  override def current(msg: AnyRef, rf: Any => Unit) {
+    var key = msg.asInstanceOf[Current[Int]].key
+    if (key < 0) key = 0
+    if (key >= list.size) rf(null)
+    else rf(KVPair(key, list.get(key)))
   }
 
-  def next(msg: AnyRef, rf: Any => Unit) {
-    rf(null)
+  override def next(msg: AnyRef, rf: Any => Unit) {
+    var key = msg.asInstanceOf[Next[Int]].key
+    if (key <= 0) key = 0
+    else key = key + 1
+    if (key >= list.size) rf(null)
+    else rf(KVPair(key, list.get(key)))
   }
 }
