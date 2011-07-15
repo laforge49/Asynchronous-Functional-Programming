@@ -42,7 +42,7 @@ class ListSeq[V](mailbox: Mailbox, factory: Factory, list: java.util.List[V])
 
   override def next(msg: AnyRef, rf: Any => Unit) {
     var key = msg.asInstanceOf[Next[Int]].key
-    if (key <= 0) key = 0
+    if (key < 0) key = 0
     else key = key + 1
     if (key >= list.size) rf(null)
     else rf(KVPair(key, list.get(key)))

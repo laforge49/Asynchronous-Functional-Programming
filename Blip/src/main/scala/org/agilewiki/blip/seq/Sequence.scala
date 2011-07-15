@@ -25,6 +25,8 @@ package org.agilewiki
 package blip
 package seq
 
+import annotation.tailrec
+
 case class First()
 
 case class Current[K](key: K)
@@ -32,6 +34,8 @@ case class Current[K](key: K)
 case class Next[K](key: K)
 
 case class KVPair[K, V](key: K, value: V)
+
+case class Loop[K, V](f: (K, V) => Unit)
 
 abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
   extends Actor(mailbox, factory) {
@@ -46,4 +50,37 @@ abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
   bind(classOf[Next[K]], next)
 
   def next(msg: AnyRef, rf: Any => Unit)
+
+  bind(classOf[Loop[K, V]], loop)
+
+  def loop(msg: AnyRef, rf: Any => Unit) {
+    val f = msg.asInstanceOf[Loop[K, V]].f
+    first(First(), r => _loop(r, f, rf))
+  }
+
+  private def aloop(rsp: Any, f: (K, V) => Unit, rf: Any => Unit) {
+    _loop(rsp, f, rf)
+  }
+
+  @tailrec private def _loop(rsp: Any, f: (K, V) => Unit, rf: Any => Unit) {
+    if (rsp == null) {
+      rf(null)
+      return
+    }
+    var rsp1: Any = null
+    var async = false
+    var sync = false
+    val kvPair = rsp.asInstanceOf[KVPair[K, V]]
+    f(kvPair.key, kvPair.value)
+    next(Next(kvPair.key), r => {
+      rsp1 = r
+      if (async) aloop(rsp1, f, rf)
+      else sync = true
+    })
+    if (!sync) {
+      async = true
+      return
+    }
+    _loop(rsp1, f, rf)
+  }
 }
