@@ -37,6 +37,8 @@ case class KVPair[K, V](key: K, value: V)
 
 case class Loop[K, V](f: (K, V) => Unit)
 
+case class LoopSafe(safe: Safe)
+
 abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
   extends Actor(mailbox, factory) {
   bind(classOf[First], first)
@@ -82,5 +84,38 @@ abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
       return
     }
     _loop(rsp1, f, rf)
+  }
+
+  bind(classOf[LoopSafe], loopSafe)
+
+  def loopSafe(msg: AnyRef, rf: Any => Unit) {
+    val safe = msg.asInstanceOf[LoopSafe].safe
+    first(First(), r => _loopSafe(r.asInstanceOf[KVPair[K, V]], safe, rf))
+  }
+
+  private def aloopSafe(rsp: KVPair[K, V], safe: Safe, rf: Any => Unit) {
+    _loopSafe(rsp, safe, rf)
+  }
+
+  @tailrec private def _loopSafe(rsp: KVPair[K, V], safe: Safe, rf: Any => Unit) {
+    if (rsp == null) {
+      rf(null)
+      return
+    }
+    var rsp1: KVPair[K, V] = null
+    var async = false
+    var sync = false
+    safe.func(rsp, rsp2 => {
+      next(Next(rsp.key), r => {
+        rsp1 = r.asInstanceOf[KVPair[K, V]]
+        if (async) aloopSafe(rsp1, safe, rf)
+        else sync = true
+      })
+    })
+    if (!sync) {
+      async = true
+      return
+    }
+    _loopSafe(rsp1, safe, rf)
   }
 }
