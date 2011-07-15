@@ -39,6 +39,8 @@ case class Loop[K, V](f: (K, V) => Unit)
 
 case class LoopSafe(safe: Safe)
 
+case class Fold[V](seed: V, f: (V, V) => V)
+
 abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
   extends Actor(mailbox, factory) {
   bind(classOf[First], first)
@@ -117,5 +119,35 @@ abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
       return
     }
     _loopSafe(rsp1, safe, rf)
+  }
+
+  bind(classOf[Fold[V]], fold)
+
+  def fold(msg: AnyRef, rf: Any => Unit) {
+    val req = msg.asInstanceOf[Fold[V]]
+    first(First(), r => _fold(r.asInstanceOf[KVPair[K, V]], req.seed, req.f, rf))
+  }
+
+  private def afold(rsp: KVPair[K, V], seed: V, f: (V, V) => V, rf: Any => Unit) {_fold(rsp, seed, f, rf)}
+
+  @tailrec private def _fold(rsp: KVPair[K, V], seed: V, f: (V, V) => V, rf: Any => Unit) {
+    if (rsp == null) {
+      rf(seed)
+      return
+    }
+    var rsp1: KVPair[K, V] = null
+    var async = false
+    var sync = false
+    val s = f(seed, rsp.value)
+    next(Next(rsp.key), r => {
+      rsp1 = r.asInstanceOf[KVPair[K, V]]
+      if (async) afold(rsp1, s, f, rf)
+      else sync = true
+    })
+    if (!sync) {
+      async = true
+      return
+    }
+    _fold(rsp1, s, f, rf)
   }
 }
