@@ -10,7 +10,7 @@ class SumSafe extends Safe {
   override def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val nvPair = msg.asInstanceOf[KVPair[Int, Int]]
     sum += nvPair.value
-    rf(null)
+    rf(true)
   }
 }
 

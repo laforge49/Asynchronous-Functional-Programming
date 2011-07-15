@@ -105,19 +105,24 @@ abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
       return
     }
     var rsp1: KVPair[K, V] = null
+    var rsp2 = false
     var async = false
     var sync = false
-    safe.func(rsp, rsp2 => {
-      next(Next(rsp.key), r => {
-        rsp1 = r.asInstanceOf[KVPair[K, V]]
-        if (async) aloopSafe(rsp1, safe, rf)
-        else sync = true
-      })
+    safe.func(rsp, fr => {
+      rsp2 = fr.asInstanceOf[Boolean]
+      if (rsp2) {
+        next(Next(rsp.key), r => {
+          rsp1 = r.asInstanceOf[KVPair[K, V]]
+          if (async) aloopSafe(rsp1, safe, rf)
+          else sync = true
+        })
+      }
     })
     if (!sync) {
       async = true
       return
     }
+    if (!rsp2) return
     _loopSafe(rsp1, safe, rf)
   }
 
@@ -128,7 +133,9 @@ abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
     first(First(), r => _fold(r.asInstanceOf[KVPair[K, V]], req.seed, req.f, rf))
   }
 
-  private def afold(rsp: KVPair[K, V], seed: V, f: (V, V) => V, rf: Any => Unit) {_fold(rsp, seed, f, rf)}
+  private def afold(rsp: KVPair[K, V], seed: V, f: (V, V) => V, rf: Any => Unit) {
+    _fold(rsp, seed, f, rf)
+  }
 
   @tailrec private def _fold(rsp: KVPair[K, V], seed: V, f: (V, V) => V, rf: Any => Unit) {
     if (rsp == null) {
