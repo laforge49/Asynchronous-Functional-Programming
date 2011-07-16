@@ -28,7 +28,7 @@ package seq
 import java.util.NavigableSet
 
 class NavSetSeq[K](mailbox: Mailbox, factory: Factory, navigableSet: NavigableSet[K])
-  extends Sequence(mailbox, factory) {
+  extends Sequence[K, K](mailbox, factory) {
 
   override def first(msg: AnyRef, rf: Any => Unit) {
     if (navigableSet.isEmpty) rf(null)

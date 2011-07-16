@@ -26,7 +26,7 @@ package blip
 package seq
 
 class ListSeq[V](mailbox: Mailbox, factory: Factory, list: java.util.List[V])
-  extends Sequence(mailbox, factory) {
+  extends Sequence[Int, V](mailbox, factory) {
 
   override def first(msg: AnyRef, rf: Any => Unit) {
     if (list.isEmpty) rf(null)
