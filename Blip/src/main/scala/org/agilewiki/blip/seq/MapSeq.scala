@@ -25,29 +25,23 @@ package org.agilewiki
 package blip
 package seq
 
-class Range(mailbox: Mailbox, factory: Factory, start: Int, limit: Int)
-  extends Sequence[Int, Int](mailbox, factory) {
+class MapSeq[K, V, V1](seq: Sequence[K, V], f: V => V1)
+  extends Sequence[K, V](seq.mailbox, null) {
 
-  override def first(msg: AnyRef, rf: Any => Unit) {
-    rf(KVPair(start, start))
+  override def first(msg: AnyRef, rf: Any => Unit) {r(msg, rf)}
+
+  override def current(msg: AnyRef, rf: Any => Unit) {r(msg, rf)}
+
+  override def next(msg: AnyRef, rf: Any => Unit) {r(msg, rf)}
+
+  private def r(msg: AnyRef, rf: Any => Unit) {
+    seq(msg){rsp =>
+      if (rsp == null) rf(null)
+      else {
+        val kv = rsp.asInstanceOf[KVPair[K, V]]
+        val v1 = f(kv.value)
+        rf(KVPair(kv.key, v1))
+      }
+    }
   }
-
-  override def current(msg: AnyRef, rf: Any => Unit) {
-    var key = msg.asInstanceOf[Current[Int]].key
-    if (key < start) key = start
-    if (key >= limit) rf(null)
-    else rf(KVPair(key, key))
-  }
-
-  override def next(msg: AnyRef, rf: Any => Unit) {
-    var key = msg.asInstanceOf[Next[Int]].key
-    if (key < start) key = start
-    else key = key + 1
-    if (key >= limit) rf(null)
-    else rf(KVPair(key, key))
-  }
-}
-
-object Range {
-  def apply(start: Int, limit: Int) = new Range(null, null, start, limit)
 }

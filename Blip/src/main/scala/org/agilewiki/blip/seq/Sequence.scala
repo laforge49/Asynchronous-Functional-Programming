@@ -247,7 +247,7 @@ abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
     })
   }
 
-  bind(classOf[Get[K]], get)
+  bind(classOf[Get[V]], get)
 
   def get(msg: AnyRef, rf: Any => Unit) {
     val key = msg.asInstanceOf[Get[K]].key
