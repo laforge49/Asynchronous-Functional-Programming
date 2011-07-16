@@ -41,6 +41,8 @@ case class LoopSafe(safe: Safe)
 
 case class Fold[V](seed: V, f: (V, V) => V)
 
+case class Exists[V](f: V => Boolean)
+
 abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
   extends Actor(mailbox, factory) {
   bind(classOf[First], first)
@@ -156,5 +158,40 @@ abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
       return
     }
     _fold(rsp1, s, f, rf)
+  }
+
+  bind(classOf[Exists[V]], exists)
+
+  def exists(msg: AnyRef, rf: Any => Unit) {
+    val req = msg.asInstanceOf[Exists[V]]
+    first(First(), r => _exists(r.asInstanceOf[KVPair[K, V]], req.f, rf))
+  }
+
+  private def aexists(rsp: KVPair[K, V], f: V => Boolean, rf: Any => Unit) {
+    _exists(rsp, f, rf)
+  }
+
+  @tailrec private def _exists(rsp: KVPair[K, V], f: V => Boolean, rf: Any => Unit) {
+    if (rsp == null) {
+      rf(false)
+      return
+    }
+    var rsp1: KVPair[K, V] = null
+    var async = false
+    var sync = false
+    if (f(rsp.value)) {
+      rf(true)
+      return
+    }
+    next(Next(rsp.key), r => {
+      rsp1 = r.asInstanceOf[KVPair[K, V]]
+      if (async) aexists(rsp1, f, rf)
+      else sync = true
+    })
+    if (!sync) {
+      async = true
+      return
+    }
+    _exists(rsp1, f, rf)
   }
 }
