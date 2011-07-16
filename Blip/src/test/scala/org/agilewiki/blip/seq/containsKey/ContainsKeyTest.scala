@@ -1,6 +1,6 @@
 package org.agilewiki.blip
 package seq
-package find
+package containsKey
 
 import org.specs.SpecificationWithJUnit
 
