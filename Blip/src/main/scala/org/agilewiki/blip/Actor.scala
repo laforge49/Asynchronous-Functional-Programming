@@ -107,6 +107,7 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
       new ClassComparator
     )
     smf.addAll(messageFunctions.keySet)
+    smf.addAll(safes.keySet)
     new NavSetSeq(_mailbox, null, smf)
   }
 }

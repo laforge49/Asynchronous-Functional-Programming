@@ -34,13 +34,6 @@ trait Responder extends SystemServicesGetter {
 
   val safes =
     new java.util.HashMap[Class[_ <: AnyRef], Safe]
-  lazy val sortedSafeMessages = {
-    val ssmf = new java.util.TreeSet[Class[_ <: AnyRef]](
-      new ClassComparator
-    )
-    ssmf.addAll(safes.keySet)
-    ssmf
-  }
 
   protected def bindSafe(reqClass: Class[_ <: AnyRef],
                          safe: Safe) {
