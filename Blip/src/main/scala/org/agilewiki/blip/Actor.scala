@@ -110,4 +110,12 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
     smf.addAll(safes.keySet)
     new NavSetSeq(_mailbox, null, smf)
   }
+
+  lazy val componentFactoryClasses = {
+    val smf = new java.util.TreeSet[Class[_ <: ComponentFactory]](
+      new ClassComparator
+    )
+    smf.addAll(components.keySet)
+    new NavSetSeq(_mailbox, null, smf)
+  }
 }
