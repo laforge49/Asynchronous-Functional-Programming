@@ -24,6 +24,8 @@
 package org.agilewiki
 package blip
 
+import seq.NavSetSeq
+
 class Actor(_mailbox: Mailbox, _factory: Factory)
   extends Responder with MsgSrc {
   val components = new java.util.LinkedHashMap[Class[_ <: ComponentFactory], Component]
@@ -98,5 +100,13 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
 
   override def response(msg: MailboxRsp) {
     mailbox.response(msg)
+  }
+
+  lazy val messageClasses = {
+    val smf = new java.util.TreeSet[Class[_ <: AnyRef]](
+      new ClassComparator
+    )
+    smf.addAll(messageFunctions.keySet)
+    new NavSetSeq(_mailbox, null, smf)
   }
 }

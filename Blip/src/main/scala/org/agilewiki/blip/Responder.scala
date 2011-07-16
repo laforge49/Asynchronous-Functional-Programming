@@ -27,13 +27,6 @@ package blip
 trait Responder extends SystemServicesGetter {
   val messageFunctions =
     new java.util.HashMap[Class[_ <: AnyRef], (AnyRef, Any => Unit) => Unit]
-  lazy val sortedMessages = {
-    val smf = new java.util.TreeSet[Class[_ <: AnyRef]](
-      new ClassComparator
-    )
-    smf.addAll(messageFunctions.keySet)
-    smf
-  }
 
   protected def bind(reqClass: Class[_ <: AnyRef], messageFunction: (AnyRef, Any => Unit) => Unit) {
     messageFunctions.put(reqClass, messageFunction)
