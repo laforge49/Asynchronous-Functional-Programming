@@ -25,8 +25,8 @@ package org.agilewiki
 package blip
 package seq
 
-class MapSeq[K, V, V1](seq: Sequence[K, V], f: V => V1)
-  extends Sequence[K, V1](seq.mailbox, null) {
+class FilterSeq[K, V](seq: Sequence[K, V], f: V => Boolean)
+  extends Sequence[K, V](seq.mailbox, null) {
 
   override def first(msg: AnyRef, rf: Any => Unit) {r(msg, rf)}
 
@@ -34,14 +34,29 @@ class MapSeq[K, V, V1](seq: Sequence[K, V], f: V => V1)
 
   override def next(msg: AnyRef, rf: Any => Unit) {r(msg, rf)}
 
+  private def ar(msg: AnyRef, rf: Any => Unit) {r(msg, rf)}
+
   private def r(msg: AnyRef, rf: Any => Unit) {
+    var req: Next[K] = null
+    var async = false
+    var sync = false
     seq(msg){rsp =>
       if (rsp == null) rf(null)
       else {
         val kv = rsp.asInstanceOf[KVPair[K, V]]
-        val v1 = f(kv.value)
-        rf(KVPair(kv.key, v1))
+        if (f(kv.value)) {
+          rf(rsp)
+          return
+        }
+        req = Next(kv.key)
+        if (async) ar(req, rf)
+        else sync = true
       }
     }
+    if (!sync) {
+      async = true
+      return
+    }
+    r(req, rf)
   }
 }
