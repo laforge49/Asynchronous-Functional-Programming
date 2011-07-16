@@ -43,6 +43,8 @@ case class Fold[V](seed: V, f: (V, V) => V)
 
 case class Exists[V](f: V => Boolean)
 
+case class Find[V](f: V => Boolean)
+
 abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
   extends Actor(mailbox, factory) {
   bind(classOf[First], first)
@@ -193,5 +195,40 @@ abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
       return
     }
     _exists(rsp1, f, rf)
+  }
+
+  bind(classOf[Find[V]], find)
+
+  def find(msg: AnyRef, rf: Any => Unit) {
+    val req = msg.asInstanceOf[Find[V]]
+    first(First(), r => _find(r.asInstanceOf[KVPair[K, V]], req.f, rf))
+  }
+
+  private def afind(rsp: KVPair[K, V], f: V => Boolean, rf: Any => Unit) {
+    _find(rsp, f, rf)
+  }
+
+  @tailrec private def _find(rsp: KVPair[K, V], f: V => Boolean, rf: Any => Unit) {
+    if (rsp == null) {
+      rf(null)
+      return
+    }
+    var rsp1: KVPair[K, V] = null
+    var async = false
+    var sync = false
+    if (f(rsp.value)) {
+      rf(rsp.value)
+      return
+    }
+    next(Next(rsp.key), r => {
+      rsp1 = r.asInstanceOf[KVPair[K, V]]
+      if (async) afind(rsp1, f, rf)
+      else sync = true
+    })
+    if (!sync) {
+      async = true
+      return
+    }
+    _find(rsp1, f, rf)
   }
 }
