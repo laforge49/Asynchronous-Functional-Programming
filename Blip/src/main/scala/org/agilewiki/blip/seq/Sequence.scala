@@ -45,6 +45,8 @@ case class Exists[V](f: V => Boolean)
 
 case class Find[V](f: V => Boolean)
 
+case class ContainsKey[K](key: K)
+
 abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
   extends Actor(mailbox, factory) {
   bind(classOf[First], first)
@@ -230,5 +232,15 @@ abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
       return
     }
     _find(rsp1, f, rf)
+  }
+
+  bind(classOf[ContainsKey[K]], containsKey)
+
+  def containsKey(msg: AnyRef, rf: Any => Unit) {
+    val key = msg.asInstanceOf[ContainsKey[K]].key
+    current(Current(key), { rsp =>
+      if (rsp == null) rf(false)
+      else rf(rsp.asInstanceOf[KVPair[K, V]].key == key)
+    })
   }
 }
