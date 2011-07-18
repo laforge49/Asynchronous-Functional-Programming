@@ -19,8 +19,7 @@ class MapSafe extends Safe {
 class FlatmapSafeSeqTest extends SpecificationWithJUnit {
   "FlatmapSafeSeqTest" should {
     "drop null values" in {
-      val range = Range(0, 10)
-      val flatmap = new FlatmapSafeSeq(range, new MapSafe)
+      val flatmap = new FlatmapSafeSeq(Range(0, 10), new MapSafe)
       Future(flatmap, Loop((key: Int, value: String) => println(key+" "+value)))
     }
   }

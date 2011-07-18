@@ -25,7 +25,7 @@ package org.agilewiki
 package blip
 package seq
 
-import java.util.NavigableMap
+import java.util.{Comparator, NavigableMap}
 
 class NavMapSeq[K, V](mailbox: Mailbox, factory: Factory, navigableMap: NavigableMap[K, V])
   extends Sequence[K, V](mailbox, factory) {
@@ -56,5 +56,11 @@ class NavMapSeq[K, V](mailbox: Mailbox, factory: Factory, navigableMap: Navigabl
       if (entry == null) rf(null)
       else rf(KVPair(entry.getKey, entry.getValue))
     }
+  }
+
+  override protected def _comparator: Comparator[_ >: K] = {
+    val c = navigableMap.comparator
+    if (c != null) c
+    else super._comparator
   }
 }

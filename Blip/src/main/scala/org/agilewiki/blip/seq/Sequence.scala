@@ -26,6 +26,7 @@ package blip
 package seq
 
 import annotation.tailrec
+import java.util.Comparator
 
 case class First()
 
@@ -258,4 +259,10 @@ abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
         else rf(rsp.asInstanceOf[KVPair[K, V]].value)
     })
   }
+
+  protected def _comparator: Comparator[_ >: K] = new Comparator[K] {
+    override def compare(a: K, b: K) = a.asInstanceOf[Comparable[K]].compareTo(b)
+  }
+
+  lazy val comparator = _comparator
 }

@@ -25,7 +25,7 @@ package org.agilewiki
 package blip
 package seq
 
-import java.util.NavigableSet
+import java.util.{Comparator, NavigableSet}
 
 class NavSetSeq[K](mailbox: Mailbox, factory: Factory, navigableSet: NavigableSet[K])
   extends Sequence[K, K](mailbox, factory) {
@@ -56,5 +56,11 @@ class NavSetSeq[K](mailbox: Mailbox, factory: Factory, navigableSet: NavigableSe
       if (key == null) rf(null)
       else rf(KVPair(key, key))
     }
+  }
+
+  override protected def _comparator: Comparator[_ >: K] = {
+    val c = navigableSet.comparator
+    if (c != null) c
+    else super._comparator
   }
 }
