@@ -25,38 +25,48 @@ package org.agilewiki
 package blip
 package seq
 
+import annotation.tailrec
+
 class FilterSeq[K, V](seq: Sequence[K, V], f: V => Boolean)
   extends Sequence[K, V](seq.mailbox, null) {
 
-  override def first(msg: AnyRef, rf: Any => Unit) {r(msg, rf)}
+  override def first(msg: AnyRef, rf: Any => Unit) {
+    _r(msg, rf)
+  }
 
-  override def current(msg: AnyRef, rf: Any => Unit) {r(msg, rf)}
+  override def current(msg: AnyRef, rf: Any => Unit) {
+    _r(msg, rf)
+  }
 
-  override def next(msg: AnyRef, rf: Any => Unit) {r(msg, rf)}
+  override def next(msg: AnyRef, rf: Any => Unit) {
+    _r(msg, rf)
+  }
 
-  private def ar(msg: AnyRef, rf: Any => Unit) {r(msg, rf)}
+  def ar(msg: AnyRef, rf: Any => Unit) {
+    ar(msg, rf)
+  }
 
-  private def r(msg: AnyRef, rf: Any => Unit) {
+  @tailrec private def _r(msg: AnyRef, rf: Any => Unit) {
     var req: Next[K] = null
     var async = false
     var sync = false
-    seq(msg){rsp =>
-      if (rsp == null) rf(null)
-      else {
-        val kv = rsp.asInstanceOf[KVPair[K, V]]
-        if (f(kv.value)) {
-          rf(rsp)
-          return
+    seq(msg) {
+      rsp =>
+        if (rsp == null) rf(null)
+        else {
+          val kv = rsp.asInstanceOf[KVPair[K, V]]
+          if (f(kv.value)) rf(rsp)
+          else {
+            req = Next(kv.key)
+            if (async) ar(req, rf)
+            else sync = true
+          }
         }
-        req = Next(kv.key)
-        if (async) ar(req, rf)
-        else sync = true
-      }
     }
     if (!sync) {
       async = true
       return
     }
-    r(req, rf)
+    _r(req, rf)
   }
 }
