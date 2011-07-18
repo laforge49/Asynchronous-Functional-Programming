@@ -73,4 +73,6 @@ class FlatmapSafeSeq[K, V](seq: Sequence[K, V], safe: Safe)
     }
     r(req, rf)
   }
+
+  override protected def _comparator = seq.comparator
 }

@@ -69,4 +69,6 @@ class FilterSeq[K, V](seq: Sequence[K, V], f: V => Boolean)
     }
     _r(req, rf)
   }
+
+  override protected def _comparator = seq.comparator
 }

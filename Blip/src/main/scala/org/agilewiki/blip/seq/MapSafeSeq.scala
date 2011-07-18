@@ -51,4 +51,6 @@ class MapSafeSeq[K, V, V1](seq: Sequence[K, V], safe: Safe)
       }
     }
   }
+
+  override protected def _comparator = seq.comparator
 }

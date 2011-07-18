@@ -60,4 +60,6 @@ class FlatmapSeq[K, V, V1](seq: Sequence[K, V], f: V => V1)
     }
     r(req, rf)
   }
+
+  override protected def _comparator = seq.comparator
 }

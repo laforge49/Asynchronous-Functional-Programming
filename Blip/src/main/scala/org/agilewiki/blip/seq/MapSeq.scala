@@ -44,4 +44,6 @@ class MapSeq[K, V, V1](seq: Sequence[K, V], f: V => V1)
       }
     }
   }
+
+  override protected def _comparator = seq.comparator
 }
