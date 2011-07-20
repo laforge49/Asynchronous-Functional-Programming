@@ -92,7 +92,8 @@ class IntersectionSequence extends SequenceSource {
             var lst = positioned.peekLast.current
             if (if (isReverse) lst > nxt else lst < nxt)
               reset
-            else if (if (isReverse) lst < nxt else lst > nxt) throw new IllegalStateException("Unsorted sequence detected")
+            else if (if (isReverse) lst < nxt else lst > nxt)
+              throw new IllegalStateException("Unsorted sequence detected")
           }
           positioned add ss
         }
