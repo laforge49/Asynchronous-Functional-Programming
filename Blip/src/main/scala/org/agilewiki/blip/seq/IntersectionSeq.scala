@@ -101,12 +101,12 @@ class IntersectionSeq[K, V](mailbox: Mailbox, seqList: java.util.List[Sequence[K
       val c = seq.compareTo(aseq)
       if (c == 0) {
         processed.add(seq)
-        if (processed.size == seqs.size) fin(rf)
-        return
-      }
-      val current = Current(aseq.lastKVPair.key)
-      if (c < 0) {
-        seq(current) {
+        if (processed.size == seqs.size) {
+          fin(rf)
+          return
+        }
+      } else if (c < 0) {
+        seq(Current(aseq.lastKVPair.key)) {
           rsp => {
             if (async) {
               val rs = new java.util.ArrayList[(Cursor[K, V], Any)]
@@ -115,11 +115,11 @@ class IntersectionSeq[K, V](mailbox: Mailbox, seqList: java.util.List[Sequence[K
             } else rsps.add((seq, rsp))
           }
         }
-        return
       } else {
         val old = new java.util.ArrayList[Cursor[K, V]](processed)
         processed.clear
         processed.add(seq)
+        val current = Current(seq.lastKVPair.key)
         val it = old.iterator
         while (it.hasNext) {
           val s = it.next
@@ -127,16 +127,16 @@ class IntersectionSeq[K, V](mailbox: Mailbox, seqList: java.util.List[Sequence[K
             rsp => {
               if (async) {
                 val rs = new java.util.ArrayList[(Cursor[K, V], Any)]
-                rs.add((seq, rsp))
+                rs.add((s, rsp))
                 aprocess(rs, processed, rf)
-              } else rsps.add((seq, rsp))
+              } else rsps.add((s, rsp))
             }
           }
         }
       }
     }
     async = true
-    _process(rsps, processed, rf)
+    if (!rsps.isEmpty) _process(rsps, processed, rf)
   }
 
   def fin(rf: KVPair[K, java.util.List[V]] => Unit) {
