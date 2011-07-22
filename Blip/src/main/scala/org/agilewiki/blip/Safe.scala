@@ -28,6 +28,13 @@ abstract class Safe {
   def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor)
 }
 
+class SafeConstant(any: Any)
+  extends Safe {
+  def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+    rf(any)
+  }
+}
+
 class SafeForward(actor: Actor)
   extends Safe {
   def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
