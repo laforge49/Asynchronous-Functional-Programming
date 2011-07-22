@@ -44,16 +44,9 @@ class FileLoader
   }
 }
 
-class SafeFileLoader(fileLoader: FileLoader)
-  extends Safe {
-  def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
-    fileLoader(msg)(rf)
-  }
-}
-
 class FileLoaderComponent(actor: Actor, componentFactory: ComponentFactory)
   extends Component(actor, componentFactory) {
-  bindSafe(classOf[LoadFile], new SafeFileLoader(new FileLoader))
+  bindSafe(classOf[LoadFile], new SafeForward(new FileLoader))
 }
 
 class FileLoaderComponentFactory extends ComponentFactory {

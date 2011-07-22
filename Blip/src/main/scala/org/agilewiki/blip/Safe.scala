@@ -27,3 +27,10 @@ package blip
 abstract class Safe {
   def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor)
 }
+
+class SafeForward(actor: Actor)
+  extends Safe {
+  def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+    actor(msg)(rf)
+  }
+}
