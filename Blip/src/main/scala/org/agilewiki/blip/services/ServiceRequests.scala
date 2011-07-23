@@ -30,3 +30,5 @@ import java.io.File
 case class LoadFile(file: File)
 
 case class Instantiate(factoryId: FactoryId, mailbox: Mailbox)
+
+case class Factories()

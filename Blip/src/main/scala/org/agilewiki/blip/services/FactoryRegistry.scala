@@ -25,10 +25,14 @@ package org.agilewiki
 package blip
 package services
 
-class FactoryRegistryComponentFactory extends ComponentFactory {
-  private val factories = new java.util.TreeMap[String, Factory]
+import seq.NavMapSeq
 
-  def registerFactory(factory: Factory) {factories.put(factory.id.value, factory)}
+class FactoryRegistryComponentFactory extends ComponentFactory {
+  val factories = new java.util.TreeMap[String, Factory]
+
+  def registerFactory(factory: Factory) {
+    factories.put(factory.id.value, factory)
+  }
 
   def getFactory(id: FactoryId) = factories.get(id.value)
 
@@ -51,4 +55,6 @@ class SafeInstantiate(factoryRegistryComponentFactory: FactoryRegistryComponentF
 class FactoryRegistryComponent(actor: Actor, componentFactory: FactoryRegistryComponentFactory)
   extends Component(actor, componentFactory) {
   bindSafe(classOf[Instantiate], new SafeInstantiate(componentFactory, systemServices))
+  bindSafe(classOf[Factories],
+    new SafeConstant(new NavMapSeq(null, null, componentFactory.factories)))
 }
