@@ -40,11 +40,13 @@ class Driver extends Actor(new Mailbox, null) {
   bind(classOf[DoIt], doit)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
-    systemServices(Factories()) {rsp =>
-      val factories = rsp.asInstanceOf[Actor]
-      factories(Loop((key: String, value: Factory) => println(key+" "+value.getClass.getName))){rsp =>
-        rf(null)
-      }
+    systemServices(Factories()) {
+      rsp =>
+        val factories = rsp.asInstanceOf[Actor]
+        factories(
+          Loop((key: String, value: Factory) => println(key + " " + value.getClass.getName))) {
+          rsp => rf(null)
+        }
     }
   }
 }
