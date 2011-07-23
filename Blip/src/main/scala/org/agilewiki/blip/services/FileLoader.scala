@@ -25,9 +25,7 @@ package org.agilewiki
 package blip
 package services
 
-import java.io.{DataInputStream, FileInputStream, File}
-
-case class LoadFile(file: File)
+import java.io.{DataInputStream, FileInputStream}
 
 class FileLoader
   extends Actor(new Mailbox, null) {

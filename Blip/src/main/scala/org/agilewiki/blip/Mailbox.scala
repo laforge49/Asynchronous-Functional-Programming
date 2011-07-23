@@ -57,6 +57,8 @@ class Mailbox
           exceptionFunction = reqExceptionFunction
           val reqFunction = target.messageFunctions.get(msg.req.getClass)
           try {
+            if (reqFunction == null)
+              throw new IllegalArgumentException("unbound message: "+msg.req.getClass.getName)
             reqFunction(msg.req, reply)
           } catch {
             case ex: Exception => {

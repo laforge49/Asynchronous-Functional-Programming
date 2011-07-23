@@ -23,17 +23,30 @@
  */
 package org.agilewiki
 package blip
+package services
 
-class ComponentFactory {
-  val requiredComponentFactoryClasses = new java.util.ArrayList[Class[_ <: ComponentFactory]]
+class FactoryRegistryComponentFactory extends ComponentFactory {
+  private val factories = new java.util.TreeMap[String, Factory]
 
-  def addDependency(requiredComponentFactoryClass: Class[_ <: ComponentFactory]) {
-    requiredComponentFactoryClasses.add(requiredComponentFactoryClass)
+  def registerFactory(factory: Factory) {factories.put(factory.id.value, factory)}
+
+  def getFactory(id: FactoryId) = factories.get(id.value)
+
+  override def instantiate(actor: Actor) = new FactoryRegistryComponent(actor, this)
+}
+
+class SafeInstantiate(factoryRegistryComponentFactory: FactoryRegistryComponentFactory)
+  extends Safe {
+  def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+    val factoryId = msg.asInstanceOf[Instantiate].factoryId
+    val mailbox = msg.asInstanceOf[Instantiate].mailbox
+    val factory = factoryRegistryComponentFactory.getFactory(factoryId)
+    val actor = factory.newActor(mailbox)
+    rf(actor)
   }
+}
 
-  def configure(compositeFactory: Factory) {}
-
-  protected def instantiate(actor: Actor) = new Component(actor, this)
-
-  def newComponent(actor: Actor) = instantiate(actor)
+class FactoryRegistryComponent(actor: Actor, componentFactory: FactoryRegistryComponentFactory)
+  extends Component(actor, componentFactory) {
+  bindSafe(classOf[Instantiate], new SafeInstantiate(componentFactory))
 }

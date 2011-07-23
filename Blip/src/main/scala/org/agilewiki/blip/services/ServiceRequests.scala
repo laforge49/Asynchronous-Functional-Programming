@@ -23,17 +23,10 @@
  */
 package org.agilewiki
 package blip
+package services
 
-class ComponentFactory {
-  val requiredComponentFactoryClasses = new java.util.ArrayList[Class[_ <: ComponentFactory]]
+import java.io.File
 
-  def addDependency(requiredComponentFactoryClass: Class[_ <: ComponentFactory]) {
-    requiredComponentFactoryClasses.add(requiredComponentFactoryClass)
-  }
+case class LoadFile(file: File)
 
-  def configure(compositeFactory: Factory) {}
-
-  protected def instantiate(actor: Actor) = new Component(actor, this)
-
-  def newComponent(actor: Actor) = instantiate(actor)
-}
+case class Instantiate(factoryId: FactoryId, mailbox: Mailbox)

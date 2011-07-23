@@ -28,28 +28,6 @@ package seq
 import annotation.tailrec
 import java.util.Comparator
 
-case class First()
-
-case class Current[K](key: K)
-
-case class Next[K](key: K)
-
-case class KVPair[K, V](key: K, value: V)
-
-case class Loop[K, V](f: (K, V) => Unit)
-
-case class LoopSafe(safe: Safe)
-
-case class Fold[V](seed: V, f: (V, V) => V)
-
-case class Exists[V](f: V => Boolean)
-
-case class Find[V](f: V => Boolean)
-
-case class ContainsKey[K](key: K)
-
-case class Get[K](key: K)
-
 abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
   extends Actor(mailbox, factory) {
   bind(classOf[First], first)

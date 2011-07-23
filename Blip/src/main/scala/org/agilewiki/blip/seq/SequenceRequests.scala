@@ -23,17 +23,26 @@
  */
 package org.agilewiki
 package blip
+package seq
 
-class ComponentFactory {
-  val requiredComponentFactoryClasses = new java.util.ArrayList[Class[_ <: ComponentFactory]]
+case class First()
 
-  def addDependency(requiredComponentFactoryClass: Class[_ <: ComponentFactory]) {
-    requiredComponentFactoryClasses.add(requiredComponentFactoryClass)
-  }
+case class Current[K](key: K)
 
-  def configure(compositeFactory: Factory) {}
+case class Next[K](key: K)
 
-  protected def instantiate(actor: Actor) = new Component(actor, this)
+case class KVPair[K, V](key: K, value: V)
 
-  def newComponent(actor: Actor) = instantiate(actor)
-}
+case class Loop[K, V](f: (K, V) => Unit)
+
+case class LoopSafe(safe: Safe)
+
+case class Fold[V](seed: V, f: (V, V) => V)
+
+case class Exists[V](f: V => Boolean)
+
+case class Find[V](f: V => Boolean)
+
+case class ContainsKey[K](key: K)
+
+case class Get[K](key: K)
