@@ -41,7 +41,7 @@ class Driver extends Actor(new Mailbox, null) {
 
   def doit(msg: AnyRef, rf: Any => Unit) {
     systemServices(Instantiate(FactoryId("greeter"), null)) {rsp =>
-      val greeter = rsp.asInstanceOf[Greeter]
+      val greeter = rsp.asInstanceOf[Actor]
       greeter(Greet())(rf)
     }
   }
