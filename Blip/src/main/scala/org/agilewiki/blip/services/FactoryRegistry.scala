@@ -35,18 +35,20 @@ class FactoryRegistryComponentFactory extends ComponentFactory {
   override def instantiate(actor: Actor) = new FactoryRegistryComponent(actor, this)
 }
 
-class SafeInstantiate(factoryRegistryComponentFactory: FactoryRegistryComponentFactory)
+class SafeInstantiate(factoryRegistryComponentFactory: FactoryRegistryComponentFactory,
+                      systemServices: SystemServices)
   extends Safe {
   def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val factoryId = msg.asInstanceOf[Instantiate].factoryId
     val mailbox = msg.asInstanceOf[Instantiate].mailbox
     val factory = factoryRegistryComponentFactory.getFactory(factoryId)
     val actor = factory.newActor(mailbox)
+    actor.setSystemServices(systemServices)
     rf(actor)
   }
 }
 
 class FactoryRegistryComponent(actor: Actor, componentFactory: FactoryRegistryComponentFactory)
   extends Component(actor, componentFactory) {
-  bindSafe(classOf[Instantiate], new SafeInstantiate(componentFactory))
+  bindSafe(classOf[Instantiate], new SafeInstantiate(componentFactory, systemServices))
 }

@@ -29,5 +29,9 @@ class SystemServicesFactory(factoryId: FactoryId, rootComponentFactory: Componen
 
   include(rootComponentFactory)
 
-  override protected def instantiate(mailbox: Mailbox) = new SystemServices(mailbox, this)
+  override protected def instantiate(mailbox: Mailbox) = {
+    val systemServices = new SystemServices(mailbox, this)
+    setSystemServices(systemServices)
+    systemServices
+  }
 }
