@@ -31,7 +31,7 @@ class SystemServicesFactory(factoryId: FactoryId, rootComponentFactory: Componen
 
   override protected def instantiate(mailbox: Mailbox) = {
     val systemServices = new SystemServices(mailbox, this)
-    setSystemServices(systemServices)
+    systemServices.setSystemServices(systemServices)
     systemServices
   }
 }

@@ -27,12 +27,6 @@ package blip
 abstract class Factory(_id: FactoryId) {
   def id = _id
 
-  private var systemServices: SystemServices = null
-
-  def setSystemServices(_systemServices: SystemServices) {
-    systemServices = _systemServices
-  }
-
   private val componentFactories =
     new java.util.LinkedHashMap[Class[_ <: ComponentFactory], ComponentFactory]
 
@@ -40,7 +34,6 @@ abstract class Factory(_id: FactoryId) {
 
   def newActor(mailbox: Mailbox) = {
     val actor = instantiate(mailbox)
-    actor.setSystemServices(systemServices)
     val fit = componentFactories.keySet.iterator
     while (fit.hasNext) {
       val componentFactoryClass = fit.next
