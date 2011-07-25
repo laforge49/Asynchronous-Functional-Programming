@@ -26,23 +26,6 @@ package blip
 
 class SystemServices(mailbox: Mailbox, factory: SystemServicesFactory)
   extends Actor(mailbox, factory) {
-  private lazy val componentList = new java.util.ArrayList[Component](components.values)
-
-  def open {
-    var i = 0
-    while (i < componentList.size) {
-      componentList.get(i).open
-      i += 1
-    }
-  }
-
-  def close {
-    var i = componentList.size
-    while (i > 0) {
-      i -= 1
-      componentList.get(i).close
-    }
-  }
 }
 
 object SystemServices {

@@ -68,12 +68,10 @@ class ActorRegistryTest extends SpecificationWithJUnit {
   "ActorRegistryTest" should {
     "register" in {
       val systemServices = SystemServices(new SomeComponentFactory)
-      systemServices.open
       val driver = new Driver
       driver.setSystemServices(systemServices)
       Future(driver, DoIt1())
       Future(driver, DoIt2())
-      systemServices.close
     }
   }
 }

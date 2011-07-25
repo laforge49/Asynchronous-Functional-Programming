@@ -29,6 +29,29 @@ import seq.NavSetSeq
 class Actor(_mailbox: Mailbox, _factory: Factory)
   extends Responder with MsgSrc {
   val components = new java.util.LinkedHashMap[Class[_ <: ComponentFactory], Component]
+  private var componentList: java.util.ArrayList[Component] = null
+
+  lazy val open = {
+    if (components.isEmpty) true
+    else {
+      componentList = new java.util.ArrayList[Component](components.values)
+      var i = 0
+      while (i < componentList.size) {
+        componentList.get(i).open
+        i += 1
+      }
+      true
+    }
+  }
+
+  def close {
+    if (componentList == null) return
+    var i = componentList.size
+    while (i > 0) {
+      i -= 1
+      componentList.get(i).close
+    }
+  }
 
   def component(componentFactoryClass: Class[_ <: ComponentFactory]) = {
     val c = components.get(componentFactoryClass)
@@ -74,6 +97,7 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
   def apply(msg: AnyRef)
            (responseFunction: Any => Unit)
            (implicit srcActor: ActiveActor) {
+    open
     val srcMailbox = {
       if (srcActor == null) null
       else srcActor.actor.mailbox
