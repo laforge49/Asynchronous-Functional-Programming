@@ -1,5 +1,5 @@
 package org.agilewiki.blip
-package lifecycle
+package dependencies
 
 import org.specs.SpecificationWithJUnit
 
@@ -13,14 +13,6 @@ class SC1Factory extends ComponentFactory {
 
 class SC1(actor: Actor, componentFactory: ComponentFactory)
   extends Component(actor, componentFactory) {
-
-  override def open {
-    println("SC1 open")
-  }
-
-  override def close {
-    println("SC1 close")
-  }
 }
 
 class SC2Factory extends ComponentFactory {
@@ -30,14 +22,6 @@ class SC2Factory extends ComponentFactory {
 class SC2(actor: Actor, componentFactory: ComponentFactory)
   extends Component(actor, componentFactory) {
   bind(classOf[DoIt], doit)
-
-  override def open {
-    println("SC2 open")
-  }
-
-  override def close {
-    println("SC2 close")
-  }
 
   def doit(msg: AnyRef, rf: Any => Unit) {
     println("Done it!")
@@ -49,12 +33,11 @@ class CompositeFactory extends Factory(null) {
   include(new SC1Factory)
 }
 
-class LifecycleTest extends SpecificationWithJUnit {
-  "components" should {
-    "print open and close" in {
+class DependenciesTest extends SpecificationWithJUnit {
+  "DependenciesTest" should {
+    "include dependencies" in {
       val actor = (new CompositeFactory).newActor(null)
       Future(actor, DoIt())
-      actor.close
     }
   }
 }
