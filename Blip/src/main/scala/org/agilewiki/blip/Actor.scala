@@ -118,4 +118,10 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
     smf.addAll(components.keySet)
     new NavSetSeq(_mailbox, null, smf)
   }
+
+  def requiredService(reqClass: Class[_ <: AnyRef]) {
+    if (!messageFunctions.containsKey(reqClass) &&
+      !safes.containsKey(reqClass))
+      throw new UnsupportedOperationException("service missing for " + reqClass.getName)
+  }
 }

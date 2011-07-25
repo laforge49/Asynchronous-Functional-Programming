@@ -32,3 +32,13 @@ case class LoadFile(file: File)
 case class Instantiate(factoryId: FactoryId, mailbox: Mailbox)
 
 case class Factories()
+
+case class Register(actor: Actor)
+
+case class Unregister(actorId: ActorId)
+
+case class GetActor(actorId: ActorId)
+
+case class ResolveName(name: Name, mailbox: Mailbox)
+
+case class Actors()

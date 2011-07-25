@@ -32,8 +32,7 @@ trait Responder extends SystemServicesGetter {
     messageFunctions.put(reqClass, messageFunction)
   }
 
-  val safes =
-    new java.util.HashMap[Class[_ <: AnyRef], Safe]
+  val safes = new java.util.HashMap[Class[_ <: AnyRef], Safe]
 
   protected def bindSafe(reqClass: Class[_ <: AnyRef],
                          safe: Safe) {

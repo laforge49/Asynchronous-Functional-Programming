@@ -25,5 +25,8 @@ package org.agilewiki
 package blip
 
 trait SystemServicesGetter {
+
+
+
   def systemServices: SystemServices
 }
