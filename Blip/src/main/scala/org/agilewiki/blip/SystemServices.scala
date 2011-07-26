@@ -29,6 +29,7 @@ object SystemServices {
     val systemServicesFactory = new CompositeFactory(factoryId, rootComponentFactory)
     val systemServices = systemServicesFactory.newActor(new Mailbox)
     systemServices.setSystemServices(systemServices)
+    systemServices.id(new ActorId(factoryId.value))
     systemServices._open
     systemServices
   }
