@@ -40,7 +40,7 @@ class FactoryRegistryComponentFactory extends ComponentFactory {
 }
 
 class SafeInstantiate(factoryRegistryComponentFactory: FactoryRegistryComponentFactory,
-                      systemServices: SystemServices)
+                      systemServices: Actor)
   extends Safe {
   def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val factoryId = msg.asInstanceOf[Instantiate].factoryId

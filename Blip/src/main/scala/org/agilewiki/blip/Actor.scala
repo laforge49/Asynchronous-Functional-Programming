@@ -87,13 +87,13 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
     _isSingleton = true
   }
 
-  var _systemServices: SystemServices = null
+  var _systemServices: Actor = null
 
-  def setSystemServices(systemServices: SystemServices) {
+  def setSystemServices(systemServices: Actor) {
     _systemServices = systemServices
   }
 
-  override def systemServices: SystemServices = _systemServices
+  override def systemServices: Actor = _systemServices
 
   def apply(msg: AnyRef)
            (responseFunction: Any => Unit)

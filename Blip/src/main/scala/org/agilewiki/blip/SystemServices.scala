@@ -24,14 +24,10 @@
 package org.agilewiki
 package blip
 
-class SystemServices(mailbox: Mailbox, factory: SystemServicesFactory)
-  extends Actor(mailbox, factory) {
-}
-
 object SystemServices {
-  def apply(rootComponentFactory: ComponentFactory, factoryId: FactoryId = new FactoryId("System")): SystemServices = {
-    val systemServicesFactory = new SystemServicesFactory(factoryId, rootComponentFactory)
-    val systemServices = systemServicesFactory.newActor(new Mailbox).asInstanceOf[SystemServices]
+  def apply(rootComponentFactory: ComponentFactory, factoryId: FactoryId = new FactoryId("System")) = {
+    val systemServicesFactory = new CompositeFactory(factoryId, rootComponentFactory)
+    val systemServices = systemServicesFactory.newActor(new Mailbox)
     systemServices.setSystemServices(systemServices)
     systemServices._open
     systemServices

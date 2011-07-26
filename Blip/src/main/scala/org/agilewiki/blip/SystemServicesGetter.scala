@@ -28,5 +28,5 @@ trait SystemServicesGetter {
 
 
 
-  def systemServices: SystemServices
+  def systemServices: Actor
 }
