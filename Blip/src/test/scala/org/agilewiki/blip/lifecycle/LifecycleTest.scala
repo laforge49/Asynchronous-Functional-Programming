@@ -45,14 +45,10 @@ class SC2(actor: Actor, componentFactory: ComponentFactory)
   }
 }
 
-class CompositeFactory extends Factory(null) {
-  include(new SC1Factory)
-}
-
 class LifecycleTest extends SpecificationWithJUnit {
   "components" should {
     "print open and close" in {
-      val actor = (new CompositeFactory).newActor(null)
+      val actor = (new CompositeFactory(null, new SC1Factory)).newActor(null)
       Future(actor, DoIt())
       actor.close
     }

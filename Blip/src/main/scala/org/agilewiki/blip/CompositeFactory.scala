@@ -24,13 +24,7 @@
 package org.agilewiki
 package blip
 
-class SystemServicesFactory(factoryId: FactoryId, rootComponentFactory: ComponentFactory)
+class CompositeFactory(factoryId: FactoryId, rootComponentFactory: ComponentFactory)
   extends Factory(factoryId) {
-
   include(rootComponentFactory)
-
-  override protected def instantiate(mailbox: Mailbox) = {
-    val systemServices = new SystemServices(mailbox, this)
-    systemServices
-  }
 }

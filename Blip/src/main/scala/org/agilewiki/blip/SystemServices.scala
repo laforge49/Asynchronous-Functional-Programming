@@ -29,9 +29,11 @@ class SystemServices(mailbox: Mailbox, factory: SystemServicesFactory)
 }
 
 object SystemServices {
-  def apply(factoryId: FactoryId, rootComponentFactory: ComponentFactory): SystemServices = {
+  def apply(rootComponentFactory: ComponentFactory, factoryId: FactoryId = new FactoryId("System")): SystemServices = {
     val systemServicesFactory = new SystemServicesFactory(factoryId, rootComponentFactory)
-    systemServicesFactory.newActor(new Mailbox).asInstanceOf[SystemServices]
+    val systemServices = systemServicesFactory.newActor(new Mailbox).asInstanceOf[SystemServices]
+    systemServices.setSystemServices(systemServices)
+    systemServices._open
+    systemServices
   }
-  def apply(rootComponentFactory: ComponentFactory): SystemServices = apply(null, rootComponentFactory)
 }
