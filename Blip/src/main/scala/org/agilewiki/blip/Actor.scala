@@ -30,8 +30,9 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
   extends Responder with MsgSrc {
   val components = new java.util.LinkedHashMap[Class[_ <: ComponentFactory], Component]
   private var componentList: java.util.ArrayList[Component] = null
-
-  lazy val open = {
+  var opened = false
+  lazy val _open = {
+    opened = true
     if (components.isEmpty) true
     else {
       componentList = new java.util.ArrayList[Component](components.values)
@@ -97,7 +98,7 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
   def apply(msg: AnyRef)
            (responseFunction: Any => Unit)
            (implicit srcActor: ActiveActor) {
-    open
+    _open
     val srcMailbox = {
       if (srcActor == null) null
       else srcActor.actor.mailbox

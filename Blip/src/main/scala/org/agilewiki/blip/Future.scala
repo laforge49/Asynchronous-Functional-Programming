@@ -31,7 +31,7 @@ class Future extends MsgSrc {
   @volatile private[this] var satisfied = false
 
   def send(dst: Actor, msg: AnyRef) {
-    dst.open
+    dst._open
     val mailbox = dst.mailbox
     if (mailbox == null) sendSynchronous(dst, msg)
     else sendAsynchronous(dst, msg)
