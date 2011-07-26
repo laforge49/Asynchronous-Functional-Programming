@@ -25,7 +25,8 @@ package org.agilewiki
 package blip
 
 object SystemServices {
-  def apply(rootComponentFactory: ComponentFactory, factoryId: FactoryId = new FactoryId("System")) = {
+  def apply(rootComponentFactory: ComponentFactory,
+            factoryId: FactoryId = new FactoryId("System")) = {
     val systemServicesFactory = new CompositeFactory(factoryId, rootComponentFactory)
     val systemServices = systemServicesFactory.newActor(new Mailbox)
     systemServices.setSystemServices(systemServices)
