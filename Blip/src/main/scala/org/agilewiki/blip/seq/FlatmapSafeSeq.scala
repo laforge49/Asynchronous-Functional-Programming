@@ -27,8 +27,8 @@ package seq
 
 import annotation.tailrec
 
-class FlatmapSafeSeq[K, V](seq: Sequence[K, V], safe: Safe)
-  extends Sequence[K, V](seq.mailbox, null) {
+class FlatmapSafeSeq[K, V, V1](seq: Sequence[K, V], safe: Safe)
+  extends Sequence[K, V1](seq.mailbox, null) {
 
   override def first(msg: AnyRef, rf: Any => Unit) {
     r(msg, rf)
@@ -57,7 +57,7 @@ class FlatmapSafeSeq[K, V](seq: Sequence[K, V], safe: Safe)
           val kv = rsp.asInstanceOf[KVPair[K, V]]
           safe.func(kv, {
             v => {
-              if (v != null) rf(KVPair(kv.key, v))
+              if (v != null) rf(KVPair(kv.key, v.asInstanceOf[V1]))
               else {
                 req = Next(kv.key)
                 if (async) ar(req, rf)
