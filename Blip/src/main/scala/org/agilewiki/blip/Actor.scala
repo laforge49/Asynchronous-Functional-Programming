@@ -32,17 +32,16 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
   private var componentList: java.util.ArrayList[Component] = null
   var opened = false
   lazy val _open = {
-    opened = true
-    if (components.isEmpty) true
-    else {
+    if (!components.isEmpty)  {
       componentList = new java.util.ArrayList[Component](components.values)
       var i = 0
       while (i < componentList.size) {
         componentList.get(i).open
         i += 1
       }
-      true
     }
+    opened = true
+    true
   }
 
   def close {
@@ -75,6 +74,7 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
 
   def id(_id: ActorId) {
     if (actorId != null) throw new UnsupportedOperationException
+    if (opened) throw new IllegalStateException
     actorId = _id
   }
 
@@ -90,6 +90,7 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
   var _systemServices: Actor = null
 
   def setSystemServices(systemServices: Actor) {
+    if (opened) throw new IllegalStateException
     _systemServices = systemServices
   }
 
@@ -145,6 +146,7 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
   }
 
   def requiredService(reqClass: Class[_ <: AnyRef]) {
+    if (opened) throw new IllegalStateException
     if (!messageFunctions.containsKey(reqClass) &&
       !safes.containsKey(reqClass))
       throw new UnsupportedOperationException("service missing for " + reqClass.getName)
