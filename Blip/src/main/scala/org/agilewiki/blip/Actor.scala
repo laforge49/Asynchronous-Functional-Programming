@@ -25,6 +25,7 @@ package org.agilewiki
 package blip
 
 import seq.NavSetSeq
+import java.util.ArrayList
 
 class Actor(_mailbox: Mailbox, _factory: Factory)
   extends Responder with MsgSrc {
@@ -124,8 +125,8 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
     safe.func(msg, responseFunction)(srcActor)
   }
 
-  override def response(msg: MailboxRsp) {
-    mailbox.response(msg)
+  override def _send(blkmsg: ArrayList[MailboxMsg]) {
+    mailbox ! blkmsg
   }
 
   lazy val messageClasses = {

@@ -24,6 +24,8 @@
 package org.agilewiki
 package blip
 
+import java.util.ArrayList
+
 trait MsgSrc {
-  def response(msg: MailboxRsp) {}
+  def _send(blkmsg: ArrayList[MailboxMsg]) {}
 }

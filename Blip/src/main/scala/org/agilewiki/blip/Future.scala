@@ -25,6 +25,7 @@ package org.agilewiki
 package blip
 
 import annotation.tailrec
+import java.util.ArrayList
 
 class Future extends MsgSrc {
   @volatile private[this] var rsp: Any = _
@@ -43,7 +44,9 @@ class Future extends MsgSrc {
 
   def sendAsynchronous(dst: Actor, msg: AnyRef) {
     val req = new MailboxReq(dst, null, null, msg, this, null)
-    dst.mailbox.request(req)
+    val blkmsg = new ArrayList[MailboxMsg]
+    blkmsg.add(req)
+    dst._send(blkmsg)
   }
 
   def synchronousResponse(_rsp: Any) {
@@ -51,10 +54,10 @@ class Future extends MsgSrc {
     satisfied = true
   }
 
-  override def response(msg: MailboxRsp) {
+  override def _send(blkmsg: ArrayList[MailboxMsg]) {
     synchronized {
       if (!satisfied) {
-        rsp = msg.rsp
+        rsp = blkmsg.get(0).asInstanceOf[MailboxRsp].rsp
         satisfied = true
       }
       notify()

@@ -25,9 +25,10 @@ package org.agilewiki
 package blip
 
 import scala.actors.Reactor
+import java.util.ArrayList
 
 class Mailbox
-  extends Reactor[MailboxMsg] {
+  extends Reactor[ArrayList[MailboxMsg]] {
 
   def isMailboxEmpty = mailboxSize == 0
 
@@ -46,41 +47,74 @@ class Mailbox
 
   var exceptionFunction: Exception => Unit = null
 
-  def reqExceptionFunction(ex: Exception) {reply(ex)}
+  def reqExceptionFunction(ex: Exception) {
+    reply(ex)
+  }
+
+  val pending = new java.util.HashMap[MsgSrc, ArrayList[MailboxMsg]]
+
+  def addPending(target: MsgSrc, msg: MailboxMsg) {
+    var blkmsg = pending.get(target)
+    if (blkmsg == null) {
+      blkmsg = new ArrayList[MailboxMsg]
+      pending.put(target, blkmsg)
+    }
+    blkmsg.add(msg)
+  }
 
   override def act {
     loop{
       react{
-        case msg: MailboxReq => {
-          curMsg = msg
-          val target = msg.target
-          exceptionFunction = reqExceptionFunction
-          val reqFunction = target.messageFunctions.get(msg.req.getClass)
-          try {
-            if (reqFunction == null)
-              throw new IllegalArgumentException("unbound message: "+msg.req.getClass.getName)
-            reqFunction(msg.req, reply)
-          } catch {
-            case ex: Exception => {
-              reply(ex)
+        case blkmsg: ArrayList[MailboxMsg] => {
+          val it = blkmsg.iterator
+          while (it.hasNext) {
+            it.next match {
+              case msg: MailboxReq => req(msg)
+              case msg: MailboxRsp => rsp(msg)
             }
+          }
+          if (isMailboxEmpty && !pending.isEmpty) {
+            val it = pending.keySet.iterator
+            while (it.hasNext) {
+              val target = it.next
+              val blkmsg = pending.get(target)
+              target._send(blkmsg)
+            }
+            pending.clear
           }
         }
-        case msg: MailboxRsp => {
-          curMsg = msg
-          exceptionFunction = msg.senderExceptionFunction
-          if (msg.rsp.isInstanceOf[Exception]) {
-            exceptionFunction(msg.rsp.asInstanceOf[Exception])
-          }
-          else {
-            try {
-              msg.responseFunction(msg.rsp)
-            } catch {
-              case ex: Exception => {
-                exceptionFunction(ex)
-              }
-            }
-          }
+      }
+    }
+  }
+
+  def req(msg: MailboxReq) {
+    curMsg = msg
+    val target = msg.target
+    exceptionFunction = reqExceptionFunction
+    val reqFunction = target.messageFunctions.get(msg.req.getClass)
+    try {
+      if (reqFunction == null)
+        throw new IllegalArgumentException("unbound message: " + msg.req.getClass.getName)
+      reqFunction(msg.req, reply)
+    } catch {
+      case ex: Exception => {
+        reply(ex)
+      }
+    }
+  }
+
+  def rsp(msg: MailboxRsp) {
+    curMsg = msg
+    exceptionFunction = msg.senderExceptionFunction
+    if (msg.rsp.isInstanceOf[Exception]) {
+      exceptionFunction(msg.rsp.asInstanceOf[Exception])
+    }
+    else {
+      try {
+        msg.responseFunction(msg.rsp)
+      } catch {
+        case ex: Exception => {
+          exceptionFunction(ex)
         }
       }
     }
@@ -90,7 +124,6 @@ class Mailbox
           (responseFunction: Any => Unit) {
     val oldReq = currentRequestMessage
     val sender = oldReq.target
-    val targetMailbox = targetActor.mailbox
     val req = new MailboxReq(
       targetActor,
       responseFunction,
@@ -98,7 +131,7 @@ class Mailbox
       content,
       sender,
       exceptionFunction)
-    targetMailbox.request(req)
+    addPending(targetActor, req)
   }
 
   private def reply(content: Any) {
@@ -111,15 +144,7 @@ class Mailbox
       req.oldRequest,
       content,
       req.senderExceptionFunction)
-    sender.response(rsp)
-  }
-
-  def request(msg: MailboxReq) {
-    this ! msg
-  }
-
-  def response(msg: MailboxRsp) {
-    this ! msg
+    addPending(sender, rsp)
   }
 
   start
