@@ -152,4 +152,6 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
       !safes.containsKey(reqClass))
       throw new UnsupportedOperationException("service missing for " + reqClass.getName)
   }
+
+  override def source = mailbox
 }

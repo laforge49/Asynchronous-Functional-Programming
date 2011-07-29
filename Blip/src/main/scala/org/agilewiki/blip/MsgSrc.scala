@@ -28,4 +28,5 @@ import java.util.ArrayList
 
 trait MsgSrc {
   def _send(blkmsg: ArrayList[MailboxMsg]) {}
+  def source = this
 }

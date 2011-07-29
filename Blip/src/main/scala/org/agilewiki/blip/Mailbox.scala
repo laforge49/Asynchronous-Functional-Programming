@@ -28,7 +28,8 @@ import scala.actors.Reactor
 import java.util.ArrayList
 
 class Mailbox
-  extends Reactor[ArrayList[MailboxMsg]] {
+  extends Reactor[ArrayList[MailboxMsg]]
+  with MsgSrc {
 
   def isMailboxEmpty = mailboxSize == 0
 
@@ -54,15 +55,16 @@ class Mailbox
   val pending = new java.util.HashMap[MsgSrc, ArrayList[MailboxMsg]]
 
   def addPending(target: MsgSrc, msg: MailboxMsg) {
-    var blkmsg = pending.get(target)
+    val source = target.source
+    var blkmsg = pending.get(source)
     if (blkmsg == null) {
       blkmsg = new ArrayList[MailboxMsg]
-      pending.put(target, blkmsg)
+      pending.put(source, blkmsg)
     }
     blkmsg.add(msg)
-    if (blkmsg.size > 100) {
-      pending.remove(target)
-      target._send(blkmsg)
+    if (blkmsg.size > 64) {
+      pending.remove(source)
+      source._send(blkmsg)
     }
   }
 
@@ -149,6 +151,10 @@ class Mailbox
       content,
       req.senderExceptionFunction)
     addPending(sender, rsp)
+  }
+
+  override def _send(blkmsg: ArrayList[MailboxMsg]) {
+    this ! blkmsg
   }
 
   start
