@@ -60,6 +60,10 @@ class Mailbox
       pending.put(target, blkmsg)
     }
     blkmsg.add(msg)
+    if (blkmsg.size > 100) {
+      pending.remove(target)
+      target._send(blkmsg)
+    }
   }
 
   override def act {
