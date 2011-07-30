@@ -29,7 +29,7 @@ import java.util.ArrayList
 
 class Mailbox
   extends Reactor[ArrayList[MailboxMsg]]
-  with MsgSrc {
+  with MsgCtrl {
 
   def isMailboxEmpty = mailboxSize == 0
 
@@ -52,19 +52,19 @@ class Mailbox
     reply(ex)
   }
 
-  val pending = new java.util.HashMap[MsgSrc, ArrayList[MailboxMsg]]
+  val pending = new java.util.HashMap[MsgCtrl, ArrayList[MailboxMsg]]
 
   def addPending(target: MsgSrc, msg: MailboxMsg) {
-    val source = target.source
-    var blkmsg = pending.get(source)
+    val ctrl = target.ctrl
+    var blkmsg = pending.get(ctrl)
     if (blkmsg == null) {
       blkmsg = new ArrayList[MailboxMsg]
-      pending.put(source, blkmsg)
+      pending.put(ctrl, blkmsg)
     }
     blkmsg.add(msg)
     if (blkmsg.size > 64) {
-      pending.remove(source)
-      source._send(blkmsg)
+      pending.remove(ctrl)
+      ctrl._send(blkmsg)
     }
   }
 
@@ -82,9 +82,9 @@ class Mailbox
           if (isMailboxEmpty && !pending.isEmpty) {
             val it = pending.keySet.iterator
             while (it.hasNext) {
-              val target = it.next
-              val blkmsg = pending.get(target)
-              target._send(blkmsg)
+              val ctrl = it.next
+              val blkmsg = pending.get(ctrl)
+              ctrl._send(blkmsg)
             }
             pending.clear
           }

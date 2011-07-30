@@ -26,6 +26,6 @@ package blip
 
 import java.util.ArrayList
 
-trait MsgSrc {
-  def ctrl: MsgCtrl
+trait MsgCtrl {
+  def _send(blkmsg: ArrayList[MailboxMsg])
 }

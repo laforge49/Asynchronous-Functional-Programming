@@ -27,7 +27,9 @@ package blip
 import annotation.tailrec
 import java.util.ArrayList
 
-class Future extends MsgSrc {
+class Future
+  extends MsgSrc
+  with MsgCtrl {
   @volatile private[this] var rsp: Any = _
   @volatile private[this] var satisfied = false
 
@@ -46,13 +48,15 @@ class Future extends MsgSrc {
     val req = new MailboxReq(dst, null, null, msg, this, null)
     val blkmsg = new ArrayList[MailboxMsg]
     blkmsg.add(req)
-    dst._send(blkmsg)
+    dst.ctrl._send(blkmsg)
   }
 
   def synchronousResponse(_rsp: Any) {
     rsp = _rsp
     satisfied = true
   }
+
+  override def ctrl = this
 
   override def _send(blkmsg: ArrayList[MailboxMsg]) {
     synchronized {

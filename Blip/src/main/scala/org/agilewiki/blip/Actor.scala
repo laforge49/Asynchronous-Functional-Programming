@@ -125,10 +125,6 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
     safe.func(msg, responseFunction)(srcActor)
   }
 
-  override def _send(blkmsg: ArrayList[MailboxMsg]) {
-    mailbox ! blkmsg
-  }
-
   lazy val messageClasses = {
     val smf = new java.util.TreeSet[Class[_ <: AnyRef]](
       new ClassComparator
@@ -153,5 +149,5 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
       throw new UnsupportedOperationException("service missing for " + reqClass.getName)
   }
 
-  override def source = mailbox
+  override def ctrl = mailbox
 }
