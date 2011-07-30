@@ -62,7 +62,7 @@ class Mailbox
       pending.put(ctrl, blkmsg)
     }
     blkmsg.add(msg)
-    if (blkmsg.size > 64) {
+    if (blkmsg.size > 63) {
       pending.remove(ctrl)
       ctrl._send(blkmsg)
     }

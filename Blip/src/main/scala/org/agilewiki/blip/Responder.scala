@@ -29,6 +29,7 @@ trait Responder extends SystemServicesGetter {
     new java.util.HashMap[Class[_ <: AnyRef], (AnyRef, Any => Unit) => Unit]
 
   protected def bind(reqClass: Class[_ <: AnyRef], messageFunction: (AnyRef, Any => Unit) => Unit) {
+    if (activeActor.actor.opened) throw new IllegalStateException
     messageFunctions.put(reqClass, messageFunction)
   }
 
@@ -36,6 +37,7 @@ trait Responder extends SystemServicesGetter {
 
   protected def bindSafe(reqClass: Class[_ <: AnyRef],
                          safe: Safe) {
+    if (activeActor.actor.opened) throw new IllegalStateException
     safes.put(reqClass, safe)
   }
 
