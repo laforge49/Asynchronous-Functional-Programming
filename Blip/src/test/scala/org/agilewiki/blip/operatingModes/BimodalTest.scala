@@ -31,9 +31,9 @@ class BimodalTest extends SpecificationWithJUnit {
   "Bimodal" should {
     "print differently" in {
       val mb1 = new Mailbox
+      val mb2 = new Mailbox
       val b = new B
       b.setMailbox(mb1)
-      val mb2 = new Mailbox
       println("synchronous test")
       val sa = new A(b)
       sa.setMailbox(mb1)
