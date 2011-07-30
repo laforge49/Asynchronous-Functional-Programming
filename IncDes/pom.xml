@@ -12,10 +12,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.agilewiki</groupId>
-    <artifactId>Blip</artifactId>
+    <artifactId>IncDes</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
-    <name>Blip</name>
+    <name>IncDes</name>
     
     <properties>
     	<scala.version>2.9.0</scala.version>
@@ -121,6 +121,11 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.agilewiki</groupId>
+            <artifactId>Blip</artifactId>
+            <version>1.0</version>
         </dependency>
         <!--dependency>
             <groupId>joda-time</groupId>
