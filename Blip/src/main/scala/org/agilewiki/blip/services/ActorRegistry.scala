@@ -51,7 +51,7 @@ class ActorRegistryComponent(actor: Actor, componentFactory: ActorRegistryCompon
   bind(classOf[GetActor], getActor)
   bindSafe(classOf[ResolveName], new SafeResolveName(actor))
   bindSafe(classOf[Actors],
-    new SafeConstant(new NavMapSeq(null, null, actors)))
+    new SafeConstant(new NavMapSeq(actors)))
 
   override def open {
     actor.requiredService(classOf[Instantiate])

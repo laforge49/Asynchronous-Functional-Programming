@@ -26,7 +26,8 @@ package blip
 package seq
 
 class HeadSeq[K, V](seq: Sequence[K, V], limit: K)
-  extends Sequence[K, V](seq.mailbox, null) {
+  extends Sequence[K, V] {
+  setMailbox(seq.mailbox)
 
   override def first(msg: AnyRef, rf: Any => Unit) {
     seq.first(msg, rsp => h(rsp, rf))

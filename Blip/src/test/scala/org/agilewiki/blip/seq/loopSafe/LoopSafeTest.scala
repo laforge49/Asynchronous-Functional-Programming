@@ -18,7 +18,7 @@ class LoopSafeTest extends SpecificationWithJUnit {
   "LoopSafeTest" should {
     "sum" in {
       val sumSafe = new SumSafe
-      val rangeSeq = Range(1, 4)
+      val rangeSeq = new Range(1, 4)
       Future(rangeSeq, LoopSafe(sumSafe))
       println(sumSafe.sum)
     }

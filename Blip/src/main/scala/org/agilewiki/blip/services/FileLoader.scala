@@ -28,7 +28,8 @@ package services
 import java.io.{DataInputStream, FileInputStream}
 
 class FileLoader
-  extends Actor(new Mailbox, null) {
+  extends Actor {
+  setMailbox(new Mailbox)
   bind(classOf[LoadFile], loadFile)
 
   def loadFile(msg: AnyRef, rf: Any => Unit) {

@@ -26,7 +26,7 @@ package blip
 package seq
 
 class EmptySeq
-  extends Sequence(null, null) {
+  extends Sequence {
   def first(msg: AnyRef, rf: Any => Unit) {
     rf(null)
   }

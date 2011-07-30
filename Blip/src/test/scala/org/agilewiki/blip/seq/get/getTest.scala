@@ -11,7 +11,7 @@ class GetTest extends SpecificationWithJUnit {
       alphabet.put("a", "Apple")
       alphabet.put("b", "Boy")
       alphabet.put("c", "Cat")
-      val alphabetSeq = new NavMapSeq(null, null, alphabet)
+      val alphabetSeq = new NavMapSeq(alphabet)
       println(Future(alphabetSeq, Get("c")))
       println(Future(alphabetSeq, Get("d")))
     }

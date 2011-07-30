@@ -26,7 +26,8 @@ package blip
 package seq
 
 class MapSafeSeq[K, V, V1](seq: Sequence[K, V], safe: Safe)
-  extends Sequence[K, V1](seq.mailbox, null) {
+  extends Sequence[K, V1] {
+  setMailbox(seq.mailbox)
 
   override def first(msg: AnyRef, rf: Any => Unit) {
     r(msg, rf)

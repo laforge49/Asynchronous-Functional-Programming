@@ -25,8 +25,8 @@ package org.agilewiki
 package blip
 package seq
 
-class ListSeq[V](mailbox: Mailbox, factory: Factory, list: java.util.List[V])
-  extends Sequence[Int, V](mailbox, factory) {
+class ListSeq[V](list: java.util.List[V])
+  extends Sequence[Int, V] {
 
   override def first(msg: AnyRef, rf: Any => Unit) {
     if (list.isEmpty) rf(null)

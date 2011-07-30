@@ -13,7 +13,7 @@ class LoopTest extends SpecificationWithJUnit {
       fact.add(2)
       fact.add(6)
       fact.add(24)
-      val factSeq = new ListSeq(null, null, fact)
+      val factSeq = new ListSeq(fact)
       Future(factSeq, Loop((key: Int, value: Int) => println(key+" "+value)))
     }
   }

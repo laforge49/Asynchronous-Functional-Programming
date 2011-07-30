@@ -7,7 +7,7 @@ case class Set(value: Int)
 
 case class Get()
 
-class Saver(mailbox: Mailbox, factory: Factory) extends Actor(mailbox, factory) {
+class Saver extends Actor {
   var i = 0
 
   bind(classOf[Set], setFunc)
@@ -36,8 +36,8 @@ class DoubleComponent(saver: Saver) extends Component(saver, null) {
 }
 
 class DoubleFactory extends Factory(null) {
-  override protected def instantiate(mailbox: Mailbox) = {
-    val saver = new Saver(mailbox, this)
+  override protected def instantiate = {
+    val saver = new Saver
     val doubleComponent = new DoubleComponent(saver)
     addComponent(saver, doubleComponent)
     saver

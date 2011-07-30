@@ -29,18 +29,21 @@ import org.specs.SpecificationWithJUnit
 class TimingTest extends SpecificationWithJUnit {
   "TimingTest" should {
     "synchronous hello world" in {
-      val a = new TimingActor(null, null)
+      val a = new TimingActor(null)
       println(Future(a, TimingReq("synchronous hello world")))
     }
     "asynchronous hello world" in {
-      val a = new TimingActor(new Mailbox, null)
+      val a = new TimingActor(null)
+      a.setMailbox(new Mailbox)
       println(Future(a, TimingReq("asynchronous hello world")))
     }
     "synchronous timing" in {
       val c = 10000//0000
       val m = new Mailbox
-      val a1 = new TimingActor(m, null)
-      val a = new RepeatingActor(m, a1, c)
+      val a1 = new TimingActor(null)
+      a1.setMailbox(m)
+      val a = new RepeatingActor(a1, c)
+      a.setMailbox(m)
       Future(a, TimingReq("hello world"))
       val t0 = System.currentTimeMillis
       Future(a, TimingReq("hello world"))
@@ -50,7 +53,8 @@ class TimingTest extends SpecificationWithJUnit {
     "quad-synchronous timing" in {
       val c = 100000//000
       val m = new Mailbox
-      val a = new ParallelSyncActor(m, c)
+      val a = new ParallelSyncActor(c)
+      a.setMailbox(m)
       Future(a, TimingReq("hello world"))
       val t0 = System.currentTimeMillis
       Future(a, TimingReq("hello world"))
@@ -60,7 +64,8 @@ class TimingTest extends SpecificationWithJUnit {
     "asynchronous timing" in {
       val c = 1000//00
       val m = new Mailbox
-      val a = new ParallelAsyncActor(m, c)
+      val a = new ParallelAsyncActor(c)
+      a.setMailbox(m)
       Future(a, TimingReq("hello world"))
       val t0 = System.currentTimeMillis
       Future(a, TimingReq("hello world"))

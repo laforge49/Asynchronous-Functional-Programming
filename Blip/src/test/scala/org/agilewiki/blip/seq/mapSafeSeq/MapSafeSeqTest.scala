@@ -14,7 +14,7 @@ class MapSafe extends Safe {
 class MapSafeSeqTest extends SpecificationWithJUnit {
   "MapSafeSeqTest" should {
     "map" in {
-      val transform = new MapSafeSeq[Int, Int, Int](Range(0, 3), new MapSafe)
+      val transform = new MapSafeSeq[Int, Int, Int](new Range(0, 3), new MapSafe)
       Future(transform, Loop((key: Int, value: Int) => println(key + " " + value)))
     }
   }

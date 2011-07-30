@@ -4,12 +4,9 @@ package factories
 import org.specs.SpecificationWithJUnit
 
 abstract class UserFactory(id: FactoryId) extends Factory(id) {
+  isSingleton = true
   def accountName: String
-  override protected def instantiate(mailbox: Mailbox) = {
-    val actor = new UserActor(mailbox, this)
-    actor.singleton
-    actor
-  }
+  override protected def instantiate = new UserActor
 }
 
 class FredFactory extends UserFactory(FactoryId("Fred")) {
@@ -18,9 +15,13 @@ class FredFactory extends UserFactory(FactoryId("Fred")) {
 
 case class AccountName()
 
-class UserActor(mailbox: Mailbox, userFactory: UserFactory) extends Actor(mailbox, userFactory) {
+class UserActor
+  extends Actor {
   bind(classOf[AccountName], accountName)
-  private def accountName(msg: AnyRef, rf: Any => Unit) {rf(userFactory.accountName)}
+
+  private def accountName(msg: AnyRef, rf: Any => Unit) {
+    rf(factory.asInstanceOf[UserFactory].accountName)
+  }
 }
 
 class FactoryTest extends SpecificationWithJUnit {

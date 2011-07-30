@@ -24,30 +24,38 @@
 package org.agilewiki
 package blip
 
-class ParallelAsyncActor(_mailbox: Mailbox, count: Int) extends Actor(_mailbox, null) {
+class ParallelAsyncActor(count: Int) extends Actor {
   bind(classOf[TimingReq], timing)
   def timing(msg: AnyRef, rf: Any => Unit) {
     var i = 4
-    var a1 = new TimingActor(new Mailbox, null)
-    var a2 = new RepeatingActor(new Mailbox, a1, count)
+    var a1 = new TimingActor(null)
+    a1.setMailbox(new Mailbox)
+    var a2 = new RepeatingActor(a1, count)
+    a2.setMailbox(new Mailbox)
     a2(msg){ r =>
       i -= 1
       if (i == 0) rf(msg)
     }
-    a1 = new TimingActor(new Mailbox, null)
-    a2 = new RepeatingActor(new Mailbox, a1, count)
+    a1 = new TimingActor(null)
+    a1.setMailbox(new Mailbox)
+    a2 = new RepeatingActor(a1, count)
+    a2.setMailbox(new Mailbox)
     a2(msg){ r =>
       i -= 1
       if (i == 0) rf(msg)
     }
-    a1 = new TimingActor(new Mailbox, null)
-    a2 = new RepeatingActor(new Mailbox, a1, count)
+    a1 = new TimingActor(null)
+    a1.setMailbox(new Mailbox)
+    a2 = new RepeatingActor(a1, count)
+    a2.setMailbox(new Mailbox)
     a2(msg){ r =>
       i -= 1
       if (i == 0) rf(msg)
     }
-    a1 = new TimingActor(new Mailbox, null)
-    a2 = new RepeatingActor(new Mailbox, a1, count)
+    a1 = new TimingActor(null)
+    a1.setMailbox(new Mailbox)
+    a2 = new RepeatingActor(a1, count)
+    a2.setMailbox(new Mailbox)
     a2(msg){ r =>
       i -= 1
       if (i == 0) rf(msg)

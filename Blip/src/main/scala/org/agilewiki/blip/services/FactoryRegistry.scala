@@ -56,5 +56,5 @@ class FactoryRegistryComponent(actor: Actor, componentFactory: FactoryRegistryCo
   extends Component(actor, componentFactory) {
   bindSafe(classOf[Instantiate], new SafeInstantiate(componentFactory, systemServices))
   bindSafe(classOf[Factories],
-    new SafeConstant(new NavMapSeq(null, null, componentFactory.factories)))
+    new SafeConstant(new NavMapSeq(componentFactory.factories)))
 }

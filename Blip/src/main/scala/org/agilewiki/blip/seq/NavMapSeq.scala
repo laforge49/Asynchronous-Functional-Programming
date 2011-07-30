@@ -27,8 +27,8 @@ package seq
 
 import java.util.{Comparator, NavigableMap}
 
-class NavMapSeq[K, V](mailbox: Mailbox, factory: Factory, navigableMap: NavigableMap[K, V])
-  extends Sequence[K, V](mailbox, factory) {
+class NavMapSeq[K, V](navigableMap: NavigableMap[K, V])
+  extends Sequence[K, V] {
 
   override def first(msg: AnyRef, rf: Any => Unit) {
     if (navigableMap.isEmpty) rf(null)

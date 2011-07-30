@@ -6,7 +6,7 @@ import org.specs.SpecificationWithJUnit
 case class SE()
 case class SNE()
 
-class S(mailbox: Mailbox) extends Actor(mailbox, null) {
+class S extends Actor {
   bind(classOf[SE], se)
   private def se(msg: AnyRef, rf: Any => Unit) {
     throw new IllegalStateException
@@ -24,7 +24,8 @@ case class SyncServerEx()
 case class AsyncRspEx()
 case class SyncRspEx()
 
-class D extends Actor(new Mailbox, null) {
+class D extends Actor {
+  setMailbox(new Mailbox)
   bind(classOf[AsyncServerEx],{(msg, rf) =>
     exceptionHandler(msg, rf, asyncServerEx){ex =>
       println("D got exception "+ex.toString)
@@ -32,7 +33,8 @@ class D extends Actor(new Mailbox, null) {
     }
   })
   def asyncServerEx(msg: AnyRef, rf: Any => Unit) {
-    val s = new S(new Mailbox)
+    val s = new S
+    s.setMailbox(new Mailbox)
     s(SE())(rsp => rf)
   }
 
@@ -43,7 +45,8 @@ class D extends Actor(new Mailbox, null) {
     }
   })
   def syncServerEx(msg: AnyRef, rf: Any => Unit) {
-    val s = new S(mailbox)
+    val s = new S
+    s.setMailbox(mailbox)
     s(SE())(rsp => rf)
   }
 
@@ -54,7 +57,8 @@ class D extends Actor(new Mailbox, null) {
     }
   })
   def asyncRspEx(msg: AnyRef, rf: Any => Unit) {
-    val s = new S(new Mailbox)
+    val s = new S
+    s.setMailbox(new Mailbox)
     s(SNE()){rsp => throw new IllegalAccessException}
   }
 
@@ -65,7 +69,8 @@ class D extends Actor(new Mailbox, null) {
     }
   })
   def syncRspEx(msg: AnyRef, rf: Any => Unit) {
-    val s = new S(mailbox)
+    val s = new S
+    s.setMailbox(mailbox)
     s(SNE()){rsp => throw new IllegalAccessException}
   }
 }

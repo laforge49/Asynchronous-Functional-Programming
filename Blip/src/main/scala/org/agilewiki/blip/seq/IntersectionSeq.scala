@@ -27,8 +27,8 @@ package seq
 
 import annotation.tailrec
 
-class IntersectionSeq[K, V](mailbox: Mailbox, seqList: java.util.List[Sequence[K, V]])
-  extends Sequence[K, java.util.List[V]](mailbox, null) {
+class IntersectionSeq[K, V](seqList: java.util.List[Sequence[K, V]])
+  extends Sequence[K, java.util.List[V]] {
 
   if (seqList.isEmpty) throw new IllegalArgumentException("at least one sequence is required")
 
@@ -48,7 +48,9 @@ class IntersectionSeq[K, V](mailbox: Mailbox, seqList: java.util.List[Sequence[K
     val seqs = new java.util.ArrayList[Cursor[K, V]]
     val sit = seqList.iterator
     while (sit.hasNext) {
-      seqs.add(new Cursor(mailbox, sit.next))
+      val cursor = new Cursor(sit.next)
+      cursor.setMailbox(mailbox)
+      seqs.add(cursor)
     }
     val processed = new java.util.ArrayList[Cursor[K, V]]
     val it = seqs.iterator

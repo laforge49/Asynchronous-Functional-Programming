@@ -25,8 +25,8 @@ package org.agilewiki
 package blip
 package seq
 
-class Cursor[K, V](mailbox: Mailbox, seq: Sequence[K, V])
-  extends Sequence[K, V](mailbox, null)
+class Cursor[K, V](seq: Sequence[K, V])
+  extends Sequence[K, V]
   with Comparable[Cursor[K, V]] {
   var lastKVPair: KVPair[K, V] = null
   var _first = false

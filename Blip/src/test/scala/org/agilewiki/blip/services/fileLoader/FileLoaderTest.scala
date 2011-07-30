@@ -7,8 +7,9 @@ import java.io.{BufferedReader, InputStreamReader, ByteArrayInputStream, File}
 
 case class DoIt()
 
-class ShortFileLoader extends Actor(new Mailbox, null) {
+class ShortFileLoader extends Actor {
   bind(classOf[DoIt], doit)
+  setMailbox(new Mailbox)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
     val cwd = new File(".")

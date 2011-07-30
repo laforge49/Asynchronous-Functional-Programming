@@ -24,7 +24,7 @@
 package org.agilewiki
 package blip
 
-class TimingActor(_mailbox: Mailbox, next: Actor) extends Actor(_mailbox, null) {
+class TimingActor(next: Actor) extends Actor {
   bind(classOf[TimingReq], timing)
   def timing(msg: AnyRef, rf: Any => Unit) {
     val req = msg.asInstanceOf[TimingReq]

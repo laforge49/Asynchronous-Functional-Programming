@@ -28,7 +28,8 @@ package seq
 import annotation.tailrec
 
 class FilterSeq[K, V](seq: Sequence[K, V], f: V => Boolean)
-  extends Sequence[K, V](seq.mailbox, null) {
+  extends Sequence[K, V] {
+  setMailbox(seq.mailbox)
 
   override def first(msg: AnyRef, rf: Any => Unit) {
     _r(msg, rf)

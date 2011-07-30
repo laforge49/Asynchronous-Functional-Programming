@@ -11,7 +11,7 @@ class NavSetTest extends SpecificationWithJUnit {
       fruit.add("Apple")
       fruit.add("Orange")
       fruit.add("Pear")
-      val fruitSeq = new NavSetSeq(null, null, fruit)
+      val fruitSeq = new NavSetSeq(fruit)
       println(Future(fruitSeq, First()))
       println(Future(fruitSeq, Current("Bananna")))
       println(Future(fruitSeq, Next("Orange")))

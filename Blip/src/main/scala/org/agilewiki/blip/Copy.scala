@@ -22,12 +22,6 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki
-package incDes
+package blip
 
-import blip._
-
-class IncDes extends Actor {
-  def newSubordinate = {
-    factory.asInstanceOf[IncDesFactory].subFactory.newActor(mailbox).asInstanceOf[IncDes]
-  }
-}
+case class Copy(mailbox: Mailbox)

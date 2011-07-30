@@ -28,8 +28,8 @@ package seq
 import annotation.tailrec
 import java.util.Comparator
 
-abstract class Sequence[K, V](mailbox: Mailbox, factory: Factory)
-  extends Actor(mailbox, factory) {
+abstract class Sequence[K, V]
+  extends Actor {
   bind(classOf[First], first)
 
   def first(msg: AnyRef, rf: Any => Unit)

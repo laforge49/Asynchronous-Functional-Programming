@@ -25,15 +25,19 @@ package org.agilewiki
 package blip
 
 abstract class Factory(_id: FactoryId) {
+  var isSingleton = false
+
   def id = _id
 
   private val componentFactories =
     new java.util.LinkedHashMap[Class[_ <: ComponentFactory], ComponentFactory]
 
-  protected def instantiate(mailbox: Mailbox) = new Actor(mailbox, this)
+  protected def instantiate = new Actor
 
   def newActor(mailbox: Mailbox) = {
-    val actor = instantiate(mailbox)
+    val actor = instantiate
+    actor.setMailbox(mailbox)
+    actor.setFactory(this)
     val fit = componentFactories.keySet.iterator
     while (fit.hasNext) {
       val componentFactoryClass = fit.next
@@ -41,6 +45,7 @@ abstract class Factory(_id: FactoryId) {
       val component = componentFactory.newComponent(actor)
       addComponent(actor, component)
     }
+    if (isSingleton) actor.id(ActorId(id.value))
     actor
   }
 

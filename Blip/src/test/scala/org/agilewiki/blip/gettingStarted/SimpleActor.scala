@@ -6,7 +6,7 @@ import org.specs.SpecificationWithJUnit
 case class Times2(value: Int)
 case class Add(value1: Int, value2: Int)
 
-class SimpleActor(mailbox: Mailbox) extends Actor(mailbox, null) {
+class SimpleActor extends Actor {
   bind(classOf[Times2], times2)
   bind(classOf[Add], add)
   private def times2(msg: AnyRef, rf: Any => Unit) { rf(msg.asInstanceOf[Times2].value * 2) }
@@ -19,7 +19,7 @@ class SimpleActor(mailbox: Mailbox) extends Actor(mailbox, null) {
 class Test extends SpecificationWithJUnit {
   "SimpleActor" should {
     "print" in {
-      val simpleActor = new SimpleActor(null)
+      val simpleActor = new SimpleActor
       println(Future(simpleActor, Times2(21)))
       println(Future(simpleActor, Add(1, 2)))
     }

@@ -14,7 +14,7 @@ class FilterSafe extends Safe {
 class FilterSafeSeqTest extends SpecificationWithJUnit {
   "FilterSeqTest" should {
     "filter" in {
-      val range = Range(0, 4)
+      val range = new Range(0, 4)
       val filter = new FilterSafeSeq(range, new FilterSafe)
       Future(filter, Loop((key: Int, value: Int) => println(key+" "+value)))
     }

@@ -8,8 +8,8 @@ import services._
 
 case class Greet()
 
-class Greeter(mailbox: Mailbox, factory: Factory)
-  extends Actor(mailbox, factory) {
+class Greeter
+  extends Actor {
   bind(classOf[Greet], greet)
 
   def greet(msg: AnyRef, rf: Any => Unit) {
@@ -20,7 +20,7 @@ class Greeter(mailbox: Mailbox, factory: Factory)
 
 class GreeterFactory
   extends Factory(new FactoryId("greeter")) {
-  override def instantiate(mailbox: Mailbox) = new Greeter(mailbox, this)
+  override def instantiate = new Greeter
 }
 
 class SomeComponentFactory
@@ -39,7 +39,8 @@ class SomeComponentFactory
 case class DoIt1()
 case class DoIt2()
 
-class Driver extends Actor(new Mailbox, null) {
+class Driver extends Actor {
+  setMailbox(new Mailbox)
   bind(classOf[DoIt1], doit1)
   bind(classOf[DoIt2], doit2)
 

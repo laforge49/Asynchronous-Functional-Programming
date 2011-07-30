@@ -25,7 +25,8 @@ package org.agilewiki
 package blip
 package msgBatchTiming
 
-class Driver(next: Array[Batcher]) extends Actor(new Mailbox, null) {
+class Driver(next: Array[Batcher]) extends Actor {
+  setMailbox(new Mailbox)
   bind(classOf[TimingReq], timing)
   def timing(msg: AnyRef, rf: Any => Unit) {
     val count = next.length

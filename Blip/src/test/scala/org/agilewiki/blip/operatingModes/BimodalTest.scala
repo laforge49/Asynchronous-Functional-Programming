@@ -5,7 +5,7 @@ import org.specs.SpecificationWithJUnit
 
 case class AMessage()
 
-class A(mb: Mailbox, sub: Actor) extends Actor(mb, null) {
+class A(sub: Actor) extends Actor {
   bind(classOf[AMessage], afunc)
   def afunc(msg: AnyRef, rf: Any => Unit)
   {
@@ -19,7 +19,7 @@ class A(mb: Mailbox, sub: Actor) extends Actor(mb, null) {
   }
 }
 
-class B(mb: Mailbox) extends Actor(mb, null) {
+class B extends Actor {
   bind(classOf[AMessage], bfunc)
   def bfunc(msg: AnyRef, rf: Any => Unit)
   {
@@ -31,12 +31,17 @@ class BimodalTest extends SpecificationWithJUnit {
   "Bimodal" should {
     "print differently" in {
       val mb1 = new Mailbox
-      val b = new B(mb1)
+      val b = new B
+      b.setMailbox(mb1)
       val mb2 = new Mailbox
       println("synchronous test")
-      Future(new A(mb1, b), AMessage())
+      val sa = new A(b)
+      sa.setMailbox(mb1)
+      Future(sa, AMessage())
       println("asynchronous test")
-      Future(new A(mb2, b), AMessage())
+      val aa = new A(b)
+      aa.setMailbox(mb2)
+      Future(aa, AMessage())
     }
   }
 }

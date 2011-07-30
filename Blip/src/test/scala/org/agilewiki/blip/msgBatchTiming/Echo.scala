@@ -25,7 +25,8 @@ package org.agilewiki
 package blip
 package msgBatchTiming
 
-class Echo extends Actor(new Mailbox, null) {
+class Echo extends Actor {
+  setMailbox(new Mailbox)
   bind(classOf[TimingReq], timing)
   def timing(msg: AnyRef, rf: Any => Unit) {
     rf(null)

@@ -25,7 +25,8 @@ package org.agilewiki
 package blip
 package msgBatchTiming
 
-class Batcher(next: Actor, count: Int) extends Actor(new Mailbox, null) {
+class Batcher(next: Actor, count: Int) extends Actor {
+  setMailbox(new Mailbox)
   bind(classOf[TimingReq], timing)
   def timing(msg: AnyRef, rf: Any => Unit) {
     var i = count

@@ -25,13 +25,15 @@ package org.agilewiki
 package blip
 
 import seq.NavSetSeq
-import java.util.ArrayList
 
-class Actor(_mailbox: Mailbox, _factory: Factory)
+class Actor
   extends Responder with MsgSrc {
+  private var _mailbox: Mailbox = null
+  private var _factory: Factory = null
   val components = new java.util.LinkedHashMap[Class[_ <: ComponentFactory], Component]
   private var componentList: java.util.ArrayList[Component] = null
   var opened = false
+
   lazy val _open = {
     if (!components.isEmpty)  {
       componentList = new java.util.ArrayList[Component](components.values)
@@ -52,6 +54,16 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
       i -= 1
       componentList.get(i).close
     }
+  }
+
+  def setFactory(factory: Factory) {
+    if (opened) throw new IllegalStateException
+    _factory = factory
+  }
+
+  def setMailbox(mailbox: Mailbox) {
+    if (opened) throw new IllegalStateException
+    _mailbox = mailbox
   }
 
   def component(componentFactoryClass: Class[_ <: ComponentFactory]) = {
@@ -79,14 +91,7 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
     actorId = _id
   }
 
-  private var _isSingleton = false
-
-  def isSingleton = _isSingleton
-
-  def singleton {
-    id(ActorId(factoryId.value))
-    _isSingleton = true
-  }
+  def isSingleton = factory.isSingleton
 
   var _systemServices: Actor = null
 
@@ -131,7 +136,9 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
     )
     smf.addAll(messageFunctions.keySet)
     smf.addAll(safes.keySet)
-    new NavSetSeq(_mailbox, null, smf)
+    val seq = new NavSetSeq(smf)
+    seq.setMailbox(_mailbox)
+    seq
   }
 
   lazy val componentFactoryClasses = {
@@ -139,7 +146,9 @@ class Actor(_mailbox: Mailbox, _factory: Factory)
       new ClassComparator
     )
     smf.addAll(components.keySet)
-    new NavSetSeq(_mailbox, null, smf)
+    val seq = new NavSetSeq(smf)
+    seq.setMailbox(_mailbox)
+    seq
   }
 
   def requiredService(reqClass: Class[_ <: AnyRef]) {

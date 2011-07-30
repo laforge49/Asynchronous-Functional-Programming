@@ -25,8 +25,8 @@ package org.agilewiki
 package blip
 package seq
 
-class Range(mailbox: Mailbox, factory: Factory, start: Int, limit: Int)
-  extends Sequence[Int, Int](mailbox, factory) {
+class Range(start: Int, limit: Int)
+  extends Sequence[Int, Int] {
 
   override def first(msg: AnyRef, rf: Any => Unit) {
     rf(KVPair(start, start))
@@ -46,8 +46,4 @@ class Range(mailbox: Mailbox, factory: Factory, start: Int, limit: Int)
     if (key >= limit) rf(null)
     else rf(KVPair(key, key))
   }
-}
-
-object Range {
-  def apply(start: Int, limit: Int) = new Range(null, null, start, limit)
 }

@@ -25,8 +25,8 @@ package org.agilewiki
 package blip
 package seq
 
-class UnionSeq[K, V](mailbox: Mailbox, seqList: java.util.List[Sequence[K, V]])
-  extends Sequence[K, java.util.List[V]](mailbox, null) {
+class UnionSeq[K, V](seqList: java.util.List[Sequence[K, V]])
+  extends Sequence[K, java.util.List[V]] {
 
   def first(msg: AnyRef, rf: Any => Unit) {
     process(msg, rf)

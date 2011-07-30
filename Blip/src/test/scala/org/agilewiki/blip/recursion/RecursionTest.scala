@@ -7,7 +7,7 @@ import annotation.tailrec
 case class Loop(n: Int)
 case class I(i: Int)
 
-class P(mb: Mailbox) extends Actor(mb, null) {
+class P extends Actor {
   bind (classOf[I], ifunc)
   def ifunc(msg: AnyRef, rf: Any => Unit) {
     println(msg.asInstanceOf[I].i)
@@ -15,7 +15,7 @@ class P(mb: Mailbox) extends Actor(mb, null) {
   }
 }
 
-class L(mb: Mailbox, a: Actor) extends Actor(mb, null) {
+class L(a: Actor) extends Actor {
   bind(classOf[Loop], lfunc)
   def lfunc(msg: AnyRef, rf: Any => Unit) {
     val n = msg.asInstanceOf[Loop].n
@@ -49,11 +49,15 @@ class RecursionTest extends SpecificationWithJUnit {
   "RecursionTest" should {
     "print 1, 2, 3 twice" in {
       val mb = new Mailbox
-      val p = new P(mb)
+      val p = new P
       println("synchronous test")
-      Future(new L(mb, p), Loop(3))
+      val sl = new L(p)
+      sl.setMailbox(mb)
+      Future(sl, Loop(3))
       println("asynchronous test")
-      Future(new L(new Mailbox, p), Loop(3))
+      val al = new L(p)
+      al.setMailbox(new Mailbox)
+      Future(al, Loop(3))
     }
   }
 }
