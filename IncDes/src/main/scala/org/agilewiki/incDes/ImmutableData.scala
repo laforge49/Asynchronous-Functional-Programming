@@ -24,4 +24,6 @@
 package org.agilewiki
 package incDes
 
-class ImmutableData
+case class ImmutableData(bytes: Array[Byte], offset: Int) {
+  def mutable = MutableData(bytes, offset)
+}
