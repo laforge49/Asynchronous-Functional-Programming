@@ -72,7 +72,12 @@ class Driver extends Actor {
       val j6 = rsp.asInstanceOf[Actor]
       j6(Set(42)) {
         rsp1 => {
-          j6(Value())(rf)
+          j6(Copy(null)) {
+            rsp => {
+              val j7 = j6.asInstanceOf[Actor]
+              j7(Value())(rf)
+            }
+          }
         }
       }
     }
