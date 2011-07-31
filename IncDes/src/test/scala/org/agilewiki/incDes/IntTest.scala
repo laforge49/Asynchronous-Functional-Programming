@@ -68,14 +68,16 @@ class Driver extends Actor {
   setMailbox(new Mailbox)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
-    systemServices(Instantiate(INC_DES_INT_FACTORY_ID, null)) {rsp =>
-      val j6 = rsp.asInstanceOf[Actor]
-      j6(Set(42)) {
-        rsp1 => {
-          j6(Copy(null)) {
-            rsp => {
-              val j7 = j6.asInstanceOf[Actor]
-              j7(Value())(rf)
+    systemServices(Instantiate(INC_DES_INT_FACTORY_ID, null)) {
+      rsp => {
+        val j6 = rsp.asInstanceOf[Actor]
+        j6(Set(42)) {
+          rsp1 => {
+            j6(Copy(null)) {
+              rsp2 => {
+                val j7 = rsp2.asInstanceOf[Actor]
+                j7(Value())(rf)
+              }
             }
           }
         }
