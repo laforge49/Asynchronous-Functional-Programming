@@ -26,6 +26,7 @@ package incDes
 
 import org.specs.SpecificationWithJUnit
 import blip._
+import blip.services._
 
 class IntTest extends SpecificationWithJUnit {
   "IntTest" should {
@@ -51,6 +52,29 @@ class IntTest extends SpecificationWithJUnit {
       val j5 = new IncDesInt
       j5.load(bs)
       Future(j5, Value()) must be equalTo (-4)
+
+      val systemServices = SystemServices(new IncDesComponentFactory)
+      val driver = new Driver
+      driver.setSystemServices(systemServices)
+      Future(driver, DoIt()) must be equalTo (42)
+    }
+  }
+}
+
+case class DoIt()
+
+class Driver extends Actor {
+  bind(classOf[DoIt], doit)
+  setMailbox(new Mailbox)
+
+  def doit(msg: AnyRef, rf: Any => Unit) {
+    systemServices(Instantiate(INC_DES_INT_FACTORY_ID, null)) {rsp =>
+      val j6 = rsp.asInstanceOf[Actor]
+      j6(Set(42)) {
+        rsp1 => {
+          j6(Value())(rf)
+        }
+      }
     }
   }
 }

@@ -23,15 +23,9 @@
  */
 package org.agilewiki
 
-package object util {
-  val JIT_ROLE_NAME = "J"
-  val JIT_BOOLEAN_ROLE_NAME = "JB"
-  val JIT_BYTES_ROLE_NAME = "JB1"
-  val JIT_INT_ROLE_NAME = "JI"
-  val JIT_LONG_ROLE_NAME = "JL"
-  val JIT_NAMED_JIT_LIST_ROLE_NAME = "JN"
-  val JIT_NAMED_STRING_TREE_MAP_ROLE_NAME = "JN1"
-  val JIT_NAMED_VARIABLE_JIT_TREE_MAP_ROLE_NAME = "JN2"
-  val JIT_STRING_ROLE_NAME = "JS"
-  val JIT_WRAPPER_ROLE_NAME = "JW"
+import blip._
+
+package object incDes {
+  val INC_DES_FACTORY_ID = FactoryId("id")
+  val INC_DES_INT_FACTORY_ID = FactoryId("idI")
 }
