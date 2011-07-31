@@ -26,7 +26,7 @@ class Saver extends Actor {
 
 case class Times2()
 
-class DoubleComponent(saver: Saver) extends Component(saver, null) {
+class DoubleComponent(saver: Saver) extends Component(saver) {
   bind(classOf[Times2], doubleFunc)
 
   private def doubleFunc(msg: AnyRef, rf: Any => Unit) {

@@ -9,10 +9,10 @@ case class Set(value: Int)
 case class Get()
 
 class SaverComponentFactory extends ComponentFactory {
-  override def instantiate(actor: Actor) = new SaverComponent(actor, this)
+  override def instantiate(actor: Actor) = new SaverComponent(actor)
 }
 
-class SaverComponent(actor: Actor, cf: SaverComponentFactory) extends Component(actor, cf) {
+class SaverComponent(actor: Actor) extends Component(actor) {
   var i = 0
 
   bind(classOf[Set], setFunc)
@@ -34,10 +34,10 @@ case class Times2()
 class DoubleComponentFactory extends ComponentFactory {
   addDependency(classOf[SaverComponentFactory])
 
-  override def instantiate(actor: Actor) = new DoubleComponent(actor, this)
+  override def instantiate(actor: Actor) = new DoubleComponent(actor)
 }
 
-class DoubleComponent(actor: Actor, cf: DoubleComponentFactory) extends Component(actor, cf) {
+class DoubleComponent(actor: Actor) extends Component(actor) {
   val saver = actor.component(classOf[SaverComponentFactory]).asInstanceOf[SaverComponent]
 
   bind(classOf[Times2], doubleFunc)

@@ -24,9 +24,15 @@
 package org.agilewiki
 package blip
 
-class Component(actor: Actor, _componentFactory: ComponentFactory) extends Responder {
+class Component(actor: Actor) extends Responder {
+  var _componentFactory: ComponentFactory = null
 
   def componentFactory = _componentFactory
+
+  def setComponentFactory(componentFactory: ComponentFactory) {
+    if (actor.opened) throw new IllegalStateException
+    _componentFactory = componentFactory
+  }
 
   override implicit def activeActor = actor.activeActor
 

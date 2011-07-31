@@ -29,7 +29,7 @@ import seq.NavMapSeq
 import java.util.TreeMap
 
 class ActorRegistryComponentFactory extends ComponentFactory {
-  override def instantiate(actor: Actor) = new ActorRegistryComponent(actor, this)
+  override def instantiate(actor: Actor) = new ActorRegistryComponent(actor)
 }
 
 class SafeResolveName(actor: Actor)
@@ -43,8 +43,8 @@ class SafeResolveName(actor: Actor)
   }
 }
 
-class ActorRegistryComponent(actor: Actor, componentFactory: ActorRegistryComponentFactory)
-  extends Component(actor, componentFactory) {
+class ActorRegistryComponent(actor: Actor)
+  extends Component(actor) {
   val actors = new TreeMap[String, Actor]
   bind(classOf[Register], register)
   bind(classOf[Unregister], unregister)

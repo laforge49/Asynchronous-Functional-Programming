@@ -43,11 +43,11 @@ class FileLoader
   }
 }
 
-class FileLoaderComponent(actor: Actor, componentFactory: ComponentFactory)
-  extends Component(actor, componentFactory) {
+class FileLoaderComponent(actor: Actor)
+  extends Component(actor) {
   bindSafe(classOf[LoadFile], new SafeForward(new FileLoader))
 }
 
 class FileLoaderComponentFactory extends ComponentFactory {
-  override def instantiate(actor: Actor) = new FileLoaderComponent(actor, this)
+  override def instantiate(actor: Actor) = new FileLoaderComponent(actor)
 }

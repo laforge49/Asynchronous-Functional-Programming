@@ -5,13 +5,13 @@ import org.specs.SpecificationWithJUnit
 
 case class Today()
 
-class Sayings(actor: Actor, componentFactory: ComponentFactory) extends Component(actor, componentFactory){
+class Sayings(actor: Actor) extends Component(actor){
   bind(classOf[Today], today)
   def today(msg: AnyRef, rf: Any => Unit) {rf("Today is the first day of the rest of your life.")}
 }
 
 class SayingsFactory extends ComponentFactory {
-  override protected def instantiate(actor: Actor) = new Sayings(actor, this)
+  override protected def instantiate(actor: Actor) = new Sayings(actor)
 }
 
 case class SaySomething()

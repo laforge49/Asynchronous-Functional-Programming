@@ -36,7 +36,7 @@ class FactoryRegistryComponentFactory extends ComponentFactory {
 
   def getFactory(id: FactoryId) = factories.get(id.value)
 
-  override def instantiate(actor: Actor) = new FactoryRegistryComponent(actor, this)
+  override def instantiate(actor: Actor) = new FactoryRegistryComponent(actor)
 }
 
 class SafeInstantiate(factoryRegistryComponentFactory: FactoryRegistryComponentFactory,
@@ -52,9 +52,13 @@ class SafeInstantiate(factoryRegistryComponentFactory: FactoryRegistryComponentF
   }
 }
 
-class FactoryRegistryComponent(actor: Actor, componentFactory: FactoryRegistryComponentFactory)
-  extends Component(actor, componentFactory) {
-  bindSafe(classOf[Instantiate], new SafeInstantiate(componentFactory, systemServices))
-  bindSafe(classOf[Factories],
-    new SafeConstant(new NavMapSeq(componentFactory.factories)))
+class FactoryRegistryComponent(actor: Actor)
+  extends Component(actor) {
+
+  override def setComponentFactory(componentFactory: ComponentFactory) {
+    super.setComponentFactory(componentFactory)
+    val cf = componentFactory.asInstanceOf[FactoryRegistryComponentFactory]
+    bindSafe(classOf[Instantiate], new SafeInstantiate(cf, systemServices))
+    bindSafe(classOf[Factories], new SafeConstant(new NavMapSeq(cf.factories)))
+  }
 }

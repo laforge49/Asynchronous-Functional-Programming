@@ -33,7 +33,11 @@ class ComponentFactory {
 
   def configure(compositeFactory: Factory) {}
 
-  protected def instantiate(actor: Actor) = new Component(actor, this)
+  protected def instantiate(actor: Actor) = new Component(actor)
 
-  def newComponent(actor: Actor) = instantiate(actor)
+  def newComponent(actor: Actor) = {
+    val component = instantiate(actor)
+    component.setComponentFactory(this)
+    component
+  }
 }
