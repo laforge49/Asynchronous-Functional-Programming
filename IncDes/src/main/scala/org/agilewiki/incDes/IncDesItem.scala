@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Bill La Forge
+ * Copyright 2011 Bill La Forge
  *
  * This file is part of AgileWiki and is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,36 +21,32 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki.util.jit
+package org.agilewiki
+package incDes
 
-import org.specs.SpecificationWithJUnit
+abstract class IncDesItem extends IncDes {
+  protected var dser = true
+  bind(classOf[Value], _value)
+  bind(classOf[Set], _set)
 
-class IntTest extends SpecificationWithJUnit {
-  "JitInt" should {
-    "Serialize/deserialize" in {
-      val properties = _Jits.defaultConfiguration("test")
-      val context = new _Jits(properties)
-
-      val j1 = JitInt.createJit(context)
-      j1.setInt(32)
-      j1.jitByteLength must be equalTo (j1.intByteLength)
-      var bs = j1.jitToBytes
-
-      val j2 = JitInt.createJit(context)
-      j2.loadJit(bs)
-      j2.getInt must be equalTo (32)
-
-      val j3 = JitInt.createJit(context)
-      j3.setInt(-4)
-      bs = j3.jitToBytes
-
-      val j4 = JitInt.createJit(context)
-      j4.loadJit(bs)
-      bs = j4.jitToBytes
-
-      val j5 = JitInt.createJit(context)
-      j5.loadJit(bs)
-      j5.getInt must be equalTo (-4)
-    }
+  def _value(msg: Any, rf: Any => Unit) {
+    rf(value)
   }
+
+  def _set(msg: Any, rf: Any => Unit) {
+    set(msg.asInstanceOf[Set].value)
+    rf(null)
+  }
+
+  def value: Any
+
+  def set(value: Any)
+
+  override def load(_data: MutableData) {
+    super.load(_data)
+    _data.skip(length)
+    dser = false
+  }
+
+  override def isDeserialized = dser
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Bill La Forge
+ * Copyright 2011 Bill La Forge
  *
  * This file is part of AgileWiki and is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,36 +21,33 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki.util.jit
+package org.agilewiki
+package incDes
 
-import org.specs.SpecificationWithJUnit
+class IncDesInt extends IncDesItem {
+  private var i = 0
 
-class IntTest extends SpecificationWithJUnit {
-  "JitInt" should {
-    "Serialize/deserialize" in {
-      val properties = _Jits.defaultConfiguration("test")
-      val context = new _Jits(properties)
+  override def value: Any = {
+    if (dser) return i
+    if (!isSerialized) throw new IllegalStateException
+    i = data.mutable.readInt
+    dser = true
+    i
+  }
 
-      val j1 = JitInt.createJit(context)
-      j1.setInt(32)
-      j1.jitByteLength must be equalTo (j1.intByteLength)
-      var bs = j1.jitToBytes
+  override def set(_value: Any) {
+    val v = _value.asInstanceOf[Int]
+    if ((isSerialized || dser) && value.asInstanceOf[Int] == v) return
+    writeLock
+    i = v
+    dser = true
+    updated(0, this)
+  }
 
-      val j2 = JitInt.createJit(context)
-      j2.loadJit(bs)
-      j2.getInt must be equalTo (32)
+  override def length = intLength
 
-      val j3 = JitInt.createJit(context)
-      j3.setInt(-4)
-      bs = j3.jitToBytes
-
-      val j4 = JitInt.createJit(context)
-      j4.loadJit(bs)
-      bs = j4.jitToBytes
-
-      val j5 = JitInt.createJit(context)
-      j5.loadJit(bs)
-      j5.getInt must be equalTo (-4)
-    }
+  override protected def serialize(_data: MutableData) {
+    if (!dser) throw new IllegalStateException
+    _data.writeInt(i)
   }
 }

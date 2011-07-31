@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Bill La Forge
+ * Copyright 2011 Bill La Forge
  *
  * This file is part of AgileWiki and is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,36 +21,36 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki.util.jit
+package org.agilewiki
+package incDes
 
 import org.specs.SpecificationWithJUnit
+import blip._
 
 class IntTest extends SpecificationWithJUnit {
-  "JitInt" should {
+  "IntTest" should {
     "Serialize/deserialize" in {
-      val properties = _Jits.defaultConfiguration("test")
-      val context = new _Jits(properties)
+      val j1 = new IncDesInt
+      Future(j1, Set(32))
+      Future(j1, Length()) must be equalTo (4)
+      Future(j1, Value()) must be equalTo (32)
+      var bs = Future(j1, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j1 = JitInt.createJit(context)
-      j1.setInt(32)
-      j1.jitByteLength must be equalTo (j1.intByteLength)
-      var bs = j1.jitToBytes
+      val j2 = new IncDesInt
+      j2.load(bs)
+      Future(j2, Value()) must be equalTo (32)
 
-      val j2 = JitInt.createJit(context)
-      j2.loadJit(bs)
-      j2.getInt must be equalTo (32)
+      val j3 = new IncDesInt
+      Future(j3, Set(-4))
+      bs = Future(j3, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j3 = JitInt.createJit(context)
-      j3.setInt(-4)
-      bs = j3.jitToBytes
+      val j4 = new IncDesInt
+      j4.load(bs)
+      bs = Future(j4, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j4 = JitInt.createJit(context)
-      j4.loadJit(bs)
-      bs = j4.jitToBytes
-
-      val j5 = JitInt.createJit(context)
-      j5.loadJit(bs)
-      j5.getInt must be equalTo (-4)
+      val j5 = new IncDesInt
+      j5.load(bs)
+      Future(j5, Value()) must be equalTo (-4)
     }
   }
 }

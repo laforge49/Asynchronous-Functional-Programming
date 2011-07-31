@@ -27,7 +27,97 @@ package incDes
 import blip._
 
 class IncDes extends Actor {
+  protected var data: ImmutableData = _
+  private var _container: IncDes = _
+  val booleanLength = 1
+  val intLength = 4
+  val longLength = 8
+  bind(classOf[Length], _length)
+  bind(classOf[Bytes], _bytes)
+  bind(classOf[Copy], _copy)
+
+  def load(_data: MutableData) {
+    if (opened) throw new IllegalStateException
+    data = _data.immutable
+  }
+
+  def load(bytes: Array[Byte]) {
+    val _data = new MutableData(bytes, 0)
+    load(_data)
+  }
+
+  def partness(container: IncDes, _id: ActorId, visibleContainer: IncDes) {
+    if (opened) throw new IllegalStateException
+    if (container == this) throw new IllegalArgumentException
+    _container = container
+    id(_id)
+  }
+
   def newSubordinate = {
     factory.asInstanceOf[IncDesFactory].subFactory.newActor(mailbox).asInstanceOf[IncDes]
+  }
+
+  def _length(msg: Any, rf: Any => Unit) {
+    rf(length)
+  }
+
+  def _bytes(msg: Any, rf: Any => Unit) {
+    rf(bytes)
+  }
+
+  def _copy(msg: Any, rf: Any => Unit) {
+    val c = factory.newActor(msg.asInstanceOf[Copy].mailbox).asInstanceOf[IncDes]
+    c.load(bytes)
+    rf(c)
+  }
+
+  def container = _container
+
+  def writeLock {
+    if (_container != null) _container.writeLock
+  }
+
+  def updated(lenDiff: Int, source: IncDes) {
+    if (_container != null) _container.updater(lenDiff, source)
+    data = null
+  }
+
+  def updater(lenDiff: Int, source: IncDes) {
+    updated(lenDiff, source)
+  }
+
+  def bytes = {
+    val bytes = new Array[Byte](length)
+    val jmc = new MutableData(bytes, 0)
+    save(jmc)
+    bytes
+  }
+
+  def stringLength(length: Int): Int = intLength + 2 * length
+
+  def stringLength(string: String): Int = stringLength(string.length)
+
+  protected def isSerialized = data != null
+
+  def length = 0
+
+  def isDeserialized = true
+
+  protected def serialize(_data: MutableData) {}
+
+  def save(_data: MutableData) {
+    if (isSerialized) {
+      val ic = _data.immutable
+      _data.write(data, length)
+      data = ic
+    } else {
+      data = _data.immutable
+      serialize(_data)
+    }
+    if (data.offset + length != _data.offset) {
+      System.err.println(getClass.getName)
+      System.err.println("" + data.offset + " + " + length + " != " + _data.offset)
+      throw new IllegalStateException
+    }
   }
 }
