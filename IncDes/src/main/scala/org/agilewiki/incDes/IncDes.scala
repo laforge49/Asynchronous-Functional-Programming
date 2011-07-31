@@ -68,6 +68,7 @@ class IncDes extends Actor {
   def _copy(msg: Any, rf: Any => Unit) {
     val c = factory.newActor(msg.asInstanceOf[Copy].mailbox).asInstanceOf[IncDes]
     c.load(bytes)
+    c.id(id)
     rf(c)
   }
 
