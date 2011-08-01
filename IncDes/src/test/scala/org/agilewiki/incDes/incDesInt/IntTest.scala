@@ -23,6 +23,7 @@
  */
 package org.agilewiki
 package incDes
+package incDesInt
 
 import org.specs.SpecificationWithJUnit
 import blip._

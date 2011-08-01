@@ -30,7 +30,7 @@ import org.specs.SpecificationWithJUnit
 class MsgBatchTimingTest extends SpecificationWithJUnit {
   "MsgBatchTimingTest" should {
     "asynchronous timing" in {
-      val e = 100000
+      val e = 10000//0
       val b = 10
       val batchers = new Array[Batcher](b)
       var i = 0

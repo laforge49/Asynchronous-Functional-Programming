@@ -24,19 +24,19 @@
 package org.agilewiki
 package incDes
 
-class IncDesInt extends IncDesItem {
-  private var i = 0
+class IncDesLong extends IncDesItem {
+  private var i = 0L
 
-  override def value: Int = {
+  override def value: Long = {
     if (dser) return i
     if (!isSerialized) throw new IllegalStateException
-    i = data.mutable.readInt
+    i = data.mutable.readLong
     dser = true
     i
   }
 
   override def set(_value: Any) {
-    val v = _value.asInstanceOf[Int]
+    val v = _value.asInstanceOf[Long]
     if ((isSerialized || dser) && value == v) return
     writeLock
     i = v
@@ -44,10 +44,10 @@ class IncDesInt extends IncDesItem {
     updated(0, this)
   }
 
-  override def length = intLength
+  override def length = longLength
 
   override protected def serialize(_data: MutableData) {
     if (!dser) throw new IllegalStateException
-    _data.writeInt(i)
+    _data.writeLong(i)
   }
 }

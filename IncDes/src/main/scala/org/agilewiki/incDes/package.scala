@@ -28,4 +28,5 @@ import blip._
 package object incDes {
   val INC_DES_FACTORY_ID = FactoryId("id")
   val INC_DES_INT_FACTORY_ID = FactoryId("idI")
+  val INC_DES_LONG_FACTORY_ID = FactoryId("idL")
 }

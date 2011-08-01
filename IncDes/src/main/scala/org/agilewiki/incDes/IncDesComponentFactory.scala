@@ -36,14 +36,22 @@ class IncDesComponentFactory
       compositeFactory.componentFactory(classOf[FactoryRegistryComponentFactory]).
         asInstanceOf[FactoryRegistryComponentFactory]
 
-    val incDesFactory = new IncDesFactory(INC_DES_FACTORY_ID) {
-      override protected def instantiate = new IncDes
-    }
-    factoryRegistryComponentFactory.registerFactory(incDesFactory)
+    factoryRegistryComponentFactory.registerFactory(
+      new IncDesFactory(INC_DES_FACTORY_ID) {
+        override protected def instantiate = new IncDes
+      }
+    )
 
-    val incDesIntFactory = new IncDesFactory(INC_DES_INT_FACTORY_ID) {
-      override protected def instantiate = new IncDesInt
-    }
-    factoryRegistryComponentFactory.registerFactory(incDesIntFactory)
+    factoryRegistryComponentFactory.registerFactory(
+      new IncDesFactory(INC_DES_INT_FACTORY_ID) {
+        override protected def instantiate = new IncDesInt
+      }
+    )
+
+    factoryRegistryComponentFactory.registerFactory(
+      new IncDesFactory(INC_DES_LONG_FACTORY_ID) {
+        override protected def instantiate = new IncDesLong
+      }
+    )
   }
 }
