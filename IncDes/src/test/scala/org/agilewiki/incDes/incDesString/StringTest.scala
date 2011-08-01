@@ -23,41 +23,41 @@
  */
 package org.agilewiki
 package incDes
-package incDesLong
+package incDesString
 
 import org.specs.SpecificationWithJUnit
 import blip._
 import blip.services._
 
-class LongTest extends SpecificationWithJUnit {
-  "LongTest" should {
+class StringTest extends SpecificationWithJUnit {
+  "StringTest" should {
     "Serialize/deserialize" in {
-      val j1 = new IncDesLong
-      Future(j1, Set(123456789123456789L))
-      Future(j1, Length()) must be equalTo (8)
-      Future(j1, Value()) must be equalTo (123456789123456789L)
+      val j1 = new IncDesString
+      Future(j1, Set(null))
+      Future(j1, Length()) must be equalTo (4)
+      Future(j1, Value()) must beNull
       var bs = Future(j1, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j2 = new IncDesLong
+      val j2 = new IncDesString
       j2.load(bs)
-      Future(j2, Value()) must be equalTo (123456789123456789L)
+      Future(j2, Value()) must beNull
 
-      val j3 = new IncDesLong
-      Future(j3, Set(-987654321987654321L))
+      val j3 = new IncDesString
+      Future(j3, Set(""))
       bs = Future(j3, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j4 = new IncDesLong
+      val j4 = new IncDesString
       j4.load(bs)
       bs = Future(j4, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j5 = new IncDesLong
+      val j5 = new IncDesString
       j5.load(bs)
-      Future(j5, Value()) must be equalTo (-987654321987654321L)
+      Future(j5, Value()) must be equalTo ("")
 
       val systemServices = SystemServices(new IncDesComponentFactory)
       val driver = new Driver
       driver.setSystemServices(systemServices)
-      Future(driver, DoIt()) must be equalTo (987654321987654321L)
+      Future(driver, DoIt()) must be equalTo ("Hello world!")
     }
   }
 }
@@ -69,10 +69,10 @@ class Driver extends Actor {
   setMailbox(new Mailbox)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
-    systemServices(Instantiate(INC_DES_LONG_FACTORY_ID, null)) {
+    systemServices(Instantiate(INC_DES_STRING_FACTORY_ID, null)) {
       rsp => {
         val j6 = rsp.asInstanceOf[Actor]
-        j6(Set(987654321987654321L)) {
+        j6(Set("Hello world!")) {
           rsp1 => {
             j6(Copy(null)) {
               rsp2 => {

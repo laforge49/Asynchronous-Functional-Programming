@@ -121,7 +121,12 @@ case class MutableData(bytes: Array[Byte], var offset: Int) {
     }
 
     def writeString(string: String) {
+      if (string == null) {
+        writeInt(-1)
+        return
+      }
       writeInt(string.length)
+      if (string.length == 0) return
       val chars = string.toCharArray()
       for (i <- 0 to (chars.length - 1)) {
         val c = chars(i)
@@ -134,10 +139,12 @@ case class MutableData(bytes: Array[Byte], var offset: Int) {
 
     def readString: String = {
       val length = readInt
-      readString(length)
+      if (length == -1) null
+      else readString(length)
     }
 
     def readString(length: Int): String = {
+      if (length == 0) return ""
       val chars = new Array[Char](length)
       for (i <- 0 to chars.length - 1) {
         val b1 = readByte

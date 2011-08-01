@@ -96,7 +96,9 @@ class IncDes extends Actor {
 
   def stringLength(length: Int): Int = intLength + 2 * length
 
-  def stringLength(string: String): Int = stringLength(string.length)
+  def stringLength(string: String): Int =
+    if (string == null) intLength
+    else stringLength(string.length)
 
   protected def isSerialized = data != null
 

@@ -53,5 +53,11 @@ class IncDesComponentFactory
         override protected def instantiate = new IncDesLong
       }
     )
+
+    factoryRegistryComponentFactory.registerFactory(
+      new IncDesFactory(INC_DES_STRING_FACTORY_ID) {
+        override protected def instantiate = new IncDesString
+      }
+    )
   }
 }
