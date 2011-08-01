@@ -42,11 +42,5 @@ abstract class IncDesItem extends IncDes {
 
   def set(value: Any)
 
-  override def load(_data: MutableData) {
-    super.load(_data)
-    _data.skip(length)
-    dser = false
-  }
-
   override def isDeserialized = dser
 }

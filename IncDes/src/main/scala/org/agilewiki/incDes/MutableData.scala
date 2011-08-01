@@ -140,11 +140,11 @@ case class MutableData(bytes: Array[Byte], var offset: Int) {
 
     def readString: String = {
       val length = readInt
-      if (length == -1) null
-      else readString(length)
+      readString(length)
     }
 
     def readString(length: Int): String = {
+      if (length == -1) return null
       if (length == 0) return ""
       val chars = new Array[Char](length)
       for (i <- 0 to chars.length - 1) {

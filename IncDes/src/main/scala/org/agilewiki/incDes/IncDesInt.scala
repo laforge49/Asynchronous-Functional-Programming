@@ -50,4 +50,10 @@ class IncDesInt extends IncDesItem {
     if (!dser) throw new IllegalStateException
     _data.writeInt(i)
   }
+
+  override def load(_data: MutableData) {
+    super.load(_data)
+    _data.skip(length)
+    dser = false
+  }
 }

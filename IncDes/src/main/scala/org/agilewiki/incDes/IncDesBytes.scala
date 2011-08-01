@@ -26,25 +26,23 @@ package incDes
 
 class IncDesBytes extends IncDesItem {
   private var i: Array[Byte] = null
+  private var len = -1
 
   override def value: Array[Byte] = {
     if (dser) return i
     if (!isSerialized) throw new IllegalStateException
-    val m = data.mutable
-    val l = m.readInt
-    if (l == -1) i = null
-    else i = m.readBytes(l)
+    if (len == -1) i = null
+    else {
+      val m = data.mutable
+      m.skip(intLength)
+      i = m.readBytes(len)
+    }
     dser = true
     i
   }
 
   override def set(_value: Any) {
     val v = _value.asInstanceOf[Array[Byte]]
-    if (isSerialized || dser) {
-      if (i == null) {
-        if (v == null) return
-      } else if (i == v) return
-    }
     writeLock
     val ol = length
     i = v
@@ -52,7 +50,13 @@ class IncDesBytes extends IncDesItem {
     updated(length - ol, this)
   }
 
-  override def length = if (i == null) intLength else intLength + i.length
+  override def length = {
+    if (dser)
+      if (i == null) intLength
+      else intLength + i.length
+    else if (len == -1) intLength
+    else intLength + len
+  }
 
   override protected def serialize(_data: MutableData) {
     if (!dser) throw new IllegalStateException
@@ -61,5 +65,12 @@ class IncDesBytes extends IncDesItem {
       _data.writeInt(i.length)
       _data.writeBytes(i)
     }
+  }
+
+  override def load(_data: MutableData) {
+    super.load(_data)
+    len = _data.readInt
+    if (len > 0) _data.skip(len)
+    dser = false
   }
 }

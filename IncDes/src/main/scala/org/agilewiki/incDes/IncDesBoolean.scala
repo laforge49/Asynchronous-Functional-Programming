@@ -50,4 +50,10 @@ class IncDesBoolean extends IncDesItem {
     if (!dser) throw new IllegalStateException
     _data.writeByte(if (i) 1 else 0)
   }
+
+  override def load(_data: MutableData) {
+    super.load(_data)
+    _data.skip(length)
+    dser = false
+  }
 }
