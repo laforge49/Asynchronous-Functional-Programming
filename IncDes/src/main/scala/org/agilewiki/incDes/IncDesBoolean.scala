@@ -22,13 +22,32 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki
+package incDes
 
-import blip._
+class IncDesBoolean extends IncDesItem {
+  private var i = false
 
-package object incDes {
-  val INC_DES_FACTORY_ID = FactoryId("id")
-  val INC_DES_INT_FACTORY_ID = FactoryId("idI")
-  val INC_DES_LONG_FACTORY_ID = FactoryId("idL")
-  val INC_DES_STRING_FACTORY_ID = FactoryId("idS")
-  val INC_DES_BOOLEAN_FACTORY_ID = FactoryId("idB")
+  override def value: Boolean = {
+    if (dser) return i
+    if (!isSerialized) throw new IllegalStateException
+    i = data.mutable.readByte != 0
+    dser = true
+    i
+  }
+
+  override def set(_value: Any) {
+    val v = _value.asInstanceOf[Boolean]
+    if ((isSerialized || dser) && value == v) return
+    writeLock
+    i = v
+    dser = true
+    updated(0, this)
+  }
+
+  override def length = booleanLength
+
+  override protected def serialize(_data: MutableData) {
+    if (!dser) throw new IllegalStateException
+    _data.writeByte(if (i) 1 else 0)
+  }
 }

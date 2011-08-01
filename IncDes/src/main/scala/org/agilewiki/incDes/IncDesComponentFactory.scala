@@ -59,5 +59,11 @@ class IncDesComponentFactory
         override protected def instantiate = new IncDesString
       }
     )
+
+    factoryRegistryComponentFactory.registerFactory(
+      new IncDesFactory(INC_DES_BOOLEAN_FACTORY_ID) {
+        override protected def instantiate = new IncDesBoolean
+      }
+    )
   }
 }
