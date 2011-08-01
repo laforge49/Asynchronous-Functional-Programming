@@ -22,14 +22,44 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki
+package incDes
 
-import blip._
+class IncDesBytes extends IncDesItem {
+  private var i: Array[Byte] = null
 
-package object incDes {
-  val INC_DES_FACTORY_ID = FactoryId("id")
-  val INC_DES_INT_FACTORY_ID = FactoryId("idI")
-  val INC_DES_LONG_FACTORY_ID = FactoryId("idL")
-  val INC_DES_STRING_FACTORY_ID = FactoryId("idS")
-  val INC_DES_BOOLEAN_FACTORY_ID = FactoryId("idB")
-  val INC_DES_BYTES_FACTORY_ID = FactoryId("idA")
+  override def value: Array[Byte] = {
+    if (dser) return i
+    if (!isSerialized) throw new IllegalStateException
+    val m = data.mutable
+    val l = m.readInt
+    if (l == -1) i = null
+    else i = m.readBytes(l)
+    dser = true
+    i
+  }
+
+  override def set(_value: Any) {
+    val v = _value.asInstanceOf[Array[Byte]]
+    if (isSerialized || dser) {
+      if (i == null) {
+        if (v == null) return
+      } else if (i == v) return
+    }
+    writeLock
+    val ol = length
+    i = v
+    dser = true
+    updated(length - ol, this)
+  }
+
+  override def length = if (i == null) intLength else intLength + i.length
+
+  override protected def serialize(_data: MutableData) {
+    if (!dser) throw new IllegalStateException
+    if (i == null) _data.writeInt(-1)
+    else {
+      _data.writeInt(i.length)
+      _data.writeBytes(i)
+    }
+  }
 }

@@ -48,6 +48,7 @@ case class MutableData(bytes: Array[Byte], var offset: Int) {
     }
 
     def writeBytes(bs: Array[Byte]) {
+      if (bs.length == 0) return
       System.arraycopy(bs, 0, bytes, offset, bs.length)
       skip(bs.length)
     }

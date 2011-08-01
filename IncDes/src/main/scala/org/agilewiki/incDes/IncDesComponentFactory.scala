@@ -65,5 +65,11 @@ class IncDesComponentFactory
         override protected def instantiate = new IncDesBoolean
       }
     )
+
+    factoryRegistryComponentFactory.registerFactory(
+      new IncDesFactory(INC_DES_BYTES_FACTORY_ID) {
+        override protected def instantiate = new IncDesBytes
+      }
+    )
   }
 }
