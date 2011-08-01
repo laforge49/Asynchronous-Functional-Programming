@@ -29,6 +29,7 @@ import blip._
 class IncDes extends Actor {
   protected var data: ImmutableData = _
   private var _container: IncDes = _
+  protected var _key: Any = null
   val booleanLength = 1
   val intLength = 4
   val longLength = 8
@@ -46,11 +47,12 @@ class IncDes extends Actor {
     load(_data)
   }
 
-  def partness(container: IncDes, _id: ActorId, visibleContainer: IncDes) {
-    if (opened) throw new IllegalStateException
+  def key = _key
+
+  def partness(container: IncDes, key: Any, visibleContainer: IncDes) {
     if (container == this) throw new IllegalArgumentException
     _container = container
-    id(_id)
+    _key = key
   }
 
   def newSubordinate = {
