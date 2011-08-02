@@ -24,4 +24,8 @@
 package org.agilewiki
 package blip
 
-class TransparentException(ex: Exception) extends Exception(ex)
+class TransparentException(ex: Exception) extends Exception(ex) {
+  override def fillInStackTrace(): Throwable =
+    if (sys.SystemProperties.noTraceSupression) super.fillInStackTrace()
+    else this
+}
