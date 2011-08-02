@@ -89,14 +89,15 @@ class IncDesIncDes extends IncDesItem {
   override def set(msg: AnyRef, rf: Any => Unit) {
     val s = msg.asInstanceOf[Set]
     val v = s.value.asInstanceOf[IncDes]
+    val tc = s.transactionContext
     if (mailbox != v.mailbox) {
       if (v.mailbox == null && !v.opened) v.setMailbox(mailbox)
       else throw new IllegalStateException
     }
-    val tc = s.transactionContext
     this(Writable(tc)) {
       rsp => {
         val olen = length
+        if (i != null) i.clearContainer
         i = v
         if (v == null) len = -1
         else len = stringLength(i.factoryId.value) + i.length
