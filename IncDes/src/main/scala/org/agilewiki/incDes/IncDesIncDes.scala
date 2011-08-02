@@ -59,19 +59,24 @@ class IncDesIncDes extends IncDesItem {
     i.save(_data)
   }
 
-  override def value: IncDes = {
-    if (dser) return i
+  override def value(msg: AnyRef, rf: Any => Unit) {
+    if (dser) {
+      rf(i)
+      return
+    }
     if (!isSerialized) throw new IllegalStateException
     val m = data.mutable
     m.skip(intLength)
     val incDesFactoryId = FactoryId(m.readString)
-    systemServices(Instantiate(incDesFactoryId, mailbox)) {rsp => i = rsp.asInstanceOf[IncDes]} //Cheat!
-    dser = true
-    i
+    systemServices(Instantiate(incDesFactoryId, mailbox)) {
+      rsp => i = rsp.asInstanceOf[IncDes]
+      dser = true
+      rf(i)
+    }
   }
 
-  override def set(_value: Any) {
-    val v = _value.asInstanceOf[IncDes]
+  override def set(msg: AnyRef, rf: Any => Unit) {
+    val v = msg.asInstanceOf[Set].value.asInstanceOf[IncDes]
     writeLock
     val olen = length
     i = v
@@ -80,5 +85,6 @@ class IncDesIncDes extends IncDesItem {
     if (container != null && i != null) i.partness(this, key, this)
     dser = true
     updated(length - olen, this)
+    rf(null)
   }
 }

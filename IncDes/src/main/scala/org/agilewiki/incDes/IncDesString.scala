@@ -28,26 +28,35 @@ class IncDesString extends IncDesItem {
   private var i: String = null
   private var len = -1
 
-  override def value: String = {
-    if (dser) return i
+  override def value(msg: AnyRef, rf: Any => Unit) {
+    if (dser) {
+      rf(i)
+      return
+    }
     if (!isSerialized) throw new IllegalStateException
     val m = data.mutable
     m.skip(intLength)
     i = m.readString(len)
     dser = true
-    i
+    rf(i)
   }
 
-  override def set(_value: Any) {
-    val v = _value.asInstanceOf[String]
-    val cv = value
-    if (stringLength(cv) == stringLength(v) &&
-      cv == v) return
-    writeLock
-    val o = i
-    i = v
-    dser = true
-    updated(stringLength(v) - stringLength(o), this)
+  override def set(msg: AnyRef, rf: Any => Unit) {
+    val v = msg.asInstanceOf[Set].value.asInstanceOf[String]
+    value(Value(),{
+      rsp: Any => {
+        if (i == v) {
+          rf(null)
+          return
+        }
+        writeLock
+        val ol = stringLength(i)
+        i = v
+        dser = true
+        updated(stringLength(i) - ol, this)
+        rf(null)
+      }
+    })
   }
 
   override def length = if (dser) stringLength(i) else stringLength(len)

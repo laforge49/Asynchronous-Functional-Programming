@@ -28,8 +28,11 @@ class IncDesBytes extends IncDesItem {
   private var i: Array[Byte] = null
   private var len = -1
 
-  override def value: Array[Byte] = {
-    if (dser) return i
+  override def value(msg: AnyRef, rf: Any => Unit) {
+    if (dser) {
+      rf(i)
+      return
+    }
     if (!isSerialized) throw new IllegalStateException
     if (len == -1) i = null
     else {
@@ -38,16 +41,17 @@ class IncDesBytes extends IncDesItem {
       i = m.readBytes(len)
     }
     dser = true
-    i
+    rf(i)
   }
 
-  override def set(_value: Any) {
-    val v = _value.asInstanceOf[Array[Byte]]
+  override def set(msg: AnyRef, rf: Any => Unit) {
+    val v = msg.asInstanceOf[Set].value.asInstanceOf[Array[Byte]]
     writeLock
     val ol = length
     i = v
     dser = true
     updated(length - ol, this)
+    rf(null)
   }
 
   override def length = {

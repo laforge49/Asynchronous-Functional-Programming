@@ -27,21 +27,32 @@ package incDes
 class IncDesLong extends IncDesItem {
   private var i = 0L
 
-  override def value: Long = {
-    if (dser) return i
+  override def value(msg: AnyRef, rf: Any => Unit) {
+    if (dser) {
+      rf(i)
+      return
+    }
     if (!isSerialized) throw new IllegalStateException
     i = data.mutable.readLong
     dser = true
-    i
+    rf(i)
   }
 
-  override def set(_value: Any) {
-    val v = _value.asInstanceOf[Long]
-    if ((isSerialized || dser) && value == v) return
-    writeLock
-    i = v
-    dser = true
-    updated(0, this)
+  override def set(msg: AnyRef, rf: Any => Unit) {
+    val v = msg.asInstanceOf[Set].value.asInstanceOf[Long]
+    value(Value(),{
+      rsp: Any => {
+        if (i == v) {
+          rf(null)
+          return
+        }
+        writeLock
+        i = v
+        dser = true
+        updated(0, this)
+        rf(null)
+      }
+    })
   }
 
   override def length = longLength

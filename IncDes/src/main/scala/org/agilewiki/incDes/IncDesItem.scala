@@ -26,21 +26,12 @@ package incDes
 
 abstract class IncDesItem extends IncDes {
   protected var dser = true
-  bind(classOf[Value], _value)
-  bind(classOf[Set], _set)
+  bind(classOf[Value], value)
+  bind(classOf[Set], set)
 
-  def _value(msg: Any, rf: Any => Unit) {
-    rf(value)
-  }
+  def value(msg: AnyRef, rf: Any => Unit)
 
-  def _set(msg: Any, rf: Any => Unit) {
-    set(msg.asInstanceOf[Set].value)
-    rf(null)
-  }
-
-  def value: Any
-
-  def set(value: Any)
+  def set(msg: AnyRef, rf: Any => Unit)
 
   override def isDeserialized = dser
 }
