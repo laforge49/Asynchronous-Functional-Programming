@@ -33,7 +33,7 @@ class BytesTest extends SpecificationWithJUnit {
   "BytesTest" should {
     "Serialize/deserialize" in {
       val j1 = new IncDesBytes
-      Future(j1, Set(null))
+      Future(j1, Set(null, null))
       Future(j1, Length()) must be equalTo (4)
       Future(j1, Value()) must beNull
       var bs = Future(j1, Bytes()).asInstanceOf[Array[Byte]]
@@ -44,7 +44,7 @@ class BytesTest extends SpecificationWithJUnit {
 
       val j3 = new IncDesBytes
       val b3 = new Array[Byte](0)
-      Future(j3, Set(b3))
+      Future(j3, Set(null, b3))
       bs = Future(j3, Bytes()).asInstanceOf[Array[Byte]]
 
       val j4 = new IncDesBytes
@@ -74,7 +74,7 @@ class Driver extends Actor {
       rsp => {
         val j6 = rsp.asInstanceOf[Actor]
         val b6: Array[Byte] = Array(1, 2, 3)
-        j6(Set(b6)) {
+        j6(Set(null, b6)) {
           rsp1 => {
             j6(Copy(null)) {
               rsp2 => {

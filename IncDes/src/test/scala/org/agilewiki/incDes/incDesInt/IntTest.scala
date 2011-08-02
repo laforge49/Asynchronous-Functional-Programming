@@ -33,7 +33,7 @@ class IntTest extends SpecificationWithJUnit {
   "IntTest" should {
     "Serialize/deserialize" in {
       val j1 = new IncDesInt
-      Future(j1, Set(32))
+      Future(j1, Set(null, 32))
       Future(j1, Length()) must be equalTo (4)
       Future(j1, Value()) must be equalTo (32)
       var bs = Future(j1, Bytes()).asInstanceOf[Array[Byte]]
@@ -43,7 +43,7 @@ class IntTest extends SpecificationWithJUnit {
       Future(j2, Value()) must be equalTo (32)
 
       val j3 = new IncDesInt
-      Future(j3, Set(-4))
+      Future(j3, Set(null, -4))
       bs = Future(j3, Bytes()).asInstanceOf[Array[Byte]]
 
       val j4 = new IncDesInt
@@ -72,7 +72,7 @@ class Driver extends Actor {
     systemServices(Instantiate(INC_DES_INT_FACTORY_ID, null)) {
       rsp => {
         val j6 = rsp.asInstanceOf[Actor]
-        j6(Set(42)) {
+        j6(Set(null, 42)) {
           rsp1 => {
             j6(Copy(null)) {
               rsp2 => {

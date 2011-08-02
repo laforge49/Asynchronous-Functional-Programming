@@ -33,7 +33,7 @@ class LongTest extends SpecificationWithJUnit {
   "LongTest" should {
     "Serialize/deserialize" in {
       val j1 = new IncDesLong
-      Future(j1, Set(123456789123456789L))
+      Future(j1, Set(null, 123456789123456789L))
       Future(j1, Length()) must be equalTo (8)
       Future(j1, Value()) must be equalTo (123456789123456789L)
       var bs = Future(j1, Bytes()).asInstanceOf[Array[Byte]]
@@ -43,7 +43,7 @@ class LongTest extends SpecificationWithJUnit {
       Future(j2, Value()) must be equalTo (123456789123456789L)
 
       val j3 = new IncDesLong
-      Future(j3, Set(-987654321987654321L))
+      Future(j3, Set(null, -987654321987654321L))
       bs = Future(j3, Bytes()).asInstanceOf[Array[Byte]]
 
       val j4 = new IncDesLong
@@ -72,7 +72,7 @@ class Driver extends Actor {
     systemServices(Instantiate(INC_DES_LONG_FACTORY_ID, null)) {
       rsp => {
         val j6 = rsp.asInstanceOf[Actor]
-        j6(Set(987654321987654321L)) {
+        j6(Set(null, 987654321987654321L)) {
           rsp1 => {
             j6(Copy(null)) {
               rsp2 => {

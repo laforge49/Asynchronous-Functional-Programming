@@ -33,7 +33,7 @@ class StringTest extends SpecificationWithJUnit {
   "StringTest" should {
     "Serialize/deserialize" in {
       val j1 = new IncDesString
-      Future(j1, Set(null))
+      Future(j1, Set(null, null))
       Future(j1, Length()) must be equalTo (4)
       Future(j1, Value()) must beNull
       var bs = Future(j1, Bytes()).asInstanceOf[Array[Byte]]
@@ -43,7 +43,7 @@ class StringTest extends SpecificationWithJUnit {
       Future(j2, Value()) must beNull
 
       val j3 = new IncDesString
-      Future(j3, Set(""))
+      Future(j3, Set(null, ""))
       bs = Future(j3, Bytes()).asInstanceOf[Array[Byte]]
 
       val j4 = new IncDesString
@@ -72,7 +72,7 @@ class Driver extends Actor {
     systemServices(Instantiate(INC_DES_STRING_FACTORY_ID, null)) {
       rsp => {
         val j6 = rsp.asInstanceOf[Actor]
-        j6(Set("Hello world!")) {
+        j6(Set(null, "Hello world!")) {
           rsp1 => {
             j6(Copy(null)) {
               rsp2 => {

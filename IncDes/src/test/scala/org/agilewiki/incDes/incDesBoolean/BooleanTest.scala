@@ -33,7 +33,7 @@ class BooleanTest extends SpecificationWithJUnit {
   "BooleanTest" should {
     "Serialize/deserialize" in {
       val j1 = new IncDesBoolean
-      Future(j1, Set(true))
+      Future(j1, Set(null, true))
       Future(j1, Length()) must be equalTo (1)
       Future(j1, Value()) must be equalTo (true)
       var bs = Future(j1, Bytes()).asInstanceOf[Array[Byte]]
@@ -71,7 +71,7 @@ class Driver extends Actor {
     systemServices(Instantiate(INC_DES_BOOLEAN_FACTORY_ID, null)) {
       rsp => {
         val j6 = rsp.asInstanceOf[Actor]
-        j6(Set(true)) {
+        j6(Set(null, true)) {
           rsp1 => {
             j6(Copy(null)) {
               rsp2 => {

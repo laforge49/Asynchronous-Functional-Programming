@@ -24,20 +24,4 @@
 package org.agilewiki
 package incDes
 
-import blip._
-
-case class Length()
-
-case class Bytes()
-
-case class Copy(mailbox: Mailbox)
-
-case class Value()
-
-case class Set(transactionContext: TransactionContext, value: Any)
-
-case class Update(diff: Int, what: IncDes)
-
-case class Writable()
-
-case class VisibleElement()
+trait TransactionContext
