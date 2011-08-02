@@ -26,6 +26,17 @@ package incDes
 
 import blip._
 
+class SubordinateBaseFactory(id: FactoryId)
+  extends SubordinateFactory(id) {
+  override protected def instantiate = new IncDes
+}
+
+object IncDes {
+  def apply(mailbox: Mailbox) = {
+    new SubordinateBaseFactory(null).newActor(mailbox).asInstanceOf[IncDes]
+  }
+}
+
 class IncDes extends Actor {
   protected var data: ImmutableData = _
   private var _container: IncDes = _
@@ -53,11 +64,6 @@ class IncDes extends Actor {
     if (container == this) throw new IllegalArgumentException
     _container = container
     _key = key
-  }
-
-  def getVisibleElement: IncDes = {
-    if (container != null) container.getVisibleElement
-    else null
   }
 
   def newSubordinate = {
@@ -89,12 +95,18 @@ class IncDes extends Actor {
     if (_container != null) _container.writeLock
   }
 
+  def change(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
+    data = null
+    if (container == null) rf(null)
+    else container(Changed(transactionContext, lenDiff, what))(rf)
+  }
+
   def updated(lenDiff: Int, source: IncDes) {
     if (_container != null) _container.updater(lenDiff, source)
-    data = null
   }
 
   def updater(lenDiff: Int, source: IncDes) {
+    data = null
     updated(lenDiff, source)
   }
 

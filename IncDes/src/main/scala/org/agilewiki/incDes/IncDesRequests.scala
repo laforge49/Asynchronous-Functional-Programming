@@ -36,8 +36,8 @@ case class Value()
 
 case class Set(transactionContext: TransactionContext, value: Any)
 
-case class Update(diff: Int, what: IncDes)
+case class Changed(transactionContext: TransactionContext, diff: Int, what: IncDes)
 
-case class Writable()
+case class Writable(transactionContext: TransactionContext)
 
 case class VisibleElement()

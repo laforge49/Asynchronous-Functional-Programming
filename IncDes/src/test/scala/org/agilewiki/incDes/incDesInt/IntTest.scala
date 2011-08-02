@@ -32,25 +32,25 @@ import blip.services._
 class IntTest extends SpecificationWithJUnit {
   "IntTest" should {
     "Serialize/deserialize" in {
-      val j1 = new IncDesInt
+      val j1 = IncDesInt(null)
       Future(j1, Set(null, 32))
       Future(j1, Length()) must be equalTo (4)
       Future(j1, Value()) must be equalTo (32)
       var bs = Future(j1, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j2 = new IncDesInt
+      val j2 = IncDesInt(null)
       j2.load(bs)
       Future(j2, Value()) must be equalTo (32)
 
-      val j3 = new IncDesInt
+      val j3 = IncDesInt(null)
       Future(j3, Set(null, -4))
       bs = Future(j3, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j4 = new IncDesInt
+      val j4 = IncDesInt(null)
       j4.load(bs)
       bs = Future(j4, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j5 = new IncDesInt
+      val j5 = IncDesInt(null)
       j5.load(bs)
       Future(j5, Value()) must be equalTo (-4)
 

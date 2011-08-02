@@ -32,25 +32,25 @@ import blip.services._
 class StringTest extends SpecificationWithJUnit {
   "StringTest" should {
     "Serialize/deserialize" in {
-      val j1 = new IncDesString
+      val j1 = IncDesString(null)
       Future(j1, Set(null, null))
       Future(j1, Length()) must be equalTo (4)
       Future(j1, Value()) must beNull
       var bs = Future(j1, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j2 = new IncDesString
+      val j2 = IncDesString(null)
       j2.load(bs)
       Future(j2, Value()) must beNull
 
-      val j3 = new IncDesString
+      val j3 = IncDesString(null)
       Future(j3, Set(null, ""))
       bs = Future(j3, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j4 = new IncDesString
+      val j4 = IncDesString(null)
       j4.load(bs)
       bs = Future(j4, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j5 = new IncDesString
+      val j5 = IncDesString(null)
       j5.load(bs)
       Future(j5, Value()) must be equalTo ("")
 

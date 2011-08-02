@@ -24,6 +24,19 @@
 package org.agilewiki
 package incDes
 
+import blip._
+
+class SubordinateIntFactory(id: FactoryId)
+  extends SubordinateFactory(id) {
+  override protected def instantiate = new IncDesInt
+}
+
+object IncDesInt {
+  def apply(mailbox: Mailbox) = {
+    new SubordinateIntFactory(null).newActor(mailbox).asInstanceOf[IncDesInt]
+  }
+}
+
 class IncDesInt extends IncDesItem {
   private var i = 0
 

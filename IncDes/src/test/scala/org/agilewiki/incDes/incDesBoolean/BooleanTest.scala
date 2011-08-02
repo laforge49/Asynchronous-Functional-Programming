@@ -32,24 +32,24 @@ import blip.services._
 class BooleanTest extends SpecificationWithJUnit {
   "BooleanTest" should {
     "Serialize/deserialize" in {
-      val j1 = new IncDesBoolean
+      val j1 = IncDesBoolean(null)
       Future(j1, Set(null, true))
       Future(j1, Length()) must be equalTo (1)
       Future(j1, Value()) must be equalTo (true)
       var bs = Future(j1, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j2 = new IncDesBoolean
+      val j2 = IncDesBoolean(null)
       j2.load(bs)
       Future(j2, Value()) must be equalTo (true)
 
-      val j3 = new IncDesBoolean
+      val j3 = IncDesBoolean(null)
       bs = Future(j3, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j4 = new IncDesBoolean
+      val j4 = IncDesBoolean(null)
       j4.load(bs)
       bs = Future(j4, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j5 = new IncDesBoolean
+      val j5 = IncDesBoolean(null)
       j5.load(bs)
       Future(j5, Value()) must be equalTo (false)
 

@@ -37,39 +37,27 @@ class IncDesComponentFactory
         asInstanceOf[FactoryRegistryComponentFactory]
 
     factoryRegistryComponentFactory.registerFactory(
-      new SubordinateFactory(INC_DES_FACTORY_ID) {
-        override protected def instantiate = new IncDes
-      }
+      new SubordinateBaseFactory(INC_DES_FACTORY_ID)
     )
 
     factoryRegistryComponentFactory.registerFactory(
-      new SubordinateFactory(INC_DES_INT_FACTORY_ID) {
-        override protected def instantiate = new IncDesInt
-      }
+      new SubordinateIntFactory(INC_DES_INT_FACTORY_ID)
     )
 
     factoryRegistryComponentFactory.registerFactory(
-      new SubordinateFactory(INC_DES_LONG_FACTORY_ID) {
-        override protected def instantiate = new IncDesLong
-      }
+      new SubordinateLongFactory(INC_DES_LONG_FACTORY_ID)
     )
 
     factoryRegistryComponentFactory.registerFactory(
-      new SubordinateFactory(INC_DES_STRING_FACTORY_ID) {
-        override protected def instantiate = new IncDesString
-      }
+      new SubordinateStringFactory(INC_DES_STRING_FACTORY_ID)
     )
 
     factoryRegistryComponentFactory.registerFactory(
-      new SubordinateFactory(INC_DES_BOOLEAN_FACTORY_ID) {
-        override protected def instantiate = new IncDesBoolean
-      }
+      new SubordinateBooleanFactory(INC_DES_BOOLEAN_FACTORY_ID)
     )
 
     factoryRegistryComponentFactory.registerFactory(
-      new SubordinateFactory(INC_DES_BYTES_FACTORY_ID) {
-        override protected def instantiate = new IncDesBytes
-      }
+      new SubordinateBytesFactory(INC_DES_BYTES_FACTORY_ID)
     )
   }
 }

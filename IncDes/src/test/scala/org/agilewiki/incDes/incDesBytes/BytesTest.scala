@@ -32,26 +32,26 @@ import blip.services._
 class BytesTest extends SpecificationWithJUnit {
   "BytesTest" should {
     "Serialize/deserialize" in {
-      val j1 = new IncDesBytes
+      val j1 = IncDesBytes(null)
       Future(j1, Set(null, null))
       Future(j1, Length()) must be equalTo (4)
       Future(j1, Value()) must beNull
       var bs = Future(j1, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j2 = new IncDesBytes
+      val j2 = IncDesBytes(null)
       j2.load(bs)
       Future(j2, Value()) must beNull
 
-      val j3 = new IncDesBytes
+      val j3 = IncDesBytes(null)
       val b3 = new Array[Byte](0)
       Future(j3, Set(null, b3))
       bs = Future(j3, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j4 = new IncDesBytes
+      val j4 = IncDesBytes(null)
       j4.load(bs)
       bs = Future(j4, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j5 = new IncDesBytes
+      val j5 = IncDesBytes(null)
       j5.load(bs)
       Future(j5, Value()).asInstanceOf[Array[Byte]].length must be equalTo (0)
 

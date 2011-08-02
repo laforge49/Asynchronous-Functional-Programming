@@ -27,6 +27,17 @@ package incDes
 import blip._
 import services._
 
+class SubordinateIncDesFactory(id: FactoryId)
+  extends SubordinateFactory(id) {
+  override protected def instantiate = new IncDesIncDes
+}
+
+object IncDesIncDes {
+  def apply(mailbox: Mailbox) = {
+    new SubordinateIncDesFactory(null).newActor(mailbox).asInstanceOf[IncDesIncDes]
+  }
+}
+
 class IncDesIncDes extends IncDesItem {
   private var i: IncDes = null
   private var len = -1
@@ -47,7 +58,7 @@ class IncDesIncDes extends IncDesItem {
 
   override def updater(lenDiff: Int, source: IncDes) {
     len += lenDiff
-    updated(lenDiff, source)
+    super.updater(lenDiff, source)
   }
 
   override protected def serialize(_data: MutableData) {
