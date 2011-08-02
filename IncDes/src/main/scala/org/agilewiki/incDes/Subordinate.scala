@@ -26,18 +26,21 @@ package incDes
 
 import blip._
 
-case class Length()
+class SubordinateFactory(id: FactoryId)
+  extends IncDesFactory(id) {
+  include(SubordinateComponentFactory())
+}
 
-case class Bytes()
+class SubordinateComponentFactory extends ComponentFactory {
+  override def instantiate(actor: Actor) = new SubordinateComponent(actor)
+}
 
-case class Copy(mailbox: Mailbox)
+object SubordinateComponentFactory {
+  val scf = new SubordinateComponentFactory
 
-case class Value()
+  def apply() = scf
+}
 
-case class Set(value: Any)
+class SubordinateComponent(actor: Actor) extends Component(actor) {
 
-case class Update(diff: Int, what: IncDes)
-
-case class Writable()
-
-case class VisibleElement()
+}

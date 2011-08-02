@@ -55,6 +55,11 @@ class IncDes extends Actor {
     _key = key
   }
 
+  def getVisibleElement: IncDes = {
+    if (container != null) container.getVisibleElement
+    else null
+  }
+
   def newSubordinate = {
     factory.asInstanceOf[IncDesFactory].subFactory.newActor(mailbox).asInstanceOf[IncDes]
   }
@@ -75,6 +80,10 @@ class IncDes extends Actor {
   }
 
   def container = _container
+
+  def clearContainer {
+    this._container = null
+  }
 
   def writeLock {
     if (_container != null) _container.writeLock
