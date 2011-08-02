@@ -58,13 +58,17 @@ class IncDesBytes extends IncDesItem {
   }
 
   override def set(msg: AnyRef, rf: Any => Unit) {
-    val v = msg.asInstanceOf[Set].value.asInstanceOf[Array[Byte]]
-    writeLock
-    val ol = length
-    i = v
-    dser = true
-    updated(length - ol, this)
-    rf(null)
+    val s = msg.asInstanceOf[Set]
+    val v = s.value.asInstanceOf[Array[Byte]]
+    val tc = s.transactionContext
+    this(Writable(tc)) {
+      rsp1 => {
+        val ol = length
+        i = v
+        dser = true
+        change(tc, length - ol, this, rf)
+      }
+    }
   }
 
   override def length = {

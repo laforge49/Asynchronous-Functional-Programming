@@ -91,23 +91,10 @@ class IncDes extends Actor {
     this._container = null
   }
 
-  def writeLock {
-    if (_container != null) _container.writeLock
-  }
-
   def change(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
     data = null
     if (container == null) rf(null)
     else container(Changed(transactionContext, lenDiff, what))(rf)
-  }
-
-  def updated(lenDiff: Int, source: IncDes) {
-    if (_container != null) _container.updater(lenDiff, source)
-  }
-
-  def updater(lenDiff: Int, source: IncDes) {
-    data = null
-    updated(lenDiff, source)
   }
 
   def bytes = {

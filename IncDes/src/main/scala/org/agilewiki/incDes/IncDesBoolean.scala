@@ -65,8 +65,7 @@ class IncDesBoolean extends IncDesItem {
           rsp1 => {
             i = v
             dser = true
-            updated(0, this)
-            rf(null)
+            change(tc, 0, this, rf)
           }
         }
       }

@@ -55,19 +55,23 @@ class IncDesString extends IncDesItem {
   }
 
   override def set(msg: AnyRef, rf: Any => Unit) {
-    val v = msg.asInstanceOf[Set].value.asInstanceOf[String]
-    value(Value(),{
+    val s = msg.asInstanceOf[Set]
+    val v = s.value.asInstanceOf[String]
+    val tc = s.transactionContext
+    value(Value(), {
       rsp: Any => {
         if (i == v) {
           rf(null)
           return
         }
-        writeLock
-        val ol = stringLength(i)
-        i = v
-        dser = true
-        updated(stringLength(i) - ol, this)
-        rf(null)
+        this(Writable(tc)) {
+          rsp1 => {
+            val ol = stringLength(i)
+            i = v
+            dser = true
+            change(tc, stringLength(i) - ol, this, rf)
+          }
+        }
       }
     })
   }

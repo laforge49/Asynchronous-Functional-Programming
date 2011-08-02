@@ -56,9 +56,9 @@ class IncDesIncDes extends IncDesItem {
     dser = false
   }
 
-  override def updater(lenDiff: Int, source: IncDes) {
+  override def change(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
     len += lenDiff
-    super.updater(lenDiff, source)
+    super.change(transactionContext, lenDiff, what, rf)
   }
 
   override protected def serialize(_data: MutableData) {
@@ -87,15 +87,19 @@ class IncDesIncDes extends IncDesItem {
   }
 
   override def set(msg: AnyRef, rf: Any => Unit) {
-    val v = msg.asInstanceOf[Set].value.asInstanceOf[IncDes]
-    writeLock
-    val olen = length
-    i = v
-    if (v == null) len = -1
-    else len = stringLength(i.factoryId.value) + i.length
-    if (container != null && i != null) i.partness(this, key, this)
-    dser = true
-    updated(length - olen, this)
-    rf(null)
+    val s = msg.asInstanceOf[Set]
+    val v = s.value.asInstanceOf[IncDes]
+    val tc = s.transactionContext
+    this(Writable(tc)) {
+      rsp => {
+        val olen = length
+        i = v
+        if (v == null) len = -1
+        else len = stringLength(i.factoryId.value) + i.length
+        if (container != null && i != null) i.partness(this, key, this)
+        dser = true
+        change(tc, length - olen, this, rf)
+      }
+    }
   }
 }
