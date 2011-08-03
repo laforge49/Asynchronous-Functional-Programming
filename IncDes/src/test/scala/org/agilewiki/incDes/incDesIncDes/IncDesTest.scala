@@ -36,6 +36,7 @@ class IncDesTest extends SpecificationWithJUnit {
 
       val s1 = IncDesString(null)
       val j1 = IncDesIncDes(null)
+      j1.setSystemServices(systemServices)
       Future(j1, Length()) must be equalTo (4)
       Future(j1, Set(null, s1))
       Future(j1, Length()) must be equalTo (18)
@@ -55,11 +56,13 @@ class IncDesTest extends SpecificationWithJUnit {
 
       val s3 = IncDesInt(null)
       val j3 = IncDesIncDes(null)
+      j3.setSystemServices(systemServices)
       Future(j3, Set(null, s3))
       Future(s3, Set(null, 42))
       bs = Future(j3, Bytes()).asInstanceOf[Array[Byte]]
 
       val j4 = IncDesIncDes(null)
+      j4.setSystemServices(systemServices)
       j4.load(bs)
       bs = Future(j4, Bytes()).asInstanceOf[Array[Byte]]
 

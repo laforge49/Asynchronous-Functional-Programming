@@ -97,6 +97,7 @@ class IncDesIncDes extends IncDesItem {
       if (v.mailbox == null && !v.opened) v.setMailbox(mailbox)
       else throw new IllegalStateException("uses a different mailbox")
     }
+    if (v.systemServices == null && !v.opened) v.setSystemServices(systemServices)
     this(Writable(tc)) {
       rsp => {
         val olen = length
