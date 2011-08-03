@@ -34,7 +34,7 @@ class SubordinateIncDesFactory(id: FactoryId)
 
 object IncDesIncDes {
   def apply(mailbox: Mailbox) = {
-    new SubordinateIncDesFactory(null).newActor(mailbox).asInstanceOf[IncDesIncDes]
+    new SubordinateIncDesFactory(INC_DES_INCDES_FACTORY_ID).newActor(mailbox).asInstanceOf[IncDesIncDes]
   }
 }
 
@@ -47,18 +47,18 @@ class IncDesIncDes extends IncDesItem {
     if (i != null) i.partness(this, key, this)
   }
 
-  override def length = if (i == null) intLength else intLength + len
+  override def length = if (len == -1) intLength else intLength + len
 
   override def load(_data: MutableData) {
     super.load(_data)
     len = _data.readInt
-    if (len > 0) _data.skip(len * 2)
+    if (len > 0) _data.skip(len)
     dser = false
   }
 
   override def change(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
     len += lenDiff
-    super.change(transactionContext, lenDiff, what, rf)
+    changed(transactionContext, lenDiff, what, rf)
   }
 
   override protected def serialize(_data: MutableData) {
@@ -80,9 +80,12 @@ class IncDesIncDes extends IncDesItem {
     m.skip(intLength)
     val incDesFactoryId = FactoryId(m.readString)
     systemServices(Instantiate(incDesFactoryId, mailbox)) {
-      rsp => i = rsp.asInstanceOf[IncDes]
-      dser = true
-      rf(i)
+      rsp => {
+        i = rsp.asInstanceOf[IncDes]
+        i.load(m)
+        dser = true
+        rf(i)
+      }
     }
   }
 
@@ -92,18 +95,20 @@ class IncDesIncDes extends IncDesItem {
     val tc = s.transactionContext
     if (mailbox != v.mailbox) {
       if (v.mailbox == null && !v.opened) v.setMailbox(mailbox)
-      else throw new IllegalStateException
+      else throw new IllegalStateException("uses a different mailbox")
     }
     this(Writable(tc)) {
       rsp => {
         val olen = length
         if (i != null) i.clearContainer
         i = v
-        if (v == null) len = -1
-        else len = stringLength(i.factoryId.value) + i.length
-        if (container != null && i != null) i.partness(this, key, this)
+        if (i == null) len = -1
+        else {
+          len = stringLength(i.factoryId.value) + i.length
+          i.partness(this, key, this)
+        }
         dser = true
-        change(tc, length - olen, this, rf)
+        changed(tc, length - olen, this, rf)
       }
     }
   }

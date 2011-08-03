@@ -33,7 +33,7 @@ class SubordinateBooleanFactory(id: FactoryId)
 
 object IncDesBoolean {
   def apply(mailbox: Mailbox) = {
-    new SubordinateBooleanFactory(null).newActor(mailbox).asInstanceOf[IncDesBoolean]
+    new SubordinateBooleanFactory(INC_DES_BOOLEAN_FACTORY_ID).newActor(mailbox).asInstanceOf[IncDesBoolean]
   }
 }
 

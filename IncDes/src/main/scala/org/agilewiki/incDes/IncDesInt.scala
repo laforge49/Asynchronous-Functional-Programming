@@ -33,7 +33,7 @@ class SubordinateIntFactory(id: FactoryId)
 
 object IncDesInt {
   def apply(mailbox: Mailbox) = {
-    new SubordinateIntFactory(null).newActor(mailbox).asInstanceOf[IncDesInt]
+    new SubordinateIntFactory(INC_DES_INT_FACTORY_ID).newActor(mailbox).asInstanceOf[IncDesInt]
   }
 }
 

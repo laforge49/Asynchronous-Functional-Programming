@@ -56,8 +56,12 @@ class IncDesComponentFactory
       new SubordinateBooleanFactory(INC_DES_BOOLEAN_FACTORY_ID)
     )
 
-    factoryRegistryComponentFactory.registerFactory(
-      new SubordinateBytesFactory(INC_DES_BYTES_FACTORY_ID)
-    )
+        factoryRegistryComponentFactory.registerFactory(
+          new SubordinateBytesFactory(INC_DES_BYTES_FACTORY_ID)
+        )
+
+        factoryRegistryComponentFactory.registerFactory(
+          new SubordinateIncDesFactory(INC_DES_INCDES_FACTORY_ID)
+        )
   }
 }

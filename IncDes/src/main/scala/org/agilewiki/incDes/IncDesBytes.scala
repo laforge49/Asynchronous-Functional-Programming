@@ -33,7 +33,7 @@ class SubordinateBytesFactory(id: FactoryId)
 
 object IncDesBytes {
   def apply(mailbox: Mailbox) = {
-    new SubordinateBytesFactory(null).newActor(mailbox).asInstanceOf[IncDesBytes]
+    new SubordinateBytesFactory(INC_DES_BYTES_FACTORY_ID).newActor(mailbox).asInstanceOf[IncDesBytes]
   }
 }
 

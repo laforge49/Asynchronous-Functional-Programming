@@ -32,4 +32,5 @@ package object incDes {
   val INC_DES_STRING_FACTORY_ID = FactoryId("idS")
   val INC_DES_BOOLEAN_FACTORY_ID = FactoryId("idB")
   val INC_DES_BYTES_FACTORY_ID = FactoryId("idA")
+  val INC_DES_INCDES_FACTORY_ID = FactoryId("idW")
 }

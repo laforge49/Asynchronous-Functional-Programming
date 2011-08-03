@@ -33,7 +33,7 @@ class SubordinateStringFactory(id: FactoryId)
 
 object IncDesString {
   def apply(mailbox: Mailbox) = {
-    new SubordinateStringFactory(null).newActor(mailbox).asInstanceOf[IncDesString]
+    new SubordinateStringFactory(INC_DES_STRING_FACTORY_ID).newActor(mailbox).asInstanceOf[IncDesString]
   }
 }
 

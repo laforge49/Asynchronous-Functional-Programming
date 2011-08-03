@@ -80,6 +80,7 @@ class IncDes extends Actor {
 
   def _copy(msg: Any, rf: Any => Unit) {
     val c = factory.newActor(msg.asInstanceOf[Copy].mailbox).asInstanceOf[IncDes]
+    c.setSystemServices(systemServices)
     c.load(bytes)
     c.id(id)
     rf(c)
@@ -91,11 +92,15 @@ class IncDes extends Actor {
     this._container = null
   }
 
-  def change(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
-    data = null
-    if (container == null) rf(null)
-    else container(Changed(transactionContext, lenDiff, what))(rf)
-  }
+    def change(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
+      changed(transactionContext, lenDiff, what, rf)
+    }
+
+    def changed(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
+      data = null
+      if (container == null) rf(null)
+      else container(Changed(transactionContext, lenDiff, what))(rf)
+    }
 
   def bytes = {
     val bytes = new Array[Byte](length)
