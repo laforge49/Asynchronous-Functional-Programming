@@ -66,10 +66,6 @@ class IncDes extends Actor {
     _key = key
   }
 
-  def newSubordinate = {
-    factory.asInstanceOf[IncDesFactory].subFactory.newActor(mailbox).asInstanceOf[IncDes]
-  }
-
   def _length(msg: Any, rf: Any => Unit) {
     rf(length)
   }

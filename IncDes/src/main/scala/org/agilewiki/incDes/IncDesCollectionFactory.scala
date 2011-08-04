@@ -26,37 +26,7 @@ package incDes
 
 import blip._
 
-class SubordinateFactory(id: FactoryId)
+class IncDesCollectionFactory(id: FactoryId)
   extends Factory(id) {
-  include(SubordinateComponentFactory())
-}
-
-class SubordinateComponentFactory extends ComponentFactory {
-  override def instantiate(actor: Actor) = new SubordinateComponent(actor)
-}
-
-object SubordinateComponentFactory {
-  val scf = new SubordinateComponentFactory
-
-  def apply() = scf
-}
-
-class SubordinateComponent(actor: Actor) extends Component(actor) {
-  bind(classOf[VisibleElement], passUp)
-  bind(classOf[Writable], passUp)
-  bind(classOf[Changed], changed)
-
-  def incDes = actor.asInstanceOf[IncDes]
-
-  def container = incDes.container
-
-  def passUp(msg: AnyRef, rf: Any => Unit) {
-    if (container == null) rf(null)
-    else container(msg)(rf)
-  }
-
-  def changed(msg: AnyRef, rf: Any => Unit) {
-    val c = msg.asInstanceOf[Changed]
-    incDes.change(c.transactionContext, c.diff, c.what, rf)
-  }
+  var subFactory: Factory = null
 }

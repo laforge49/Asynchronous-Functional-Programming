@@ -41,27 +41,27 @@ class IncDesComponentFactory
     )
 
     factoryRegistryComponentFactory.registerFactory(
-      new SubordinateIntFactory(INC_DES_INT_FACTORY_ID)
+      SubordinateIntFactory
     )
 
     factoryRegistryComponentFactory.registerFactory(
-      new SubordinateLongFactory(INC_DES_LONG_FACTORY_ID)
+      SubordinateLongFactory
     )
 
     factoryRegistryComponentFactory.registerFactory(
-      new SubordinateStringFactory(INC_DES_STRING_FACTORY_ID)
+      SubordinateStringFactory
     )
 
     factoryRegistryComponentFactory.registerFactory(
-      new SubordinateBooleanFactory(INC_DES_BOOLEAN_FACTORY_ID)
+      SubordinateBooleanFactory
     )
 
-        factoryRegistryComponentFactory.registerFactory(
-          new SubordinateBytesFactory(INC_DES_BYTES_FACTORY_ID)
-        )
+    factoryRegistryComponentFactory.registerFactory(
+      SubordinateBytesFactory
+    )
 
-        factoryRegistryComponentFactory.registerFactory(
-          new SubordinateIncDesFactory(INC_DES_INCDES_FACTORY_ID)
-        )
+    factoryRegistryComponentFactory.registerFactory(
+      SubordinateIncDesFactory
+    )
   }
 }

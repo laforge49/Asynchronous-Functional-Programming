@@ -25,8 +25,19 @@ package org.agilewiki
 package incDes
 
 import blip._
+import seq._
 
-class IncDesFactory(id: FactoryId)
-  extends Factory(id) {
-  var subFactory: IncDesFactory = null
+abstract class IncDesCollection[K]
+  extends IncDes {
+
+  bind(classOf[Get[K]], get)
+  bind(classOf[ContainsKey[K]], get)
+
+  def get(msg: AnyRef, rf: Any => Unit)
+
+  def containsKey(msg: AnyRef, rf: Any => Unit)
+
+  def subFactory = factory.asInstanceOf[IncDesCollectionFactory].subFactory
+
+  def newSubordinate = subFactory.newActor(mailbox).asInstanceOf[IncDes]
 }
