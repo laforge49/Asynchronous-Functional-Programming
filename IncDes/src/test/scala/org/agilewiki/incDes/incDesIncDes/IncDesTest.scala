@@ -30,7 +30,7 @@ import blip._
 import blip.services._
 
 class IncDesTest extends SpecificationWithJUnit {
-  "InDesTest" should {
+  "IncDesTest" should {
     "Serialize/deserialize" in {
       val systemServices = SystemServices(new IncDesComponentFactory)
 
