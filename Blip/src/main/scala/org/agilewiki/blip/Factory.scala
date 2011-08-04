@@ -25,7 +25,6 @@ package org.agilewiki
 package blip
 
 abstract class Factory(_id: FactoryId) {
-  var isSingleton = false
 
   def id = _id
 
@@ -45,7 +44,6 @@ abstract class Factory(_id: FactoryId) {
       val component = componentFactory.newComponent(actor)
       addComponent(actor, component)
     }
-    if (isSingleton) actor.id(ActorId(id.value))
     actor
   }
 

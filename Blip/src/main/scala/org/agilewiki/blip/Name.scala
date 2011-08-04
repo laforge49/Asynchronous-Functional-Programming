@@ -37,12 +37,13 @@ object Name {
 }
 
 sealed abstract class Name {
-  def value:String
+  def value: String
 }
 
 case class ActorId(id: String) extends Name {
-  override def toString = "AID:"+ value
-  override def value = if(id.startsWith("AID:")) id.substring(4) else id
+  override def toString = "AID:" + value
+
+  override def value = if (id.startsWith("AID:")) id.substring(4) else id
 }
 
 object ActorId {
@@ -51,7 +52,20 @@ object ActorId {
 
 case class FactoryId(name: String) extends Name {
 
-  override def value = if(name.startsWith("FID:")) name.substring(4) else name
+  override def value = if (name.startsWith("FID:")) name.substring(4) else name
 
-  override def toString = "FID:"+value
+  override def toString = "FID:" + value
+}
+
+trait IdActor {
+  this: Actor =>
+  private var actorId: ActorId = null
+
+  def id = actorId
+
+  def id(_id: ActorId) {
+    if (actorId != null) throw new UnsupportedOperationException
+    if (opened) throw new IllegalStateException
+    actorId = _id
+  }
 }

@@ -28,7 +28,6 @@ object SystemServices {
   def apply(rootComponentFactory: ComponentFactory,
             factoryId: FactoryId = new FactoryId("System")) = {
     val systemServicesFactory = new CompositeFactory(factoryId, rootComponentFactory)
-    systemServicesFactory.isSingleton = true
     val systemServices = systemServicesFactory.newActor(new Mailbox)
     systemServices.setSystemServices(systemServices)
     systemServices._open

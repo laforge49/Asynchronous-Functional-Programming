@@ -9,7 +9,7 @@ import services._
 case class Greet()
 
 class Greeter
-  extends Actor {
+  extends Actor with IdActor {
   bind(classOf[Greet], greet)
 
   def greet(msg: AnyRef, rf: Any => Unit) {
@@ -46,12 +46,12 @@ class Driver extends Actor {
 
   def doit1(msg: AnyRef, rf: Any => Unit) {
     systemServices(Instantiate(FactoryId("greeter"), null)) {rsp =>
-      val greeter = rsp.asInstanceOf[Actor]
+      val greeter = rsp.asInstanceOf[IdActor]
       greeter.id(ActorId("a"))
       systemServices(Register(greeter)) {rsp => {}}
     }
     systemServices(ResolveName(FactoryId("greeter"), null)) {rsp =>
-      val greeter = rsp.asInstanceOf[Actor]
+      val greeter = rsp.asInstanceOf[IdActor]
       greeter.id(ActorId("b"))
       systemServices(Register(greeter)) {rsp => {}}
     }

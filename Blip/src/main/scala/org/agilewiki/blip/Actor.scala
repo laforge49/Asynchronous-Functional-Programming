@@ -81,18 +81,6 @@ class Actor
 
   implicit def activeActor: ActiveActor = _activeActor
 
-  private var actorId: ActorId = null
-
-  override def id = actorId
-
-  def id(_id: ActorId) {
-    if (actorId != null) throw new UnsupportedOperationException
-    if (opened) throw new IllegalStateException
-    actorId = _id
-  }
-
-  def isSingleton = factory.isSingleton
-
   var _systemServices: Actor = null
 
   def setSystemServices(systemServices: Actor) {

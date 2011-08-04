@@ -45,8 +45,6 @@ trait Responder extends SystemServicesGetter {
 
   implicit def activeActor: ActiveActor
 
-  def id: ActorId
-
   def factory: Factory
 
   def factoryId = {

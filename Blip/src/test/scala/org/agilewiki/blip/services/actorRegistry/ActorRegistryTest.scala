@@ -7,7 +7,8 @@ import org.specs.SpecificationWithJUnit
 case class Greet()
 
 class Greeter
-  extends Actor {
+  extends Actor
+  with IdActor {
   bind(classOf[Greet], greet)
 
   def greet(msg: AnyRef, rf: Any => Unit) {
@@ -35,6 +36,7 @@ class SomeComponentFactory
 }
 
 case class DoIt1()
+
 case class DoIt2()
 
 class Driver extends Actor {
@@ -43,24 +45,33 @@ class Driver extends Actor {
   setMailbox(new Mailbox)
 
   def doit1(msg: AnyRef, rf: Any => Unit) {
-    systemServices(Instantiate(FactoryId("greeter"), null)) {rsp =>
-      val greeter = rsp.asInstanceOf[Actor]
-      greeter.id(ActorId("a"))
-      systemServices(Register(greeter)) {rsp => {}}
+    systemServices(Instantiate(FactoryId("greeter"), null)) {
+      rsp =>
+        val greeter = rsp.asInstanceOf[IdActor]
+        greeter.id(ActorId("a"))
+        systemServices(Register(greeter)) {
+          rsp => {}
+        }
     }
-    systemServices(ResolveName(FactoryId("greeter"), null)) {rsp =>
-      val greeter = rsp.asInstanceOf[Actor]
-      greeter.id(ActorId("b"))
-      systemServices(Register(greeter)) {rsp => {}}
+    systemServices(ResolveName(FactoryId("greeter"), null)) {
+      rsp =>
+        val greeter = rsp.asInstanceOf[IdActor]
+        greeter.id(ActorId("b"))
+        systemServices(Register(greeter)) {
+          rsp => {}
+        }
     }
     rf(null)
   }
 
   def doit2(msg: AnyRef, rf: Any => Unit) {
-    systemServices(Unregister(ActorId("a"))) {rsp => {}}
-    systemServices(ResolveName(ActorId("b"), null)) {rsp =>
-      val actor = rsp.asInstanceOf[Actor]
-      actor(Greet())(rf)
+    systemServices(Unregister(ActorId("a"))) {
+      rsp => {}
+    }
+    systemServices(ResolveName(ActorId("b"), null)) {
+      rsp =>
+        val actor = rsp.asInstanceOf[Actor]
+        actor(Greet())(rf)
     }
   }
 }

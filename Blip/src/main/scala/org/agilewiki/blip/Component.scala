@@ -38,10 +38,6 @@ class Component(actor: Actor) extends Responder {
 
   override def mailbox = actor.mailbox
 
-  override def id = actor.id
-
-  def isSingleton = actor.isSingleton
-
   override def factory = actor.factory
 
   override def systemServices = actor.systemServices

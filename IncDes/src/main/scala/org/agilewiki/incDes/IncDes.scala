@@ -82,7 +82,6 @@ class IncDes extends Actor {
     val c = factory.newActor(msg.asInstanceOf[Copy].mailbox).asInstanceOf[IncDes]
     c.setSystemServices(systemServices)
     c.load(bytes)
-    c.id(id)
     rf(c)
   }
 

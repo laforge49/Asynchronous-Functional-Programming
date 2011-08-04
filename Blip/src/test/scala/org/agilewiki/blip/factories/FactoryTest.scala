@@ -4,7 +4,6 @@ package factories
 import org.specs.SpecificationWithJUnit
 
 abstract class UserFactory(id: FactoryId) extends Factory(id) {
-  isSingleton = true
   def accountName: String
   override protected def instantiate = new UserActor
 }
@@ -28,7 +27,6 @@ class FactoryTest extends SpecificationWithJUnit {
   "FactoryTest" should {
     "create and configure" in {
       val fred = (new FredFactory).newActor(null)
-      println("actor id = " + fred.id.value)
       println("account name = " + Future(fred, AccountName()))
     }
   }

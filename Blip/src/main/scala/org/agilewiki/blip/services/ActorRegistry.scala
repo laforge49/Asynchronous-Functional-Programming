@@ -45,7 +45,7 @@ class SafeResolveName(systemServices: Actor)
 
 class ActorRegistryComponent(actor: Actor)
   extends Component(actor) {
-  val actors = new TreeMap[String, Actor]
+  val actors = new TreeMap[String, IdActor]
   bind(classOf[Register], register)
   bind(classOf[Unregister], unregister)
   bind(classOf[GetActor], getActor)
