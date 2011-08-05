@@ -25,7 +25,17 @@ package org.agilewiki
 package incDes
 
 import blip._
+import services._
 import seq._
+
+class IncDesCollectionFactory(id: FactoryId, subId: FactoryId)
+  extends IncDesFactory(id) {
+  var subFactory: Factory = null
+
+  override def configure(systemServices: Actor, factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {
+    subFactory = factoryRegistryComponentFactory.getFactory(subId)
+  }
+}
 
 abstract class IncDesCollection[K]
   extends IncDes {
