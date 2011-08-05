@@ -87,8 +87,8 @@ object IncDesIncDesList {
 }
 
 class IncDesList[V] extends IncDesCollection[Int, V] {
-  private var i: ArrayList[IncDes] = null
-  private var len = -1
+  private var i = new ArrayList[IncDes]
+  private var len = 0
 
   override def isDeserialized = i != null
 
