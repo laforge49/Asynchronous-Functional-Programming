@@ -44,7 +44,6 @@ class IncDesComponentFactory
     factoryRegistryComponentFactory.registerFactory(SubordinateBytesFactory)
     factoryRegistryComponentFactory.registerFactory(SubordinateIncDesFactory)
 
-    factoryRegistryComponentFactory.registerFactory(SubordinateBaseListFactory)
     factoryRegistryComponentFactory.registerFactory(SubordinateIntListFactory)
     factoryRegistryComponentFactory.registerFactory(SubordinateLongListFactory)
     factoryRegistryComponentFactory.registerFactory(SubordinateStringListFactory)

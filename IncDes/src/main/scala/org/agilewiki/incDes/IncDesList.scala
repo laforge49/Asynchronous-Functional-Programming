@@ -32,15 +32,6 @@ class SubordinateListFactory[V](id: FactoryId, subId: FactoryId)
   override protected def instantiate = new IncDesList[V]
 }
 
-object SubordinateBaseListFactory
-  extends SubordinateListFactory[IncDes](INC_DES_LIST_FACTORY_ID, INC_DES_FACTORY_ID)
-
-object IncDesList {
-  def apply(mailbox: Mailbox) = {
-    SubordinateBaseListFactory.newActor(mailbox).asInstanceOf[IncDesList[IncDes]]
-  }
-}
-
 object SubordinateIntListFactory
   extends SubordinateListFactory[IncDesInt](INC_DES_INT_LIST_FACTORY_ID, INC_DES_INT_FACTORY_ID)
 
@@ -123,6 +114,7 @@ class IncDesList[V] extends IncDesCollection[Int, V] {
   override def length = intLength + len
 
   def deserialize {
+    if (i != null) return
     i = new ArrayList[IncDes]
     val m = data.mutable
     m.skip(intLength)
@@ -133,5 +125,10 @@ class IncDesList[V] extends IncDesCollection[Int, V] {
       sub.partness(this, i.size - 1, this)
       i.add(sub)
     }
+  }
+
+  override def change(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
+    len += lenDiff
+    changed(transactionContext, lenDiff, what, rf)
   }
 }
