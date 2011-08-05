@@ -36,32 +36,15 @@ class IncDesComponentFactory
       compositeFactory.componentFactory(classOf[FactoryRegistryComponentFactory]).
         asInstanceOf[FactoryRegistryComponentFactory]
 
-    factoryRegistryComponentFactory.registerFactory(
-      new SubordinateBaseFactory(INC_DES_FACTORY_ID)
-    )
+    factoryRegistryComponentFactory.registerFactory(SubordinateBaseFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateIntFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateLongFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateStringFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateBooleanFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateBytesFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateIncDesFactory)
 
-    factoryRegistryComponentFactory.registerFactory(
-      SubordinateIntFactory
-    )
-
-    factoryRegistryComponentFactory.registerFactory(
-      SubordinateLongFactory
-    )
-
-    factoryRegistryComponentFactory.registerFactory(
-      SubordinateStringFactory
-    )
-
-    factoryRegistryComponentFactory.registerFactory(
-      SubordinateBooleanFactory
-    )
-
-    factoryRegistryComponentFactory.registerFactory(
-      SubordinateBytesFactory
-    )
-
-    factoryRegistryComponentFactory.registerFactory(
-      SubordinateIncDesFactory
-    )
+    factoryRegistryComponentFactory.registerFactory(SubordinateBaseListFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateIntListFactory)
   }
 }

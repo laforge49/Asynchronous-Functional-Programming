@@ -22,16 +22,39 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki
+package incDes
 
 import blip._
 
-package object incDes {
-  val INC_DES_FACTORY_ID = FactoryId("id")
-  val INC_DES_INT_FACTORY_ID = FactoryId("idI")
-  val INC_DES_LONG_FACTORY_ID = FactoryId("idl")
-  val INC_DES_STRING_FACTORY_ID = FactoryId("idS")
-  val INC_DES_BOOLEAN_FACTORY_ID = FactoryId("idB")
-  val INC_DES_BYTES_FACTORY_ID = FactoryId("idA")
-  val INC_DES_INCDES_FACTORY_ID = FactoryId("idW")
-  val INC_DES_LIST_FACTORY_ID = FactoryId("idL")
+class SubordinateListFactory[V](subId: FactoryId)
+  extends SubordinateCollectionFactory(INC_DES_LIST_FACTORY_ID, subId) {
+  override protected def instantiate = new IncDesList[V]
+}
+
+object SubordinateBaseListFactory extends SubordinateListFactory[IncDes](INC_DES_FACTORY_ID)
+
+object IncDesList {
+  def apply(mailbox: Mailbox) = {
+    SubordinateBaseListFactory.newActor(mailbox).asInstanceOf[IncDesList[IncDes]]
+  }
+}
+
+object SubordinateIntListFactory extends SubordinateListFactory[Int](INC_DES_INT_FACTORY_ID)
+
+object IncDesIntList {
+  def apply(mailbox: Mailbox) = {
+    SubordinateIntListFactory.newActor(mailbox).asInstanceOf[IncDesList[IncDesInt]]
+  }
+}
+
+object SubordinateLongListFactory extends SubordinateListFactory[Int](INC_DES_LONG_FACTORY_ID)
+
+object IncDesLongList {
+  def apply(mailbox: Mailbox) = {
+    SubordinateIntListFactory.newActor(mailbox).asInstanceOf[IncDesList[IncDesLong]]
+  }
+}
+
+class IncDesList[V] extends IncDesCollection[Int, V] {
+
 }

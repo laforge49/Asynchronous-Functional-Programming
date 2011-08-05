@@ -37,15 +37,15 @@ class IncDesCollectionFactory(id: FactoryId, subId: FactoryId)
   }
 }
 
-abstract class IncDesCollection[K]
+abstract class IncDesCollection[K, V]
   extends IncDes {
 
-  bind(classOf[Get[K]], get)
-  bind(classOf[ContainsKey[K]], get)
+//  bind(classOf[Get[K]], get)
+//  bind(classOf[ContainsKey[K]], get)
 
-  def get(msg: AnyRef, rf: Any => Unit)
+//  def get(msg: AnyRef, rf: Any => Unit)
 
-  def containsKey(msg: AnyRef, rf: Any => Unit)
+//  def containsKey(msg: AnyRef, rf: Any => Unit)
 
   def subFactory = factory.asInstanceOf[IncDesCollectionFactory].subFactory
 
