@@ -34,7 +34,11 @@ class FactoryRegistryComponentFactory extends ComponentFactory {
     factories.put(factory.id.value, factory)
   }
 
-  def getFactory(id: FactoryId) = factories.get(id.value)
+  def getFactory(id: FactoryId) = {
+    val factory = factories.get(id.value)
+    if (factory == null) throw new IllegalArgumentException("Unknown factory id: " + id.value)
+    factory
+  }
 
   override def instantiate(actor: Actor) = new FactoryRegistryComponent(actor)
 }
