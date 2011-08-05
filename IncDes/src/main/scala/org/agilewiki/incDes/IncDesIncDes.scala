@@ -29,6 +29,7 @@ import services._
 
 object SubordinateIncDesFactory
   extends SubordinateFactory(INC_DES_INCDES_FACTORY_ID) {
+
   override protected def instantiate = new IncDesIncDes
 }
 
@@ -41,6 +42,12 @@ object IncDesIncDes {
 class IncDesIncDes extends IncDesItem {
   private var i: IncDes = null
   private var len = -1
+
+  lazy val factoryRegistryComponentFactory = {
+    if (systemServices == null) throw new IllegalStateException("SystemServices is required")
+    systemServices.factory.componentFactory(classOf[FactoryRegistryComponentFactory]).
+      asInstanceOf[FactoryRegistryComponentFactory]
+  }
 
   override def partness(container: IncDes, _key: Any, visibleContainer: IncDes) {
     super.partness(container, _key, visibleContainer)
@@ -93,6 +100,14 @@ class IncDesIncDes extends IncDesItem {
     val s = msg.asInstanceOf[Set]
     val v = s.value.asInstanceOf[IncDes]
     val tc = s.transactionContext
+    val vfactory = v.factory
+    if (vfactory == null) throw new IllegalArgumentException("factory is null")
+    val fid = vfactory.id
+    if (fid == null) throw new IllegalArgumentException("factory id is null")
+    if (factoryRegistryComponentFactory == null)
+      throw new IllegalStateException("SystemServices does not contain FactoryRegistryComponentFactory")
+    if (factoryRegistryComponentFactory.getFactory(fid) == null)
+      throw new IllegalArgumentException("unregistered factory id: "+fid)
     if (mailbox != v.mailbox) {
       if (v.mailbox == null && !v.opened) v.setMailbox(mailbox)
       else throw new IllegalStateException("uses a different mailbox")
