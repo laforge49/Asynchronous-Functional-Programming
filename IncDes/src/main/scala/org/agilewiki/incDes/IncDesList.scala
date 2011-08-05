@@ -26,12 +26,12 @@ package incDes
 
 import blip._
 
-class SubordinateListFactory[V](subId: FactoryId)
-  extends SubordinateCollectionFactory(INC_DES_LIST_FACTORY_ID, subId) {
+class SubordinateListFactory[V](id: FactoryId, subId: FactoryId)
+  extends SubordinateCollectionFactory(id, subId) {
   override protected def instantiate = new IncDesList[V]
 }
 
-object SubordinateBaseListFactory extends SubordinateListFactory[IncDes](INC_DES_FACTORY_ID)
+object SubordinateBaseListFactory extends SubordinateListFactory[IncDes](INC_DES_LIST_FACTORY_ID, INC_DES_FACTORY_ID)
 
 object IncDesList {
   def apply(mailbox: Mailbox) = {
@@ -39,7 +39,7 @@ object IncDesList {
   }
 }
 
-object SubordinateIntListFactory extends SubordinateListFactory[Int](INC_DES_INT_FACTORY_ID)
+object SubordinateIntListFactory extends SubordinateListFactory[Int](INC_DES_INT_LIST_FACTORY_ID, INC_DES_INT_FACTORY_ID)
 
 object IncDesIntList {
   def apply(mailbox: Mailbox) = {
@@ -47,7 +47,7 @@ object IncDesIntList {
   }
 }
 
-object SubordinateLongListFactory extends SubordinateListFactory[Int](INC_DES_LONG_FACTORY_ID)
+object SubordinateLongListFactory extends SubordinateListFactory[Int](INC_DES_LONG_LIST_FACTORY_ID, INC_DES_LONG_FACTORY_ID)
 
 object IncDesLongList {
   def apply(mailbox: Mailbox) = {
