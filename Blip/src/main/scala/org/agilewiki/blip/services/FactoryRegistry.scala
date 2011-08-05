@@ -65,4 +65,14 @@ class FactoryRegistryComponent(actor: Actor)
     bindSafe(classOf[Instantiate], new SafeInstantiate(cf, actor))
     bindSafe(classOf[Factories], new SafeConstant(new NavMapSeq(cf.factories)))
   }
+
+  override def open {
+    val cf = componentFactory.asInstanceOf[FactoryRegistryComponentFactory]
+    val factories = cf.factories
+    val it = factories.keySet.iterator
+    while (it.hasNext) {
+      val factory = factories.get(it.next)
+      factory.configure(actor,cf)
+    }
+  }
 }

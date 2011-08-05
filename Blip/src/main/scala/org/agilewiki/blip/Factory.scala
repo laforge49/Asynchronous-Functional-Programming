@@ -24,6 +24,8 @@
 package org.agilewiki
 package blip
 
+import services.FactoryRegistryComponentFactory
+
 abstract class Factory(_id: FactoryId) {
 
   def id = _id
@@ -110,4 +112,7 @@ abstract class Factory(_id: FactoryId) {
 
   def componentFactory(componentFactoryClass: Class[_ <: ComponentFactory]) =
     componentFactories.get(componentFactoryClass)
+
+    def configure(systemServices: Actor,
+                  factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {}
 }
