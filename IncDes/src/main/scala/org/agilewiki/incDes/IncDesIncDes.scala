@@ -90,6 +90,7 @@ class IncDesIncDes extends IncDesItem {
       rsp => {
         i = rsp.asInstanceOf[IncDes]
         i.load(m)
+        i.partness(this, key, this)
         dser = true
         rf(i)
       }

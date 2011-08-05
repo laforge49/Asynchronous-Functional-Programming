@@ -87,15 +87,15 @@ class IncDes extends Actor {
     this._container = null
   }
 
-    def change(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
-      changed(transactionContext, lenDiff, what, rf)
-    }
+  def change(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
+    changed(transactionContext, lenDiff, what, rf)
+  }
 
-    def changed(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
-      data = null
-      if (container == null) rf(null)
-      else container(Changed(transactionContext, lenDiff, what))(rf)
-    }
+  def changed(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
+    data = null
+    if (container == null) rf(null)
+    else container(Changed(transactionContext, lenDiff, what))(rf)
+  }
 
   def bytes = {
     val bytes = new Array[Byte](length)

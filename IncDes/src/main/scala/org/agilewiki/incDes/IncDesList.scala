@@ -25,6 +25,7 @@ package org.agilewiki
 package incDes
 
 import blip._
+import java.util.ArrayList
 
 class SubordinateListFactory[V](id: FactoryId, subId: FactoryId)
   extends SubordinateCollectionFactory(id, subId) {
@@ -95,5 +96,42 @@ object IncDesIncDesList {
 }
 
 class IncDesList[V] extends IncDesCollection[Int, V] {
+  private var i: ArrayList[IncDes] = null
+  private var len = -1
 
+  override def isDeserialized = i != null
+
+  override def load(_data: MutableData) {
+    super.load(_data)
+    len = _data.readInt
+    if (len > 0) _data.skip(len)
+    i = null
+  }
+
+  override protected def serialize(_data: MutableData) {
+    if (i == null) throw new IllegalStateException
+    else {
+      _data.writeInt(len)
+      val it = i.iterator
+      while (it.hasNext) {
+        val j = it.next
+        j.save(_data)
+      }
+    }
+  }
+
+  override def length = intLength + len
+
+  def deserialize {
+    i = new ArrayList[IncDes]
+    val m = data.mutable
+    m.skip(intLength)
+    val limit = m.offset + len
+    while (m.offset < limit) {
+      val sub = newSubordinate
+      sub.load(m)
+      sub.partness(this, i.size - 1, this)
+      i.add(sub)
+    }
+  }
 }
