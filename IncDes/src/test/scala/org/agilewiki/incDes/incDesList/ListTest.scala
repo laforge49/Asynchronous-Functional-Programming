@@ -122,6 +122,10 @@ class ListTest extends SpecificationWithJUnit {
       Future(incdesl1, Size()) must be equalTo (1)
       val incdes1 = Future(incdesl1, Get(0))
       incdes1.isInstanceOf[IncDesIncDes] must beTrue
+      val incdes2 = Future(incdesl1, Remove(null, 0))
+      incdes2.isInstanceOf[IncDesIncDes] must beTrue
+      Future(incdesl1, Length()) must be equalTo (4)
+      Future(incdesl1, Size()) must be equalTo (0)
     }
   }
 }

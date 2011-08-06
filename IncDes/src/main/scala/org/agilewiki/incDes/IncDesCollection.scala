@@ -43,12 +43,15 @@ abstract class IncDesCollection[K, V]
   bind(classOf[Get[K]], get)
   bind(classOf[ContainsKey[K]], containsKey)
   bind(classOf[Size], size)
+  bind(classOf[Remove[K]], remove)
 
   def get(msg: AnyRef, rf: Any => Unit)
 
   def containsKey(msg: AnyRef, rf: Any => Unit)
 
   def size(msg: AnyRef, rf: Any => Unit)
+
+  def remove(msg: AnyRef, rf: Any => Unit)
 
   def subFactory = factory.asInstanceOf[IncDesCollectionFactory].subFactory
 

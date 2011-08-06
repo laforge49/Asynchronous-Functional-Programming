@@ -43,3 +43,7 @@ case class Writable(transactionContext: TransactionContext)
 case class VisibleElement()
 
 case class Add[V <: IncDes](transactionContext: TransactionContext, value: V)
+
+case class Size()
+
+case class Remove[K](transactionContext: TransactionContext, key: K)

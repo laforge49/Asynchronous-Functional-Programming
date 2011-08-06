@@ -140,6 +140,7 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
     val v = s.value
     val tc = s.transactionContext
     if (v == null) throw new IllegalArgumentException("may not be null")
+    if (v.container != null) throw new IllegalArgumentException("already in use")
     val vfactory = v.factory
     if (vfactory == null) throw new IllegalArgumentException("factory is null")
     val fid = vfactory.id
@@ -164,7 +165,7 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
     deserialize
     val key = msg.asInstanceOf[Get[Int]].key
     if (key < 0 || key >= i.size) rf(null)
-    rf(i.get(key))
+    else rf(i.get(key))
   }
 
   def containsKey(msg: AnyRef, rf: Any => Unit) {
@@ -176,5 +177,24 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
   def size(msg: AnyRef, rf: Any => Unit) {
     deserialize
     rf(i.size)
+  }
+
+  def remove(msg: AnyRef, rf: Any => Unit) {
+    deserialize
+    val s = msg.asInstanceOf[Remove[Int]]
+    val key = s.key
+    if (key < 0 || key >= i.size) {
+      rf(null)
+      return
+    }
+    val tc = s.transactionContext
+    this(Writable(tc)) {
+      rsp => {
+        val r = i.remove(key)
+        val l = r.length
+        r.clearContainer
+        change(tc, -l, this, {rsp => rf(r)})
+      }
+    }
   }
 }

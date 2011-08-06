@@ -46,5 +46,3 @@ case class Find[V](f: V => Boolean)
 case class ContainsKey[K](key: K)
 
 case class Get[K](key: K)
-
-case class Size()
