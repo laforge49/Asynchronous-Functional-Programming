@@ -108,8 +108,10 @@ class ListTest extends SpecificationWithJUnit {
       incdesl0.setSystemServices(systemServices)
       val incdes0 = IncDesIncDes(null)
       Future(incdesl0, ContainsKey(0)) must be equalTo(false)
+      Future(incdesl0, Size()) must be equalTo (0)
       Future(incdesl0, Add(null, incdes0))
       Future(incdesl0, Length()) must be equalTo (8)
+      Future(incdesl0, Size()) must be equalTo (1)
       val incdesb0 = Future(incdesl0, Bytes()).asInstanceOf[Array[Byte]]
 
       val incdesl1 = IncDesIncDesList(new Mailbox)
@@ -117,6 +119,7 @@ class ListTest extends SpecificationWithJUnit {
       incdesl1.load(incdesb0)
       Future(incdesl1, ContainsKey(0)) must be equalTo(true)
       Future(incdesl1, Length()) must be equalTo (8)
+      Future(incdesl1, Size()) must be equalTo (1)
       val incdes1 = Future(incdesl1, Get(0))
       incdes1.isInstanceOf[IncDesIncDes] must beTrue
     }

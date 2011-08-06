@@ -42,10 +42,13 @@ abstract class IncDesCollection[K, V]
 
   bind(classOf[Get[K]], get)
   bind(classOf[ContainsKey[K]], containsKey)
+  bind(classOf[Size], size)
 
   def get(msg: AnyRef, rf: Any => Unit)
 
   def containsKey(msg: AnyRef, rf: Any => Unit)
+
+  def size(msg: AnyRef, rf: Any => Unit)
 
   def subFactory = factory.asInstanceOf[IncDesCollectionFactory].subFactory
 

@@ -167,11 +167,14 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
     rf(i.get(key))
   }
 
-
   def containsKey(msg: AnyRef, rf: Any => Unit) {
     deserialize
     val key = msg.asInstanceOf[ContainsKey[Int]].key
     rf(key >= 0 && key < i.size)
   }
 
+  def size(msg: AnyRef, rf: Any => Unit) {
+    deserialize
+    rf(i.size)
+  }
 }
