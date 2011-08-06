@@ -27,6 +27,7 @@ package incDesList
 
 import org.specs.SpecificationWithJUnit
 import blip._
+import seq._
 
 class ListTest extends SpecificationWithJUnit {
   "ListTest" should {
@@ -35,8 +36,8 @@ class ListTest extends SpecificationWithJUnit {
 
       val booll0 = IncDesBooleanList(new Mailbox)
       booll0.setSystemServices(systemServices)
-      val bool1 = IncDesBoolean(null)
-      Future(booll0, Add(null, bool1))
+      val bool0 = IncDesBoolean(null)
+      Future(booll0, Add(null, bool0))
       Future(booll0, Length()) must be equalTo (5)
       val boolb0 = Future(booll0, Bytes()).asInstanceOf[Array[Byte]]
 
@@ -44,6 +45,8 @@ class ListTest extends SpecificationWithJUnit {
       booll1.setSystemServices(systemServices)
       booll1.load(boolb0)
       Future(booll1, Length()) must be equalTo (5)
+      val bool1 = Future(booll1, Get(0))
+      bool1.isInstanceOf[IncDesBoolean] must beTrue
 
       val bytesl0 = IncDesBytesList(new Mailbox)
       bytesl0.setSystemServices(systemServices)
@@ -56,6 +59,8 @@ class ListTest extends SpecificationWithJUnit {
       bytesl1.setSystemServices(systemServices)
       bytesl1.load(bytesb0)
       Future(bytesl1, Length()) must be equalTo (8)
+      val bytes1 = Future(bytesl1, Get(0))
+      bytes1.isInstanceOf[IncDesBytes] must beTrue
 
       val intl0 = IncDesIntList(new Mailbox)
       intl0.setSystemServices(systemServices)
@@ -68,18 +73,8 @@ class ListTest extends SpecificationWithJUnit {
       intl1.setSystemServices(systemServices)
       intl1.load(intb0)
       Future(intl1, Length()) must be equalTo (8)
-
-      val incdesl0 = IncDesIncDesList(new Mailbox)
-      incdesl0.setSystemServices(systemServices)
-      val incdes0 = IncDesIncDes(null)
-      Future(incdesl0, Add(null, incdes0))
-      Future(incdesl0, Length()) must be equalTo (8)
-      val incdesb0 = Future(incdesl0, Bytes()).asInstanceOf[Array[Byte]]
-
-      val incdesl1 = IncDesIncDesList(new Mailbox)
-      incdesl1.setSystemServices(systemServices)
-      incdesl1.load(incdesb0)
-      Future(incdesl1, Length()) must be equalTo (8)
+      val int1 = Future(intl1, Get(0))
+      int1.isInstanceOf[IncDesInt] must beTrue
 
       val longl0 = IncDesLongList(new Mailbox)
       longl0.setSystemServices(systemServices)
@@ -92,6 +87,8 @@ class ListTest extends SpecificationWithJUnit {
       longl1.setSystemServices(systemServices)
       longl1.load(longb0)
       Future(longl1, Length()) must be equalTo (12)
+      val long1 = Future(longl1, Get(0))
+      long1.isInstanceOf[IncDesLong] must beTrue
 
       val strl0 = IncDesStringList(new Mailbox)
       strl0.setSystemServices(systemServices)
@@ -104,6 +101,22 @@ class ListTest extends SpecificationWithJUnit {
       strl1.setSystemServices(systemServices)
       strl1.load(strb0)
       Future(strl1, Length()) must be equalTo (8)
+      val str1 = Future(strl1, Get(0))
+      str1.isInstanceOf[IncDesString] must beTrue
+
+      val incdesl0 = IncDesIncDesList(new Mailbox)
+      incdesl0.setSystemServices(systemServices)
+      val incdes0 = IncDesIncDes(null)
+      Future(incdesl0, Add(null, incdes0))
+      Future(incdesl0, Length()) must be equalTo (8)
+      val incdesb0 = Future(incdesl0, Bytes()).asInstanceOf[Array[Byte]]
+
+      val incdesl1 = IncDesIncDesList(new Mailbox)
+      incdesl1.setSystemServices(systemServices)
+      incdesl1.load(incdesb0)
+      Future(incdesl1, Length()) must be equalTo (8)
+      val incdes1 = Future(incdesl1, Get(0))
+      incdes1.isInstanceOf[IncDesIncDes] must beTrue
     }
   }
 }

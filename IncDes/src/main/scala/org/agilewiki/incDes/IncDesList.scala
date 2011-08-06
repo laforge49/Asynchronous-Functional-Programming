@@ -25,6 +25,7 @@ package org.agilewiki
 package incDes
 
 import blip._
+import seq._
 import java.util.ArrayList
 
 class SubordinateListFactory[V <: IncDes](id: FactoryId, subId: FactoryId)
@@ -157,5 +158,12 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
         change(tc, v.length, this, rf)
       }
     }
+  }
+
+  def get(msg: AnyRef, rf: Any => Unit) {
+    deserialize
+    val key = msg.asInstanceOf[Get[Int]].key
+    if (key < 0 || key >= i.size) rf(null)
+    rf(i.get(key))
   }
 }
