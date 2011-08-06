@@ -41,3 +41,5 @@ case class Changed(transactionContext: TransactionContext, diff: Int, what: IncD
 case class Writable(transactionContext: TransactionContext)
 
 case class VisibleElement()
+
+case class Add[V <: IncDes](transactionContext: TransactionContext, value: V)

@@ -101,19 +101,21 @@ class IncDesIncDes extends IncDesItem {
     val s = msg.asInstanceOf[Set]
     val v = s.value.asInstanceOf[IncDes]
     val tc = s.transactionContext
-    val vfactory = v.factory
-    if (vfactory == null) throw new IllegalArgumentException("factory is null")
-    val fid = vfactory.id
-    if (fid == null) throw new IllegalArgumentException("factory id is null")
-    if (factoryRegistryComponentFactory == null)
-      throw new IllegalStateException("SystemServices does not contain FactoryRegistryComponentFactory")
-    if (factoryRegistryComponentFactory.getFactory(fid) == null)
-      throw new IllegalArgumentException("unregistered factory id: "+fid)
-    if (mailbox != v.mailbox) {
-      if (v.mailbox == null && !v.opened) v.setMailbox(mailbox)
-      else throw new IllegalStateException("uses a different mailbox")
+    if (v != null) {
+      val vfactory = v.factory
+      if (vfactory == null) throw new IllegalArgumentException("factory is null")
+      val fid = vfactory.id
+      if (fid == null) throw new IllegalArgumentException("factory id is null")
+      if (factoryRegistryComponentFactory == null)
+        throw new IllegalStateException("SystemServices does not contain FactoryRegistryComponentFactory")
+      if (factoryRegistryComponentFactory.getFactory(fid) == null)
+        throw new IllegalArgumentException("unregistered factory id: " + fid)
+      if (mailbox != v.mailbox) {
+        if (v.mailbox == null && !v.opened) v.setMailbox(mailbox)
+        else throw new IllegalStateException("uses a different mailbox")
+      }
+      if (v.systemServices == null && !v.opened) v.setSystemServices(systemServices)
     }
-    if (v.systemServices == null && !v.opened) v.setSystemServices(systemServices)
     this(Writable(tc)) {
       rsp => {
         val olen = length

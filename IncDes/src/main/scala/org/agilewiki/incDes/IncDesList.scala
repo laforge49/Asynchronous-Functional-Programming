@@ -27,7 +27,7 @@ package incDes
 import blip._
 import java.util.ArrayList
 
-class SubordinateListFactory[V](id: FactoryId, subId: FactoryId)
+class SubordinateListFactory[V <: IncDes](id: FactoryId, subId: FactoryId)
   extends SubordinateCollectionFactory(id, subId) {
   override protected def instantiate = new IncDesList[V]
 }
@@ -78,7 +78,7 @@ object IncDesBytesList {
 }
 
 object SubordinateIncDesListFactory
-  extends SubordinateListFactory[IncDesIncDes](INC_DES_INCDES_FACTORY_ID, INC_DES_INCDES_FACTORY_ID)
+  extends SubordinateListFactory[IncDesIncDes](INC_DES_INCDES_LIST_FACTORY_ID, INC_DES_INCDES_FACTORY_ID)
 
 object IncDesIncDesList {
   def apply(mailbox: Mailbox) = {
@@ -86,9 +86,11 @@ object IncDesIncDesList {
   }
 }
 
-class IncDesList[V] extends IncDesCollection[Int, V] {
+class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
   private var i = new ArrayList[IncDes]
   private var len = 0
+
+  bind(classOf[Add[V]], add)
 
   override def isDeserialized = i != null
 
@@ -130,5 +132,30 @@ class IncDesList[V] extends IncDesCollection[Int, V] {
   override def change(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
     len += lenDiff
     changed(transactionContext, lenDiff, what, rf)
+  }
+
+  def add(msg: AnyRef, rf: Any => Unit) {
+    val s = msg.asInstanceOf[Add[V]]
+    val v = s.value
+    val tc = s.transactionContext
+    if (v == null) throw new IllegalArgumentException("may not be null")
+    val vfactory = v.factory
+    if (vfactory == null) throw new IllegalArgumentException("factory is null")
+    val fid = vfactory.id
+    if (fid == null) throw new IllegalArgumentException("factory id is null")
+    if (fid.value != subFactory.id.value)
+      throw new IllegalArgumentException("incorrect factory id: " + fid.value)
+    if (mailbox != v.mailbox) {
+      if (v.mailbox == null && !v.opened) v.setMailbox(mailbox)
+      else throw new IllegalStateException("uses a different mailbox")
+    }
+    if (v.systemServices == null && !v.opened) v.setSystemServices(systemServices)
+    this(Writable(tc)) {
+      rsp => {
+        deserialize
+        i.add(v)
+        change(tc, v.length, this, rf)
+      }
+    }
   }
 }

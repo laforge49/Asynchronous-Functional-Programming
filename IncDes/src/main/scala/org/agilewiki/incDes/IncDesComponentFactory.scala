@@ -49,5 +49,6 @@ class IncDesComponentFactory
     factoryRegistryComponentFactory.registerFactory(SubordinateStringListFactory)
     factoryRegistryComponentFactory.registerFactory(SubordinateBooleanListFactory)
     factoryRegistryComponentFactory.registerFactory(SubordinateBytesListFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateIncDesListFactory)
   }
 }
