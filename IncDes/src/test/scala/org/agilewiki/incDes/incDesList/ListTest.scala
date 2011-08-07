@@ -120,12 +120,17 @@ class ListTest extends SpecificationWithJUnit {
       Future(incdesl1, ContainsKey(0)) must be equalTo(true)
       Future(incdesl1, Length()) must be equalTo (8)
       Future(incdesl1, Size()) must be equalTo (1)
+
       val incdes1 = Future(incdesl1, Get(0))
       incdes1.isInstanceOf[IncDesIncDes] must beTrue
-      val incdes2 = Future(incdesl1, Remove(null, 0))
-      incdes2.isInstanceOf[IncDesIncDes] must beTrue
-      Future(incdesl1, Length()) must be equalTo (4)
-      Future(incdesl1, Size()) must be equalTo (0)
+      val incdes2 = IncDesIncDes(null)
+      Future(incdesl1, Insert(null, 0, incdes2))
+      Future(incdesl1, Length()) must be equalTo (12)
+      Future(incdesl1, Size()) must be equalTo (2)
+      val incdes3 = Future(incdesl1, Remove(null, 1))
+      incdes3.isInstanceOf[IncDesIncDes] must beTrue
+      Future(incdesl1, Length()) must be equalTo (8)
+      Future(incdesl1, Size()) must be equalTo (1)
     }
   }
 }

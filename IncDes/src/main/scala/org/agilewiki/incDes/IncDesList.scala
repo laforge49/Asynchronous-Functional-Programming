@@ -92,6 +92,7 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
   private var len = 0
 
   bind(classOf[Add[V]], add)
+  bind(classOf[Insert[V]], insert)
 
   override def isDeserialized = i != null
 
@@ -135,10 +136,7 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
     changed(transactionContext, lenDiff, what, rf)
   }
 
-  def add(msg: AnyRef, rf: Any => Unit) {
-    val s = msg.asInstanceOf[Add[V]]
-    val v = s.value
-    val tc = s.transactionContext
+  def preprocess(tc: TransactionContext, v: V) {
     if (v == null) throw new IllegalArgumentException("may not be null")
     if (v.container != null) throw new IllegalArgumentException("already in use")
     val vfactory = v.factory
@@ -152,10 +150,32 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
       else throw new IllegalStateException("uses a different mailbox")
     }
     if (v.systemServices == null && !v.opened) v.setSystemServices(systemServices)
+    deserialize
+  }
+
+  def add(msg: AnyRef, rf: Any => Unit) {
+    val s = msg.asInstanceOf[Add[V]]
+    val tc = s.transactionContext
+    val v = s.value
+    preprocess(tc, v)
     this(Writable(tc)) {
       rsp => {
-        deserialize
         i.add(v)
+        change(tc, v.length, this, rf)
+      }
+    }
+  }
+
+  def insert(msg: AnyRef, rf: Any => Unit) {
+    val s = msg.asInstanceOf[Insert[V]]
+    val tc = s.transactionContext
+    val v = s.value
+    preprocess(tc, v)
+    val index = s.index
+    if (index < 0 || index > i.size) throw new IndexOutOfBoundsException("Index: "+index+", Size: "+i.size)
+    this(Writable(tc)) {
+      rsp => {
+        i.add(index, v)
         change(tc, v.length, this, rf)
       }
     }
@@ -193,7 +213,9 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
         val r = i.remove(key)
         val l = r.length
         r.clearContainer
-        change(tc, -l, this, {rsp => rf(r)})
+        change(tc, -l, this, {
+          rsp => rf(r)
+        })
       }
     }
   }
