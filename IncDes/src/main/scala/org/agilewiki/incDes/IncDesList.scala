@@ -219,4 +219,9 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
       }
     }
   }
+
+  def seq(msg: AnyRef, rf: Any => Unit) {
+    deserialize
+    rf(new ListSeq[IncDes](i))
+  }
 }

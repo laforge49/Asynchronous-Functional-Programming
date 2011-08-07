@@ -131,6 +131,9 @@ class ListTest extends SpecificationWithJUnit {
       incdes3.isInstanceOf[IncDesIncDes] must beTrue
       Future(incdesl1, Length()) must be equalTo (8)
       Future(incdesl1, Size()) must be equalTo (1)
+
+      val seq = Future(incdesl1, Seq()).asInstanceOf[Sequence[Int, IncDes]]
+      Future(seq, First()).isInstanceOf[KVPair[Int, IncDesIncDes]] must beTrue
     }
   }
 }

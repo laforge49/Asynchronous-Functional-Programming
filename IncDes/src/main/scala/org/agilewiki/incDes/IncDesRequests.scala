@@ -49,3 +49,5 @@ case class Insert[V <: IncDes](transactionContext: TransactionContext, index: In
 case class Size()
 
 case class Remove[K](transactionContext: TransactionContext, key: K)
+
+case class Seq()
