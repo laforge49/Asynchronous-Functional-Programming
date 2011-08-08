@@ -24,30 +24,13 @@
 package org.agilewiki
 package incDes
 
-import blip._
+class IncDesKV[K, V <: IncDes] extends IncDes {
 
-case class Length()
+  def keyFactory = factory.asInstanceOf[IncDesKVFactory].keyFactory
 
-case class Bytes()
+  def newKey = keyFactory.newActor(mailbox).asInstanceOf[IncDes]
 
-case class Copy(mailbox: Mailbox)
+  def valueFactory = factory.asInstanceOf[IncDesKVFactory].valueFactory
 
-case class Value()
-
-case class Set(transactionContext: TransactionContext, value: Any)
-
-case class Changed(transactionContext: TransactionContext, diff: Int, what: IncDes)
-
-case class Writable(transactionContext: TransactionContext)
-
-case class VisibleElement()
-
-case class Add[V <: IncDes](transactionContext: TransactionContext, value: V)
-
-case class Insert[V <: IncDes](transactionContext: TransactionContext, index: Int, value: V)
-
-case class Size()
-
-case class Remove[K](transactionContext: TransactionContext, key: K)
-
-case class Seq()
+  def newValue = valueFactory.newActor(mailbox).asInstanceOf[V]
+}

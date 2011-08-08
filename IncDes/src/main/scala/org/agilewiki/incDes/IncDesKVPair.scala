@@ -25,48 +25,17 @@ package org.agilewiki
 package incDes
 
 import blip._
+import services._
 
-class SubordinateFactory(id: FactoryId)
-  extends IncDesFactory(id) {
-  include(SubordinateComponentFactory())
+class SubordinateKVPairFactory[K, V <: IncDes](id: FactoryId, keyId: FactoryId, valueId: FactoryId)
+  extends SubordinateKVFactory(id, keyId, valueId) {
+  override protected def instantiate = new IncDesKVPair[K, V]
 }
 
-class SubordinateCollectionFactory(id: FactoryId, subId: FactoryId)
-  extends IncDesCollectionFactory(id, subId) {
-  include(SubordinateComponentFactory())
-}
+class IncDesKVPair[K, V <: IncDes] extends IncDesKV[K, V] {
+  private var idKey: IncDes = null
+  private var idValue: V = null.asInstanceOf[V]
+  private var dser = true
 
-class SubordinateKVFactory(id: FactoryId, keyId: FactoryId, valueId: FactoryId)
-  extends IncDesKVFactory(id, keyId, valueId) {
-  include(SubordinateComponentFactory())
-}
-
-class SubordinateComponentFactory extends ComponentFactory {
-  override def instantiate(actor: Actor) = new SubordinateComponent(actor)
-}
-
-object SubordinateComponentFactory {
-  val scf = new SubordinateComponentFactory
-
-  def apply() = scf
-}
-
-class SubordinateComponent(actor: Actor) extends Component(actor) {
-  bind(classOf[VisibleElement], passUp)
-  bind(classOf[Writable], passUp)
-  bind(classOf[Changed], changed)
-
-  def incDes = actor.asInstanceOf[IncDes]
-
-  def container = incDes.container
-
-  def passUp(msg: AnyRef, rf: Any => Unit) {
-    if (container == null) rf(null)
-    else container(msg)(rf)
-  }
-
-  def changed(msg: AnyRef, rf: Any => Unit) {
-    val c = msg.asInstanceOf[Changed]
-    incDes.change(c.transactionContext, c.diff, c.what, rf)
-  }
+  override def isDeserialized = dser
 }

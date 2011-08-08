@@ -28,11 +28,6 @@ import blip._
 import seq._
 import java.util.ArrayList
 
-class SubordinateListFactory[V <: IncDes](id: FactoryId, subId: FactoryId)
-  extends SubordinateCollectionFactory(id, subId) {
-  override protected def instantiate = new IncDesList[V]
-}
-
 object SubordinateIntListFactory
   extends SubordinateListFactory[IncDesInt](INC_DES_INT_LIST_FACTORY_ID, INC_DES_INT_FACTORY_ID)
 
@@ -87,8 +82,13 @@ object IncDesIncDesList {
   }
 }
 
+class SubordinateListFactory[V <: IncDes](id: FactoryId, subId: FactoryId)
+  extends SubordinateCollectionFactory(id, subId) {
+  override protected def instantiate = new IncDesList[V]
+}
+
 class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
-  private var i = new ArrayList[IncDes]
+  private var i = new ArrayList[V]
   private var len = 0
 
   bind(classOf[Add[V]], add)
@@ -119,7 +119,7 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
 
   def deserialize {
     if (i != null) return
-    i = new ArrayList[IncDes]
+    i = new ArrayList[V]
     val m = data.mutable
     m.skip(intLength)
     val limit = m.offset + len
@@ -222,6 +222,6 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
 
   def seq(msg: AnyRef, rf: Any => Unit) {
     deserialize
-    rf(new ListSeq[IncDes](i))
+    rf(new ListSeq[V](i))
   }
 }

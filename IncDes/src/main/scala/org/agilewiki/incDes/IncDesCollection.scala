@@ -58,5 +58,5 @@ abstract class IncDesCollection[K, V]
 
   def subFactory = factory.asInstanceOf[IncDesCollectionFactory].subFactory
 
-  def newSubordinate = subFactory.newActor(mailbox).asInstanceOf[IncDes]
+  def newSubordinate = subFactory.newActor(mailbox).asInstanceOf[V]
 }

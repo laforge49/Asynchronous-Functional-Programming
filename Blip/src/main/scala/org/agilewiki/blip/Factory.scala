@@ -113,6 +113,6 @@ abstract class Factory(_id: FactoryId) {
   def componentFactory(componentFactoryClass: Class[_ <: ComponentFactory]) =
     componentFactories.get(componentFactoryClass)
 
-    def configure(systemServices: Actor,
-                  factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {}
+  def configure(systemServices: Actor,
+                factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {}
 }

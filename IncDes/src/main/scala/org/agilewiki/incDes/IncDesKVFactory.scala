@@ -25,48 +25,15 @@ package org.agilewiki
 package incDes
 
 import blip._
+import services._
 
-class SubordinateFactory(id: FactoryId)
+class IncDesKVFactory(id: FactoryId, keyId: FactoryId, valueId: FactoryId)
   extends IncDesFactory(id) {
-  include(SubordinateComponentFactory())
-}
+  var keyFactory: Factory = null
+  var valueFactory: Factory = null
 
-class SubordinateCollectionFactory(id: FactoryId, subId: FactoryId)
-  extends IncDesCollectionFactory(id, subId) {
-  include(SubordinateComponentFactory())
-}
-
-class SubordinateKVFactory(id: FactoryId, keyId: FactoryId, valueId: FactoryId)
-  extends IncDesKVFactory(id, keyId, valueId) {
-  include(SubordinateComponentFactory())
-}
-
-class SubordinateComponentFactory extends ComponentFactory {
-  override def instantiate(actor: Actor) = new SubordinateComponent(actor)
-}
-
-object SubordinateComponentFactory {
-  val scf = new SubordinateComponentFactory
-
-  def apply() = scf
-}
-
-class SubordinateComponent(actor: Actor) extends Component(actor) {
-  bind(classOf[VisibleElement], passUp)
-  bind(classOf[Writable], passUp)
-  bind(classOf[Changed], changed)
-
-  def incDes = actor.asInstanceOf[IncDes]
-
-  def container = incDes.container
-
-  def passUp(msg: AnyRef, rf: Any => Unit) {
-    if (container == null) rf(null)
-    else container(msg)(rf)
-  }
-
-  def changed(msg: AnyRef, rf: Any => Unit) {
-    val c = msg.asInstanceOf[Changed]
-    incDes.change(c.transactionContext, c.diff, c.what, rf)
+  override def configure(systemServices: Actor, factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {
+    keyFactory = factoryRegistryComponentFactory.getFactory(keyId)
+    valueFactory = factoryRegistryComponentFactory.getFactory(valueId)
   }
 }
