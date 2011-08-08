@@ -90,6 +90,7 @@ class SubordinateListFactory[V <: IncDes](id: FactoryId, subId: FactoryId)
 class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
   private var i = new ArrayList[V]
   private var len = 0
+  private var listSeq: ListSeq[V] = null
 
   bind(classOf[Add[V]], add)
   bind(classOf[Insert[V]], insert)
@@ -176,6 +177,7 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
     this(Writable(tc)) {
       rsp => {
         i.add(index, v)
+        seqOutdated
         change(tc, v.length, this, rf)
       }
     }
@@ -213,6 +215,7 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
         val r = i.remove(key)
         val l = r.length
         r.clearContainer
+        seqOutdated
         change(tc, -l, this, {
           rsp => rf(r)
         })
@@ -220,8 +223,19 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
     }
   }
 
+  def seqOutdated {
+    if (listSeq == null) return
+    listSeq.outdated
+    listSeq = null
+  }
+
   def seq(msg: AnyRef, rf: Any => Unit) {
+    if (listSeq != null) {
+      rf(listSeq)
+      return
+    }
     deserialize
-    rf(new ListSeq[V](i))
+    listSeq = new ListSeq[V](i)
+    rf(listSeq)
   }
 }
