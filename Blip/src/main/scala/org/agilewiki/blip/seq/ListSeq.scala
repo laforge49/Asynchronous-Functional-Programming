@@ -28,12 +28,15 @@ package seq
 class ListSeq[V](list: java.util.List[V])
   extends Sequence[Int, V] {
 
+  var outdated = false
+
   override def first(msg: AnyRef, rf: Any => Unit) {
     if (list.isEmpty) rf(null)
     else rf(KVPair(0, list.get(0)))
   }
 
   override def current(msg: AnyRef, rf: Any => Unit) {
+    if (outdated) throw new IllegalStateException("underlying list has been updated")
     var key = msg.asInstanceOf[Current[Int]].key
     if (key < 0) key = 0
     if (key >= list.size) rf(null)
@@ -41,6 +44,7 @@ class ListSeq[V](list: java.util.List[V])
   }
 
   override def next(msg: AnyRef, rf: Any => Unit) {
+    if (outdated) throw new IllegalStateException("underlying list has been updated")
     var key = msg.asInstanceOf[Next[Int]].key
     if (key < 0) key = 0
     else key = key + 1
