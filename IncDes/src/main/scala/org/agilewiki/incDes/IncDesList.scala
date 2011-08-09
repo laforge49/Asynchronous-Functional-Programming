@@ -28,65 +28,6 @@ import blip._
 import seq._
 import java.util.ArrayList
 
-object SubordinateIntListFactory
-  extends SubordinateListFactory[IncDesInt](INC_DES_INT_LIST_FACTORY_ID, INC_DES_INT_FACTORY_ID)
-
-object IncDesIntList {
-  def apply(mailbox: Mailbox) = {
-    SubordinateIntListFactory.newActor(mailbox).asInstanceOf[IncDesList[IncDesInt]]
-  }
-}
-
-object SubordinateLongListFactory
-  extends SubordinateListFactory[IncDesLong](INC_DES_LONG_LIST_FACTORY_ID, INC_DES_LONG_FACTORY_ID)
-
-object IncDesLongList {
-  def apply(mailbox: Mailbox) = {
-    SubordinateLongListFactory.newActor(mailbox).asInstanceOf[IncDesList[IncDesLong]]
-  }
-}
-
-object SubordinateStringListFactory
-  extends SubordinateListFactory[IncDesString](INC_DES_STRING_LIST_FACTORY_ID, INC_DES_STRING_FACTORY_ID)
-
-object IncDesStringList {
-  def apply(mailbox: Mailbox) = {
-    SubordinateStringListFactory.newActor(mailbox).asInstanceOf[IncDesList[IncDesString]]
-  }
-}
-
-object SubordinateBooleanListFactory
-  extends SubordinateListFactory[IncDesBoolean](INC_DES_BOOLEAN_LIST_FACTORY_ID, INC_DES_BOOLEAN_FACTORY_ID)
-
-object IncDesBooleanList {
-  def apply(mailbox: Mailbox) = {
-    SubordinateBooleanListFactory.newActor(mailbox).asInstanceOf[IncDesList[IncDesBoolean]]
-  }
-}
-
-object SubordinateBytesListFactory
-  extends SubordinateListFactory[IncDesBytes](INC_DES_BYTES_LIST_FACTORY_ID, INC_DES_BYTES_FACTORY_ID)
-
-object IncDesBytesList {
-  def apply(mailbox: Mailbox) = {
-    SubordinateBytesListFactory.newActor(mailbox).asInstanceOf[IncDesList[IncDesBytes]]
-  }
-}
-
-object SubordinateIncDesListFactory
-  extends SubordinateListFactory[IncDesIncDes](INC_DES_INCDES_LIST_FACTORY_ID, INC_DES_INCDES_FACTORY_ID)
-
-object IncDesIncDesList {
-  def apply(mailbox: Mailbox) = {
-    SubordinateIncDesListFactory.newActor(mailbox).asInstanceOf[IncDesList[IncDesIncDes]]
-  }
-}
-
-class SubordinateListFactory[V <: IncDes](id: FactoryId, subId: FactoryId)
-  extends SubordinateCollectionFactory(id, subId) {
-  override protected def instantiate = new IncDesList[V]
-}
-
 class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
   private var i = new ArrayList[V]
   private var len = 0

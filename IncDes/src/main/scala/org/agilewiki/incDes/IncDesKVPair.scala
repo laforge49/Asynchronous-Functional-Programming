@@ -25,7 +25,6 @@ package org.agilewiki
 package incDes
 
 import blip._
-import services._
 
 class SubordinateKVPairFactory[K, V <: IncDes](id: FactoryId, keyId: FactoryId, valueId: FactoryId)
   extends SubordinateKVFactory(id, keyId, valueId) {
@@ -35,7 +34,9 @@ class SubordinateKVPairFactory[K, V <: IncDes](id: FactoryId, keyId: FactoryId, 
 class IncDesKVPair[K, V <: IncDes] extends IncDesKV[K, V] {
   private var idKey: IncDes = null
   private var idValue: V = null.asInstanceOf[V]
-  private var dser = true
+  private var dser = false
+
+
 
   override def isDeserialized = dser
 }
