@@ -24,36 +24,14 @@
 package org.agilewiki
 package incDes
 
-import blip._
+abstract class IncDesItem extends IncDes {
+  protected var dser = true
+  bind(classOf[Value], value)
+  bind(classOf[Set], set)
 
-object SubordinateIntSetFactory
-  extends SubordinateSetFactory[IncDesInt](INC_DES_INT_SET_FACTORY_ID, INC_DES_INT_FACTORY_ID)
+  def value(msg: AnyRef, rf: Any => Unit)
 
-object IncDesIntSet {
-  def apply(mailbox: Mailbox) = {
-    SubordinateIntSetFactory.newActor(mailbox).asInstanceOf[IncDesNavSet[IncDesInt]]
-  }
-}
+  def set(msg: AnyRef, rf: Any => Unit)
 
-object SubordinateLongSetFactory
-  extends SubordinateSetFactory[IncDesLong](INC_DES_LONG_SET_FACTORY_ID, INC_DES_LONG_FACTORY_ID)
-
-object IncDesLongSet {
-  def apply(mailbox: Mailbox) = {
-    SubordinateLongSetFactory.newActor(mailbox).asInstanceOf[IncDesNavSet[IncDesLong]]
-  }
-}
-
-object SubordinateStringSetFactory
-  extends SubordinateSetFactory[IncDesString](INC_DES_STRING_SET_FACTORY_ID, INC_DES_STRING_FACTORY_ID)
-
-object IncDesStringSet {
-  def apply(mailbox: Mailbox) = {
-    SubordinateStringSetFactory.newActor(mailbox).asInstanceOf[IncDesNavSet[IncDesString]]
-  }
-}
-
-class SubordinateSetFactory[V <: IncDes](id: FactoryId, valueId: FactoryId)
-  extends SubordinateCollectionFactory(id, valueId) {
-  override protected def instantiate = new IncDesNavSet[V]
+  override def isDeserialized = dser
 }
