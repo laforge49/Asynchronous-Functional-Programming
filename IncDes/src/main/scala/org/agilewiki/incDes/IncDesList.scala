@@ -35,7 +35,6 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
 
   bind(classOf[Add[V]], add)
   bind(classOf[Insert[V]], insert)
-  bind(classOf[Get[V]], get)
 
   override def isDeserialized = i != null
 
@@ -113,7 +112,7 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
     }
   }
 
-  def get(msg: AnyRef, rf: Any => Unit) {
+  override def get(msg: AnyRef, rf: Any => Unit) {
     deserialize
     val key = msg.asInstanceOf[Get[Int]].key
     if (key < 0 || key >= i.size) rf(null)
