@@ -80,7 +80,7 @@ object IncDesIncDesList {
   }
 }
 
-class SubordinateListFactory[V <: IncDes](id: FactoryId, subId: FactoryId)
-  extends SubordinateCollectionFactory(id, subId) {
+class SubordinateListFactory[V <: IncDes](id: FactoryId, valueId: FactoryId)
+  extends SubordinateCollectionFactory(id, valueId) {
   override protected def instantiate = new IncDesList[V]
 }

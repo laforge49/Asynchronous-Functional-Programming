@@ -36,6 +36,11 @@ class SubordinateCollectionFactory(id: FactoryId, valueId: FactoryId)
   include(SubordinateComponentFactory())
 }
 
+class SubordinateKeyedCollectionFactory(id: FactoryId, keyId: FactoryId, valueId: FactoryId)
+  extends IncDesKeyedCollectionFactory(id, keyId, valueId) {
+  include(SubordinateComponentFactory())
+}
+
 class SubordinateComponentFactory extends ComponentFactory {
   override def instantiate(actor: Actor) = new SubordinateComponent(actor)
 }
