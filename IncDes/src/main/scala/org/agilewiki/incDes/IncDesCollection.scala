@@ -37,16 +37,13 @@ class IncDesCollectionFactory(id: FactoryId, subId: FactoryId)
   }
 }
 
-abstract class IncDesCollection[K, V]
+abstract class IncDesCollection[K, V <: IncDes]
   extends IncDes {
 
-  bind(classOf[Get[K]], get)
   bind(classOf[ContainsKey[K]], containsKey)
   bind(classOf[Size], size)
   bind(classOf[Remove[K]], remove)
   bind(classOf[Seq], seq)
-
-  def get(msg: AnyRef, rf: Any => Unit)
 
   def containsKey(msg: AnyRef, rf: Any => Unit)
 
@@ -59,4 +56,20 @@ abstract class IncDesCollection[K, V]
   def subFactory = factory.asInstanceOf[IncDesCollectionFactory].subFactory
 
   def newSubordinate = subFactory.newActor(mailbox).asInstanceOf[V]
+
+  def preprocess(tc: TransactionContext, v: V) {
+    if (v == null) throw new IllegalArgumentException("may not be null")
+    if (v.container != null) throw new IllegalArgumentException("already in use")
+    val vfactory = v.factory
+    if (vfactory == null) throw new IllegalArgumentException("factory is null")
+    val fid = vfactory.id
+    if (fid == null) throw new IllegalArgumentException("factory id is null")
+    if (fid.value != subFactory.id.value)
+      throw new IllegalArgumentException("incorrect factory id: " + fid.value)
+    if (mailbox != v.mailbox) {
+      if (v.mailbox == null && !v.opened) v.setMailbox(mailbox)
+      else throw new IllegalStateException("uses a different mailbox")
+    }
+    if (v.systemServices == null && !v.opened) v.setSystemServices(systemServices)
+  }
 }

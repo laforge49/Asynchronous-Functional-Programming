@@ -26,16 +26,13 @@ package incDes
 
 import blip._
 import seq._
-import java.util.ArrayList
 
-class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
-  private var i = new ArrayList[V]
+class IncDesNavSet[V <: IncDes] extends IncDesCollection[V, V] {
+  private var i = new java.util.TreeSet[V]
   private var len = 0
-  private var listSeq: ListSeq[V] = null
+  private var navSetSeq: NavSetSeq[V] = null
 
   bind(classOf[Add[V]], add)
-  bind(classOf[Insert[V]], insert)
-  bind(classOf[Get[V]], get)
 
   override def isDeserialized = i != null
 
@@ -62,7 +59,7 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
 
   def deserialize {
     if (i != null) return
-    i = new ArrayList[V]
+    i = new java.util.TreeSet[V]
     val m = data.mutable
     m.skip(intLength)
     val limit = m.offset + len
@@ -99,33 +96,10 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
     }
   }
 
-  def insert(msg: AnyRef, rf: Any => Unit) {
-    val s = msg.asInstanceOf[Insert[V]]
-    val tc = s.transactionContext
-    val v = s.value
-    preprocess(tc, v)
-    val index = s.index
-    if (index < 0 || index > i.size) throw new IndexOutOfBoundsException("Index: "+index+", Size: "+i.size)
-    this(Writable(tc)) {
-      rsp => {
-        i.add(index, v)
-        seqOutdated
-        change(tc, v.length, this, rf)
-      }
-    }
-  }
-
-  def get(msg: AnyRef, rf: Any => Unit) {
-    deserialize
-    val key = msg.asInstanceOf[Get[Int]].key
-    if (key < 0 || key >= i.size) rf(null)
-    else rf(i.get(key))
-  }
-
   override def containsKey(msg: AnyRef, rf: Any => Unit) {
     deserialize
-    val key = msg.asInstanceOf[ContainsKey[Int]].key
-    rf(key >= 0 && key < i.size)
+    val key = msg.asInstanceOf[ContainsKey[V]].key
+    rf(i.contains(key))
   }
 
   override def size(msg: AnyRef, rf: Any => Unit) {
@@ -135,39 +109,32 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
 
   override def remove(msg: AnyRef, rf: Any => Unit) {
     deserialize
-    val s = msg.asInstanceOf[Remove[Int]]
+    val s = msg.asInstanceOf[Remove[V]]
     val key = s.key
-    if (key < 0 || key >= i.size) {
+    if (!i.contains(key)) {
       rf(null)
       return
     }
     val tc = s.transactionContext
     this(Writable(tc)) {
       rsp => {
-        val r = i.remove(key)
-        val l = r.length
-        r.clearContainer
-        seqOutdated
+        val l = key.length
+        i.remove(key)
+        key.clearContainer
         change(tc, -l, this, {
-          rsp => rf(r)
+          rsp => rf(key)
         })
       }
     }
   }
 
-  def seqOutdated {
-    if (listSeq == null) return
-    listSeq.outdated
-    listSeq = null
-  }
-
   override def seq(msg: AnyRef, rf: Any => Unit) {
-    if (listSeq != null) {
-      rf(listSeq)
+    if (navSetSeq != null) {
+      rf(navSetSeq)
       return
     }
     deserialize
-    listSeq = new ListSeq[V](i)
-    rf(listSeq)
+    navSetSeq = new NavSetSeq[V](i)
+    rf(navSetSeq)
   }
 }
