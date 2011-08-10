@@ -40,4 +40,25 @@ package object incDes {
   val INC_DES_BOOLEAN_LIST_FACTORY_ID = FactoryId("idLB")
   val INC_DES_BYTES_LIST_FACTORY_ID = FactoryId("idLA")
   val INC_DES_INCDES_LIST_FACTORY_ID = FactoryId("idLW")
+
+  val INC_DES_INT_INT_MAP_FACTORY_ID = FactoryId("idLi")
+  val INC_DES_INT_LONG_MAP_FACTORY_ID = FactoryId("idLl")
+  val INC_DES_INT_STRING_MAP_FACTORY_ID = FactoryId("idLS")
+  val INC_DES_INT_BOOLEAN_MAP_FACTORY_ID = FactoryId("idLB")
+  val INC_DES_INT_BYTES_MAP_FACTORY_ID = FactoryId("idLA")
+  val INC_DES_INT_INCDES_MAP_FACTORY_ID = FactoryId("idLW")
+
+  val INC_DES_LONG_INT_MAP_FACTORY_ID = FactoryId("idLi")
+  val INC_DES_LONG_LONG_MAP_FACTORY_ID = FactoryId("idLl")
+  val INC_DES_LONG_STRING_MAP_FACTORY_ID = FactoryId("idLS")
+  val INC_DES_LONG_BOOLEAN_MAP_FACTORY_ID = FactoryId("idLB")
+  val INC_DES_LONG_BYTES_MAP_FACTORY_ID = FactoryId("idLA")
+  val INC_DES_LONG_INCDES_MAP_FACTORY_ID = FactoryId("idLW")
+
+  val INC_DES_STRING_INT_MAP_FACTORY_ID = FactoryId("idLi")
+  val INC_DES_STRING_LONG_MAP_FACTORY_ID = FactoryId("idLl")
+  val INC_DES_STRING_STRING_MAP_FACTORY_ID = FactoryId("idLS")
+  val INC_DES_STRING_BOOLEAN_MAP_FACTORY_ID = FactoryId("idLB")
+  val INC_DES_STRING_BYTES_MAP_FACTORY_ID = FactoryId("idLA")
+  val INC_DES_STRING_INCDES_MAP_FACTORY_ID = FactoryId("idLW")
 }
