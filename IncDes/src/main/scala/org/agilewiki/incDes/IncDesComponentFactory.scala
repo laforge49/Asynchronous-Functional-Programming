@@ -50,5 +50,26 @@ class IncDesComponentFactory
     factoryRegistryComponentFactory.registerFactory(SubordinateBooleanListFactory)
     factoryRegistryComponentFactory.registerFactory(SubordinateBytesListFactory)
     factoryRegistryComponentFactory.registerFactory(SubordinateIncDesListFactory)
+
+    factoryRegistryComponentFactory.registerFactory(SubordinateIntIntMapFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateIntLongMapFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateIntStringMapFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateIntBooleanMapFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateIntBytesMapFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateIntIncDesMapFactory)
+
+    factoryRegistryComponentFactory.registerFactory(SubordinateLongIntMapFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateLongLongMapFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateLongStringMapFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateLongBooleanMapFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateLongBytesMapFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateLongIncDesMapFactory)
+
+    factoryRegistryComponentFactory.registerFactory(SubordinateStringIntMapFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateStringLongMapFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateStringStringMapFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateStringBooleanMapFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateStringBytesMapFactory)
+    factoryRegistryComponentFactory.registerFactory(SubordinateStringIncDesMapFactory)
   }
 }
