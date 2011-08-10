@@ -25,24 +25,13 @@ package org.agilewiki
 package incDes
 
 import blip._
-import services._
 
-class IncDesKeyedCollectionFactory[K](id: FactoryId, keyId: FactoryId, valueId: FactoryId)
-  extends IncDesCollectionFactory(id, valueId) {
-  var keyFactory: IncDesKeyFactory[K] = null
+abstract class IncDesKeyFactory[K](id: FactoryId)
+  extends IncDesFactory(id) {
 
-  override def configure(systemServices: Actor, factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {
-    super.configure(systemServices, factoryRegistryComponentFactory)
-    keyFactory = factoryRegistryComponentFactory.getFactory(keyId).asInstanceOf[IncDesKeyFactory[K]]
-  }
-}
+  def read(data: MutableData): K
 
-abstract class IncDesKeyedCollection[K, V <: IncDes]
-  extends IncDesCollection[K, V] {
+  def write(data: MutableData, k: K)
 
-  bind(classOf[Put[K, V]], put)
-
-  def keyFactory = factory.asInstanceOf[IncDesKeyedCollectionFactory[K]].keyFactory
-
-  def put(msg: AnyRef, rf: Any => Unit)
+  def length(k: K): Int
 }

@@ -27,8 +27,24 @@ package incDes
 import blip._
 
 object SubordinateIntFactory
-  extends SubordinateFactory(INC_DES_INT_FACTORY_ID) {
+  extends IncDesIntFactory {
+  include(SubordinateComponentFactory())
+}
+
+class IncDesIntFactory
+  extends IncDesKeyFactory[Int](INC_DES_INT_FACTORY_ID) {
+
   override protected def instantiate = new IncDesInt
+
+  override def read(data: MutableData) = {
+    data.readInt
+  }
+
+  override def write(data: MutableData, k: Int) {
+    data.writeInt(k)
+  }
+
+  override def length(k: Int) = IncDes.intLength
 }
 
 object IncDesInt {
@@ -72,7 +88,7 @@ class IncDesInt extends IncDesItem {
     })
   }
 
-  override def length = intLength
+  override def length = IncDes.intLength
 
   override protected def serialize(_data: MutableData) {
     if (!dser) throw new IllegalStateException

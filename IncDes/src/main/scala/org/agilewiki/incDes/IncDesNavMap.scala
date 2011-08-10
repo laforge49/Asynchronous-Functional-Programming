@@ -26,15 +26,11 @@ package incDes
 
 import blip._
 import seq._
-import java.util.ArrayList
 
-class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
-  private var i = new ArrayList[V]
+class IncDesNavMap[K, V <: IncDes] extends IncDesCollection[K, V] {
+  private var i = new java.util.TreeMap[K, V]
   private var len = 0
-  private var listSeq: ListSeq[V] = null
-
-  bind(classOf[Add[V]], add)
-  bind(classOf[Insert[V]], insert)
+  private var navMapSeq: NavMapSeq[K, V] = null
 
   override def isDeserialized = i != null
 
@@ -49,11 +45,13 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
     if (i == null) throw new IllegalStateException
     else {
       _data.writeInt(len)
+      /*
       val it = i.iterator
       while (it.hasNext) {
         val j = it.next
         j.save(_data)
       }
+      */
     }
   }
 
@@ -61,7 +59,7 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
 
   def deserialize {
     if (i != null) return
-    i = new ArrayList[V]
+    i = new java.util.TreeMap[K, V]
     val m = data.mutable
     m.skip(IncDes.intLength)
     val limit = m.offset + len
@@ -69,7 +67,7 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
       val sub = newValue
       sub.load(m)
       sub.partness(this, i.size - 1, this)
-      i.add(sub)
+      //i.add(sub)
     }
   }
 
@@ -83,30 +81,14 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
     deserialize
   }
 
-  def add(msg: AnyRef, rf: Any => Unit) {
+  def put(msg: AnyRef, rf: Any => Unit) {
     val s = msg.asInstanceOf[Add[V]]
     val tc = s.transactionContext
     val v = s.value
     preprocess(tc, v)
     this(Writable(tc)) {
       rsp => {
-        i.add(v)
-        change(tc, v.length, this, rf)
-      }
-    }
-  }
-
-  def insert(msg: AnyRef, rf: Any => Unit) {
-    val s = msg.asInstanceOf[Insert[V]]
-    val tc = s.transactionContext
-    val v = s.value
-    preprocess(tc, v)
-    val index = s.index
-    if (index < 0 || index > i.size) throw new IndexOutOfBoundsException("Index: "+index+", Size: "+i.size)
-    this(Writable(tc)) {
-      rsp => {
-        i.add(index, v)
-        seqOutdated
+        //i.add(v)
         change(tc, v.length, this, rf)
       }
     }
@@ -114,15 +96,17 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
 
   override def get(msg: AnyRef, rf: Any => Unit) {
     deserialize
-    val key = msg.asInstanceOf[Get[Int]].key
+    val key = msg.asInstanceOf[Get[K]].key
+    /*
     if (key < 0 || key >= i.size) rf(null)
     else rf(i.get(key))
+    */
   }
 
   override def containsKey(msg: AnyRef, rf: Any => Unit) {
     deserialize
-    val key = msg.asInstanceOf[ContainsKey[Int]].key
-    rf(key >= 0 && key < i.size)
+    val key = msg.asInstanceOf[ContainsKey[K]].key
+    //rf(key >= 0 && key < i.size)
   }
 
   override def size(msg: AnyRef, rf: Any => Unit) {
@@ -132,19 +116,20 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
 
   override def remove(msg: AnyRef, rf: Any => Unit) {
     deserialize
-    val s = msg.asInstanceOf[Remove[Int]]
+    val s = msg.asInstanceOf[Remove[K]]
     val key = s.key
+    /*
     if (key < 0 || key >= i.size) {
       rf(null)
       return
     }
+    */
     val tc = s.transactionContext
     this(Writable(tc)) {
       rsp => {
         val r = i.remove(key)
         val l = r.length
         r.clearContainer
-        seqOutdated
         change(tc, -l, this, {
           rsp => rf(r)
         })
@@ -152,19 +137,13 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
     }
   }
 
-  def seqOutdated {
-    if (listSeq == null) return
-    listSeq.outdated
-    listSeq = null
-  }
-
   override def seq(msg: AnyRef, rf: Any => Unit) {
-    if (listSeq != null) {
-      rf(listSeq)
+    if (navMapSeq != null) {
+      rf(navMapSeq)
       return
     }
     deserialize
-    listSeq = new ListSeq[V](i)
-    rf(listSeq)
+    navMapSeq = new NavMapSeq[K, V](i)
+    rf(navMapSeq)
   }
 }

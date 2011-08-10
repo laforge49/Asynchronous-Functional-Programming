@@ -30,10 +30,10 @@ import seq._
 
 class IncDesCollectionFactory(id: FactoryId, valueId: FactoryId)
   extends IncDesFactory(id) {
-  var valueFactory: Factory = null
+  var valueFactory: IncDesFactory = null
 
   override def configure(systemServices: Actor, factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {
-    valueFactory = factoryRegistryComponentFactory.getFactory(valueId)
+    valueFactory = factoryRegistryComponentFactory.getFactory(valueId).asInstanceOf[IncDesFactory]
   }
 }
 

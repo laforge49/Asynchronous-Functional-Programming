@@ -32,18 +32,25 @@ object SubordinateBaseFactory
 }
 
 object IncDes {
+  val booleanLength = 1
+  val intLength = 4
+  val longLength = 8
+
   def apply(mailbox: Mailbox) = {
     SubordinateBaseFactory.newActor(mailbox).asInstanceOf[IncDes]
   }
+
+  def stringLength(length: Int): Int = intLength + 2 * length
+
+  def stringLength(string: String): Int =
+    if (string == null) intLength
+    else stringLength(string.length)
 }
 
 class IncDes extends Actor {
   protected var data: ImmutableData = _
   private var _container: IncDes = _
   protected var _key: Any = null
-  val booleanLength = 1
-  val intLength = 4
-  val longLength = 8
   bind(classOf[Length], _length)
   bind(classOf[Bytes], _bytes)
   bind(classOf[Copy], _copy)
@@ -103,12 +110,6 @@ class IncDes extends Actor {
     save(jmc)
     bytes
   }
-
-  def stringLength(length: Int): Int = intLength + 2 * length
-
-  def stringLength(string: String): Int =
-    if (string == null) intLength
-    else stringLength(string.length)
 
   protected def isSerialized = data != null
 

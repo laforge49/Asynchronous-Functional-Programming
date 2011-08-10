@@ -27,8 +27,24 @@ package incDes
 import blip._
 
 object SubordinateStringFactory
-  extends SubordinateFactory(INC_DES_STRING_FACTORY_ID) {
+  extends IncDesStringFactory {
+  include(SubordinateComponentFactory())
+}
+
+class IncDesStringFactory
+  extends IncDesKeyFactory[String](INC_DES_STRING_FACTORY_ID) {
+
   override protected def instantiate = new IncDesString
+
+  override def read(data: MutableData) = {
+    data.readString
+  }
+
+  override def write(data: MutableData, k: String) {
+    data.writeString(k)
+  }
+
+  override def length(k: String) = IncDes.stringLength(k)
 }
 
 object IncDesString {
@@ -48,7 +64,7 @@ class IncDesString extends IncDesItem {
     }
     if (!isSerialized) throw new IllegalStateException
     val m = data.mutable
-    m.skip(intLength)
+    m.skip(IncDes.intLength)
     i = m.readString(len)
     dser = true
     rf(i)
@@ -66,17 +82,17 @@ class IncDesString extends IncDesItem {
         }
         this(Writable(tc)) {
           rsp1 => {
-            val ol = stringLength(i)
+            val ol = IncDes.stringLength(i)
             i = v
             dser = true
-            change(tc, stringLength(i) - ol, this, rf)
+            change(tc, IncDes.stringLength(i) - ol, this, rf)
           }
         }
       }
     })
   }
 
-  override def length = if (dser) stringLength(i) else stringLength(len)
+  override def length = if (dser) IncDes.stringLength(i) else IncDes.stringLength(len)
 
   override protected def serialize(_data: MutableData) {
     if (!dser) throw new IllegalStateException
