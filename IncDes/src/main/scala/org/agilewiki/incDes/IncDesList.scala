@@ -67,9 +67,7 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
     m.skip(intLength)
     val limit = m.offset + len
     while (m.offset < limit) {
-      val sub = newSubordinate
-      sub.setMailbox(mailbox)
-      sub.setSystemServices(systemServices)
+      val sub = newValue
       sub.load(m)
       sub.partness(this, i.size - 1, this)
       i.add(sub)

@@ -22,26 +22,38 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki
+package incDes
 
 import blip._
 
-package object incDes {
-  val INC_DES_FACTORY_ID = FactoryId("id")
-  val INC_DES_INT_FACTORY_ID = FactoryId("idI")
-  val INC_DES_LONG_FACTORY_ID = FactoryId("idl")
-  val INC_DES_STRING_FACTORY_ID = FactoryId("idS")
-  val INC_DES_BOOLEAN_FACTORY_ID = FactoryId("idB")
-  val INC_DES_BYTES_FACTORY_ID = FactoryId("idA")
-  val INC_DES_INCDES_FACTORY_ID = FactoryId("idW")
+object SubordinateIntSetFactory
+  extends SubordinateSetFactory[IncDesInt](INC_DES_INT_SET_FACTORY_ID, INC_DES_INT_FACTORY_ID)
 
-  val INC_DES_INT_LIST_FACTORY_ID = FactoryId("idLi")
-  val INC_DES_LONG_LIST_FACTORY_ID = FactoryId("idLl")
-  val INC_DES_STRING_LIST_FACTORY_ID = FactoryId("idLS")
-  val INC_DES_BOOLEAN_LIST_FACTORY_ID = FactoryId("idLB")
-  val INC_DES_BYTES_LIST_FACTORY_ID = FactoryId("idLA")
-  val INC_DES_INCDES_LIST_FACTORY_ID = FactoryId("idLW")
+object IncDesIntSet {
+  def apply(mailbox: Mailbox) = {
+    SubordinateIntSetFactory.newActor(mailbox).asInstanceOf[IncDesNavSet[IncDesInt]]
+  }
+}
 
-  val INC_DES_INT_SET_FACTORY_ID = FactoryId("idsi")
-  val INC_DES_LONG_SET_FACTORY_ID = FactoryId("idsl")
-  val INC_DES_STRING_SET_FACTORY_ID = FactoryId("idsS")
+object SubordinateLongSetFactory
+  extends SubordinateSetFactory[IncDesLong](INC_DES_LONG_SET_FACTORY_ID, INC_DES_LONG_FACTORY_ID)
+
+object IncDesLongSet {
+  def apply(mailbox: Mailbox) = {
+    SubordinateLongSetFactory.newActor(mailbox).asInstanceOf[IncDesNavSet[IncDesLong]]
+  }
+}
+
+object SubordinateStringSetFactory
+  extends SubordinateSetFactory[IncDesString](INC_DES_STRING_SET_FACTORY_ID, INC_DES_STRING_FACTORY_ID)
+
+object IncDesStringSet {
+  def apply(mailbox: Mailbox) = {
+    SubordinateStringSetFactory.newActor(mailbox).asInstanceOf[IncDesNavSet[IncDesString]]
+  }
+}
+
+class SubordinateSetFactory[V <: IncDes](id: FactoryId, valueId: FactoryId)
+  extends SubordinateCollectionFactory(id, valueId) {
+  override protected def instantiate = new IncDesNavSet[V]
 }

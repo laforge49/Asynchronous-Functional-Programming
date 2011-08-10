@@ -28,12 +28,12 @@ import blip._
 import services._
 import seq._
 
-class IncDesCollectionFactory(id: FactoryId, subId: FactoryId)
+class IncDesCollectionFactory(id: FactoryId, valueId: FactoryId)
   extends IncDesFactory(id) {
-  var subFactory: Factory = null
+  var valueFactory: Factory = null
 
   override def configure(systemServices: Actor, factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {
-    subFactory = factoryRegistryComponentFactory.getFactory(subId)
+    valueFactory = factoryRegistryComponentFactory.getFactory(valueId)
   }
 }
 
@@ -53,9 +53,14 @@ abstract class IncDesCollection[K, V <: IncDes]
 
   def seq(msg: AnyRef, rf: Any => Unit)
 
-  def subFactory = factory.asInstanceOf[IncDesCollectionFactory].subFactory
+  def valueFactory = factory.asInstanceOf[IncDesCollectionFactory].valueFactory
 
-  def newSubordinate = subFactory.newActor(mailbox).asInstanceOf[V]
+  def newValue = {
+    val v = valueFactory.newActor(mailbox).asInstanceOf[V]
+    v.setMailbox(mailbox)
+    v.setSystemServices(systemServices)
+    v
+  }
 
   def preprocess(tc: TransactionContext, v: V) {
     if (v == null) throw new IllegalArgumentException("may not be null")
@@ -64,7 +69,7 @@ abstract class IncDesCollection[K, V <: IncDes]
     if (vfactory == null) throw new IllegalArgumentException("factory is null")
     val fid = vfactory.id
     if (fid == null) throw new IllegalArgumentException("factory id is null")
-    if (fid.value != subFactory.id.value)
+    if (fid.value != valueFactory.id.value)
       throw new IllegalArgumentException("incorrect factory id: " + fid.value)
     if (mailbox != v.mailbox) {
       if (v.mailbox == null && !v.opened) v.setMailbox(mailbox)
