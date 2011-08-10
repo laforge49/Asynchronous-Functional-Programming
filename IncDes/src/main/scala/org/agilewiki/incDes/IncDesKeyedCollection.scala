@@ -39,4 +39,8 @@ class IncDesKeyedCollectionFactory(id: FactoryId, keyId: FactoryId, valueId: Fac
 
 abstract class IncDesKeyedCollection[K, V <: IncDes]
   extends IncDesCollection[K, V] {
+
+  bind(classOf[Put[K, V]], put)
+
+  def put(msg: AnyRef, rf: Any => Unit)
 }
