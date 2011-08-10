@@ -27,7 +27,7 @@ package incDes
 import blip._
 import seq._
 
-class IncDesNavMap[K, V <: IncDes] extends IncDesCollection[K, V] {
+class IncDesNavMap[K, V <: IncDes] extends IncDesKeyedCollection[K, V] {
   private var i = new java.util.TreeMap[K, V]
   private var len = 0
   private var navMapSeq: NavMapSeq[K, V] = null
@@ -45,13 +45,13 @@ class IncDesNavMap[K, V <: IncDes] extends IncDesCollection[K, V] {
     if (i == null) throw new IllegalStateException
     else {
       _data.writeInt(len)
-      /*
-      val it = i.iterator
+      val it = i.keySet.iterator
       while (it.hasNext) {
-        val j = it.next
-        j.save(_data)
+        val key = it.next
+        keyFactory.write(_data, key)
+        val value = i.get(key)
+        value.save(_data)
       }
-      */
     }
   }
 
@@ -64,10 +64,11 @@ class IncDesNavMap[K, V <: IncDes] extends IncDesCollection[K, V] {
     m.skip(IncDes.intLength)
     val limit = m.offset + len
     while (m.offset < limit) {
-      val sub = newValue
-      sub.load(m)
-      sub.partness(this, i.size - 1, this)
-      //i.add(sub)
+      val key = keyFactory.read(m)
+      val value = newValue
+      value.load(m)
+      value.partness(this, i.size - 1, this)
+      i.put(key, value)
     }
   }
 
@@ -82,14 +83,15 @@ class IncDesNavMap[K, V <: IncDes] extends IncDesCollection[K, V] {
   }
 
   def put(msg: AnyRef, rf: Any => Unit) {
-    val s = msg.asInstanceOf[Add[V]]
+    val s = msg.asInstanceOf[Put[K, V]]
     val tc = s.transactionContext
+    val k = s.key
     val v = s.value
     preprocess(tc, v)
     this(Writable(tc)) {
       rsp => {
-        //i.add(v)
-        change(tc, v.length, this, rf)
+        i.put(k, v)
+        change(tc, keyFactory.length(k) + v.length, this, rf)
       }
     }
   }
@@ -97,16 +99,13 @@ class IncDesNavMap[K, V <: IncDes] extends IncDesCollection[K, V] {
   override def get(msg: AnyRef, rf: Any => Unit) {
     deserialize
     val key = msg.asInstanceOf[Get[K]].key
-    /*
-    if (key < 0 || key >= i.size) rf(null)
-    else rf(i.get(key))
-    */
+    rf(i.get(key))
   }
 
   override def containsKey(msg: AnyRef, rf: Any => Unit) {
     deserialize
     val key = msg.asInstanceOf[ContainsKey[K]].key
-    //rf(key >= 0 && key < i.size)
+    rf(i.containsKey(key))
   }
 
   override def size(msg: AnyRef, rf: Any => Unit) {
@@ -118,19 +117,17 @@ class IncDesNavMap[K, V <: IncDes] extends IncDesCollection[K, V] {
     deserialize
     val s = msg.asInstanceOf[Remove[K]]
     val key = s.key
-    /*
-    if (key < 0 || key >= i.size) {
+    if (!i.containsKey(key)) {
       rf(null)
       return
     }
-    */
     val tc = s.transactionContext
     this(Writable(tc)) {
       rsp => {
         val r = i.remove(key)
         val l = r.length
         r.clearContainer
-        change(tc, -l, this, {
+        change(tc, -keyFactory.length(key)-l, this, {
           rsp => rf(r)
         })
       }

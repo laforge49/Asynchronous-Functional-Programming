@@ -52,4 +52,4 @@ case class Remove[K](transactionContext: TransactionContext, key: K)
 
 case class Seq()
 
-case class Put[K, V <: IncDes](key: V, value: V)
+case class Put[K, V <: IncDes](transactionContext: TransactionContext, key: K, value: V)
