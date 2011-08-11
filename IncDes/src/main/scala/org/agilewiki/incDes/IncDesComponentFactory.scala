@@ -37,7 +37,7 @@ class IncDesComponentFactory
         asInstanceOf[FactoryRegistryComponentFactory]
 
     factoryRegistryComponentFactory.registerFactory(SubordinateBaseFactory)
-    factoryRegistryComponentFactory.registerFactory(SubordinateIntFactory)
+    factoryRegistryComponentFactory.registerFactory(new SubordinateIntFactory(INC_DES_INT_FACTORY_ID))
     factoryRegistryComponentFactory.registerFactory(SubordinateLongFactory)
     factoryRegistryComponentFactory.registerFactory(SubordinateStringFactory)
     factoryRegistryComponentFactory.registerFactory(SubordinateBooleanFactory)

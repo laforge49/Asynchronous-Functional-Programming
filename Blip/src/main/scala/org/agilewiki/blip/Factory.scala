@@ -113,6 +113,13 @@ abstract class Factory(_id: FactoryId) {
   def componentFactory(componentFactoryClass: Class[_ <: ComponentFactory]) =
     componentFactories.get(componentFactoryClass)
 
+  def configure(systemServices: Actor) {
+    val systemServicesFactory = systemServices.factory
+    val cf = systemServicesFactory.componentFactory(classOf[FactoryRegistryComponentFactory]).
+      asInstanceOf[FactoryRegistryComponentFactory]
+    configure(systemServices, cf)
+  }
+
   def configure(systemServices: Actor,
                 factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {}
 }
