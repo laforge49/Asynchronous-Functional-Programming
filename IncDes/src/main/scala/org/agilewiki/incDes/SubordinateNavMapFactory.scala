@@ -136,7 +136,7 @@ object IncDesStringStringMap {
 
 object SubordinateIntBooleanMapFactory
   extends SubordinateNavMapFactory[Int, IncDesBoolean](
-    INC_DES_INT_STRING_MAP_FACTORY_ID,
+    INC_DES_INT_BOOLEAN_MAP_FACTORY_ID,
     INC_DES_INT_FACTORY_ID,
     INC_DES_BOOLEAN_FACTORY_ID)
 
@@ -148,7 +148,7 @@ object IncDesIntBooleanMap {
 
 object SubordinateLongBooleanMapFactory
   extends SubordinateNavMapFactory[Long, IncDesBoolean](
-    INC_DES_LONG_STRING_MAP_FACTORY_ID,
+    INC_DES_LONG_BOOLEAN_MAP_FACTORY_ID,
     INC_DES_LONG_FACTORY_ID,
     INC_DES_BOOLEAN_FACTORY_ID)
 
@@ -160,7 +160,7 @@ object IncDesLongBooleanMap {
 
 object SubordinateStringBooleanMapFactory
   extends SubordinateNavMapFactory[String, IncDesBoolean](
-    INC_DES_STRING_STRING_MAP_FACTORY_ID,
+    INC_DES_STRING_BOOLEAN_MAP_FACTORY_ID,
     INC_DES_STRING_FACTORY_ID,
     INC_DES_BOOLEAN_FACTORY_ID)
 
@@ -172,7 +172,7 @@ object IncDesStringBooleanMap {
 
 object SubordinateIntBytesMapFactory
   extends SubordinateNavMapFactory[Int, IncDesBytes](
-    INC_DES_INT_STRING_MAP_FACTORY_ID,
+    INC_DES_INT_BYTES_MAP_FACTORY_ID,
     INC_DES_INT_FACTORY_ID,
     INC_DES_BYTES_FACTORY_ID)
 
@@ -184,7 +184,7 @@ object IncDesIntBytesMap {
 
 object SubordinateLongBytesMapFactory
   extends SubordinateNavMapFactory[Long, IncDesBytes](
-    INC_DES_LONG_STRING_MAP_FACTORY_ID,
+    INC_DES_LONG_BYTES_MAP_FACTORY_ID,
     INC_DES_LONG_FACTORY_ID,
     INC_DES_BYTES_FACTORY_ID)
 
@@ -196,7 +196,7 @@ object IncDesLongBytesMap {
 
 object SubordinateStringBytesMapFactory
   extends SubordinateNavMapFactory[String, IncDesBytes](
-    INC_DES_STRING_STRING_MAP_FACTORY_ID,
+    INC_DES_STRING_BYTES_MAP_FACTORY_ID,
     INC_DES_STRING_FACTORY_ID,
     INC_DES_BYTES_FACTORY_ID)
 
@@ -208,7 +208,7 @@ object IncDesStringBytesMap {
 
 object SubordinateIntIncDesMapFactory
   extends SubordinateNavMapFactory[Int, IncDesIncDes](
-    INC_DES_INT_STRING_MAP_FACTORY_ID,
+    INC_DES_INT_INCDES_MAP_FACTORY_ID,
     INC_DES_INT_FACTORY_ID,
     INC_DES_INCDES_FACTORY_ID)
 
@@ -220,7 +220,7 @@ object IncDesIntIncDesMap {
 
 object SubordinateLongIncDesMapFactory
   extends SubordinateNavMapFactory[Long, IncDesIncDes](
-    INC_DES_LONG_STRING_MAP_FACTORY_ID,
+    INC_DES_LONG_INCDES_MAP_FACTORY_ID,
     INC_DES_LONG_FACTORY_ID,
     INC_DES_INCDES_FACTORY_ID)
 
@@ -232,7 +232,7 @@ object SubordinateLongIncDesMap {
 
 object SubordinateStringIncDesMapFactory
   extends SubordinateNavMapFactory[String, IncDesIncDes](
-    INC_DES_STRING_STRING_MAP_FACTORY_ID,
+    INC_DES_STRING_INCDES_MAP_FACTORY_ID,
     INC_DES_STRING_FACTORY_ID,
     INC_DES_INCDES_FACTORY_ID)
 
