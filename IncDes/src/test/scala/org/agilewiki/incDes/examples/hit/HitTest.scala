@@ -28,6 +28,7 @@ package hit
 
 import org.specs.SpecificationWithJUnit
 import blip._
+
 case class Hit()
 
 class HitComponent(actor: Actor) extends Component(actor) {
@@ -48,18 +49,20 @@ object HitComponentFactory extends ComponentFactory {
   override def instantiate(actor: Actor) = new HitComponent(actor)
 }
 
-object HitFactory extends SubordinateIntFactory(FactoryId("hit")) {
+class HitFactory extends SubordinateIntFactory(FactoryId("hit")) {
   include(HitComponentFactory)
 }
 
 class HitTest extends SpecificationWithJUnit {
   "HitTest" should {
     "count hits" in {
-      val hit1 = HitFactory.newActor(null)
+      val hitFactory = new HitFactory
+
+      val hit1 = hitFactory.newActor(null)
       Future(hit1, Hit())
       val bs = Future(hit1, Bytes()).asInstanceOf[Array[Byte]]
 
-      val hit2 = HitFactory.newActor(null).asInstanceOf[IncDes]
+      val hit2 = hitFactory.newActor(null).asInstanceOf[IncDes]
       hit2.load(bs)
       Future(hit2, Hit())
     }
