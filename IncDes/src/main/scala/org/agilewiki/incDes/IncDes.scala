@@ -26,19 +26,10 @@ package incDes
 
 import blip._
 
-object SubordinateBaseFactory
-  extends SubordinateFactory(INC_DES_FACTORY_ID) {
-  override protected def instantiate = new IncDes
-}
-
 object IncDes {
   val booleanLength = 1
   val intLength = 4
   val longLength = 8
-
-  def apply(mailbox: Mailbox) = {
-    SubordinateBaseFactory.newActor(mailbox).asInstanceOf[IncDes]
-  }
 
   def stringLength(length: Int): Int = intLength + 2 * length
 
