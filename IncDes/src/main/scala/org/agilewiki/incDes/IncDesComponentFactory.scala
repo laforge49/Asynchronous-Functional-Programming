@@ -43,12 +43,12 @@ class IncDesComponentFactory
     factoryRegistryComponentFactory.registerFactory(new SubordinateBytesFactory(INC_DES_BYTES_FACTORY_ID))
     factoryRegistryComponentFactory.registerFactory(new SubordinateIncDesFactory(INC_DES_INCDES_FACTORY_ID))
 
-    factoryRegistryComponentFactory.registerFactory(SubordinateIntListFactory)
-    factoryRegistryComponentFactory.registerFactory(SubordinateLongListFactory)
-    factoryRegistryComponentFactory.registerFactory(SubordinateStringListFactory)
-    factoryRegistryComponentFactory.registerFactory(SubordinateBooleanListFactory)
-    factoryRegistryComponentFactory.registerFactory(SubordinateBytesListFactory)
-    factoryRegistryComponentFactory.registerFactory(SubordinateIncDesListFactory)
+    factoryRegistryComponentFactory.registerFactory(new SubordinateIntListFactory(INC_DES_INT_LIST_FACTORY_ID))
+    factoryRegistryComponentFactory.registerFactory(new SubordinateLongListFactory(INC_DES_LONG_LIST_FACTORY_ID))
+    factoryRegistryComponentFactory.registerFactory(new SubordinateStringListFactory(INC_DES_STRING_LIST_FACTORY_ID))
+    factoryRegistryComponentFactory.registerFactory(new SubordinateBooleanListFactory(INC_DES_BOOLEAN_LIST_FACTORY_ID))
+    factoryRegistryComponentFactory.registerFactory(new SubordinateBytesListFactory(INC_DES_BYTES_LIST_FACTORY_ID))
+    factoryRegistryComponentFactory.registerFactory(new SubordinateIncDesListFactory(INC_DES_INCDES_LIST_FACTORY_ID))
 
     factoryRegistryComponentFactory.registerFactory(SubordinateIntIntMapFactory)
     factoryRegistryComponentFactory.registerFactory(SubordinateIntLongMapFactory)
