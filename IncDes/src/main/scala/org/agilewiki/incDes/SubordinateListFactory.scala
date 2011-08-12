@@ -46,7 +46,7 @@ object IncDesLongList {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
     val f = new SubordinateLongListFactory(INC_DES_LONG_LIST_FACTORY_ID)
     f.configure(systemServices)
-    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesInt]]
+    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesLong]]
     a.setSystemServices(systemServices)
     a
   }
@@ -59,7 +59,7 @@ object IncDesStringList {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
     val f = new SubordinateStringListFactory(INC_DES_STRING_LIST_FACTORY_ID)
     f.configure(systemServices)
-    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesInt]]
+    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesString]]
     a.setSystemServices(systemServices)
     a
   }
@@ -72,7 +72,7 @@ object IncDesBooleanList {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
     val f = new SubordinateBooleanListFactory(INC_DES_BOOLEAN_LIST_FACTORY_ID)
     f.configure(systemServices)
-    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesInt]]
+    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesBoolean]]
     a.setSystemServices(systemServices)
     a
   }
@@ -85,7 +85,7 @@ object IncDesBytesList {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
     val f = new SubordinateBytesListFactory(INC_DES_BYTES_LIST_FACTORY_ID)
     f.configure(systemServices)
-    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesInt]]
+    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesBytes]]
     a.setSystemServices(systemServices)
     a
   }
@@ -98,7 +98,7 @@ object IncDesIncDesList {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
     val f = new SubordinateIncDesListFactory(INC_DES_INCDES_LIST_FACTORY_ID)
     f.configure(systemServices)
-    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesInt]]
+    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesIncDes]]
     a.setSystemServices(systemServices)
     a
   }

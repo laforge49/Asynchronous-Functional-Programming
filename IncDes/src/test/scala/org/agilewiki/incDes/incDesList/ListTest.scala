@@ -35,7 +35,7 @@ class ListTest extends SpecificationWithJUnit {
       val systemServices = SystemServices(new IncDesComponentFactory)
 
       val booll0 = IncDesBooleanList(new Mailbox, systemServices)
-      val bool0 = IncDesBoolean(null)
+      val bool0 = booll0.newValue
       Future(booll0, Add(null, bool0))
       Future(booll0, Length()) must be equalTo (5)
       val boolb0 = Future(booll0, Bytes()).asInstanceOf[Array[Byte]]
@@ -59,7 +59,7 @@ class ListTest extends SpecificationWithJUnit {
       bytes1.isInstanceOf[IncDesBytes] must beTrue
 
       val intl0 = IncDesIntList(new Mailbox, systemServices)
-      val int0 = IncDesInt(null)
+      val int0 = intl0.newValue
       Future(intl0, Add(null, int0))
       Future(intl0, Length()) must be equalTo (8)
       val intb0 = Future(intl0, Bytes()).asInstanceOf[Array[Byte]]
@@ -83,7 +83,7 @@ class ListTest extends SpecificationWithJUnit {
       long1.isInstanceOf[IncDesLong] must beTrue
 
       val strl0 = IncDesStringList(new Mailbox, systemServices)
-      val str0 = IncDesString(null)
+      val str0 = strl0.newValue
       Future(strl0, Add(null, str0))
       Future(strl0, Length()) must be equalTo (8)
       val strb0 = Future(strl0, Bytes()).asInstanceOf[Array[Byte]]
@@ -111,7 +111,7 @@ class ListTest extends SpecificationWithJUnit {
 
       val incdes1 = Future(incdesl1, Get(0))
       incdes1.isInstanceOf[IncDesIncDes] must beTrue
-      val incdes2 = IncDesIncDes(null)
+      val incdes2 = incdesl1.newValue
       Future(incdesl1, Insert(null, 0, incdes2))
       Future(incdesl1, Length()) must be equalTo (12)
       Future(incdesl1, Size()) must be equalTo (2)
