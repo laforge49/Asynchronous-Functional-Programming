@@ -26,13 +26,13 @@ package incDes
 
 import blip._
 
-object SubordinateStringFactory
-  extends IncDesStringFactory {
+class SubordinateStringFactory(id: FactoryId)
+  extends IncDesStringFactory(id) {
   include(SubordinateComponentFactory())
 }
 
-class IncDesStringFactory
-  extends IncDesKeyFactory[String](INC_DES_STRING_FACTORY_ID) {
+class IncDesStringFactory(id: FactoryId)
+  extends IncDesKeyFactory[String](id) {
 
   override protected def instantiate = new IncDesString
 
@@ -49,7 +49,7 @@ class IncDesStringFactory
 
 object IncDesString {
   def apply(mailbox: Mailbox) = {
-    SubordinateStringFactory.newActor(mailbox).asInstanceOf[IncDesString]
+    new SubordinateStringFactory(INC_DES_STRING_FACTORY_ID).newActor(mailbox).asInstanceOf[IncDesString]
   }
 }
 

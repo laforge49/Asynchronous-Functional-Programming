@@ -26,14 +26,14 @@ package incDes
 
 import blip._
 
-object SubordinateBytesFactory
-  extends SubordinateFactory(INC_DES_BYTES_FACTORY_ID) {
+class SubordinateBytesFactory(id: FactoryId)
+  extends SubordinateFactory(id) {
   override protected def instantiate = new IncDesBytes
 }
 
 object IncDesBytes {
   def apply(mailbox: Mailbox) = {
-    SubordinateBytesFactory.newActor(mailbox).asInstanceOf[IncDesBytes]
+    new SubordinateBytesFactory(INC_DES_BYTES_FACTORY_ID).newActor(mailbox).asInstanceOf[IncDesBytes]
   }
 }
 

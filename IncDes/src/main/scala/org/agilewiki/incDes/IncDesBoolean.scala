@@ -26,14 +26,14 @@ package incDes
 
 import blip._
 
-object SubordinateBooleanFactory
-  extends SubordinateFactory(INC_DES_BOOLEAN_FACTORY_ID) {
+class SubordinateBooleanFactory(id: FactoryId)
+  extends SubordinateFactory(id) {
   override protected def instantiate = new IncDesBoolean
 }
 
 object IncDesBoolean {
   def apply(mailbox: Mailbox) = {
-    SubordinateBooleanFactory.newActor(mailbox).asInstanceOf[IncDesBoolean]
+    new SubordinateBooleanFactory(INC_DES_BOOLEAN_FACTORY_ID).newActor(mailbox).asInstanceOf[IncDesBoolean]
   }
 }
 
