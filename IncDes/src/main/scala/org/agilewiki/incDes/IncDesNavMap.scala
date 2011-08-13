@@ -90,8 +90,13 @@ class IncDesNavMap[K, V <: IncDes] extends IncDesKeyedCollection[K, V] {
     preprocess(tc, v)
     this(Writable(tc)) {
       rsp => {
-        i.put(k, v)
-        change(tc, keyFactory.length(k) + v.length, this, rf)
+        val old = i.put(k, v)
+        if (old != null) old.clearContainer
+        change(tc, keyFactory.length(k) + v.length, this, {
+          rsp1: Any => {
+            rf(old)
+          }
+        })
       }
     }
   }

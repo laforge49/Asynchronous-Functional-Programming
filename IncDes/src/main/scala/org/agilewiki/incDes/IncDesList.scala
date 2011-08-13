@@ -33,6 +33,7 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
   private var len = 0
   private var listSeq: ListSeq[V] = null
 
+  bind(classOf[Get[V]], get)
   bind(classOf[Add[V]], add)
   bind(classOf[Insert[V]], insert)
 
@@ -112,7 +113,7 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
     }
   }
 
-  override def get(msg: AnyRef, rf: Any => Unit) {
+  def get(msg: AnyRef, rf: Any => Unit) {
     deserialize
     val key = msg.asInstanceOf[Get[Int]].key
     if (key < 0 || key >= i.size) rf(null)
