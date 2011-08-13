@@ -28,12 +28,12 @@ import blip._
 import seq._
 import java.util.ArrayList
 
-class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
+class IncDesList[V <: IncDes]
+  extends IncDesValueCollection[Int, V] {
   private var i = new ArrayList[V]
   private var len = 0
   private var listSeq: ListSeq[V] = null
 
-  bind(classOf[Get[V]], get)
   bind(classOf[Add[V]], add)
   bind(classOf[Insert[V]], insert)
 
@@ -113,7 +113,7 @@ class IncDesList[V <: IncDes] extends IncDesCollection[Int, V] {
     }
   }
 
-  def get(msg: AnyRef, rf: Any => Unit) {
+  override def get(msg: AnyRef, rf: Any => Unit) {
     deserialize
     val key = msg.asInstanceOf[Get[Int]].key
     if (key < 0 || key >= i.size) rf(null)

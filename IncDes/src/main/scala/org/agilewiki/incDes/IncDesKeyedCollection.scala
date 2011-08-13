@@ -29,7 +29,7 @@ import services._
 import seq._
 
 class IncDesKeyedCollectionFactory[K](id: FactoryId, keyId: FactoryId, valueId: FactoryId)
-  extends IncDesCollectionFactory(id, valueId) {
+  extends IncDesValueCollectionFactory(id, valueId) {
   var keyFactory: IncDesKeyFactory[K] = null
 
   override def configure(systemServices: Actor, factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {
@@ -39,14 +39,11 @@ class IncDesKeyedCollectionFactory[K](id: FactoryId, keyId: FactoryId, valueId: 
 }
 
 abstract class IncDesKeyedCollection[K, V <: IncDes]
-  extends IncDesCollection[K, V] {
+  extends IncDesValueCollection[K, V] {
 
-  bind(classOf[Get[V]], get)
   bind(classOf[Put[K, V]], put)
 
   def keyFactory = factory.asInstanceOf[IncDesKeyedCollectionFactory[K]].keyFactory
-
-  def get(msg: AnyRef, rf: Any => Unit)
 
   def put(msg: AnyRef, rf: Any => Unit)
 }

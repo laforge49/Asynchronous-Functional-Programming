@@ -28,16 +28,7 @@ import blip._
 import services._
 import seq._
 
-class IncDesCollectionFactory(id: FactoryId, valueId: FactoryId)
-  extends IncDesFactory(id) {
-  var valueFactory: IncDesFactory = null
-
-  override def configure(systemServices: Actor, factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {
-    valueFactory = factoryRegistryComponentFactory.getFactory(valueId).asInstanceOf[IncDesFactory]
-  }
-}
-
-abstract class IncDesCollection[K, V <: IncDes]
+abstract class IncDesCollection[K]
   extends IncDes {
 
   bind(classOf[ContainsKey[K]], containsKey)
@@ -52,29 +43,4 @@ abstract class IncDesCollection[K, V <: IncDes]
   def remove(msg: AnyRef, rf: Any => Unit)
 
   def seq(msg: AnyRef, rf: Any => Unit)
-
-  def valueFactory = factory.asInstanceOf[IncDesCollectionFactory].valueFactory
-
-  def newValue = {
-    val v = valueFactory.newActor(mailbox).asInstanceOf[V]
-    v.setMailbox(mailbox)
-    v.setSystemServices(systemServices)
-    v
-  }
-
-  def preprocess(tc: TransactionContext, v: V) {
-    if (v == null) throw new IllegalArgumentException("may not be null")
-    if (v.container != null) throw new IllegalArgumentException("already in use")
-    val vfactory = v.factory
-    if (vfactory == null) throw new IllegalArgumentException("factory is null")
-    val fid = vfactory.id
-    if (fid == null) throw new IllegalArgumentException("factory id is null")
-    if (fid.value != valueFactory.id.value)
-      throw new IllegalArgumentException("incorrect factory id: " + fid.value)
-    if (mailbox != v.mailbox) {
-      if (v.mailbox == null && !v.opened) v.setMailbox(mailbox)
-      else throw new IllegalStateException("uses a different mailbox")
-    }
-    if (v.systemServices == null && !v.opened) v.setSystemServices(systemServices)
-  }
 }

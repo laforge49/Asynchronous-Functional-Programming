@@ -31,8 +31,8 @@ class SubordinateFactory(id: FactoryId)
   include(SubordinateComponentFactory())
 }
 
-class SubordinateCollectionFactory(id: FactoryId, valueId: FactoryId)
-  extends IncDesCollectionFactory(id, valueId) {
+class SubordinateValueCollectionFactory(id: FactoryId, valueId: FactoryId)
+  extends IncDesValueCollectionFactory(id, valueId) {
   include(SubordinateComponentFactory())
 }
 
