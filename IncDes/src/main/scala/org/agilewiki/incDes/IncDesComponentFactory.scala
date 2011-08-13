@@ -70,5 +70,9 @@ class IncDesComponentFactory
     factoryRegistryComponentFactory.registerFactory(new SubordinateStringBooleanMapFactory(INC_DES_STRING_BOOLEAN_MAP_FACTORY_ID))
     factoryRegistryComponentFactory.registerFactory(new SubordinateStringBytesMapFactory(INC_DES_STRING_BYTES_MAP_FACTORY_ID))
     factoryRegistryComponentFactory.registerFactory(new SubordinateStringIncDesMapFactory(INC_DES_STRING_INCDES_MAP_FACTORY_ID))
+
+    factoryRegistryComponentFactory.registerFactory(new SubordinateIntListFactory(INC_DES_INT_SET_FACTORY_ID))
+    factoryRegistryComponentFactory.registerFactory(new SubordinateLongListFactory(INC_DES_LONG_SET_FACTORY_ID))
+    factoryRegistryComponentFactory.registerFactory(new SubordinateStringListFactory(INC_DES_STRING_SET_FACTORY_ID))
   }
 }
