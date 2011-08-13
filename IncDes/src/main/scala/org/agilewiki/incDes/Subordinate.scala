@@ -31,6 +31,11 @@ class SubordinateFactory(id: FactoryId)
   include(SubordinateComponentFactory())
 }
 
+class SubordinateCollectionFactory(id: FactoryId)
+  extends IncDesFactory(id) {
+  include(SubordinateComponentFactory())
+}
+
 class SubordinateValueCollectionFactory(id: FactoryId, valueId: FactoryId)
   extends IncDesValueCollectionFactory(id, valueId) {
   include(SubordinateComponentFactory())

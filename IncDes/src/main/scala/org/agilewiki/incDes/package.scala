@@ -60,4 +60,8 @@ package object incDes {
   val INC_DES_STRING_BOOLEAN_MAP_FACTORY_ID = FactoryId("idMSB")
   val INC_DES_STRING_BYTES_MAP_FACTORY_ID = FactoryId("idMSA")
   val INC_DES_STRING_INCDES_MAP_FACTORY_ID = FactoryId("idMSW")
+
+  val INC_DES_INT_SET_FACTORY_ID = FactoryId("idsi")
+  val INC_DES_LONG_SET_FACTORY_ID = FactoryId("idsl")
+  val INC_DES_STRING_SET_FACTORY_ID = FactoryId("idsS")
 }
