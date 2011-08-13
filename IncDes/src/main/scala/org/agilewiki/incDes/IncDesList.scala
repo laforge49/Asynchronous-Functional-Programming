@@ -92,6 +92,7 @@ class IncDesList[V <: IncDes]
     this(Writable(tc)) {
       rsp => {
         i.add(v)
+        v.partness(this, i.size - 1, this)
         change(tc, v.length, this, rf)
       }
     }
@@ -107,6 +108,7 @@ class IncDesList[V <: IncDes]
     this(Writable(tc)) {
       rsp => {
         i.add(index, v)
+        v.partness(this, i.size - 1, this)
         seqOutdated
         change(tc, v.length, this, rf)
       }

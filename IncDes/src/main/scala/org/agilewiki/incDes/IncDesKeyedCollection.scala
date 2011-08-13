@@ -26,7 +26,6 @@ package incDes
 
 import blip._
 import services._
-import seq._
 
 class IncDesKeyedCollectionFactory[K](id: FactoryId, keyId: FactoryId, valueId: FactoryId)
   extends IncDesValueCollectionFactory(id, valueId) {

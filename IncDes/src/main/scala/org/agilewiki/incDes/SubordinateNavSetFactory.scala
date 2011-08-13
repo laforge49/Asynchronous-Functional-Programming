@@ -25,6 +25,7 @@ package org.agilewiki
 package incDes
 
 import blip._
+import services._
 
 class SubordinateIntSetFactory(id: FactoryId)
   extends SubordinateNavSetFactory[Int](id, INC_DES_INT_FACTORY_ID)
@@ -67,5 +68,12 @@ object IncDesStringSet {
 
 class SubordinateNavSetFactory[K](id: FactoryId, keyId: FactoryId)
   extends SubordinateCollectionFactory(id) {
+  var keyFactory: IncDesKeyFactory[K] = null
+
+  override def configure(systemServices: Actor, factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {
+    super.configure(systemServices, factoryRegistryComponentFactory)
+    keyFactory = factoryRegistryComponentFactory.getFactory(keyId).asInstanceOf[IncDesKeyFactory[K]]
+  }
+
   override protected def instantiate = new IncDesNavSet[K]
 }

@@ -27,7 +27,8 @@ package incDes
 import blip._
 import seq._
 
-class IncDesNavMap[K, V <: IncDes] extends IncDesKeyedCollection[K, V] {
+class IncDesNavMap[K, V <: IncDes]
+  extends IncDesKeyedCollection[K, V] {
   private var i = new java.util.TreeMap[K, V]
   private var len = 0
   private var navMapSeq: NavMapSeq[K, V] = null
@@ -67,7 +68,7 @@ class IncDesNavMap[K, V <: IncDes] extends IncDesKeyedCollection[K, V] {
       val key = keyFactory.read(m)
       val value = newValue
       value.load(m)
-      value.partness(this, i.size - 1, this)
+      value.partness(this, key, this)
       i.put(key, value)
     }
   }
@@ -91,8 +92,13 @@ class IncDesNavMap[K, V <: IncDes] extends IncDesKeyedCollection[K, V] {
     this(Writable(tc)) {
       rsp => {
         val old = i.put(k, v)
-        if (old != null) old.clearContainer
-        change(tc, keyFactory.length(k) + v.length, this, {
+        var ol = 0
+        if (old != null) {
+          old.clearContainer
+          ol = old.length
+        }
+        v.partness(this, k, this)
+        change(tc, keyFactory.length(k) + v.length - ol, this, {
           rsp1: Any => {
             rf(old)
           }

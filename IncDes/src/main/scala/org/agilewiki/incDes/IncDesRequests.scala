@@ -42,7 +42,7 @@ case class Writable(transactionContext: TransactionContext)
 
 case class VisibleElement()
 
-case class Add[V <: IncDes](transactionContext: TransactionContext, value: V)
+case class Add[V](transactionContext: TransactionContext, value: V)
 
 case class Insert[V <: IncDes](transactionContext: TransactionContext, index: Int, value: V)
 
