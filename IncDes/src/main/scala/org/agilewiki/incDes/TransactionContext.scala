@@ -25,3 +25,5 @@ package org.agilewiki
 package incDes
 
 trait TransactionContext
+
+object SimpleTransactionContext extends TransactionContext
