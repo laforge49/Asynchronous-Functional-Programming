@@ -26,6 +26,19 @@ package incDes
 
 import blip._
 import seq._
+import services._
+
+class IncDesNavSetFactory[K](id: FactoryId, keyId: FactoryId)
+  extends IncDesFactory(id) {
+  var keyFactory: IncDesKeyFactory[K] = null
+
+  override def configure(systemServices: Actor, factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {
+    super.configure(systemServices, factoryRegistryComponentFactory)
+    keyFactory = factoryRegistryComponentFactory.getFactory(keyId).asInstanceOf[IncDesKeyFactory[K]]
+  }
+
+  override protected def instantiate = new IncDesNavSet[K]
+}
 
 class IncDesNavSet[K]
   extends IncDesCollection[K] {
@@ -35,7 +48,7 @@ class IncDesNavSet[K]
 
   bind(classOf[Add[K]], add)
 
-  def keyFactory = factory.asInstanceOf[IncDesKeyedCollectionFactory[K]].keyFactory
+  def keyFactory = factory.asInstanceOf[IncDesNavSetFactory[K]].keyFactory
 
   override def isDeserialized = i != null
 

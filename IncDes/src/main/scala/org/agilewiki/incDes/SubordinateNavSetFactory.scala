@@ -41,11 +41,11 @@ object IncDesIntSet {
 }
 
 class SubordinateLongSetFactory(id: FactoryId)
-  extends SubordinateNavSetFactory[Int](id, INC_DES_LONG_FACTORY_ID)
+  extends SubordinateNavSetFactory[Long](id, INC_DES_LONG_FACTORY_ID)
 
 object IncDesLongSet {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateIntSetFactory(INC_DES_LONG_SET_FACTORY_ID)
+    val f = new SubordinateLongSetFactory(INC_DES_LONG_SET_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavSet[Long]]
     a.setSystemServices(systemServices)
@@ -54,26 +54,14 @@ object IncDesLongSet {
 }
 
 class SubordinateStringSetFactory(id: FactoryId)
-  extends SubordinateNavSetFactory[Int](id, INC_DES_STRING_FACTORY_ID)
+  extends SubordinateNavSetFactory[String](id, INC_DES_STRING_FACTORY_ID)
 
 object IncDesStringSet {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateIntSetFactory(INC_DES_STRING_SET_FACTORY_ID)
+    val f = new SubordinateStringSetFactory(INC_DES_STRING_SET_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavSet[String]]
     a.setSystemServices(systemServices)
     a
   }
-}
-
-class SubordinateNavSetFactory[K](id: FactoryId, keyId: FactoryId)
-  extends SubordinateCollectionFactory(id) {
-  var keyFactory: IncDesKeyFactory[K] = null
-
-  override def configure(systemServices: Actor, factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {
-    super.configure(systemServices, factoryRegistryComponentFactory)
-    keyFactory = factoryRegistryComponentFactory.getFactory(keyId).asInstanceOf[IncDesKeyFactory[K]]
-  }
-
-  override protected def instantiate = new IncDesNavSet[K]
 }

@@ -31,8 +31,8 @@ class SubordinateFactory(id: FactoryId)
   include(SubordinateComponentFactory())
 }
 
-class SubordinateCollectionFactory(id: FactoryId)
-  extends IncDesFactory(id) {
+class SubordinateNavSetFactory[K](id: FactoryId, keyId: FactoryId)
+  extends IncDesNavSetFactory[K](id, keyId) {
   include(SubordinateComponentFactory())
 }
 
