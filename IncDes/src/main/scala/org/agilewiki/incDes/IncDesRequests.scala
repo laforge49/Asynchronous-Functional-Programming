@@ -61,3 +61,5 @@ case class MakeSet(transactionContext: TransactionContext, factoryId: FactoryId)
 case class GetValue[K](key: K)
 
 case class MakePutSet[K, V1](transactionContext: TransactionContext, key: K, value: V1)
+
+case class MakePutMakeSet[K](transactionContext: TransactionContext, key: K, factoryId: FactoryId)

@@ -28,8 +28,6 @@ package mashup
 
 import org.specs.SpecificationWithJUnit
 import blip._
-import seq._
-
 case class Title()
 
 case class SetTitle(transactionContext: TransactionContext, title: String)
@@ -37,13 +35,12 @@ case class SetTitle(transactionContext: TransactionContext, title: String)
 case class AddString(transactionContext: TransactionContext, value: String)
 
 class MashupComponent(actor: Actor) extends Component(actor) {
-  val incDesNavMap = actor.asInstanceOf[IncDesNavMap[String, IncDesIncDes]]
 
   bind(classOf[Title], title)
   bind(classOf[SetTitle], setTitle)
 
   def title(msg: Any, rf: Any => Unit) {
-    actor(GetValue("title")){
+    actor(GetValue("title")) {
       r1 => {
         val incDesString = r1.asInstanceOf[IncDesString]
         if (incDesString == null) {
@@ -59,15 +56,10 @@ class MashupComponent(actor: Actor) extends Component(actor) {
     val st = msg.asInstanceOf[SetTitle]
     val transactionContext = st.transactionContext
     val t = st.title
-    actor(MakePut(transactionContext, "title")) {
+    actor(MakePutMakeSet(transactionContext, "title", INC_DES_STRING_FACTORY_ID)) {
       r1 => {
-        val titleHolder = r1.asInstanceOf[IncDesIncDes]
-        titleHolder(MakeSet(transactionContext, INC_DES_STRING_FACTORY_ID)) {
-          r2 => {
-            val ids = r2.asInstanceOf[IncDesString]
-            ids(Set(transactionContext, t))(rf)
-          }
-        }
+        val ids = r1.asInstanceOf[IncDesString]
+        ids(Set(transactionContext, t))(rf)
       }
     }
   }
@@ -92,21 +84,21 @@ class MashupTest extends SpecificationWithJUnit {
       mashup1.setSystemServices(systemServices)
       Future(mashup1, Title()) must beNull
       Future(mashup1, SetTitle(null, "123"))
-      Future(mashup1, Title()) must be equalTo("123")
+      Future(mashup1, Title()) must be equalTo ("123")
       val bs1 = Future(mashup1, Bytes()).asInstanceOf[Array[Byte]]
 
       val mashup2 = mashupFactory.newActor(new Mailbox).asInstanceOf[IncDes]
       mashup2.setSystemServices(systemServices)
       mashup2.load(bs1)
-      Future(mashup2, Title()) must be equalTo("123")
+      Future(mashup2, Title()) must be equalTo ("123")
       Future(mashup2, SetTitle(null, "42"))
-      Future(mashup2, Title()) must be equalTo("42")
+      Future(mashup2, Title()) must be equalTo ("42")
       val bs2 = Future(mashup2, Bytes()).asInstanceOf[Array[Byte]]
 
       val mashup3 = mashupFactory.newActor(new Mailbox).asInstanceOf[IncDes]
       mashup3.setSystemServices(systemServices)
       mashup3.load(bs2)
-      Future(mashup3, Title()) must be equalTo("42")
+      Future(mashup3, Title()) must be equalTo ("42")
     }
   }
 }

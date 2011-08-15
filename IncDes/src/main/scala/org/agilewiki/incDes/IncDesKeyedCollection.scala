@@ -43,7 +43,8 @@ abstract class IncDesKeyedCollection[K, V <: IncDes, V1]
   bind(classOf[GetValue[K]], getValue)
   bind(classOf[Put[K, V]], put)
   bind(classOf[MakePut[K]], makePut)
-  bind(classOf[MakePutSet[K, V1]], makePut)
+  bind(classOf[MakePutSet[K, V1]], makePutSet)
+  if (isInstanceOf[V1]) bind(classOf[MakePutMakeSet[K]], makePutMakeSet)
 
   def keyFactory = factory.asInstanceOf[IncDesKeyedCollectionFactory[K]].keyFactory
 
@@ -54,4 +55,6 @@ abstract class IncDesKeyedCollection[K, V <: IncDes, V1]
   def makePut(msg: AnyRef, rf: Any => Unit)
 
   def makePutSet(msg: AnyRef, rf: Any => Unit)
+
+  def makePutMakeSet(msg: AnyRef, rf: Any => Unit)
 }

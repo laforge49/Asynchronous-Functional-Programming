@@ -132,7 +132,29 @@ class IncDesNavMap[K, V <: IncDes, V1]
   }
 
   override def makePutSet(msg: AnyRef, rf: Any => Unit) {
+    val s = msg.asInstanceOf[MakePutSet[K, V1]]
+    val tc = s.transactionContext
+    val k = s.key
+    val v = s.value
+    this(MakePut(tc, k)) {
+      r1 => {
+        val item = r1.asInstanceOf[V]
+        item(Set(tc, v))(rf)
+      }
+    }
+  }
 
+  override def makePutMakeSet(msg: AnyRef, rf: Any => Unit) {
+    val s = msg.asInstanceOf[MakePutMakeSet[K]]
+    val tc = s.transactionContext
+    val k = s.key
+    val fid = s.factoryId
+    this(MakePut(tc, k)) {
+      r1 => {
+        val incDesIncDes = r1.asInstanceOf[V]
+        incDesIncDes(MakeSet(tc, fid))(rf)
+      }
+    }
   }
 
   override def get(msg: AnyRef, rf: Any => Unit) {
