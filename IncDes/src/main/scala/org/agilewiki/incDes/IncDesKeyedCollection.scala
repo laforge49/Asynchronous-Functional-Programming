@@ -41,8 +41,11 @@ abstract class IncDesKeyedCollection[K, V <: IncDes]
   extends IncDesValueCollection[K, V] {
 
   bind(classOf[Put[K, V]], put)
+  bind(classOf[MakePut[K]], makePut)
 
   def keyFactory = factory.asInstanceOf[IncDesKeyedCollectionFactory[K]].keyFactory
 
   def put(msg: AnyRef, rf: Any => Unit)
+
+  def makePut(msg: AnyRef, rf: Any => Unit)
 }

@@ -107,6 +107,30 @@ class IncDesNavMap[K, V <: IncDes]
     }
   }
 
+  override def makePut(msg: AnyRef, rf: Any => Unit) {
+    val s = msg.asInstanceOf[MakePut[K]]
+    val tc = s.transactionContext
+    val k = s.key
+    deserialize
+    var v = i.get(k)
+    if (v != null) {
+      rf(v)
+      return
+    }
+    this(Writable(tc)) {
+      r1 => {
+        v = newValue
+        i.put(k, v)
+        v.partness(this, k, this)
+        change(tc, keyFactory.length(k) + v.length, this, {
+          r2: Any => {
+            rf(v)
+          }
+        })
+      }
+    }
+  }
+
   override def get(msg: AnyRef, rf: Any => Unit) {
     deserialize
     val key = msg.asInstanceOf[Get[K]].key

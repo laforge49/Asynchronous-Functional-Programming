@@ -38,19 +38,24 @@ case class AddString(transactionContext: TransactionContext, value: String)
 
 class MashupComponent(actor: Actor) extends Component(actor) {
   val incDesNavMap = actor.asInstanceOf[IncDesNavMap[String, IncDesIncDes]]
-  var _title: IncDesString = null
 
   bind(classOf[Title], title)
   bind(classOf[SetTitle], setTitle)
 
-  def title(msg: AnyRef, rf: Any => Unit) {
-    getTitle(null) {
+  def title(msg: Any, rf: Any => Unit) {
+    actor(Get("title")) {
       r1 => {
         if (r1 == null) {
           rf(null)
           return
         }
-        r1(Value())(rf)
+        val titleHolder = r1.asInstanceOf[IncDesIncDes]
+        titleHolder(Value()) {
+          r2 => {
+            val t = r2.asInstanceOf[IncDesString]
+            t(Value())(rf)
+          }
+        }
       }
     }
   }
@@ -59,57 +64,32 @@ class MashupComponent(actor: Actor) extends Component(actor) {
     val st = msg.asInstanceOf[SetTitle]
     val transactionContext = st.transactionContext
     val t = st.title
-    getTitle(transactionContext) {
+    actor(MakePut(transactionContext, "title")) {
       r1 => {
-        r1(Set(transactionContext, t))(rf)
-      }
-    }
-  }
-
-  def getTitle(transactionContext: TransactionContext)(rf: IncDesString => Unit) {
-    if (_title != null) {
-      rf(_title)
-      return
-    }
-    actor(Get("title")) {
-      r1 => {
-        if (r1 != null) {
-          _getTitle(transactionContext, r1.asInstanceOf[IncDesIncDes], rf)
-          return
-        }
-        if (transactionContext == null) {
-          rf(null)
-          return
-        }
-        val titleHolder = incDesNavMap.newValue
-        actor(Put(transactionContext, "title", titleHolder)) {
-          r2 => {
-            _getTitle(transactionContext, titleHolder, rf)
-            return
+        val titleHolder = r1.asInstanceOf[IncDesIncDes]
+        makeTitleHolder(transactionContext, titleHolder, {
+          r2: IncDesString => {
+            r2(Set(transactionContext, t))(rf)
           }
-        }
+        })
       }
     }
   }
 
-  def _getTitle(transactionContext: TransactionContext,
+  def makeTitleHolder(transactionContext: TransactionContext,
                 titleHolder: IncDesIncDes,
                 rf: IncDesString => Unit) {
     titleHolder(Value()) {
       r1 => {
         if (r1 != null) {
-          _title = r1.asInstanceOf[IncDesString]
-          rf(_title)
+          val ts = r1.asInstanceOf[IncDesString]
+          rf(ts)
           return
         }
-        if (transactionContext == null) {
-          rf(null)
-          return
-        }
-        _title = IncDesString(mailbox)
-        titleHolder(Set(transactionContext, _title)){
+        val ts = IncDesString(mailbox)
+        titleHolder(Set(transactionContext, ts)){
           r2 => {
-            rf(_title)
+            rf(ts)
           }
         }
       }
