@@ -55,3 +55,5 @@ case class Seq()
 case class Put[K, V <: IncDes](transactionContext: TransactionContext, key: K, value: V)
 
 case class MakePut[K](transactionContext: TransactionContext, key: K)
+
+case class MakeSet(transactionContext: TransactionContext, factoryId: FactoryId)

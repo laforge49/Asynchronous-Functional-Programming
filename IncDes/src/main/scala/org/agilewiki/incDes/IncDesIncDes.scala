@@ -43,6 +43,8 @@ class IncDesIncDes extends IncDesItem {
   private var i: IncDes = null
   private var len = -1
 
+  //bind(classOf[MakeSet], makeSet)
+
   lazy val factoryRegistryComponentFactory = {
     if (systemServices == null) throw new IllegalStateException("SystemServices is required")
     systemServices.factory.componentFactory(classOf[FactoryRegistryComponentFactory]).
@@ -60,7 +62,8 @@ class IncDesIncDes extends IncDesItem {
     super.load(_data)
     len = _data.readInt
     if (len > 0) _data.skip(len)
-    dser = false
+    i = null
+    dser = len == -1
   }
 
   override def change(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
