@@ -39,7 +39,7 @@ object IncDesIncDes {
   }
 }
 
-class IncDesIncDes extends IncDesItem {
+class IncDesIncDes extends IncDesItem[IncDes] {
   private var i: IncDes = null
   private var len = -1
 
@@ -128,8 +128,8 @@ class IncDesIncDes extends IncDesItem {
   }
 
   override def set(msg: AnyRef, rf: Any => Unit) {
-    val s = msg.asInstanceOf[Set]
-    val v = s.value.asInstanceOf[IncDes]
+    val s = msg.asInstanceOf[Set[IncDes]]
+    val v = s.value
     val tc = s.transactionContext
     if (v != null) {
       if (v.container != null) throw new IllegalArgumentException("already in use")

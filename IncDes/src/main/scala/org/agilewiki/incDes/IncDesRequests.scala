@@ -34,7 +34,7 @@ case class Copy(mailbox: Mailbox)
 
 case class Value()
 
-case class Set(transactionContext: TransactionContext, value: Any)
+case class Set[V](transactionContext: TransactionContext, value: V)
 
 case class Changed(transactionContext: TransactionContext, diff: Int, what: IncDes)
 

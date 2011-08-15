@@ -53,7 +53,7 @@ object IncDesInt {
   }
 }
 
-class IncDesInt extends IncDesItem {
+class IncDesInt extends IncDesItem[Int] {
   private var i = 0
 
   override def value(msg: AnyRef, rf: Any => Unit) {
@@ -68,8 +68,8 @@ class IncDesInt extends IncDesItem {
   }
 
   override def set(msg: AnyRef, rf: Any => Unit) {
-    val s = msg.asInstanceOf[Set]
-    val v = s.value.asInstanceOf[Int]
+    val s = msg.asInstanceOf[Set[Int]]
+    val v = s.value
     val tc = s.transactionContext
     value(Value(), {
       rsp: Any => {

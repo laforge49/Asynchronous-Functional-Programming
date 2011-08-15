@@ -37,7 +37,7 @@ object IncDesBoolean {
   }
 }
 
-class IncDesBoolean extends IncDesItem {
+class IncDesBoolean extends IncDesItem[Boolean] {
   private var i = false
 
   override def value(msg: AnyRef, rf: Any => Unit) {
@@ -52,8 +52,8 @@ class IncDesBoolean extends IncDesItem {
   }
 
   override def set(msg: AnyRef, rf: Any => Unit) {
-    val s = msg.asInstanceOf[Set]
-    val v = s.value.asInstanceOf[Boolean]
+    val s = msg.asInstanceOf[Set[Boolean]]
+    val v = s.value
     val tc = s.transactionContext
     value(Value(), {
       rsp: Any => {

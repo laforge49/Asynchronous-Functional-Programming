@@ -37,7 +37,7 @@ object IncDesBytes {
   }
 }
 
-class IncDesBytes extends IncDesItem {
+class IncDesBytes extends IncDesItem[Array[Byte]] {
   private var i: Array[Byte] = null
   private var len = -1
 
@@ -58,8 +58,8 @@ class IncDesBytes extends IncDesItem {
   }
 
   override def set(msg: AnyRef, rf: Any => Unit) {
-    val s = msg.asInstanceOf[Set]
-    val v = s.value.asInstanceOf[Array[Byte]]
+    val s = msg.asInstanceOf[Set[Array[Byte]]]
+    val v = s.value
     val tc = s.transactionContext
     this(Writable(tc)) {
       rsp1 => {

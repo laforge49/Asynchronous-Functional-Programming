@@ -53,7 +53,7 @@ object IncDesString {
   }
 }
 
-class IncDesString extends IncDesItem {
+class IncDesString extends IncDesItem[String] {
   private var i: String = null
   private var len = -1
 
@@ -71,8 +71,8 @@ class IncDesString extends IncDesItem {
   }
 
   override def set(msg: AnyRef, rf: Any => Unit) {
-    val s = msg.asInstanceOf[Set]
-    val v = s.value.asInstanceOf[String]
+    val s = msg.asInstanceOf[Set[String]]
+    val v = s.value
     val tc = s.transactionContext
     value(Value(), {
       rsp: Any => {

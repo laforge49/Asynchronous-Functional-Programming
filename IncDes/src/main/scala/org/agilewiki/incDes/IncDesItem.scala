@@ -24,10 +24,10 @@
 package org.agilewiki
 package incDes
 
-abstract class IncDesItem extends IncDes {
+abstract class IncDesItem[V] extends IncDes {
   protected var dser = true
   bind(classOf[Value], value)
-  bind(classOf[Set], set)
+  bind(classOf[Set[V]], set)
 
   def value(msg: AnyRef, rf: Any => Unit)
 

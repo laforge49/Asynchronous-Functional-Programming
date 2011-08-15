@@ -219,7 +219,7 @@ object IncDesStringBooleanMap {
 }
 
 class SubordinateIntBytesMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[Int, IncDesBytes, Bytes](
+  extends SubordinateNavMapFactory[Int, IncDesBytes, Array[Byte]](
     id,
     INC_DES_INT_FACTORY_ID,
     INC_DES_BYTES_FACTORY_ID)
@@ -228,14 +228,14 @@ object IncDesIntBytesMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
     val f = new SubordinateIntBytesMapFactory(INC_DES_INT_BYTES_MAP_FACTORY_ID)
     f.configure(systemServices)
-    val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[Int, IncDesBytes, Bytes]]
+    val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[Int, IncDesBytes, Array[Byte]]]
     a.setSystemServices(systemServices)
     a
   }
 }
 
 class SubordinateLongBytesMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[Long, IncDesBytes, Bytes](
+  extends SubordinateNavMapFactory[Long, IncDesBytes, Array[Byte]](
     id,
     INC_DES_LONG_FACTORY_ID,
     INC_DES_BYTES_FACTORY_ID)
@@ -244,14 +244,14 @@ object IncDesLongBytesMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
     val f = new SubordinateLongBytesMapFactory(INC_DES_LONG_BYTES_MAP_FACTORY_ID)
     f.configure(systemServices)
-    val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[Long, IncDesBytes, Bytes]]
+    val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[Long, IncDesBytes, Array[Byte]]]
     a.setSystemServices(systemServices)
     a
   }
 }
 
 class SubordinateStringBytesMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[String, IncDesBytes, Bytes](
+  extends SubordinateNavMapFactory[String, IncDesBytes, Array[Byte]](
     id,
     INC_DES_STRING_FACTORY_ID,
     INC_DES_BYTES_FACTORY_ID)
@@ -260,7 +260,7 @@ object IncDesStringBytesMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
     val f = new SubordinateStringBytesMapFactory(INC_DES_STRING_BYTES_MAP_FACTORY_ID)
     f.configure(systemServices)
-    val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[String, IncDesBytes, Bytes]]
+    val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[String, IncDesBytes, Array[Byte]]]
     a.setSystemServices(systemServices)
     a
   }
