@@ -43,7 +43,7 @@ class IncDesIncDes extends IncDesItem {
   private var i: IncDes = null
   private var len = -1
 
-  //bind(classOf[MakeSet], makeSet)
+  bind(classOf[MakeSet], makeSet)
 
   lazy val factoryRegistryComponentFactory = {
     if (systemServices == null) throw new IllegalStateException("SystemServices is required")
@@ -96,6 +96,33 @@ class IncDesIncDes extends IncDesItem {
         i.partness(this, key, this)
         dser = true
         rf(i)
+      }
+    }
+  }
+
+  def makeSet(msg: AnyRef, rf: Any => Unit) {
+    if (len > 0) {
+      value(Value(), rf)
+      return
+    }
+    val s = msg.asInstanceOf[MakeSet]
+    val tc = s.transactionContext
+    val fid = s.factoryId
+    this(Writable(tc)) {
+      r1 => {
+        systemServices(Instantiate(fid, mailbox)) {
+          r2 => {
+            i = r2.asInstanceOf[IncDes]
+            i.partness(this, key, this)
+            dser = true
+            len = IncDes.stringLength(fid.value) + i.length
+            changed(tc, len, this, {
+              r3: Any => {
+                rf(i)
+              }
+            })
+          }
+        }
       }
     }
   }

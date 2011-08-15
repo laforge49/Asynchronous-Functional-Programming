@@ -67,29 +67,10 @@ class MashupComponent(actor: Actor) extends Component(actor) {
     actor(MakePut(transactionContext, "title")) {
       r1 => {
         val titleHolder = r1.asInstanceOf[IncDesIncDes]
-        makeTitleHolder(transactionContext, titleHolder, {
-          r2: IncDesString => {
-            r2(Set(transactionContext, t))(rf)
-          }
-        })
-      }
-    }
-  }
-
-  def makeTitleHolder(transactionContext: TransactionContext,
-                titleHolder: IncDesIncDes,
-                rf: IncDesString => Unit) {
-    titleHolder(Value()) {
-      r1 => {
-        if (r1 != null) {
-          val ts = r1.asInstanceOf[IncDesString]
-          rf(ts)
-          return
-        }
-        val ts = IncDesString(mailbox)
-        titleHolder(Set(transactionContext, ts)){
+        titleHolder(MakeSet(transactionContext, INC_DES_STRING_FACTORY_ID)) {
           r2 => {
-            rf(ts)
+            val ids = r2.asInstanceOf[IncDesString]
+            ids(Set(transactionContext, t))(rf)
           }
         }
       }
