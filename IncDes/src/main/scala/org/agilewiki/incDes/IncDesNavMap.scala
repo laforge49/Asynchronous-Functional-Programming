@@ -27,8 +27,8 @@ package incDes
 import blip._
 import seq._
 
-class IncDesNavMap[K, V <: IncDes]
-  extends IncDesKeyedCollection[K, V] {
+class IncDesNavMap[K, V <: IncDes, V1]
+  extends IncDesKeyedCollection[K, V, V1] {
   private var i = new java.util.TreeMap[K, V]
   private var len = 0
   private var navMapSeq: NavMapSeq[K, V] = null
@@ -129,6 +129,10 @@ class IncDesNavMap[K, V <: IncDes]
         })
       }
     }
+  }
+
+  override def makePutSet(msg: AnyRef, rf: Any => Unit) {
+
   }
 
   override def get(msg: AnyRef, rf: Any => Unit) {
