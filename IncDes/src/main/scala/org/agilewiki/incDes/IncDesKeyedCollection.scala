@@ -40,10 +40,13 @@ class IncDesKeyedCollectionFactory[K](id: FactoryId, keyId: FactoryId, valueId: 
 abstract class IncDesKeyedCollection[K, V <: IncDes]
   extends IncDesValueCollection[K, V] {
 
+  bind(classOf[GetValue[K]], getValue)
   bind(classOf[Put[K, V]], put)
   bind(classOf[MakePut[K]], makePut)
 
   def keyFactory = factory.asInstanceOf[IncDesKeyedCollectionFactory[K]].keyFactory
+
+  def getValue(msg: AnyRef, rf: Any => Unit)
 
   def put(msg: AnyRef, rf: Any => Unit)
 

@@ -43,19 +43,14 @@ class MashupComponent(actor: Actor) extends Component(actor) {
   bind(classOf[SetTitle], setTitle)
 
   def title(msg: Any, rf: Any => Unit) {
-    actor(Get("title")) {
+    actor(GetValue("title")){
       r1 => {
-        if (r1 == null) {
+        val incDesString = r1.asInstanceOf[IncDesString]
+        if (incDesString == null) {
           rf(null)
           return
         }
-        val titleHolder = r1.asInstanceOf[IncDesIncDes]
-        titleHolder(Value()) {
-          r2 => {
-            val t = r2.asInstanceOf[IncDesString]
-            t(Value())(rf)
-          }
-        }
+        incDesString(Value())(rf)
       }
     }
   }

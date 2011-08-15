@@ -137,6 +137,17 @@ class IncDesNavMap[K, V <: IncDes]
     rf(i.get(key))
   }
 
+  override def getValue(msg: AnyRef, rf: Any => Unit) {
+    deserialize
+    val key = msg.asInstanceOf[GetValue[K]].key
+    val item = i.get(key)
+    if (item == null) {
+      rf(null)
+      return
+    }
+    item(Value())(rf)
+  }
+
   override def containsKey(msg: AnyRef, rf: Any => Unit) {
     deserialize
     val key = msg.asInstanceOf[ContainsKey[K]].key
@@ -162,7 +173,7 @@ class IncDesNavMap[K, V <: IncDes]
         val r = i.remove(key)
         val l = r.length
         r.clearContainer
-        change(tc, -keyFactory.length(key)-l, this, {
+        change(tc, -keyFactory.length(key) - l, this, {
           rsp => rf(r)
         })
       }

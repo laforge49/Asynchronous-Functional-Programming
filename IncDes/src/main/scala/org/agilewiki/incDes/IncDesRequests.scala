@@ -57,3 +57,5 @@ case class Put[K, V <: IncDes](transactionContext: TransactionContext, key: K, v
 case class MakePut[K](transactionContext: TransactionContext, key: K)
 
 case class MakeSet(transactionContext: TransactionContext, factoryId: FactoryId)
+
+case class GetValue[K](key: K)
