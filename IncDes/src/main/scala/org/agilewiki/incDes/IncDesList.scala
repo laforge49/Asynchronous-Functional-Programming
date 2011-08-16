@@ -28,8 +28,8 @@ import blip._
 import seq._
 import java.util.ArrayList
 
-class IncDesList[V <: IncDes]
-  extends IncDesValueCollection[Int, V] {
+class IncDesList[V <: IncDes, V1]
+  extends IncDesValueCollection[Int, V, V1] {
   private var i = new ArrayList[V]
   private var len = 0
   private var listSeq: ListSeq[V] = null

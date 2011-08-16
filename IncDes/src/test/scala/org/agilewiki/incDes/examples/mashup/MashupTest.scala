@@ -82,7 +82,7 @@ class MashupComponent(actor: Actor) extends Component(actor) {
     val t = st.string
     actor(MakePutMakeSet(transactionContext, "strings", INC_DES_STRING_LIST_FACTORY_ID)) {
       r1 => {
-        val strings = r1.asInstanceOf[IncDesList[IncDesString]]
+        val strings = r1.asInstanceOf[IncDesList[IncDesString, String]]
         val ids = IncDesString(mailbox)
         strings(Add(transactionContext, ids)) {
           r2 => {
@@ -103,7 +103,7 @@ class MashupComponent(actor: Actor) extends Component(actor) {
           rf(null)
           return
         }
-        val strings = r1.asInstanceOf[IncDesList[IncDesString]]
+        val strings = r1.asInstanceOf[IncDesList[IncDesString, String]]
         strings(GetValue(index))(rf)
       }
     }

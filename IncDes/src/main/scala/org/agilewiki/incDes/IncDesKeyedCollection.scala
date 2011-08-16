@@ -38,7 +38,7 @@ class IncDesKeyedCollectionFactory[K](id: FactoryId, keyId: FactoryId, valueId: 
 }
 
 abstract class IncDesKeyedCollection[K, V <: IncDes, V1]
-  extends IncDesValueCollection[K, V] {
+  extends IncDesValueCollection[K, V, V1] {
 
   bind(classOf[Put[K, V]], put)
   bind(classOf[MakePut[K]], makePut)

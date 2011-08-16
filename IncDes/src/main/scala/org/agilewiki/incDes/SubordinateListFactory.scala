@@ -27,84 +27,84 @@ package incDes
 import blip._
 
 class SubordinateIntListFactory(id: FactoryId)
-  extends SubordinateListFactory[IncDesInt](id, INC_DES_INT_FACTORY_ID)
+  extends SubordinateListFactory[IncDesInt, Int](id, INC_DES_INT_FACTORY_ID)
 
 object IncDesIntList {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
     val f = new SubordinateIntListFactory(INC_DES_INT_LIST_FACTORY_ID)
     f.configure(systemServices)
-    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesInt]]
+    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesInt, Int]]
     a.setSystemServices(systemServices)
     a
   }
 }
 
 class SubordinateLongListFactory(id: FactoryId)
-  extends SubordinateListFactory[IncDesLong](id, INC_DES_LONG_FACTORY_ID)
+  extends SubordinateListFactory[IncDesLong, Long](id, INC_DES_LONG_FACTORY_ID)
 
 object IncDesLongList {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
     val f = new SubordinateLongListFactory(INC_DES_LONG_LIST_FACTORY_ID)
     f.configure(systemServices)
-    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesLong]]
+    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesLong, Long]]
     a.setSystemServices(systemServices)
     a
   }
 }
 
 class SubordinateStringListFactory(id: FactoryId)
-  extends SubordinateListFactory[IncDesString](id, INC_DES_STRING_FACTORY_ID)
+  extends SubordinateListFactory[IncDesString, String](id, INC_DES_STRING_FACTORY_ID)
 
 object IncDesStringList {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
     val f = new SubordinateStringListFactory(INC_DES_STRING_LIST_FACTORY_ID)
     f.configure(systemServices)
-    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesString]]
+    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesString, String]]
     a.setSystemServices(systemServices)
     a
   }
 }
 
 class SubordinateBooleanListFactory(id: FactoryId)
-  extends SubordinateListFactory[IncDesBoolean](id, INC_DES_BOOLEAN_FACTORY_ID)
+  extends SubordinateListFactory[IncDesBoolean, Boolean](id, INC_DES_BOOLEAN_FACTORY_ID)
 
 object IncDesBooleanList {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
     val f = new SubordinateBooleanListFactory(INC_DES_BOOLEAN_LIST_FACTORY_ID)
     f.configure(systemServices)
-    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesBoolean]]
+    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesBoolean, Boolean]]
     a.setSystemServices(systemServices)
     a
   }
 }
 
 class SubordinateBytesListFactory(id: FactoryId)
-  extends SubordinateListFactory[IncDesBytes](id, INC_DES_BYTES_FACTORY_ID)
+  extends SubordinateListFactory[IncDesBytes, Array[Byte]](id, INC_DES_BYTES_FACTORY_ID)
 
 object IncDesBytesList {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
     val f = new SubordinateBytesListFactory(INC_DES_BYTES_LIST_FACTORY_ID)
     f.configure(systemServices)
-    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesBytes]]
+    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesBytes, Array[Byte]]]
     a.setSystemServices(systemServices)
     a
   }
 }
 
 class SubordinateIncDesListFactory(id: FactoryId)
-  extends SubordinateListFactory[IncDesIncDes](id, INC_DES_INCDES_FACTORY_ID)
+  extends SubordinateListFactory[IncDesIncDes, IncDes](id, INC_DES_INCDES_FACTORY_ID)
 
 object IncDesIncDesList {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
     val f = new SubordinateIncDesListFactory(INC_DES_INCDES_LIST_FACTORY_ID)
     f.configure(systemServices)
-    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesIncDes]]
+    val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesIncDes, IncDes]]
     a.setSystemServices(systemServices)
     a
   }
 }
 
-class SubordinateListFactory[V <: IncDes](id: FactoryId, valueId: FactoryId)
+class SubordinateListFactory[V <: IncDes, V1](id: FactoryId, valueId: FactoryId)
   extends SubordinateValueCollectionFactory(id, valueId) {
-  override protected def instantiate = new IncDesList[V]
+  override protected def instantiate = new IncDesList[V, V1]
 }
