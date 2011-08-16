@@ -314,7 +314,7 @@ object IncDesStringIncDesMap {
   }
 }
 
-class SubordinateNavMapFactory[K, V <: IncDes, V1](id: FactoryId, keyId: FactoryId, valueId: FactoryId)
+class SubordinateNavMapFactory[K, V <: IncDesItem[V1], V1](id: FactoryId, keyId: FactoryId, valueId: FactoryId)
   extends SubordinateKeyedCollectionFactory(id, keyId, valueId) {
   override protected def instantiate = new IncDesNavMap[K, V, V1]
 }

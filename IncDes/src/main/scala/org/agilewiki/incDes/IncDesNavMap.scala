@@ -27,7 +27,7 @@ package incDes
 import blip._
 import seq._
 
-class IncDesNavMap[K, V <: IncDes, V1]
+class IncDesNavMap[K, V <: IncDesItem[V1], V1]
   extends IncDesKeyedCollection[K, V, V1] {
   private var i = new java.util.TreeMap[K, V]
   private var len = 0
@@ -84,7 +84,7 @@ class IncDesNavMap[K, V <: IncDes, V1]
   }
 
   def put(msg: AnyRef, rf: Any => Unit) {
-    val s = msg.asInstanceOf[Put[K, V]]
+    val s = msg.asInstanceOf[Put[K, V, V1]]
     val tc = s.transactionContext
     val k = s.key
     val v = s.value

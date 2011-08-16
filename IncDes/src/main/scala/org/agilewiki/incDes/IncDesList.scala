@@ -28,14 +28,14 @@ import blip._
 import seq._
 import java.util.ArrayList
 
-class IncDesList[V <: IncDes, V1]
+class IncDesList[V <: IncDesItem[V1], V1]
   extends IncDesValueCollection[Int, V, V1] {
   private var i = new ArrayList[V]
   private var len = 0
   private var listSeq: ListSeq[V] = null
 
   bind(classOf[Add[V]], add)
-  bind(classOf[Insert[V]], insert)
+  bind(classOf[Insert[V, V1]], insert)
 
   override def isDeserialized = i != null
 
@@ -99,7 +99,7 @@ class IncDesList[V <: IncDes, V1]
   }
 
   def insert(msg: AnyRef, rf: Any => Unit) {
-    val s = msg.asInstanceOf[Insert[V]]
+    val s = msg.asInstanceOf[Insert[V, V1]]
     val tc = s.transactionContext
     val v = s.value
     preprocess(tc, v)

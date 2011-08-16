@@ -37,7 +37,7 @@ class IncDesValueCollectionFactory(id: FactoryId, valueId: FactoryId)
   }
 }
 
-abstract class IncDesValueCollection[K, V <: IncDes, V1]
+abstract class IncDesValueCollection[K, V <: IncDesItem[V1], V1]
   extends IncDesCollection[K] {
 
   bind(classOf[Get[V]], get)

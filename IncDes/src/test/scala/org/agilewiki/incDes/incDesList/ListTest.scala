@@ -111,8 +111,8 @@ class ListTest extends SpecificationWithJUnit {
 
       val incdes1 = Future(incdesl1, Get(0))
       incdes1.isInstanceOf[IncDesIncDes] must beTrue
-      val incdes2 = incdesl1.newValue
-      Future(incdesl1, Insert(null, 0, incdes2))
+      val incdes2 = incdesl1.newValue.asInstanceOf[IncDesIncDes]
+      Future(incdesl1, Insert[IncDesIncDes, IncDes](null, 0, incdes2))
       Future(incdesl1, Length()) must be equalTo (12)
       Future(incdesl1, Size()) must be equalTo (2)
       val incdes3 = Future(incdesl1, Remove(null, 1))

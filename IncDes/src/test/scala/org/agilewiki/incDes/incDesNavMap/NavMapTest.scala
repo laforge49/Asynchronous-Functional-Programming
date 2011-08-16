@@ -36,7 +36,7 @@ class NavMapTest extends SpecificationWithJUnit {
 
       val booll0 = IncDesIntBooleanMap(new Mailbox, systemServices)
       val bool0 = booll0.newValue
-      Future(booll0, Put(null, 2, bool0))
+      Future(booll0, Put[Int, IncDesBoolean, Boolean](null, 2, bool0))
       Future(booll0, Length()) must be equalTo (9)
       val boolb0 = Future(booll0, Bytes()).asInstanceOf[Array[Byte]]
 
@@ -48,7 +48,7 @@ class NavMapTest extends SpecificationWithJUnit {
 
       val bytesl0 = IncDesLongBytesMap(new Mailbox, systemServices)
       val bytes0 = IncDesBytes(null)
-      Future(bytesl0, Put(null, 42L, bytes0))
+      Future(bytesl0, Put[Long, IncDesBytes, Array[Byte]](null, 42L, bytes0))
       Future(bytesl0, Length()) must be equalTo (16)
       val bytesb0 = Future(bytesl0, Bytes()).asInstanceOf[Array[Byte]]
 
@@ -60,7 +60,7 @@ class NavMapTest extends SpecificationWithJUnit {
 
       val intl0 = IncDesStringIntMap(new Mailbox, systemServices)
       val int0 = intl0.newValue
-      Future(intl0, Put(null, "j", int0))
+      Future(intl0, Put[String, IncDesInt, Int](null, "j", int0))
       Future(intl0, Length()) must be equalTo (14)
       val intb0 = Future(intl0, Bytes()).asInstanceOf[Array[Byte]]
 
@@ -72,7 +72,7 @@ class NavMapTest extends SpecificationWithJUnit {
 
       val longl0 = IncDesIntLongMap(new Mailbox, systemServices)
       val long0 = IncDesLong(null)
-      Future(longl0, Put(null, 9, long0))
+      Future(longl0, Put[Int, IncDesLong, Long](null, 9, long0))
       Future(longl0, Length()) must be equalTo (16)
       val longb0 = Future(longl0, Bytes()).asInstanceOf[Array[Byte]]
 
@@ -84,7 +84,7 @@ class NavMapTest extends SpecificationWithJUnit {
 
       val strl0 = IncDesLongStringMap(new Mailbox, systemServices)
       val str0 = strl0.newValue
-      Future(strl0, Put(null, -2L, str0))
+      Future(strl0, Put[Long, IncDesString, String](null, -2L, str0))
       Future(strl0, Length()) must be equalTo (16)
       val strb0 = Future(strl0, Bytes()).asInstanceOf[Array[Byte]]
 
@@ -98,7 +98,7 @@ class NavMapTest extends SpecificationWithJUnit {
       val incdes0 = IncDesIncDes(null)
       Future(incdesl0, ContainsKey("x")) must be equalTo(false)
       Future(incdesl0, Size()) must be equalTo (0)
-      Future(incdesl0, Put(null, "x", incdes0))
+      Future(incdesl0, Put[String, IncDesIncDes, IncDes](null, "x", incdes0))
       Future(incdesl0, Length()) must be equalTo (14)
       Future(incdesl0, Size()) must be equalTo (1)
       val incdesb0 = Future(incdesl0, Bytes()).asInstanceOf[Array[Byte]]
@@ -112,7 +112,7 @@ class NavMapTest extends SpecificationWithJUnit {
       val incdes1 = Future(incdesl1, Get("x"))
       incdes1.isInstanceOf[IncDesIncDes] must beTrue
       val incdes2 = incdesl1.newValue
-      Future(incdesl1, Put(null, "y", incdes2))
+      Future(incdesl1, Put[String, IncDesIncDes, IncDes](null, "y", incdes2))
       Future(incdesl1, Length()) must be equalTo (24)
       Future(incdesl1, Size()) must be equalTo (2)
       val incdes3 = Future(incdesl1, Remove(null, "x"))

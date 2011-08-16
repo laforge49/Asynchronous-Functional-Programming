@@ -44,7 +44,7 @@ case class VisibleElement()
 
 case class Add[V](transactionContext: TransactionContext, value: V)
 
-case class Insert[V <: IncDes](transactionContext: TransactionContext, index: Int, value: V)
+case class Insert[V <: IncDesItem[V1], V1](transactionContext: TransactionContext, index: Int, value: V)
 
 case class Size()
 
@@ -52,7 +52,7 @@ case class Remove[K](transactionContext: TransactionContext, key: K)
 
 case class Seq()
 
-case class Put[K, V <: IncDes](transactionContext: TransactionContext, key: K, value: V)
+case class Put[K, V <: IncDesItem[V1], V1](transactionContext: TransactionContext, key: K, value: V)
 
 case class MakePut[K](transactionContext: TransactionContext, key: K)
 
