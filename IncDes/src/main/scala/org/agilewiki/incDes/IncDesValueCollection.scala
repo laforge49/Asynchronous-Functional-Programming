@@ -41,8 +41,11 @@ abstract class IncDesValueCollection[K, V <: IncDes]
   extends IncDesCollection[K] {
 
   bind(classOf[Get[V]], get)
+  bind(classOf[GetValue[K]], getValue)
 
   def get(msg: AnyRef, rf: Any => Unit)
+
+  def getValue(msg: AnyRef, rf: Any => Unit)
 
   def valueFactory = factory.asInstanceOf[IncDesValueCollectionFactory].valueFactory
 

@@ -104,7 +104,7 @@ class IncDesList[V <: IncDes]
     val v = s.value
     preprocess(tc, v)
     val index = s.index
-    if (index < 0 || index > i.size) throw new IndexOutOfBoundsException("Index: "+index+", Size: "+i.size)
+    if (index < 0 || index > i.size) throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + i.size)
     this(Writable(tc)) {
       rsp => {
         i.add(index, v)
@@ -120,6 +120,21 @@ class IncDesList[V <: IncDes]
     val key = msg.asInstanceOf[Get[Int]].key
     if (key < 0 || key >= i.size) rf(null)
     else rf(i.get(key))
+  }
+
+  override def getValue(msg: AnyRef, rf: Any => Unit) {
+    deserialize
+    val key = msg.asInstanceOf[GetValue[Int]].key
+    if (key < 0 || key >= i.size) {
+      rf(null)
+      return
+    }
+    val item = i.get(key)
+    if (item == null) {
+      rf(null)
+      return
+    }
+    item(Value())(rf)
   }
 
   override def containsKey(msg: AnyRef, rf: Any => Unit) {
