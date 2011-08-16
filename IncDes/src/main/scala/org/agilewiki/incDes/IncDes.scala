@@ -26,18 +26,6 @@ package incDes
 
 import blip._
 
-object IncDes {
-  val booleanLength = 1
-  val intLength = 4
-  val longLength = 8
-
-  def stringLength(length: Int): Int = intLength + 2 * length
-
-  def stringLength(string: String): Int =
-    if (string == null) intLength
-    else stringLength(string.length)
-}
-
 class IncDes extends Actor {
   protected var data: ImmutableData = _
   private var _container: IncDes = _

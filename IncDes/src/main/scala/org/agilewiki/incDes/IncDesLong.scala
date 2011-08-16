@@ -44,7 +44,7 @@ class IncDesLongFactory(id: FactoryId)
     data.writeLong(k)
   }
 
-  override def length(k: Long) = IncDes.longLength
+  override def length(k: Long) = longLength
 }
 
 object IncDesLong {
@@ -88,7 +88,7 @@ class IncDesLong extends IncDesItem[Long] {
     })
   }
 
-  override def length = IncDes.longLength
+  override def length = longLength
 
   override protected def serialize(_data: MutableData) {
     if (!dser) throw new IllegalStateException

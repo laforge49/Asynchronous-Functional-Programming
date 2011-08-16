@@ -56,7 +56,7 @@ class IncDesIncDes extends IncDesItem[IncDes] {
     if (i != null) i.partness(this, key, this)
   }
 
-  override def length = if (len == -1) IncDes.intLength else IncDes.intLength + len
+  override def length = if (len == -1) intLength else intLength + len
 
   override def load(_data: MutableData) {
     super.load(_data)
@@ -87,7 +87,7 @@ class IncDesIncDes extends IncDesItem[IncDes] {
     }
     if (!isSerialized) throw new IllegalStateException
     val m = data.mutable
-    m.skip(IncDes.intLength)
+    m.skip(intLength)
     val incDesFactoryId = FactoryId(m.readString)
     systemServices(Instantiate(incDesFactoryId, mailbox)) {
       rsp => {
@@ -115,7 +115,7 @@ class IncDesIncDes extends IncDesItem[IncDes] {
             i = r2.asInstanceOf[IncDes]
             i.partness(this, key, this)
             dser = true
-            len = IncDes.stringLength(fid.value) + i.length
+            len = stringLength(fid.value) + i.length
             changed(tc, len, this, {
               r3: Any => {
                 rf(i)
@@ -154,7 +154,7 @@ class IncDesIncDes extends IncDesItem[IncDes] {
         i = v
         if (i == null) len = -1
         else {
-          len = IncDes.stringLength(i.factoryId.value) + i.length
+          len = stringLength(i.factoryId.value) + i.length
           i.partness(this, key, this)
         }
         dser = true

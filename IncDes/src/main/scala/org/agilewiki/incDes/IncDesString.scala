@@ -44,7 +44,7 @@ class IncDesStringFactory(id: FactoryId)
     data.writeString(k)
   }
 
-  override def length(k: String) = IncDes.stringLength(k)
+  override def length(k: String) = stringLength(k)
 }
 
 object IncDesString {
@@ -64,7 +64,7 @@ class IncDesString extends IncDesItem[String] {
     }
     if (!isSerialized) throw new IllegalStateException
     val m = data.mutable
-    m.skip(IncDes.intLength)
+    m.skip(intLength)
     i = m.readString(len)
     dser = true
     rf(i)
@@ -82,17 +82,17 @@ class IncDesString extends IncDesItem[String] {
         }
         this(Writable(tc)) {
           rsp1 => {
-            val ol = IncDes.stringLength(i)
+            val ol = stringLength(i)
             i = v
             dser = true
-            change(tc, IncDes.stringLength(i) - ol, this, rf)
+            change(tc, stringLength(i) - ol, this, rf)
           }
         }
       }
     })
   }
 
-  override def length = if (dser) IncDes.stringLength(i) else IncDes.stringLength(len)
+  override def length = if (dser) stringLength(i) else stringLen(len)
 
   override protected def serialize(_data: MutableData) {
     if (!dser) throw new IllegalStateException

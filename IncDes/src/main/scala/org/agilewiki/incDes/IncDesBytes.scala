@@ -50,7 +50,7 @@ class IncDesBytes extends IncDesItem[Array[Byte]] {
     if (len == -1) i = null
     else {
       val m = data.mutable
-      m.skip(IncDes.intLength)
+      m.skip(intLength)
       i = m.readBytes(len)
     }
     dser = true
@@ -73,10 +73,10 @@ class IncDesBytes extends IncDesItem[Array[Byte]] {
 
   override def length = {
     if (dser)
-      if (i == null) IncDes.intLength
-      else IncDes.intLength + i.length
-    else if (len == -1) IncDes.intLength
-    else IncDes.intLength + len
+      if (i == null) intLength
+      else intLength + i.length
+    else if (len == -1) intLength
+    else intLength + len
   }
 
   override protected def serialize(_data: MutableData) {

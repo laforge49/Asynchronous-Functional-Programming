@@ -44,7 +44,7 @@ class IncDesIntFactory(id: FactoryId)
     data.writeInt(k)
   }
 
-  override def length(k: Int) = IncDes.intLength
+  override def length(k: Int) = intLength
 }
 
 object IncDesInt {
@@ -88,7 +88,7 @@ class IncDesInt extends IncDesItem[Int] {
     })
   }
 
-  override def length = IncDes.intLength
+  override def length = intLength
 
   override protected def serialize(_data: MutableData) {
     if (!dser) throw new IllegalStateException

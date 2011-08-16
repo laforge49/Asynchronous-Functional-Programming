@@ -56,13 +56,13 @@ class IncDesNavMap[K, V <: IncDesItem[V1], V1]
     }
   }
 
-  override def length = IncDes.intLength + len
+  override def length = intLength + len
 
   def deserialize {
     if (i != null) return
     i = new java.util.TreeMap[K, V]
     val m = data.mutable
-    m.skip(IncDes.intLength)
+    m.skip(intLength)
     val limit = m.offset + len
     while (m.offset < limit) {
       val key = keyFactory.read(m)

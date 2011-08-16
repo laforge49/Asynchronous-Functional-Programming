@@ -72,7 +72,7 @@ class IncDesBoolean extends IncDesItem[Boolean] {
     })
   }
 
-  override def length = IncDes.booleanLength
+  override def length = booleanLength
 
   override protected def serialize(_data: MutableData) {
     if (!dser) throw new IllegalStateException
