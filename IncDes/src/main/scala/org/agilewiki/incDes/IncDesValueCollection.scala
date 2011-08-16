@@ -69,6 +69,6 @@ abstract class IncDesValueCollection[K, V <: IncDes]
       if (v.mailbox == null && !v.opened) v.setMailbox(mailbox)
       else throw new IllegalStateException("uses a different mailbox")
     }
-    if (v.systemServices == null && !v.opened) v.setSystemServices(systemServices)
+    if (v.systemServices == null) v.setSystemServices(systemServices)
   }
 }

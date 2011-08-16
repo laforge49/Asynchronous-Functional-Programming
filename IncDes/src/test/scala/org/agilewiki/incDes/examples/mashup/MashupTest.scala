@@ -28,16 +28,24 @@ package mashup
 
 import org.specs.SpecificationWithJUnit
 import blip._
+
 case class Title()
 
 case class SetTitle(transactionContext: TransactionContext, title: String)
 
-case class AddString(transactionContext: TransactionContext, value: String)
+case class Strings()
+
+case class AddString(transactionContext: TransactionContext, string: String)
+
+case class GetString(index: Int)
 
 class MashupComponent(actor: Actor) extends Component(actor) {
 
   bind(classOf[Title], title)
   bind(classOf[SetTitle], setTitle)
+  bind(classOf[Strings], strings)
+  bind(classOf[AddString], addString)
+  bind(classOf[GetString], getString)
 
   def title(msg: Any, rf: Any => Unit) {
     actor(GetValue("title")) {
@@ -63,6 +71,43 @@ class MashupComponent(actor: Actor) extends Component(actor) {
       }
     }
   }
+
+  def strings(msg: AnyRef, rf: Any => Unit) {
+    actor(GetValue("strings"))(rf)
+  }
+
+  def addString(msg: AnyRef, rf: Any => Unit) {
+    val st = msg.asInstanceOf[AddString]
+    val transactionContext = st.transactionContext
+    val t = st.string
+    actor(MakePutMakeSet(transactionContext, "strings", INC_DES_STRING_LIST_FACTORY_ID)) {
+      r1 => {
+        val strings = r1.asInstanceOf[IncDesList[IncDesString]]
+        val ids = IncDesString(mailbox)
+        strings(Add(transactionContext, ids)) {
+          r2 => {
+            ids(Set(transactionContext, t))(rf)
+          }
+        }
+
+      }
+    }
+  }
+
+  def getString(msg: AnyRef, rf: Any => Unit) {
+    val st = msg.asInstanceOf[GetString]
+    val index = st.index
+    actor(GetValue("strings")) {
+      r1 => {
+        if (r1 == null) {
+          rf(null)
+          return
+        }
+        val strings = r1.asInstanceOf[IncDesList[IncDesString]]
+        strings(GetValue(index))(rf)
+      }
+    }
+  }
 }
 
 object MashupComponentFactory extends ComponentFactory {
@@ -85,6 +130,9 @@ class MashupTest extends SpecificationWithJUnit {
       Future(mashup1, Title()) must beNull
       Future(mashup1, SetTitle(null, "123"))
       Future(mashup1, Title()) must be equalTo ("123")
+      Future(mashup1, GetString(0)) must beNull
+      Future(mashup1, AddString(null, "Laundry"))
+      Future(mashup1, GetString(0)) must be equalTo("Laundry")
       val bs1 = Future(mashup1, Bytes()).asInstanceOf[Array[Byte]]
 
       val mashup2 = mashupFactory.newActor(new Mailbox).asInstanceOf[IncDes]
@@ -93,12 +141,17 @@ class MashupTest extends SpecificationWithJUnit {
       Future(mashup2, Title()) must be equalTo ("123")
       Future(mashup2, SetTitle(null, "42"))
       Future(mashup2, Title()) must be equalTo ("42")
+      Future(mashup2, AddString(null, "Dishes"))
+      Future(mashup2, GetString(0)) must be equalTo("Laundry")
+      Future(mashup2, GetString(1)) must be equalTo("Dishes")
       val bs2 = Future(mashup2, Bytes()).asInstanceOf[Array[Byte]]
 
       val mashup3 = mashupFactory.newActor(new Mailbox).asInstanceOf[IncDes]
       mashup3.setSystemServices(systemServices)
       mashup3.load(bs2)
       Future(mashup3, Title()) must be equalTo ("42")
+      Future(mashup3, GetString(1)) must be equalTo("Dishes")
+      Future(mashup3, GetString(0)) must be equalTo("Laundry")
     }
   }
 }
