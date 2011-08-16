@@ -35,7 +35,7 @@ class NavSetTest extends SpecificationWithJUnit {
       val systemServices = SystemServices(new IncDesComponentFactory)
 
       val intl0 = IncDesIntSet(new Mailbox, systemServices)
-      Future(intl0, Add(null, 1))
+      Future(intl0, AddValue(null, 1))
       Future(intl0, Length()) must be equalTo (8)
       val intb0 = Future(intl0, Bytes()).asInstanceOf[Array[Byte]]
 
@@ -48,8 +48,8 @@ class NavSetTest extends SpecificationWithJUnit {
       Future(seq, First()).isInstanceOf[KVPair[Int, Int]] must be equalTo (true)
 
       val longl0 = IncDesLongSet(new Mailbox, systemServices)
-      Future(longl0, Add(null, 1L))
-      Future(longl0, Add(null, 2L))
+      Future(longl0, AddValue(null, 1L))
+      Future(longl0, AddValue(null, 2L))
       Future(longl0, Length()) must be equalTo (20)
       val longb0 = Future(longl0, Bytes()).asInstanceOf[Array[Byte]]
 
@@ -60,8 +60,8 @@ class NavSetTest extends SpecificationWithJUnit {
       Future(longl1, ContainsKey(2L)) must be equalTo (true)
 
       val stringl0 = IncDesStringSet(new Mailbox, systemServices)
-      Future(stringl0, Add(null, "a"))
-      Future(stringl0, Add(null, "bb"))
+      Future(stringl0, AddValue(null, "a"))
+      Future(stringl0, AddValue(null, "bb"))
       Future(stringl0, Remove(null, "a"))
       Future(stringl0, Length()) must be equalTo (12)
       val stringb0 = Future(stringl0, Bytes()).asInstanceOf[Array[Byte]]

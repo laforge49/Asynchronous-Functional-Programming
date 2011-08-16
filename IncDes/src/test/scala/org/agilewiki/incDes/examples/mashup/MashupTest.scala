@@ -84,7 +84,7 @@ class MashupComponent(actor: Actor) extends Component(actor) {
       r1 => {
         val strings = r1.asInstanceOf[IncDesList[IncDesString, String]]
         val ids = IncDesString(mailbox)
-        strings(Add(transactionContext, ids)) {
+        strings(Add[IncDesString, String](transactionContext, ids)) {
           r2 => {
             ids(Set(transactionContext, t))(rf)
           }

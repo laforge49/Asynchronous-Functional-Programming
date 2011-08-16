@@ -34,7 +34,7 @@ class IncDesList[V <: IncDesItem[V1], V1]
   private var len = 0
   private var listSeq: ListSeq[V] = null
 
-  bind(classOf[Add[V]], add)
+  bind(classOf[Add[V, V1]], add)
   bind(classOf[Insert[V, V1]], insert)
 
   override def isDeserialized = i != null
@@ -85,7 +85,7 @@ class IncDesList[V <: IncDesItem[V1], V1]
   }
 
   def add(msg: AnyRef, rf: Any => Unit) {
-    val s = msg.asInstanceOf[Add[V]]
+    val s = msg.asInstanceOf[Add[V, V1]]
     val tc = s.transactionContext
     val v = s.value
     preprocess(tc, v)

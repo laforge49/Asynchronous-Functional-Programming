@@ -46,7 +46,7 @@ class IncDesNavSet[K]
   private var len = 0
   private var navSetSeq: NavSetSeq[K] = null
 
-  bind(classOf[Add[K]], add)
+  bind(classOf[AddValue[K]], addValue)
 
   def keyFactory = factory.asInstanceOf[IncDesNavSetFactory[K]].keyFactory
 
@@ -101,9 +101,9 @@ class IncDesNavSet[K]
     rf(i.size)
   }
 
-  def add(msg: AnyRef, rf: Any => Unit) {
+  def addValue(msg: AnyRef, rf: Any => Unit) {
     deserialize
-    val s = msg.asInstanceOf[Add[K]]
+    val s = msg.asInstanceOf[AddValue[K]]
     val k = s.value
     if (i.contains(k)) {
       rf(null)

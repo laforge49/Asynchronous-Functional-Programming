@@ -36,7 +36,7 @@ class ListTest extends SpecificationWithJUnit {
 
       val booll0 = IncDesBooleanList(new Mailbox, systemServices)
       val bool0 = booll0.newValue
-      Future(booll0, Add(null, bool0))
+      Future(booll0, Add[IncDesBoolean, Boolean](null, bool0))
       Future(booll0, Length()) must be equalTo (5)
       val boolb0 = Future(booll0, Bytes()).asInstanceOf[Array[Byte]]
 
@@ -48,7 +48,7 @@ class ListTest extends SpecificationWithJUnit {
 
       val bytesl0 = IncDesBytesList(new Mailbox, systemServices)
       val bytes0 = IncDesBytes(null)
-      Future(bytesl0, Add(null, bytes0))
+      Future(bytesl0, Add[IncDesBytes, Array[Byte]](null, bytes0))
       Future(bytesl0, Length()) must be equalTo (8)
       val bytesb0 = Future(bytesl0, Bytes()).asInstanceOf[Array[Byte]]
 
@@ -60,7 +60,7 @@ class ListTest extends SpecificationWithJUnit {
 
       val intl0 = IncDesIntList(new Mailbox, systemServices)
       val int0 = intl0.newValue
-      Future(intl0, Add(null, int0))
+      Future(intl0, Add[IncDesInt, Int](null, int0))
       Future(intl0, Length()) must be equalTo (8)
       val intb0 = Future(intl0, Bytes()).asInstanceOf[Array[Byte]]
 
@@ -72,7 +72,7 @@ class ListTest extends SpecificationWithJUnit {
 
       val longl0 = IncDesLongList(new Mailbox, systemServices)
       val long0 = IncDesLong(null)
-      Future(longl0, Add(null, long0))
+      Future(longl0, Add[IncDesLong, Long](null, long0))
       Future(longl0, Length()) must be equalTo (12)
       val longb0 = Future(longl0, Bytes()).asInstanceOf[Array[Byte]]
 
@@ -84,7 +84,7 @@ class ListTest extends SpecificationWithJUnit {
 
       val strl0 = IncDesStringList(new Mailbox, systemServices)
       val str0 = strl0.newValue
-      Future(strl0, Add(null, str0))
+      Future(strl0, Add[IncDesString, String](null, str0))
       Future(strl0, Length()) must be equalTo (8)
       val strb0 = Future(strl0, Bytes()).asInstanceOf[Array[Byte]]
 
@@ -98,7 +98,7 @@ class ListTest extends SpecificationWithJUnit {
       val incdes0 = IncDesIncDes(null)
       Future(incdesl0, ContainsKey(0)) must be equalTo(false)
       Future(incdesl0, Size()) must be equalTo (0)
-      Future(incdesl0, Add(null, incdes0))
+      Future(incdesl0, Add[IncDesIncDes, IncDes](null, incdes0))
       Future(incdesl0, Length()) must be equalTo (8)
       Future(incdesl0, Size()) must be equalTo (1)
       val incdesb0 = Future(incdesl0, Bytes()).asInstanceOf[Array[Byte]]
