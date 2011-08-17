@@ -30,6 +30,7 @@ import annotation.tailrec
 class FilterSeq[K, V](seq: Sequence[K, V], f: V => Boolean)
   extends Sequence[K, V] {
   setMailbox(seq.mailbox)
+  setSystemServices(seq.systemServices)
 
   override def first(msg: AnyRef, rf: Any => Unit) {
     _r(msg, rf)

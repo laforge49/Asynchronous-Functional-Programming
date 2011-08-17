@@ -43,6 +43,7 @@ abstract class IncDesValueCollection[K, V <: IncDesItem[V1], V1]
   bind(classOf[Get[V]], get)
   bind(classOf[GetValue[K]], getValue)
   bind(classOf[ValuesSeq], valuesSeq)
+  bind(classOf[FlatValuesSeq], flatValuesSeq)
 
   def get(msg: AnyRef, rf: Any => Unit)
 
@@ -78,6 +79,16 @@ abstract class IncDesValueCollection[K, V <: IncDesItem[V1], V1]
       r1 => {
         val s = r1.asInstanceOf[Sequence[K, V]]
         val m = new MapSafeSeq[K, V, V1](s, new MapValueSafe[K, V, V1])
+        rf(m)
+      }
+    })
+  }
+
+  def flatValuesSeq(msg: AnyRef, rf: Any => Unit) {
+    seq(Seq(), {
+      r1 => {
+        val s = r1.asInstanceOf[Sequence[K, V]]
+        val m = new FlatmapSafeSeq[K, V, V1](s, new MapValueSafe[K, V, V1])
         rf(m)
       }
     })

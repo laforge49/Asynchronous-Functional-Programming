@@ -30,6 +30,7 @@ import annotation.tailrec
 class FlatmapSafeSeq[K, V, V1](seq: Sequence[K, V], safe: Safe)
   extends Sequence[K, V1] {
   setMailbox(seq.mailbox)
+  setSystemServices(seq.systemServices)
 
   override def first(msg: AnyRef, rf: Any => Unit) {
     r(msg, rf)

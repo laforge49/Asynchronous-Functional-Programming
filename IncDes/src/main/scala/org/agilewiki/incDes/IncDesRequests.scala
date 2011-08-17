@@ -56,6 +56,8 @@ case class Seq()
 
 case class ValuesSeq()
 
+case class FlatValuesSeq()
+
 case class Put[K, V <: IncDesItem[V1], V1](transactionContext: TransactionContext, key: K, value: V)
 
 case class MakePut[K](transactionContext: TransactionContext, key: K)
@@ -67,3 +69,4 @@ case class GetValue[K](key: K)
 case class MakePutSet[K, V1](transactionContext: TransactionContext, key: K, value: V1)
 
 case class MakePutMakeSet[K](transactionContext: TransactionContext, key: K, factoryId: FactoryId)
+

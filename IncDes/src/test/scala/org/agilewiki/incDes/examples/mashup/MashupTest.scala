@@ -90,7 +90,6 @@ class MashupComponent(actor: Actor) extends Component(actor) {
             ids(Set(transactionContext, t))(rf)
           }
         }
-
       }
     }
   }
@@ -166,6 +165,10 @@ class MashupTest extends SpecificationWithJUnit {
       println("mashupValuesSeq:")
       Future(mashupValuesSeq, Loop((key: String, value: IncDes) => println(key+" "+value)))
       println("")
+      val flatMashupValuesSeq = Future(mashup3, FlatValuesSeq()).asInstanceOf[Sequence[String, IncDes]]
+      println("flatMashupValuesSeq:")
+      Future(flatMashupValuesSeq, Loop((key: String, value: IncDes) => println(key+" "+value)))
+      println("")
       val mashupStrings = Future(mashup3, Strings()).asInstanceOf[IncDesList[IncDesString, String]]
       val stringsSeq = Future(mashupStrings, Seq()).asInstanceOf[Sequence[Int, IncDesString]]
       println("stringsSeq:")
@@ -174,6 +177,10 @@ class MashupTest extends SpecificationWithJUnit {
       val stringValuesSeq = Future(mashupStrings, ValuesSeq()).asInstanceOf[Sequence[Int, String]]
       println("stringValuesSeq:")
       Future(stringValuesSeq, Loop((key: Int, value: String) => println(key+" "+value)))
+      println("")
+      val flatStringValuesSeq = Future(mashupStrings, FlatValuesSeq()).asInstanceOf[Sequence[Int, String]]
+      println("flatStringValuesSeq:")
+      Future(flatStringValuesSeq, Loop((key: Int, value: String) => println(key+" "+value)))
       println("")
     }
   }
