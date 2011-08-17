@@ -183,6 +183,8 @@ class IncDesList[V <: IncDesItem[V1], V1]
     }
     deserialize
     listSeq = new ListSeq[V](i)
+    listSeq.setMailbox(mailbox)
+    listSeq.setSystemServices(systemServices)
     rf(listSeq)
   }
 }

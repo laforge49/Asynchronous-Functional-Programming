@@ -54,6 +54,8 @@ case class Remove[K](transactionContext: TransactionContext, key: K)
 
 case class Seq()
 
+case class ValuesSeq()
+
 case class Put[K, V <: IncDesItem[V1], V1](transactionContext: TransactionContext, key: K, value: V)
 
 case class MakePut[K](transactionContext: TransactionContext, key: K)

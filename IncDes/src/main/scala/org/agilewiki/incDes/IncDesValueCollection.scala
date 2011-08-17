@@ -42,6 +42,7 @@ abstract class IncDesValueCollection[K, V <: IncDesItem[V1], V1]
 
   bind(classOf[Get[V]], get)
   bind(classOf[GetValue[K]], getValue)
+  bind(classOf[ValuesSeq], valuesSeq)
 
   def get(msg: AnyRef, rf: Any => Unit)
 
@@ -70,5 +71,28 @@ abstract class IncDesValueCollection[K, V <: IncDesItem[V1], V1]
       else throw new IllegalStateException("uses a different mailbox")
     }
     if (v.systemServices == null) v.setSystemServices(systemServices)
+  }
+
+  def valuesSeq(msg: AnyRef, rf: Any => Unit) {
+    seq(Seq(), {
+      r1 => {
+        val s = r1.asInstanceOf[Sequence[K, V]]
+        val m = new MapSafeSeq[K, V, V1](s, new MapValueSafe[K, V, V1])
+        rf(m)
+      }
+    })
+  }
+}
+
+class MapValueSafe[K, V <: IncDesItem[V1], V1]
+  extends Safe {
+  override def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+    val item = msg.asInstanceOf[KVPair[K, V]].value
+    item(Value()) {
+      r1 => {
+        val v = r1.asInstanceOf[V1]
+        rf(v)
+      }
+    }
   }
 }

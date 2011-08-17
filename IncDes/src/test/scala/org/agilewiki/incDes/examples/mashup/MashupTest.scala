@@ -28,6 +28,7 @@ package mashup
 
 import org.specs.SpecificationWithJUnit
 import blip._
+import seq._
 
 case class Title()
 
@@ -130,6 +131,7 @@ class MashupTest extends SpecificationWithJUnit {
       Future(mashup1, Title()) must beNull
       Future(mashup1, SetTitle(null, "123"))
       Future(mashup1, Title()) must be equalTo ("123")
+      Future(mashup1, MakePut(null, "nada"))
       Future(mashup1, GetString(0)) must beNull
       Future(mashup1, AddString(null, "Laundry"))
       Future(mashup1, GetString(0)) must be equalTo("Laundry")
@@ -141,17 +143,38 @@ class MashupTest extends SpecificationWithJUnit {
       Future(mashup2, Title()) must be equalTo ("123")
       Future(mashup2, SetTitle(null, "42"))
       Future(mashup2, Title()) must be equalTo ("42")
+      Future(mashup2, AddString(null, null))
       Future(mashup2, AddString(null, "Dishes"))
       Future(mashup2, GetString(0)) must be equalTo("Laundry")
-      Future(mashup2, GetString(1)) must be equalTo("Dishes")
+      Future(mashup2, GetString(1)) must beNull
+      Future(mashup2, GetString(2)) must be equalTo("Dishes")
       val bs2 = Future(mashup2, Bytes()).asInstanceOf[Array[Byte]]
 
       val mashup3 = mashupFactory.newActor(new Mailbox).asInstanceOf[IncDes]
       mashup3.setSystemServices(systemServices)
       mashup3.load(bs2)
       Future(mashup3, Title()) must be equalTo ("42")
-      Future(mashup3, GetString(1)) must be equalTo("Dishes")
+      Future(mashup3, GetString(2)) must be equalTo("Dishes")
+      Future(mashup3, GetString(1)) must beNull
       Future(mashup3, GetString(0)) must be equalTo("Laundry")
+      println("")
+      val mashupSeq = Future(mashup3, Seq()).asInstanceOf[Sequence[String, IncDesIncDes]]
+      println("mashupSeq:")
+      Future(mashupSeq, Loop((key: String, item: IncDesIncDes) => println(key+" "+item)))
+      println("")
+      val mashupValuesSeq = Future(mashup3, ValuesSeq()).asInstanceOf[Sequence[String, IncDes]]
+      println("mashupValuesSeq:")
+      Future(mashupValuesSeq, Loop((key: String, value: IncDes) => println(key+" "+value)))
+      println("")
+      val mashupStrings = Future(mashup3, Strings()).asInstanceOf[IncDesList[IncDesString, String]]
+      val stringsSeq = Future(mashupStrings, Seq()).asInstanceOf[Sequence[Int, IncDesString]]
+      println("stringsSeq:")
+      Future(stringsSeq, Loop((key: Int, item: IncDesString) => println(key+" "+item)))
+      println("")
+      val stringValuesSeq = Future(mashupStrings, ValuesSeq()).asInstanceOf[Sequence[Int, String]]
+      println("stringValuesSeq:")
+      Future(stringValuesSeq, Loop((key: Int, value: String) => println(key+" "+value)))
+      println("")
     }
   }
 }

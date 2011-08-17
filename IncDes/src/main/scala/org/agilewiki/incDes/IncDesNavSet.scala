@@ -148,6 +148,8 @@ class IncDesNavSet[K]
     }
     deserialize
     navSetSeq = new NavSetSeq[K](i)
+    navSetSeq.setMailbox(mailbox)
+    navSetSeq.setSystemServices(systemServices)
     rf(navSetSeq)
   }
 }
