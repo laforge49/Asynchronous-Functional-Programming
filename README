@@ -1,3 +1,7 @@
-Asynchronous programming with fast actors (replies without future) and keyed sequences has been developed as part of the AgileWiki project, which is included in its entirity in this repository. 
+Scalability without Architecture
 
-While the overall effort is to convert this code base entirely to this new style of asynchronous programming, complete with a versioning graphical database and a template-driven front end written in Groovy, the code for fast actors can be found in the Scala package org.agilewiki.util.lite.
+Callbacks form the basis for high performance actors; Functional Programming techniques are employed for improved readability. With actor performance increased by a hundred fold, now everything can be an actor.
+
+The actors are composable. Factories are used for decoupling and to implement dependency-driven compositon. Dependency Injection is made open-ended by using a composite actor.
+
+This then is our starting point. From here we proceed to transaction processing, Incremental (Lazy) Deserialization, and databases.
