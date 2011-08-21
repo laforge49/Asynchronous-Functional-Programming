@@ -46,7 +46,8 @@ class Future
   }
 
   def sendAsynchronous(dst: Actor, msg: AnyRef) {
-    val req = new MailboxReq(dst, null, null, msg, this, null)
+    val boundFunction = dst.messageFunctions.get(msg.getClass).asInstanceOf[BoundFunction]
+    val req = new MailboxReq(dst, null, null, msg, boundFunction, this, null)
     val blkmsg = new ArrayList[MailboxMsg]
     blkmsg.add(req)
     dst.ctrl._send(blkmsg)

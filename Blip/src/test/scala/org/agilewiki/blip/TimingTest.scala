@@ -62,7 +62,7 @@ class TimingTest extends SpecificationWithJUnit {
       println("quad sync msgs per sec = "+(c * 4L * 2L * 1000L / (t1 - t0)))
     }
     "asynchronous timing" in {
-      val c = 1000//00
+      val c = 100000
       val m = new Mailbox
       val a = new ParallelAsyncActor(c)
       a.setMailbox(m)

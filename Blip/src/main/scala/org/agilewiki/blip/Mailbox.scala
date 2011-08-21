@@ -97,10 +97,8 @@ class Mailbox
     curMsg = msg
     val target = msg.target
     exceptionFunction = reqExceptionFunction
-    val bound = target.messageFunctions.get(msg.req.getClass)
+    val bound = msg.binding
     try {
-      if (bound == null)
-        throw new IllegalArgumentException("unbound message: " + msg.req.getClass.getName)
       bound.process(msg.req, reply)
     } catch {
       case ex: Exception => {
@@ -126,7 +124,7 @@ class Mailbox
     }
   }
 
-  def send(targetActor: Actor, content: AnyRef)
+  def send(targetActor: Actor, content: AnyRef, bound: Bound)
           (responseFunction: Any => Unit) {
     val oldReq = currentRequestMessage
     val sender = oldReq.target
@@ -135,6 +133,7 @@ class Mailbox
       responseFunction,
       oldReq,
       content,
+      bound,
       sender,
       exceptionFunction)
     addPending(targetActor, req)

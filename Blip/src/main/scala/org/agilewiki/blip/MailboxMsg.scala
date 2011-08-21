@@ -36,6 +36,7 @@ final class MailboxReq(dst: Actor,
                        rf: Any => Unit,
                        oldReq: MailboxReq,
                        data: AnyRef,
+                       bound: Bound,
                        src: MsgSrc,
                        srcEF: Exception => Unit)
   extends MailboxMsg(rf, oldReq, srcEF) {
@@ -43,6 +44,7 @@ final class MailboxReq(dst: Actor,
   def sender = src
   def target = dst
   def req = data
+  def binding = bound
 }
 
 final class MailboxRsp(rf: Any => Unit,

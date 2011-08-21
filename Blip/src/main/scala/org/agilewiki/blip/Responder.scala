@@ -46,7 +46,7 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
     )
     target._open
     if (target.mailbox == null || target.mailbox == srcMailbox) messageFunction(msg, responseFunction)
-    else srcMailbox.send(target, msg)(responseFunction)
+    else srcMailbox.send(target, msg, this)(responseFunction)
   }
 
   override def process(msg: AnyRef, responseFunction: Any => Unit) {
@@ -61,7 +61,7 @@ class BoundAsync(messageFunction: (AnyRef, Any => Unit) => Unit)
     if (srcMailbox == null) throw new UnsupportedOperationException("source actor has no mailbox")
     if (target.mailbox == null) throw new UnsupportedOperationException("target actor has no mailbox")
     target._open
-    srcMailbox.send(target, msg)(responseFunction)
+    srcMailbox.send(target, msg, this)(responseFunction)
   }
 
   override def process(msg: AnyRef, responseFunction: Any => Unit) {
