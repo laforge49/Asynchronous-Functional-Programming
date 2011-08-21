@@ -24,7 +24,11 @@
 package org.agilewiki
 package blip
 
-abstract class Safe {
+abstract class Safe extends Bound {
+  override def send(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit srcActor: ActiveActor) {
+    func(msg, rf)
+  }
+
   def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor)
 }
 

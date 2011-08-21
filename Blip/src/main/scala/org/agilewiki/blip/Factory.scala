@@ -65,20 +65,6 @@ abstract class Factory(_id: FactoryId) {
       val v = componentMsgFunctions.get(k)
       actorMsgFunctions.put(k, v)
     }
-    val actorSafes = actor.safes
-    val componentSafes = component.safes
-    var its = componentSafes.keySet.iterator
-    while (its.hasNext) {
-      val k = its.next
-      if (actorSafes.containsKey(k)) {
-        throw new IllegalArgumentException("bindSafe conflict on actor " +
-          getClass.getName +
-          "message " +
-          k.getName)
-      }
-      val v = componentSafes.get(k)
-      actorSafes.put(k, v)
-    }
     val componentFactory = component.componentFactory
     if (componentFactory == null) return
     val componentFactoryClass = componentFactory.getClass.asInstanceOf[Class[ComponentFactory]]

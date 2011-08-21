@@ -97,11 +97,11 @@ class Mailbox
     curMsg = msg
     val target = msg.target
     exceptionFunction = reqExceptionFunction
-    val reqFunction = target.messageFunctions.get(msg.req.getClass)
+    val bound = target.messageFunctions.get(msg.req.getClass)
     try {
-      if (reqFunction == null)
+      if (bound == null)
         throw new IllegalArgumentException("unbound message: " + msg.req.getClass.getName)
-      reqFunction(msg.req, reply)
+      bound.process(msg.req, reply)
     } catch {
       case ex: Exception => {
         reply(ex)

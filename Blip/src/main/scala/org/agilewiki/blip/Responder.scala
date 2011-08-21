@@ -24,21 +24,69 @@
 package org.agilewiki
 package blip
 
+abstract class Bound {
+  def send(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor)
+
+  def process(msg: AnyRef, responseFunction: Any => Unit) {
+    throw new UnsupportedOperationException
+  }
+}
+
+class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
+  extends Bound {
+  def reqFunction = messageFunction
+
+  override def send(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor) {
+    val srcMailbox = {
+      if (srcActor == null) null
+      else srcActor.actor.mailbox
+    }
+    if (srcMailbox == null && target.mailbox != null) throw new UnsupportedOperationException(
+      "An immutable actor can only send to another immutable actor."
+    )
+    target._open
+    if (target.mailbox == null || target.mailbox == srcMailbox) messageFunction(msg, responseFunction)
+    else srcMailbox.send(target, msg)(responseFunction)
+  }
+
+  override def process(msg: AnyRef, responseFunction: Any => Unit) {
+    messageFunction(msg, responseFunction)
+  }
+}
+
+class BoundAsync(messageFunction: (AnyRef, Any => Unit) => Unit)
+  extends Bound {
+  override def send(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor) {
+    val srcMailbox = srcActor.actor.mailbox
+    if (srcMailbox == null) throw new UnsupportedOperationException("source actor has no mailbox")
+    if (target.mailbox == null) throw new UnsupportedOperationException("target actor has no mailbox")
+    target._open
+    srcMailbox.send(target, msg)(responseFunction)
+  }
+
+  override def process(msg: AnyRef, responseFunction: Any => Unit) {
+    messageFunction(msg, responseFunction)
+  }
+}
+
 trait Responder extends SystemServicesGetter {
   val messageFunctions =
-    new java.util.HashMap[Class[_ <: AnyRef], (AnyRef, Any => Unit) => Unit]
+    new java.util.HashMap[Class[_ <: AnyRef], Bound]
 
   protected def bind(reqClass: Class[_ <: AnyRef], messageFunction: (AnyRef, Any => Unit) => Unit) {
     if (activeActor.actor.opened) throw new IllegalStateException
-    messageFunctions.put(reqClass, messageFunction)
+    messageFunctions.put(reqClass, new BoundFunction(messageFunction))
   }
 
-  val safes = new java.util.HashMap[Class[_ <: AnyRef], Safe]
+  protected def bindAsync(reqClass: Class[_ <: AnyRef], messageFunction: (AnyRef, Any => Unit) => Unit) {
+    if (activeActor.actor.opened) throw new IllegalStateException
+    messageFunctions.put(reqClass, new BoundAsync(messageFunction))
+  }
 
   protected def bindSafe(reqClass: Class[_ <: AnyRef],
                          safe: Safe) {
     if (activeActor.actor.opened) throw new IllegalStateException
-    safes.put(reqClass, safe)
+    messageFunctions.put(reqClass, safe)
   }
 
   def mailbox: Mailbox

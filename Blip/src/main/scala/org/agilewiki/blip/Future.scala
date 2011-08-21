@@ -41,7 +41,8 @@ class Future
   }
 
   def sendSynchronous(dst: Actor, msg: AnyRef) {
-    dst.sendSynchronous(msg, synchronousResponse)
+    val boundFunction = dst.messageFunctions.get(msg.getClass).asInstanceOf[BoundFunction]
+    boundFunction.reqFunction(msg, synchronousResponse)
   }
 
   def sendAsynchronous(dst: Actor, msg: AnyRef) {

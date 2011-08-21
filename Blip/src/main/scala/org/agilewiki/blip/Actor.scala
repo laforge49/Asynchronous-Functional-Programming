@@ -93,29 +93,9 @@ class Actor
   def apply(msg: AnyRef)
            (responseFunction: Any => Unit)
            (implicit srcActor: ActiveActor) {
-    _open
-    val srcMailbox = {
-      if (srcActor == null) null
-      else srcActor.actor.mailbox
-    }
-    if (srcMailbox == null && mailbox != null) throw new UnsupportedOperationException(
-      "An immutable actor can only send to another immutable actor."
-    )
-    if (safes.containsKey(msg.getClass)) sendSafe(msg, responseFunction, srcActor)
-    else if (mailbox == null || mailbox == srcMailbox) sendSynchronous(msg, responseFunction)
-    else srcMailbox.send(this, msg)(responseFunction)
-  }
-
-  def sendSynchronous(msg: AnyRef, responseFunction: Any => Unit) {
-    val reqFunction = messageFunctions.get(msg.getClass)
-    if (reqFunction == null) throw new UnsupportedOperationException(msg.getClass.getName)
-    reqFunction(msg, responseFunction)
-  }
-
-  def sendSafe(msg: AnyRef, responseFunction: Any => Unit, srcActor: ActiveActor) {
-    val safe = safes.get(msg.getClass)
-    if (safe == null) throw new UnsupportedOperationException(msg.getClass.getName)
-    safe.func(msg, responseFunction)(srcActor)
+    val bound = messageFunctions.get(msg.getClass)
+    if (bound == null) throw new IllegalArgumentException("Unknown type of message: " + msg.getClass.getName)
+    bound.send(this, msg, responseFunction)(srcActor)
   }
 
   lazy val messageClasses = {
@@ -123,7 +103,6 @@ class Actor
       new ClassComparator
     )
     smf.addAll(messageFunctions.keySet)
-    smf.addAll(safes.keySet)
     val seq = new NavSetSeq(smf)
     seq.setMailbox(_mailbox)
     seq
@@ -141,8 +120,7 @@ class Actor
 
   def requiredService(reqClass: Class[_ <: AnyRef]) {
     if (opened) throw new IllegalStateException
-    if (!messageFunctions.containsKey(reqClass) &&
-      !safes.containsKey(reqClass))
+    if (!messageFunctions.containsKey(reqClass))
       throw new UnsupportedOperationException("service missing for " + reqClass.getName)
   }
 
