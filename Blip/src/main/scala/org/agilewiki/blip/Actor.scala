@@ -93,6 +93,7 @@ class Actor
   def apply(msg: AnyRef)
            (responseFunction: Any => Unit)
            (implicit srcActor: ActiveActor) {
+    _open
     val bound = messageFunctions.get(msg.getClass)
     if (bound == null) throw new IllegalArgumentException("Unknown type of message: " + msg.getClass.getName)
     bound.send(this, msg, responseFunction)(srcActor)

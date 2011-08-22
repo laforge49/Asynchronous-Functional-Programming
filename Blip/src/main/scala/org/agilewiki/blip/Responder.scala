@@ -44,7 +44,6 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
     if (srcMailbox == null && target.mailbox != null) throw new UnsupportedOperationException(
       "An immutable actor can only send to another immutable actor."
     )
-    target._open
     if (target.mailbox == null || target.mailbox == srcMailbox) messageFunction(msg, responseFunction)
     else srcMailbox.send(target, msg, this)(responseFunction)
   }
@@ -60,7 +59,6 @@ class BoundAsync(messageFunction: (AnyRef, Any => Unit) => Unit)
     val srcMailbox = srcActor.actor.mailbox
     if (srcMailbox == null) throw new UnsupportedOperationException("source actor has no mailbox")
     if (target.mailbox == null) throw new UnsupportedOperationException("target actor has no mailbox")
-    target._open
     srcMailbox.send(target, msg, this)(responseFunction)
   }
 
