@@ -25,6 +25,7 @@ package org.agilewiki
 package incDes
 
 import blip._
+import transactions._
 
 class IncDes extends Actor {
   protected var data: ImmutableData = _

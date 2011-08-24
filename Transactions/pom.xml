@@ -12,10 +12,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.agilewiki</groupId>
-    <artifactId>IncDes</artifactId>
+    <artifactId>Transactions</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
-    <name>IncDes</name>
+    <name>Transactions</name>
     
     <properties>
     	<scala.version>2.9.0</scala.version>
@@ -125,11 +125,6 @@
         <dependency>
             <groupId>org.agilewiki</groupId>
             <artifactId>Blip</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.agilewiki</groupId>
-            <artifactId>Transactions</artifactId>
             <version>1.0</version>
         </dependency>
         <!--dependency>

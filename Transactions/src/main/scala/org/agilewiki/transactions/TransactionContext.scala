@@ -22,6 +22,6 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki
-package incDes
+package transactions
 
 trait TransactionContext

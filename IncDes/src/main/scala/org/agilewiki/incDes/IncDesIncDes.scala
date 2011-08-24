@@ -26,6 +26,7 @@ package incDes
 
 import blip._
 import services._
+import transactions._
 
 class SubordinateIncDesFactory(id: FactoryId)
   extends SubordinateFactory(id) {

@@ -29,6 +29,7 @@ package mashup
 import org.specs.SpecificationWithJUnit
 import blip._
 import seq._
+import transactions._
 
 case class Title()
 
