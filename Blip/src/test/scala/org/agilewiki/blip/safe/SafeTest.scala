@@ -23,7 +23,7 @@ class Driver extends Actor {
 
 case class SafePrintEven(safeActor: SafeActor)
   extends Safe {
-  def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val printEven = msg.asInstanceOf[PrintEven]
     val value = printEven.value
     if (value % 2 == 0) safeActor(Print(value))(rf)

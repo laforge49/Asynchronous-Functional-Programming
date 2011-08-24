@@ -35,7 +35,7 @@ class Mailbox
 
   override def scheduler = super.scheduler
 
-  private var curMsg: MailboxMsg = null
+  var curMsg: MailboxMsg = null
 
   def currentMessage = curMsg
 
@@ -94,17 +94,8 @@ class Mailbox
   }
 
   def req(msg: MailboxReq) {
-    curMsg = msg
-    val target = msg.target
-    exceptionFunction = reqExceptionFunction
     val bound = msg.binding
-    try {
-      bound.process(msg.req, reply)
-    } catch {
-      case ex: Exception => {
-        reply(ex)
-      }
-    }
+    bound.process(this, msg, reply)
   }
 
   def rsp(msg: MailboxRsp) {

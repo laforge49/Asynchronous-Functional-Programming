@@ -27,7 +27,7 @@ package blip
 abstract class Bound {
   def send(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor)
 
-  def process(msg: AnyRef, responseFunction: Any => Unit) {
+  def process(mailbox: Mailbox, mailboxReq: MailboxReq, responseFunction: Any => Unit) {
     throw new UnsupportedOperationException
   }
 }
@@ -48,8 +48,17 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
     else srcMailbox.send(target, msg, this)(responseFunction)
   }
 
-  override def process(msg: AnyRef, responseFunction: Any => Unit) {
-    messageFunction(msg, responseFunction)
+  override def process(mailbox: Mailbox, mailboxReq: MailboxReq, responseFunction: Any => Unit) {
+    mailbox.curMsg = mailboxReq
+    val target = mailboxReq.target
+    mailbox.exceptionFunction = mailbox.reqExceptionFunction
+    try {
+      messageFunction(mailboxReq.req, responseFunction)
+    } catch {
+      case ex: Exception => {
+        responseFunction(ex)
+      }
+    }
   }
 }
 
@@ -62,8 +71,17 @@ class BoundAsync(messageFunction: (AnyRef, Any => Unit) => Unit)
     srcMailbox.send(target, msg, this)(responseFunction)
   }
 
-  override def process(msg: AnyRef, responseFunction: Any => Unit) {
-    messageFunction(msg, responseFunction)
+  override def process(mailbox: Mailbox, mailboxReq: MailboxReq, responseFunction: Any => Unit) {
+    mailbox.curMsg = mailboxReq
+    val target = mailboxReq.target
+    mailbox.exceptionFunction = mailbox.reqExceptionFunction
+    try {
+      messageFunction(mailboxReq.req, responseFunction)
+    } catch {
+      case ex: Exception => {
+        responseFunction(ex)
+      }
+    }
   }
 }
 

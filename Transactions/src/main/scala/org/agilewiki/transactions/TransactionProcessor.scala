@@ -68,6 +68,6 @@ class TransactionProcessor extends Actor {
     if (!isCompatible(mailboxReq)) return
     addActive(mailboxReq)
     val transaction = mailboxReq.binding.asInstanceOf[Transaction]
-    transaction.process(mailboxReq.req, mailboxReq.responseFunction)
+    transaction.process(mailbox, mailboxReq, mailboxReq.responseFunction)
   }
 }
