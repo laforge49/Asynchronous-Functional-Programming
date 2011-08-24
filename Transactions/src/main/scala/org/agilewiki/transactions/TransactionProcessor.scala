@@ -25,7 +25,16 @@ package org.agilewiki
 package transactions
 
 import blip._
+import java.util.ArrayDeque
 
 class TransactionProcessor extends Actor {
   var activityLevel = 0
+  var transactionContext: TransactionContext = null
+  val pending = new ArrayDeque[MailboxReq]
+
+  def isInvalid = activityLevel < 0
+
+  def isActive = activityLevel > 0
+
+  def isIdle = activityLevel = 0
 }
