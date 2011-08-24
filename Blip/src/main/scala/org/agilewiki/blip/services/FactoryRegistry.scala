@@ -36,7 +36,6 @@ class FactoryRegistryComponentFactory extends ComponentFactory {
 
   def getFactory(id: FactoryId) = {
     val factory = factories.get(id.value)
-    if (factory == null) throw new IllegalArgumentException("Unknown factory id: " + id.value)
     factory
   }
 
