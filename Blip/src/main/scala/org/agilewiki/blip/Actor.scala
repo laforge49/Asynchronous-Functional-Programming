@@ -33,6 +33,7 @@ class Actor
   val components = new java.util.LinkedHashMap[Class[_ <: ComponentFactory], Component]
   private var componentList: java.util.ArrayList[Component] = null
   var opened = false
+  private var _superior: Actor = null
 
   lazy val _open = {
     if (!components.isEmpty)  {
@@ -56,10 +57,17 @@ class Actor
     }
   }
 
-  def setFactory(factory: Factory) {
-    if (opened) throw new IllegalStateException
-    _factory = factory
-  }
+    def setSuperior(superior: Actor) {
+      if (opened) throw new IllegalStateException
+      _superior = superior
+    }
+
+  def superior = _superior
+
+    def setFactory(factory: Factory) {
+      if (opened) throw new IllegalStateException
+      _factory = factory
+    }
 
   def setMailbox(mailbox: Mailbox) {
     if (opened) throw new IllegalStateException
@@ -95,8 +103,9 @@ class Actor
            (implicit srcActor: ActiveActor) {
     _open
     val bound = messageFunctions.get(msg.getClass)
-    if (bound == null) throw new IllegalArgumentException("Unknown type of message: " + msg.getClass.getName)
-    bound.send(this, msg, responseFunction)(srcActor)
+    if (bound != null) bound.send(this, msg, responseFunction)(srcActor)
+    else if (superior != null) superior(msg)(responseFunction)(srcActor)
+    else throw new IllegalArgumentException("Unknown type of message: " + msg.getClass.getName)
   }
 
   lazy val messageClasses = {
