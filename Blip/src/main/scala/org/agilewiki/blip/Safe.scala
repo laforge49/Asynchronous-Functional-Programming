@@ -24,24 +24,26 @@
 package org.agilewiki
 package blip
 
-abstract class Safe extends Bound {
+class Safe extends Bound {
   override def send(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit srcActor: ActiveActor) {
     func(msg, rf)
   }
 
-  def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor)
+  def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor){
+    throw new UnsupportedOperationException
+  }
 }
 
 class SafeConstant(any: Any)
   extends Safe {
-  def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     rf(any)
   }
 }
 
 class SafeForward(actor: Actor)
   extends Safe {
-  def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     actor(msg)(rf)
   }
 }

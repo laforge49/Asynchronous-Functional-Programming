@@ -25,17 +25,7 @@ package org.agilewiki
 package transactions
 
 import blip._
-import java.util.{ArrayList, ArrayDeque}
 
-class TransactionProcessor extends Actor {
-  var activityLevel = 0
-  var transactionContext: TransactionContext = null
-  val pending = new ArrayDeque[MailboxReq]
-  val active = new ArrayList[BoundTransaction]
-
-  def isInvalid = activityLevel < 0
-
-  def isActive = activityLevel > 0
-
-  def isIdle = activityLevel = 0
+class BoundTransaction extends Safe {
+  def level = 10
 }

@@ -34,7 +34,7 @@ class ActorRegistryComponentFactory extends ComponentFactory {
 
 class SafeResolveName(systemServices: Actor)
   extends Safe {
-  def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val req = msg.asInstanceOf[ResolveName]
     req.name match {
       case factoryId: FactoryId => systemServices(Instantiate(factoryId, req.mailbox))(rf)
