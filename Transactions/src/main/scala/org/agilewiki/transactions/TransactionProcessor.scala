@@ -25,17 +25,49 @@ package org.agilewiki
 package transactions
 
 import blip._
-import java.util.{ArrayList, ArrayDeque}
 
 class TransactionProcessor extends Actor {
   var activityLevel = 0
   var transactionContext: TransactionContext = null
-  val pending = new ArrayDeque[MailboxReq]
-  val active = new ArrayList[BoundTransaction]
+  val pending = new java.util.ArrayDeque[MailboxReq]
+  val active = new java.util.HashSet[MailboxReq]
 
   def isInvalid = activityLevel < 0
 
   def isActive = activityLevel > 0
 
   def isIdle = activityLevel = 0
+
+  def maxLevel = {
+    var level = 0
+    val it = active.iterator
+    while (it.hasNext) {
+      val l = it.next.binding.asInstanceOf[Transaction].level
+      if (l > level) level = l
+    }
+    level
+  }
+
+  def addActive(mailboxReq: MailboxReq) {
+    val l = mailboxReq.binding.asInstanceOf[Transaction].level
+    if (l > activityLevel) activityLevel = l
+    active.add(mailboxReq)
+  }
+
+  def removeActive(mailboxReq: MailboxReq) {
+    val l = mailboxReq.binding.asInstanceOf[Transaction].level
+    active.remove(mailboxReq)
+    if (l == activityLevel) activityLevel = maxLevel
+  }
+
+  def isCompatible(mailboxReq: MailboxReq) =
+    mailboxReq.binding.asInstanceOf[Transaction].maxCompatibleLevel <= activityLevel
+
+  def runPending {
+    val mailboxReq = pending.peekFirst
+    if (!isCompatible(mailboxReq)) return
+    addActive(mailboxReq)
+    val transaction = mailboxReq.binding.asInstanceOf[Transaction]
+    transaction.process(mailboxReq.req, mailboxReq.responseFunction)
+  }
 }
