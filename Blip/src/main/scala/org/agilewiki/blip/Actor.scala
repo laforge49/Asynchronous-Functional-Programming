@@ -36,7 +36,7 @@ class Actor
   private var _superior: Actor = null
 
   lazy val _open = {
-    if (!components.isEmpty)  {
+    if (!components.isEmpty) {
       componentList = new java.util.ArrayList[Component](components.values)
       var i = 0
       while (i < componentList.size) {
@@ -57,17 +57,17 @@ class Actor
     }
   }
 
-    def setSuperior(superior: Actor) {
-      if (opened) throw new IllegalStateException
-      _superior = superior
-    }
+  def setSuperior(superior: Actor) {
+    if (opened) throw new IllegalStateException
+    _superior = superior
+  }
 
   def superior = _superior
 
-    def setFactory(factory: Factory) {
-      if (opened) throw new IllegalStateException
-      _factory = factory
-    }
+  def setFactory(factory: Factory) {
+    if (opened) throw new IllegalStateException
+    _factory = factory
+  }
 
   def setMailbox(mailbox: Mailbox) {
     if (opened) throw new IllegalStateException

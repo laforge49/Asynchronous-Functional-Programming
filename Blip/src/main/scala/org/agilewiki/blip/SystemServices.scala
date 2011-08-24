@@ -34,3 +34,16 @@ object SystemServices {
     systemServices
   }
 }
+
+object Subsystem {
+  def apply(systemServices: Actor,
+            rootComponentFactory: ComponentFactory,
+            factoryId: FactoryId = new FactoryId("System")) = {
+    val subSystemFactory = new CompositeFactory(factoryId, rootComponentFactory)
+    val subSystem = subSystemFactory.newActor(new Mailbox)
+    subSystem.setSystemServices(subSystem)
+    subSystem.setSuperior(systemServices)
+    systemServices._open
+    systemServices
+  }
+}

@@ -48,11 +48,20 @@ class SafeInstantiate(factoryRegistryComponentFactory: FactoryRegistryComponentF
   extends Safe {
   def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val factoryId = msg.asInstanceOf[Instantiate].factoryId
-    val mailbox = msg.asInstanceOf[Instantiate].mailbox
     val factory = factoryRegistryComponentFactory.getFactory(factoryId)
-    val actor = factory.newActor(mailbox)
-    actor.setSystemServices(systemServices)
-    rf(actor)
+    if (factory != null) {
+      val mailbox = msg.asInstanceOf[Instantiate].mailbox
+      val actor = factory.newActor(mailbox)
+      actor.setSystemServices(systemServices)
+      rf(actor)
+      return
+    }
+    val superior = systemServices.superior
+    if (superior == null) {
+      rf(null)
+      return
+    }
+    superior(msg)(rf)
   }
 }
 
@@ -72,7 +81,7 @@ class FactoryRegistryComponent(actor: Actor)
     val it = factories.keySet.iterator
     while (it.hasNext) {
       val factory = factories.get(it.next)
-      factory.configure(actor,cf)
+      factory.configure(actor, cf)
     }
   }
 }

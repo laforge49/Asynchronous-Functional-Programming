@@ -81,6 +81,15 @@ class ActorRegistryComponent(actor: Actor)
   private def getActor(msg: AnyRef, rf: Any => Unit) {
     val actorId = msg.asInstanceOf[GetActor].actorId
     val key = actorId.value
-    rf(actors.get(key))
+    val a = actors.get(key)
+    if (a != null) {
+      rf(actors.get(key))
+      return
+    }
+    if (actor.superior == null) {
+      rf(null)
+      return
+    }
+    actor.superior(msg)(rf)
   }
 }

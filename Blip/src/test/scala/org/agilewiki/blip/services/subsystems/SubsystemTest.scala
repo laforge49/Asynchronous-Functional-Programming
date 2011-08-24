@@ -1,6 +1,6 @@
 package org.agilewiki.blip
 package services
-package factoryRegistry
+package subsystems
 
 import org.specs.SpecificationWithJUnit
 
@@ -47,12 +47,13 @@ class Driver extends Actor {
   }
 }
 
-class FactoryRegistryTest extends SpecificationWithJUnit {
-  "FactoryRegistryTest" should {
+class SubsystemTest extends SpecificationWithJUnit {
+  "SubsystemTest" should {
     "instantiate" in {
       val systemServices = SystemServices(new SomeComponentFactory)
+      val aSubsystem = Subsystem(systemServices, new FactoryRegistryComponentFactory)
       val driver = new Driver
-      driver.setSystemServices(systemServices)
+      driver.setSystemServices(aSubsystem)
       Future(driver, DoIt())
     }
   }
