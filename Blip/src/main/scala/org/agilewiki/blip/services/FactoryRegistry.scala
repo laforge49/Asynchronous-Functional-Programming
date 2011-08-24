@@ -56,10 +56,7 @@ class SafeInstantiate(factoryRegistryComponentFactory: FactoryRegistryComponentF
       return
     }
     val superior = systemServices.superior
-    if (superior == null) {
-      rf(null)
-      return
-    }
+    if (superior == null) throw new IllegalArgumentException("Unknown factory id: "+factoryId.value)
     superior(msg)(rf)
   }
 }
