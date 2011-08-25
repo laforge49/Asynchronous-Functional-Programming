@@ -25,7 +25,7 @@ package org.agilewiki
 package blip
 
 abstract class Bound {
-  def send(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor)
+  def func(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor)
 
   def process(mailbox: Mailbox, mailboxReq: MailboxReq, responseFunction: Any => Unit) {
     throw new UnsupportedOperationException
@@ -36,7 +36,7 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
   extends Bound {
   def reqFunction = messageFunction
 
-  override def send(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor) {
+  override def func(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor) {
     val srcMailbox = {
       if (srcActor == null) null
       else srcActor.actor.mailbox
@@ -64,7 +64,7 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
 
 class BoundAsync(messageFunction: (AnyRef, Any => Unit) => Unit)
   extends Bound {
-  override def send(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor) {
+  override def func(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor) {
     val srcMailbox = srcActor.actor.mailbox
     if (srcMailbox == null) throw new UnsupportedOperationException("source actor has no mailbox")
     if (target.mailbox == null) throw new UnsupportedOperationException("target actor has no mailbox")
