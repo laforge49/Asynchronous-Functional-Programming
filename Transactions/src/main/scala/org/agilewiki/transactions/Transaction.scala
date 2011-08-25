@@ -46,6 +46,7 @@ class Transaction(messageFunction: (AnyRef, Any => Unit) => Unit)
     try {
       messageFunction(mailboxReq.req, {
         rsp1: Any => {
+          transactionProcessor.removeActive(mailboxReq)
           responseFunction(rsp1)
           transactionProcessor.runPending
         }
