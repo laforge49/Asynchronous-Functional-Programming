@@ -64,7 +64,7 @@ class Mailbox
       pending.put(ctrl, blkmsg)
     }
     blkmsg.add(msg)
-    if (blkmsg.size > 63) {
+    if (blkmsg.size > 63 || isMailboxEmpty) {
       pending.remove(ctrl)
       ctrl._send(blkmsg)
     }
@@ -114,7 +114,9 @@ class Mailbox
 
   private def reply(content: Any) {
     val req = currentRequestMessage
-    if (!req.active) return
+    if (!req.active) {
+      return
+    }
     req.active = false
     val sender = req.sender
     val rsp = new MailboxRsp(

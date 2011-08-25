@@ -62,15 +62,16 @@ class TransactionProcessor extends Actor {
   }
 
   def isCompatible(mailboxReq: MailboxReq) =
-    mailboxReq.binding.asInstanceOf[Transaction].maxCompatibleLevel <= activityLevel
+    mailboxReq.binding.asInstanceOf[Transaction].maxCompatibleLevel >= activityLevel
 
   def addPending(mailboxReq: MailboxReq) {
     pending.addLast(mailboxReq)
-    if (isIdle) runPending
+    runPending
   }
 
   @tailrec final def runPending {
     val mailboxReq = pending.peekFirst
+    if (mailboxReq == null) return
     if (!isCompatible(mailboxReq)) return
     pending.removeFirst
     addActive(mailboxReq)

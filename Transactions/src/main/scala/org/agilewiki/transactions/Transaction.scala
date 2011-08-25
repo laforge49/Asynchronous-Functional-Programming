@@ -35,7 +35,6 @@ abstract class Transaction(messageFunction: (AnyRef, Any => Unit) => Unit)
   override def process(mailbox: Mailbox, mailboxReq: MailboxReq, responseFunction: Any => Unit) {
     val transactionProcessor = mailboxReq.target.asInstanceOf[TransactionProcessor]
     transactionProcessor.addPending(mailboxReq)
-
   }
 
   def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq, responseFunction: Any => Unit) {
@@ -44,6 +43,7 @@ abstract class Transaction(messageFunction: (AnyRef, Any => Unit) => Unit)
     mailbox.exceptionFunction = mailbox.reqExceptionFunction
     mailbox.transactionContext = null
     try {
+      if (transactionProcessor.isInvalid) throw new IllegalStateException
       messageFunction(mailboxReq.req, {
         rsp1: Any => {
           transactionProcessor.removeActive(mailboxReq)
