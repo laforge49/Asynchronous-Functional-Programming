@@ -42,8 +42,7 @@ class FactoryRegistryComponentFactory extends ComponentFactory {
   override def instantiate(actor: Actor) = new FactoryRegistryComponent(actor)
 }
 
-class SafeInstantiate(factoryRegistryComponentFactory: FactoryRegistryComponentFactory,
-                      systemServices: Actor)
+class SafeInstantiate(factoryRegistryComponentFactory: FactoryRegistryComponentFactory)
   extends Safe {
   override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val factoryId = msg.asInstanceOf[Instantiate].factoryId
@@ -51,11 +50,11 @@ class SafeInstantiate(factoryRegistryComponentFactory: FactoryRegistryComponentF
     if (factory != null) {
       val mailbox = msg.asInstanceOf[Instantiate].mailbox
       val actor = factory.newActor(mailbox)
-      actor.setSystemServices(systemServices)
+      actor.setSystemServices(target)
       rf(actor)
       return
     }
-    val superior = systemServices.superior
+    val superior = target.superior
     if (superior == null) throw new IllegalArgumentException("Unknown factory id: "+factoryId.value)
     superior(msg)(rf)
   }
@@ -67,7 +66,7 @@ class FactoryRegistryComponent(actor: Actor)
   override def setComponentFactory(componentFactory: ComponentFactory) {
     super.setComponentFactory(componentFactory)
     val cf = componentFactory.asInstanceOf[FactoryRegistryComponentFactory]
-    bindSafe(classOf[Instantiate], new SafeInstantiate(cf, actor))
+    bindSafe(classOf[Instantiate], new SafeInstantiate(cf))
     bindSafe(classOf[Factories], new SafeConstant(new NavMapSeq(cf.factories)))
   }
 

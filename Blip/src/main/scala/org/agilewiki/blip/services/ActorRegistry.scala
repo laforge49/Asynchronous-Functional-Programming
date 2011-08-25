@@ -32,13 +32,13 @@ class ActorRegistryComponentFactory extends ComponentFactory {
   override def instantiate(actor: Actor) = new ActorRegistryComponent(actor)
 }
 
-class SafeResolveName(systemServices: Actor)
+object SafeResolveName
   extends Safe {
   override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val req = msg.asInstanceOf[ResolveName]
     req.name match {
-      case factoryId: FactoryId => systemServices(Instantiate(factoryId, req.mailbox))(rf)
-      case actorId: ActorId => systemServices(GetActor(actorId))(rf)
+      case factoryId: FactoryId => target(Instantiate(factoryId, req.mailbox))(rf)
+      case actorId: ActorId => target(GetActor(actorId))(rf)
     }
   }
 }
@@ -49,7 +49,7 @@ class ActorRegistryComponent(actor: Actor)
   bind(classOf[Register], register)
   bind(classOf[Unregister], unregister)
   bind(classOf[GetActor], getActor)
-  bindSafe(classOf[ResolveName], new SafeResolveName(actor))
+  bindSafe(classOf[ResolveName], SafeResolveName)
   bindSafe(classOf[Actors],
     new SafeConstant(new NavMapSeq(actors)))
 
