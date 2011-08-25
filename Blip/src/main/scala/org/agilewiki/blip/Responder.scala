@@ -24,18 +24,25 @@
 package org.agilewiki
 package blip
 
-abstract class Bound {
-  def func(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor)
+abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Safe {
+  def reqFunction = messageFunction
 
   def process(mailbox: Mailbox, mailboxReq: MailboxReq, responseFunction: Any => Unit) {
-    throw new UnsupportedOperationException
+    mailbox.curMsg = mailboxReq
+    val target = mailboxReq.target
+    mailbox.exceptionFunction = mailbox.reqExceptionFunction
+    try {
+      messageFunction(mailboxReq.req, responseFunction)
+    } catch {
+      case ex: Exception => {
+        responseFunction(ex)
+      }
+    }
   }
 }
 
 class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
-  extends Bound {
-  def reqFunction = messageFunction
-
+  extends Bound(messageFunction) {
   override def func(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor) {
     val srcMailbox = {
       if (srcActor == null) null
@@ -47,56 +54,25 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
     if (target.mailbox == null || target.mailbox == srcMailbox) messageFunction(msg, responseFunction)
     else srcMailbox.send(target, msg, this)(responseFunction)
   }
-
-  override def process(mailbox: Mailbox, mailboxReq: MailboxReq, responseFunction: Any => Unit) {
-    mailbox.curMsg = mailboxReq
-    val target = mailboxReq.target
-    mailbox.exceptionFunction = mailbox.reqExceptionFunction
-    try {
-      messageFunction(mailboxReq.req, responseFunction)
-    } catch {
-      case ex: Exception => {
-        responseFunction(ex)
-      }
-    }
-  }
 }
 
 class BoundAsync(messageFunction: (AnyRef, Any => Unit) => Unit)
-  extends Bound {
+  extends Bound(messageFunction) {
   override def func(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor) {
     val srcMailbox = srcActor.actor.mailbox
     if (srcMailbox == null) throw new UnsupportedOperationException("source actor has no mailbox")
     if (target.mailbox == null) throw new UnsupportedOperationException("target actor has no mailbox")
     srcMailbox.send(target, msg, this)(responseFunction)
   }
-
-  override def process(mailbox: Mailbox, mailboxReq: MailboxReq, responseFunction: Any => Unit) {
-    mailbox.curMsg = mailboxReq
-    val target = mailboxReq.target
-    mailbox.exceptionFunction = mailbox.reqExceptionFunction
-    try {
-      messageFunction(mailboxReq.req, responseFunction)
-    } catch {
-      case ex: Exception => {
-        responseFunction(ex)
-      }
-    }
-  }
 }
 
 trait Responder extends SystemServicesGetter {
   val messageFunctions =
-    new java.util.HashMap[Class[_ <: AnyRef], Bound]
+    new java.util.HashMap[Class[_ <: AnyRef], Safe]
 
   protected def bind(reqClass: Class[_ <: AnyRef], messageFunction: (AnyRef, Any => Unit) => Unit) {
     if (activeActor.actor.opened) throw new IllegalStateException
     messageFunctions.put(reqClass, new BoundFunction(messageFunction))
-  }
-
-  protected def bindAsync(reqClass: Class[_ <: AnyRef], messageFunction: (AnyRef, Any => Unit) => Unit) {
-    if (activeActor.actor.opened) throw new IllegalStateException
-    messageFunctions.put(reqClass, new BoundAsync(messageFunction))
   }
 
   protected def bindSafe(reqClass: Class[_ <: AnyRef],

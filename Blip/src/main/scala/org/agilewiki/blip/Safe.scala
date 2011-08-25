@@ -24,10 +24,8 @@
 package org.agilewiki
 package blip
 
-class Safe extends Bound {
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit srcActor: ActiveActor) {
-    throw new UnsupportedOperationException
-  }
+abstract class Safe{
+  def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit srcActor: ActiveActor)
 }
 
 class SafeConstant(any: Any)

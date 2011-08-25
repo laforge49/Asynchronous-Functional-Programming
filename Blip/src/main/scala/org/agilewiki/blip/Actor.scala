@@ -102,8 +102,8 @@ class Actor
            (responseFunction: Any => Unit)
            (implicit srcActor: ActiveActor) {
     _open
-    val bound = messageFunctions.get(msg.getClass)
-    if (bound != null) bound.func(this, msg, responseFunction)(srcActor)
+    val safe = messageFunctions.get(msg.getClass)
+    if (safe != null) safe.func(this, msg, responseFunction)(srcActor)
     else if (superior != null) superior(msg)(responseFunction)(srcActor)
     else throw new IllegalArgumentException("Unknown type of message: " + msg.getClass.getName)
   }

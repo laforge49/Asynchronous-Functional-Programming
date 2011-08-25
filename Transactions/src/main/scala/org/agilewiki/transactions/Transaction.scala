@@ -26,7 +26,8 @@ package transactions
 
 import blip._
 
-class Transaction extends Safe {
+abstract class Transaction(messageFunction: (AnyRef, Any => Unit) => Unit)
+  extends Bound(messageFunction) {
   def level = 10
 
   def maxCompatibleLevel = 0
