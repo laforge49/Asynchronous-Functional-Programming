@@ -25,6 +25,7 @@ package org.agilewiki
 package transactions
 
 import blip._
+import annotation.tailrec
 
 class TransactionProcessor extends Actor {
   var activityLevel = 0
@@ -36,7 +37,7 @@ class TransactionProcessor extends Actor {
 
   def isActive = activityLevel > 0
 
-  def isIdle = activityLevel = 0
+  def isIdle = activityLevel == 0
 
   def maxLevel = {
     var level = 0
@@ -63,11 +64,18 @@ class TransactionProcessor extends Actor {
   def isCompatible(mailboxReq: MailboxReq) =
     mailboxReq.binding.asInstanceOf[Transaction].maxCompatibleLevel <= activityLevel
 
-  def runPending {
+  def addPending(mailboxReq: MailboxReq) {
+    pending.addLast(mailboxReq)
+    if (isIdle) runPending
+  }
+
+  @tailrec final def runPending {
     val mailboxReq = pending.peekFirst
     if (!isCompatible(mailboxReq)) return
+    pending.removeFirst
     addActive(mailboxReq)
     val transaction = mailboxReq.binding.asInstanceOf[Transaction]
-    transaction.process(mailbox, mailboxReq, mailboxReq.responseFunction)
+    transaction.processTransaction(mailbox, mailboxReq, mailboxReq.responseFunction)
+    runPending
   }
 }

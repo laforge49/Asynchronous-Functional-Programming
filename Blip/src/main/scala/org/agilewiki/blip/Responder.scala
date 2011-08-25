@@ -24,16 +24,6 @@
 package org.agilewiki
 package blip
 
-class BoundAsync(messageFunction: (AnyRef, Any => Unit) => Unit)
-  extends Bound(messageFunction) {
-  override def func(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor) {
-    val srcMailbox = srcActor.actor.mailbox
-    if (srcMailbox == null) throw new UnsupportedOperationException("source actor has no mailbox")
-    if (target.mailbox == null) throw new UnsupportedOperationException("target actor has no mailbox")
-    srcMailbox.send(target, msg, this)(responseFunction)
-  }
-}
-
 trait Responder extends SystemServicesGetter {
   val messageFunctions =
     new java.util.HashMap[Class[_ <: AnyRef], Safe]

@@ -26,9 +26,34 @@ package transactions
 
 import blip._
 
-abstract class Transaction(messageFunction: (AnyRef, Any => Unit) => Unit)
+class Transaction(messageFunction: (AnyRef, Any => Unit) => Unit)
   extends Bound(messageFunction) {
   def level = 10
 
   def maxCompatibleLevel = 0
+
+  override def process(mailbox: Mailbox, mailboxReq: MailboxReq, responseFunction: Any => Unit) {
+    val transactionProcessor = mailboxReq.target.asInstanceOf[TransactionProcessor]
+    transactionProcessor.addPending(mailboxReq)
+
+  }
+
+  def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq, responseFunction: Any => Unit) {
+    val transactionProcessor = mailboxReq.target.asInstanceOf[TransactionProcessor]
+    mailbox.curMsg = mailboxReq
+    mailbox.exceptionFunction = mailbox.reqExceptionFunction
+    mailbox.transactionContext = null
+    try {
+      messageFunction(mailboxReq.req, {
+        rsp1: Any => {
+          responseFunction(rsp1)
+          transactionProcessor.runPending
+        }
+      })
+    } catch {
+      case ex: Exception => {
+        responseFunction(ex)
+      }
+    }
+  }
 }

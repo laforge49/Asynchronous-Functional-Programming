@@ -24,7 +24,7 @@
 package org.agilewiki
 package blip
 
-abstract class Safe{
+abstract class Safe {
   def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit srcActor: ActiveActor)
 }
 
@@ -43,12 +43,20 @@ class SafeForward(actor: Actor)
 }
 
 abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Safe {
+
+  override def func(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor) {
+    val srcMailbox = srcActor.actor.mailbox
+    if (srcMailbox == null) throw new UnsupportedOperationException("source actor has no mailbox")
+    if (target.mailbox == null) throw new UnsupportedOperationException("target actor has no mailbox")
+    asyncSendReq(srcMailbox, target, msg, this, responseFunction)
+  }
+
   def reqFunction = messageFunction
 
   def process(mailbox: Mailbox, mailboxReq: MailboxReq, responseFunction: Any => Unit) {
     mailbox.curMsg = mailboxReq
-    val target = mailboxReq.target
     mailbox.exceptionFunction = mailbox.reqExceptionFunction
+    mailbox.transactionContext = null
     try {
       messageFunction(mailboxReq.req, responseFunction)
     } catch {
@@ -56,6 +64,25 @@ abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Saf
         responseFunction(ex)
       }
     }
+  }
+
+  def asyncSendReq(srcMailbox: Mailbox,
+                targetActor: Actor,
+                content: AnyRef,
+                bound: Bound,
+                responseFunction: Any => Unit) {
+    val oldReq = srcMailbox.currentRequestMessage
+    val sender = oldReq.target
+    val req = new MailboxReq(
+      targetActor,
+      responseFunction,
+      oldReq,
+      content,
+      bound,
+      sender,
+      srcMailbox.exceptionFunction,
+      srcMailbox.transactionContext)
+    srcMailbox.addPending(targetActor, req)
   }
 }
 
@@ -70,6 +97,6 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
       "An immutable actor can only send to another immutable actor."
     )
     if (target.mailbox == null || target.mailbox == srcMailbox) messageFunction(msg, responseFunction)
-    else srcMailbox.send(target, msg, this)(responseFunction)
+    else asyncSendReq(srcMailbox, target, msg, this, responseFunction)
   }
 }

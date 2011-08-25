@@ -112,22 +112,6 @@ class Mailbox
     }
   }
 
-  def send(targetActor: Actor, content: AnyRef, bound: Bound)
-          (responseFunction: Any => Unit) {
-    val oldReq = currentRequestMessage
-    val sender = oldReq.target
-    val req = new MailboxReq(
-      targetActor,
-      responseFunction,
-      oldReq,
-      content,
-      bound,
-      sender,
-      exceptionFunction,
-      transactionContext)
-    addPending(targetActor, req)
-  }
-
   private def reply(content: Any) {
     val req = currentRequestMessage
     if (!req.active) return
