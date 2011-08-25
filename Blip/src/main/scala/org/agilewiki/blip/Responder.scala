@@ -24,38 +24,6 @@
 package org.agilewiki
 package blip
 
-abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Safe {
-  def reqFunction = messageFunction
-
-  def process(mailbox: Mailbox, mailboxReq: MailboxReq, responseFunction: Any => Unit) {
-    mailbox.curMsg = mailboxReq
-    val target = mailboxReq.target
-    mailbox.exceptionFunction = mailbox.reqExceptionFunction
-    try {
-      messageFunction(mailboxReq.req, responseFunction)
-    } catch {
-      case ex: Exception => {
-        responseFunction(ex)
-      }
-    }
-  }
-}
-
-class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
-  extends Bound(messageFunction) {
-  override def func(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor) {
-    val srcMailbox = {
-      if (srcActor == null) null
-      else srcActor.actor.mailbox
-    }
-    if (srcMailbox == null && target.mailbox != null) throw new UnsupportedOperationException(
-      "An immutable actor can only send to another immutable actor."
-    )
-    if (target.mailbox == null || target.mailbox == srcMailbox) messageFunction(msg, responseFunction)
-    else srcMailbox.send(target, msg, this)(responseFunction)
-  }
-}
-
 class BoundAsync(messageFunction: (AnyRef, Any => Unit) => Unit)
   extends Bound(messageFunction) {
   override def func(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor) {
