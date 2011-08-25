@@ -48,6 +48,8 @@ class Mailbox
 
   var exceptionFunction: Exception => Unit = null
 
+  var transactionContext: TransactionContext = null
+
   def reqExceptionFunction(ex: Exception) {
     reply(ex)
   }
@@ -96,10 +98,10 @@ class Mailbox
   def rsp(msg: MailboxRsp) {
     curMsg = msg
     exceptionFunction = msg.senderExceptionFunction
+    transactionContext = msg.transactionContext
     if (msg.rsp.isInstanceOf[Exception]) {
       exceptionFunction(msg.rsp.asInstanceOf[Exception])
-    }
-    else {
+    } else {
       try {
         msg.responseFunction(msg.rsp)
       } catch {
@@ -121,7 +123,8 @@ class Mailbox
       content,
       bound,
       sender,
-      exceptionFunction)
+      exceptionFunction,
+      transactionContext)
     addPending(targetActor, req)
   }
 
@@ -134,7 +137,8 @@ class Mailbox
       req.responseFunction,
       req.oldRequest,
       content,
-      req.senderExceptionFunction)
+      req.senderExceptionFunction,
+      req.transactionContext)
     addPending(sender, rsp)
   }
 

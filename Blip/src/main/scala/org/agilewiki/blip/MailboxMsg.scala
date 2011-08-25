@@ -26,10 +26,12 @@ package blip
 
 sealed abstract class MailboxMsg(rf: Any => Unit,
                                  oldReq: MailboxReq,
-                                 sef: Exception => Unit) {
+                                 sef: Exception => Unit,
+                                 tc: TransactionContext) {
   def responseFunction = rf
   def oldRequest = oldReq
   def senderExceptionFunction = sef
+  def transactionContext = tc
 }
 
 final class MailboxReq(dst: Actor,
@@ -38,8 +40,9 @@ final class MailboxReq(dst: Actor,
                        data: AnyRef,
                        bound: Bound,
                        src: MsgSrc,
-                       srcEF: Exception => Unit)
-  extends MailboxMsg(rf, oldReq, srcEF) {
+                       srcEF: Exception => Unit,
+                                 tc: TransactionContext)
+  extends MailboxMsg(rf, oldReq, srcEF, tc) {
   var active = true
   def sender = src
   def target = dst
@@ -50,7 +53,8 @@ final class MailboxReq(dst: Actor,
 final class MailboxRsp(rf: Any => Unit,
                        oldReq: MailboxReq,
                        data: Any,
-                       srcEF: Exception => Unit)
-  extends MailboxMsg(rf, oldReq, srcEF) {
+                       srcEF: Exception => Unit,
+                                 tc: TransactionContext)
+  extends MailboxMsg(rf, oldReq, srcEF, tc) {
   def rsp = data
 }
