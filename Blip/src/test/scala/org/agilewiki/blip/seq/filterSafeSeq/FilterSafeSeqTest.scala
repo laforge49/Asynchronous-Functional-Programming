@@ -5,7 +5,7 @@ package filterSafeSeq
 import org.specs.SpecificationWithJUnit
 
 class FilterSafe extends Safe {
-  override def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val kvPair = msg.asInstanceOf[KVPair[Int, Int]]
     rf(kvPair.value % 2 == 0)
   }

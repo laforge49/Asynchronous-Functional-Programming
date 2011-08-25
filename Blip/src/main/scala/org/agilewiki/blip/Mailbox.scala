@@ -75,7 +75,7 @@ class Mailbox
           val it = blkmsg.iterator
           while (it.hasNext) {
             it.next match {
-              case msg: MailboxReq => req(msg)
+              case msg: MailboxReq => msg.binding.process(this, msg, reply)
               case msg: MailboxRsp => rsp(msg)
             }
           }
@@ -91,11 +91,6 @@ class Mailbox
         }
       }
     }
-  }
-
-  def req(msg: MailboxReq) {
-    val bound = msg.binding
-    bound.process(this, msg, reply)
   }
 
   def rsp(msg: MailboxRsp) {

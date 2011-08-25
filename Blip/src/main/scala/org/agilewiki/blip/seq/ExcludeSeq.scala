@@ -26,7 +26,7 @@ package blip
 package seq
 
 class ExcludeSafe[K, V1](exclude: Sequence[K, V1]) extends Safe {
-  override def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val kvPair = msg.asInstanceOf[KVPair[Int, Int]]
     exclude(ContainsKey(kvPair.key)) {rsp => rf(!rsp.asInstanceOf[Boolean])}
   }

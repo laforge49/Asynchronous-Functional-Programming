@@ -10,7 +10,7 @@ class MapSafe extends Safe {
   alphabet.put(22, "Boy")
   alphabet.put(5, "Cat")
 
-  override def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val kvPair = msg.asInstanceOf[KVPair[Int, Int]]
     rf(alphabet.get(kvPair.value))
   }

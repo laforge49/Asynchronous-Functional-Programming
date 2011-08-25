@@ -95,7 +95,7 @@ abstract class Sequence[K, V]
     var rsp2 = false
     var async = false
     var sync = false
-    safe.func(rsp, fr => {
+    safe.func(this, rsp, fr => {
       rsp2 = fr.asInstanceOf[Boolean]
       if (rsp2) {
         next(Next(rsp.key), r => {

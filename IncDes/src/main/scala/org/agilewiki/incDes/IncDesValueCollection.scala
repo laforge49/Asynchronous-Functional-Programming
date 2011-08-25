@@ -98,7 +98,7 @@ abstract class IncDesValueCollection[K, V <: IncDesItem[V1], V1]
 
 class MapValueSafe[K, V <: IncDesItem[V1], V1]
   extends Safe {
-  override def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val item = msg.asInstanceOf[KVPair[K, V]].value
     item(Value()) {
       r1 => {

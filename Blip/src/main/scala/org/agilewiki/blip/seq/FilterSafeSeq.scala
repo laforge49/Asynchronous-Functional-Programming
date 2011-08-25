@@ -57,7 +57,7 @@ class FilterSafeSeq[K, V](seq: Sequence[K, V], safe: Safe)
         if (rsp == null) rf(null)
         else {
           val kv = rsp.asInstanceOf[KVPair[K, V]]
-          safe.func(kv, v => {
+          safe.func(this, kv, v => {
             if (v.asInstanceOf[Boolean]) rf(rsp)
             else {
               req = Next(kv.key)

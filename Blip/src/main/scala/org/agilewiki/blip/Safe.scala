@@ -26,24 +26,24 @@ package blip
 
 class Safe extends Bound {
   override def send(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit srcActor: ActiveActor) {
-    func(msg, rf)
+    func(target, msg, rf)
   }
 
-  def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor){
+  def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor){
     throw new UnsupportedOperationException
   }
 }
 
 class SafeConstant(any: Any)
   extends Safe {
-  override def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     rf(any)
   }
 }
 
 class SafeForward(actor: Actor)
   extends Safe {
-  override def func(msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     actor(msg)(rf)
   }
 }

@@ -48,7 +48,7 @@ class MapSafeSeq[K, V, V1](seq: Sequence[K, V], safe: Safe)
         if (rsp == null) rf(null)
         else {
           val kvPair = rsp.asInstanceOf[KVPair[K, V]]
-          safe.func(kvPair, v => rf(KVPair(kvPair.key, v.asInstanceOf[V1])))
+          safe.func(this, kvPair, v => rf(KVPair(kvPair.key, v.asInstanceOf[V1])))
         }
       }
     }

@@ -57,7 +57,7 @@ class FlatmapSafeSeq[K, V, V1](seq: Sequence[K, V], safe: Safe)
         if (rsp == null) rf(null)
         else {
           val kv = rsp.asInstanceOf[KVPair[K, V]]
-          safe.func(kv, {
+          safe.func(this, kv, {
             v => {
               if (v != null) rf(KVPair(kv.key, v.asInstanceOf[V1]))
               else {
