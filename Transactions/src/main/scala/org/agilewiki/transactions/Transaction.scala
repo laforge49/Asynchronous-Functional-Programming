@@ -26,11 +26,11 @@ package transactions
 
 import blip._
 
-class Transaction(messageFunction: (AnyRef, Any => Unit) => Unit)
+abstract class Transaction(messageFunction: (AnyRef, Any => Unit) => Unit)
   extends Bound(messageFunction) {
-  def level = 10
+  def level: Int
 
-  def maxCompatibleLevel = 0
+  def maxCompatibleLevel: Int
 
   override def process(mailbox: Mailbox, mailboxReq: MailboxReq, responseFunction: Any => Unit) {
     val transactionProcessor = mailboxReq.target.asInstanceOf[TransactionProcessor]
@@ -53,8 +53,21 @@ class Transaction(messageFunction: (AnyRef, Any => Unit) => Unit)
       })
     } catch {
       case ex: Exception => {
+        transactionProcessor.removeActive(mailboxReq)
         responseFunction(ex)
       }
     }
   }
+}
+
+class Query(messageFunction: (AnyRef, Any => Unit) => Unit)
+  extends Transaction(messageFunction) {
+  override def level = 5
+  override def maxCompatibleLevel = 5
+}
+
+class Update(messageFunction: (AnyRef, Any => Unit) => Unit)
+  extends Transaction(messageFunction) {
+  override def level = 10
+  override def maxCompatibleLevel = 0
 }
