@@ -76,7 +76,7 @@ class TransactionProcessor extends Actor {
     pending.removeFirst
     addActive(mailboxReq)
     val transaction = mailboxReq.binding.asInstanceOf[Transaction]
-    transaction.processTransaction(mailbox, mailboxReq, mailboxReq.responseFunction)
+    transaction.processTransaction(mailbox, mailboxReq)
     runPending
   }
 }

@@ -53,15 +53,14 @@ abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Saf
 
   def reqFunction = messageFunction
 
-  def process(mailbox: Mailbox, mailboxReq: MailboxReq, responseFunction: Any => Unit) {
-    mailbox.curMsg = mailboxReq
+  def process(mailbox: Mailbox, mailboxReq: MailboxReq) {
     mailbox.exceptionFunction = mailbox.reqExceptionFunction
     mailbox.transactionContext = null
     try {
-      messageFunction(mailboxReq.req, responseFunction)
+      messageFunction(mailboxReq.req, mailbox.reply)
     } catch {
       case ex: Exception => {
-        responseFunction(ex)
+        mailbox.reply(ex)
       }
     }
   }

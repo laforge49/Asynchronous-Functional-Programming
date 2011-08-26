@@ -32,12 +32,12 @@ abstract class Transaction(messageFunction: (AnyRef, Any => Unit) => Unit)
 
   def maxCompatibleLevel: Int
 
-  override def process(mailbox: Mailbox, mailboxReq: MailboxReq, responseFunction: Any => Unit) {
+  override def process(mailbox: Mailbox, mailboxReq: MailboxReq) {
     val transactionProcessor = mailboxReq.target.asInstanceOf[TransactionProcessor]
     transactionProcessor.addPending(mailboxReq)
   }
 
-  def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq, responseFunction: Any => Unit) {
+  def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq) {
     val transactionProcessor = mailboxReq.target.asInstanceOf[TransactionProcessor]
     mailbox.curMsg = mailboxReq
     mailbox.exceptionFunction = mailbox.reqExceptionFunction
@@ -47,14 +47,14 @@ abstract class Transaction(messageFunction: (AnyRef, Any => Unit) => Unit)
       messageFunction(mailboxReq.req, {
         rsp1: Any => {
           transactionProcessor.removeActive(mailboxReq)
-          responseFunction(rsp1)
+          mailbox.reply(rsp1)
           transactionProcessor.runPending
         }
       })
     } catch {
       case ex: Exception => {
         transactionProcessor.removeActive(mailboxReq)
-        responseFunction(ex)
+        mailbox.reply(ex)
       }
     }
   }

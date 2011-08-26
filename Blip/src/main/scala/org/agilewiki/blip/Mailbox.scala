@@ -64,7 +64,7 @@ class Mailbox
       pending.put(ctrl, blkmsg)
     }
     blkmsg.add(msg)
-    if (blkmsg.size > 63 || isMailboxEmpty) {
+    if (blkmsg.size > 63) {
       pending.remove(ctrl)
       ctrl._send(blkmsg)
     }
@@ -76,8 +76,9 @@ class Mailbox
         case blkmsg: ArrayList[MailboxMsg] => {
           val it = blkmsg.iterator
           while (it.hasNext) {
-            it.next match {
-              case msg: MailboxReq => msg.binding.process(this, msg, reply)
+            curMsg = it.next
+            curMsg match {
+              case msg: MailboxReq => msg.binding.process(this, msg)
               case msg: MailboxRsp => rsp(msg)
             }
           }
@@ -96,7 +97,6 @@ class Mailbox
   }
 
   def rsp(msg: MailboxRsp) {
-    curMsg = msg
     exceptionFunction = msg.senderExceptionFunction
     transactionContext = msg.transactionContext
     if (msg.rsp.isInstanceOf[Exception]) {
@@ -112,7 +112,7 @@ class Mailbox
     }
   }
 
-  private def reply(content: Any) {
+  def reply(content: Any) {
     val req = currentRequestMessage
     if (!req.active) {
       return
