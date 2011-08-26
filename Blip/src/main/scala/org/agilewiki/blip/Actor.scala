@@ -25,6 +25,7 @@ package org.agilewiki
 package blip
 
 import seq.NavSetSeq
+import annotation.tailrec
 
 class Actor
   extends Responder with MsgSrc {
@@ -34,6 +35,9 @@ class Actor
   private var componentList: java.util.ArrayList[Component] = null
   var opened = false
   private var _superior: Actor = null
+  var transactionActivityLevel = 0
+  lazy val pendingTransactions = new java.util.ArrayDeque[MailboxReq]
+  lazy val activeTransactions = new java.util.HashSet[MailboxReq]
 
   lazy val _open = {
     if (!components.isEmpty) {
@@ -135,4 +139,51 @@ class Actor
   }
 
   override def ctrl = mailbox
+
+  def isInvalid = transactionActivityLevel < 0
+
+  def isActive = transactionActivityLevel > 0
+
+  def isIdle = transactionActivityLevel == 0
+
+  def maxLevel = {
+    var level = 0
+    val it = activeTransactions.iterator
+    while (it.hasNext) {
+      val l = it.next.binding.asInstanceOf[Transaction].level
+      if (l > level) level = l
+    }
+    level
+  }
+
+  def addPendingTransaction(mailboxReq: MailboxReq) {
+    pendingTransactions.addLast(mailboxReq)
+    runPendingTransaction
+  }
+
+  @tailrec final def runPendingTransaction {
+    val mailboxReq = pendingTransactions.peekFirst
+    if (mailboxReq == null) return
+    if (!isTransactionCompatible(mailboxReq)) return
+    pendingTransactions.removeFirst
+    addActiveTransaction(mailboxReq)
+    val transaction = mailboxReq.binding.asInstanceOf[Transaction]
+    transaction.processTransaction(mailbox, mailboxReq)
+    runPendingTransaction
+  }
+
+  def isTransactionCompatible(mailboxReq: MailboxReq) =
+    mailboxReq.binding.asInstanceOf[Transaction].maxCompatibleLevel >= transactionActivityLevel
+
+  def addActiveTransaction(mailboxReq: MailboxReq) {
+    val l = mailboxReq.binding.asInstanceOf[Transaction].level
+    if (l > transactionActivityLevel) transactionActivityLevel = l
+    activeTransactions.add(mailboxReq)
+  }
+
+  def removeActiveTransaction(mailboxReq: MailboxReq) {
+    val l = mailboxReq.binding.asInstanceOf[Transaction].level
+    activeTransactions.remove(mailboxReq)
+    if (l == transactionActivityLevel) transactionActivityLevel = maxLevel
+  }
 }

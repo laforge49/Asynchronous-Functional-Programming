@@ -155,7 +155,6 @@
     <!-- Sub projects -->
     <modules>
         <module>Blip</module>
-        <module>Transactions</module>
         <module>IncDes</module>
         <!--
         <module>AW5Kernel</module>

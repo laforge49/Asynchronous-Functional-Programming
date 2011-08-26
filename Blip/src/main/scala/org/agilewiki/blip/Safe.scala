@@ -99,3 +99,49 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
     else asyncSendReq(srcMailbox, target, msg, this, responseFunction)
   }
 }
+
+abstract class Transaction(messageFunction: (AnyRef, Any => Unit) => Unit)
+  extends Bound(messageFunction) {
+  def level: Int
+
+  def maxCompatibleLevel: Int
+
+  override def process(mailbox: Mailbox, mailboxReq: MailboxReq) {
+    val transactionProcessor = mailboxReq.target
+    transactionProcessor.addPendingTransaction(mailboxReq)
+  }
+
+  def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq) {
+    val transactionProcessor = mailboxReq.target
+    mailbox.curMsg = mailboxReq
+    mailbox.exceptionFunction = mailbox.reqExceptionFunction
+    mailbox.transactionContext = null
+    try {
+      if (transactionProcessor.isInvalid) throw new IllegalStateException
+      messageFunction(mailboxReq.req, {
+        rsp1: Any => {
+          transactionProcessor.removeActiveTransaction(mailboxReq)
+          mailbox.reply(rsp1)
+          transactionProcessor.runPendingTransaction
+        }
+      })
+    } catch {
+      case ex: Exception => {
+        transactionProcessor.removeActiveTransaction(mailboxReq)
+        mailbox.reply(ex)
+      }
+    }
+  }
+}
+
+class Query(messageFunction: (AnyRef, Any => Unit) => Unit)
+  extends Transaction(messageFunction) {
+  override def level = 5
+  override def maxCompatibleLevel = 5
+}
+
+class Update(messageFunction: (AnyRef, Any => Unit) => Unit)
+  extends Transaction(messageFunction) {
+  override def level = 10
+  override def maxCompatibleLevel = 0
+}

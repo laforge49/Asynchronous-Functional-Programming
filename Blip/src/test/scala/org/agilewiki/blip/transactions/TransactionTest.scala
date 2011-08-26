@@ -1,7 +1,6 @@
-package org.agilewiki
+package org.agilewiki.blip
 package transactions
 
-import blip._
 import org.specs.SpecificationWithJUnit
 
 case class Pause()
@@ -29,7 +28,7 @@ case class SimpleQuery(name: String)
 case class SimpleUpdate(name: String)
 
 class SimpleTransactionProcessor
-  extends TransactionProcessor {
+  extends Actor {
   bindSafe(classOf[SimpleQuery], new Query(query))
   bindSafe(classOf[SimpleUpdate], new Update(update))
 

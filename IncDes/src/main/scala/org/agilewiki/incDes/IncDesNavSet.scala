@@ -27,7 +27,6 @@ package incDes
 import blip._
 import seq._
 import services._
-import transactions._
 
 class IncDesNavSetFactory[K](id: FactoryId, keyId: FactoryId)
   extends IncDesFactory(id) {

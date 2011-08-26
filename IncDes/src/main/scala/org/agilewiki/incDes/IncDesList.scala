@@ -26,7 +26,6 @@ package incDes
 
 import blip._
 import seq._
-import transactions._
 import java.util.ArrayList
 
 class IncDesList[V <: IncDesItem[V1], V1]

@@ -26,7 +26,6 @@ package incDes
 
 import blip._
 import seq._
-import transactions._
 
 class IncDesNavMap[K, V <: IncDesItem[V1], V1]
   extends IncDesKeyedCollection[K, V, V1] {
