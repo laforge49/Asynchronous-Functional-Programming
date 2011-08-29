@@ -91,7 +91,7 @@ class Actor
 
   private val _activeActor = ActiveActor(this)
 
-  implicit def activeActor: ActiveActor = _activeActor
+  override implicit def activeActor: ActiveActor = _activeActor
 
   var _systemServices: Actor = null
 

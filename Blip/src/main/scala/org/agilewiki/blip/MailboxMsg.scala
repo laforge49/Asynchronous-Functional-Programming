@@ -29,8 +29,11 @@ sealed abstract class MailboxMsg(rf: Any => Unit,
                                  sef: Exception => Unit,
                                  tc: TransactionContext) {
   def responseFunction = rf
+
   def oldRequest = oldReq
+
   def senderExceptionFunction = sef
+
   def transactionContext = tc
 }
 
@@ -41,12 +44,16 @@ final class MailboxReq(dst: Actor,
                        bound: Bound,
                        src: MsgSrc,
                        srcEF: Exception => Unit,
-                                 tc: TransactionContext)
+                       tc: TransactionContext)
   extends MailboxMsg(rf, oldReq, srcEF, tc) {
   var active = true
+
   def sender = src
+
   def target = dst
+
   def req = data
+
   def binding = bound
 }
 
@@ -54,7 +61,7 @@ final class MailboxRsp(rf: Any => Unit,
                        oldReq: MailboxReq,
                        data: Any,
                        srcEF: Exception => Unit,
-                                 tc: TransactionContext)
+                       tc: TransactionContext)
   extends MailboxMsg(rf, oldReq, srcEF, tc) {
   def rsp = data
 }
