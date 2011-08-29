@@ -48,7 +48,7 @@ abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Saf
     val srcMailbox = srcActor.actor.mailbox
     if (srcMailbox == null) throw new UnsupportedOperationException("source actor has no mailbox")
     if (target.mailbox == null) throw new UnsupportedOperationException("target actor has no mailbox")
-    asyncSendReq(srcMailbox, target, msg, this, responseFunction)
+    asyncSendReq(srcMailbox, target, msg, responseFunction)
   }
 
   def reqFunction = messageFunction
@@ -66,10 +66,9 @@ abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Saf
   }
 
   def asyncSendReq(srcMailbox: Mailbox,
-                targetActor: Actor,
-                content: AnyRef,
-                bound: Bound,
-                responseFunction: Any => Unit) {
+                   targetActor: Actor,
+                   content: AnyRef,
+                   responseFunction: Any => Unit) {
     val oldReq = srcMailbox.currentRequestMessage
     val sender = oldReq.target
     val req = new MailboxReq(
@@ -77,7 +76,7 @@ abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Saf
       responseFunction,
       oldReq,
       content,
-      bound,
+      this,
       sender,
       srcMailbox.exceptionFunction,
       srcMailbox.transactionContext)
@@ -87,7 +86,8 @@ abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Saf
 
 class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
   extends Bound(messageFunction) {
-  override def func(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor) {
+  override def func(target: Actor, msg: AnyRef, responseFunction: Any => Unit)
+                   (implicit srcActor: ActiveActor) {
     val srcMailbox = {
       if (srcActor == null) null
       else srcActor.actor.mailbox
@@ -95,8 +95,9 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
     if (srcMailbox == null && target.mailbox != null) throw new UnsupportedOperationException(
       "An immutable actor can only send to another immutable actor."
     )
-    if (target.mailbox == null || target.mailbox == srcMailbox) messageFunction(msg, responseFunction)
-    else asyncSendReq(srcMailbox, target, msg, this, responseFunction)
+    if (target.mailbox == null || target.mailbox == srcMailbox)
+      messageFunction(msg, responseFunction)
+    else asyncSendReq(srcMailbox, target, msg, responseFunction)
   }
 }
 
@@ -137,11 +138,13 @@ abstract class Transaction(messageFunction: (AnyRef, Any => Unit) => Unit)
 class Query(messageFunction: (AnyRef, Any => Unit) => Unit)
   extends Transaction(messageFunction) {
   override def level = 5
+
   override def maxCompatibleLevel = 5
 }
 
 class Update(messageFunction: (AnyRef, Any => Unit) => Unit)
   extends Transaction(messageFunction) {
   override def level = 10
+
   override def maxCompatibleLevel = 0
 }
