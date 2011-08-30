@@ -24,6 +24,43 @@
 package org.agilewiki
 package blip
 
-trait MsgSrc {
-  def ctrl: MsgCtrl
+import scala.actors.Reactor
+
+trait AFP[T >: AnyRef]
+  extends MsgSrc
+  with MsgCtrl {
+  this: Reactor[T] =>
+
+  override def ctrl = this
+
+  def afpSend(dst: Actor, msg: AnyRef)(rf: Any => Unit) {
+    val safe = dst.messageFunctions.get(msg.getClass)
+    if (!safe.isInstanceOf[Bound]) throw
+      new IllegalArgumentException(msg.getClass.getName + "is bound to a Safe object in " + dst)
+    dst._open
+    val mailbox = dst.mailbox
+    if (mailbox == null) {
+      val boundFunction = safe.asInstanceOf[BoundFunction]
+      boundFunction.reqFunction(msg, rf)
+    } else {
+      val bound = safe.asInstanceOf[Bound]
+      val req = new MailboxReq(dst, null, null, msg, bound, this, null, null)
+      val blkmsg = new java.util.ArrayList[MailboxMsg]
+      blkmsg.add(req)
+      dst.ctrl._send(blkmsg)
+    }
+  }
+
+  override def _send(blkmsg: java.util.ArrayList[MailboxMsg]) {
+    var i = 0
+    while (i < blkmsg.size) {
+      val mailboxRsp = blkmsg.get(i).asInstanceOf[MailboxRsp]
+      i += 1
+      this ! mailboxRsp
+    }
+  }
+
+  def afpResponse(mailboxRsp: MailboxRsp) {
+    mailboxRsp.responseFunction(mailboxRsp.rsp)
+  }
 }
