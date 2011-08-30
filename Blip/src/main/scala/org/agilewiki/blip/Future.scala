@@ -34,23 +34,21 @@ class Future
   @volatile private[this] var satisfied = false
 
   def send(dst: Actor, msg: AnyRef) {
+    val safe = dst.messageFunctions.get(msg.getClass)
+    if (!safe.isInstanceOf[Bound]) throw
+      new IllegalArgumentException(msg.getClass.getName + "can not be sent asynchronously to " + dst)
     dst._open
     val mailbox = dst.mailbox
-    if (mailbox == null) sendSynchronous(dst, msg)
-    else sendAsynchronous(dst, msg)
-  }
-
-  def sendSynchronous(dst: Actor, msg: AnyRef) {
-    val boundFunction = dst.messageFunctions.get(msg.getClass).asInstanceOf[BoundFunction]
-    boundFunction.reqFunction(msg, synchronousResponse)
-  }
-
-  def sendAsynchronous(dst: Actor, msg: AnyRef) {
-    val bound = dst.messageFunctions.get(msg.getClass).asInstanceOf[Bound]
-    val req = new MailboxReq(dst, null, null, msg, bound, this, null, null)
-    val blkmsg = new ArrayList[MailboxMsg]
-    blkmsg.add(req)
-    dst.ctrl._send(blkmsg)
+    if (mailbox == null) {
+      val boundFunction = safe.asInstanceOf[BoundFunction]
+      boundFunction.reqFunction(msg, synchronousResponse)
+    } else {
+      val bound = safe.asInstanceOf[Bound]
+      val req = new MailboxReq(dst, null, null, msg, bound, this, null, null)
+      val blkmsg = new ArrayList[MailboxMsg]
+      blkmsg.add(req)
+      dst.ctrl._send(blkmsg)
+    }
   }
 
   def synchronousResponse(_rsp: Any) {

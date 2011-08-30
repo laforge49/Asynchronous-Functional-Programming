@@ -36,7 +36,7 @@ trait AFP[T >: AnyRef]
   def afpSend(dst: Actor, msg: AnyRef)(rf: Any => Unit) {
     val safe = dst.messageFunctions.get(msg.getClass)
     if (!safe.isInstanceOf[Bound]) throw
-      new IllegalArgumentException(msg.getClass.getName + "is bound to a Safe object in " + dst)
+      new IllegalArgumentException(msg.getClass.getName + "can not be sent asynchronously to " + dst)
     dst._open
     val mailbox = dst.mailbox
     if (mailbox == null) {
