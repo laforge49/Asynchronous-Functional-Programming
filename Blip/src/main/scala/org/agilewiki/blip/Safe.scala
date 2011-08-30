@@ -107,6 +107,18 @@ abstract class Transaction(messageFunction: (AnyRef, Any => Unit) => Unit)
 
   def maxCompatibleLevel: Int
 
+  override def func(target: Actor, msg: AnyRef, responseFunction: Any => Unit)
+                   (implicit srcActor: ActiveActor) {
+    val srcMailbox = {
+      if (srcActor == null) null
+      else srcActor.actor.mailbox
+    }
+    if (srcMailbox == null || target.mailbox == null) throw new UnsupportedOperationException(
+      "Transactions require that both the requesting and target actors have mailboxes."
+    )
+    asyncSendReq(srcMailbox, target, msg, responseFunction)
+  }
+
   override def process(mailbox: Mailbox, mailboxReq: MailboxReq) {
     val transactionProcessor = mailboxReq.target
     transactionProcessor.addPendingTransaction(mailboxReq)
