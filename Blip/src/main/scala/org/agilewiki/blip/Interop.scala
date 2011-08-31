@@ -26,7 +26,7 @@ package blip
 
 import scala.actors.Reactor
 
-class AFP[T >: AnyRef](reactor: Reactor[T])
+class Interop[T >: AnyRef](reactor: Reactor[T])
   extends MsgSrc
   with MsgCtrl {
 
@@ -43,7 +43,7 @@ class AFP[T >: AnyRef](reactor: Reactor[T])
       boundFunction.reqFunction(msg, rf)
     } else {
       val bound = safe.asInstanceOf[Bound]
-      val req = new MailboxReq(dst, null, null, msg, bound, this, exceptionHandler, null)
+      val req = new MailboxReq(dst, rf, null, msg, bound, this, exceptionHandler, null)
       val blkmsg = new java.util.ArrayList[MailboxMsg]
       blkmsg.add(req)
       dst.ctrl._send(blkmsg)
