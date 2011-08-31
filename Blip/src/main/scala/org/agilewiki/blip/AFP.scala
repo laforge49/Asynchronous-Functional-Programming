@@ -26,14 +26,13 @@ package blip
 
 import scala.actors.Reactor
 
-trait AFP[T >: AnyRef]
+class AFP[T >: AnyRef](reactor: Reactor[T])
   extends MsgSrc
   with MsgCtrl {
-  this: Reactor[T] =>
 
   override def ctrl = this
 
-  def afpSend(dst: Actor, msg: AnyRef)(rf: Any => Unit) {
+  def afpSend(dst: Actor, msg: AnyRef, exceptionHandler: Exception => Unit)(rf: Any => Unit) {
     val safe = dst.messageFunctions.get(msg.getClass)
     if (!safe.isInstanceOf[Bound]) throw
       new IllegalArgumentException(msg.getClass.getName + "can not be sent asynchronously to " + dst)
@@ -44,7 +43,7 @@ trait AFP[T >: AnyRef]
       boundFunction.reqFunction(msg, rf)
     } else {
       val bound = safe.asInstanceOf[Bound]
-      val req = new MailboxReq(dst, null, null, msg, bound, this, null, null)
+      val req = new MailboxReq(dst, null, null, msg, bound, this, exceptionHandler, null)
       val blkmsg = new java.util.ArrayList[MailboxMsg]
       blkmsg.add(req)
       dst.ctrl._send(blkmsg)
@@ -56,11 +55,14 @@ trait AFP[T >: AnyRef]
     while (i < blkmsg.size) {
       val mailboxRsp = blkmsg.get(i).asInstanceOf[MailboxRsp]
       i += 1
-      this ! mailboxRsp
+      reactor ! mailboxRsp
     }
   }
 
   def afpResponse(mailboxRsp: MailboxRsp) {
-    mailboxRsp.responseFunction(mailboxRsp.rsp)
+    mailboxRsp.rsp match {
+      case rsp: Exception => mailboxRsp.senderExceptionFunction(rsp)
+      case rsp => mailboxRsp.responseFunction(rsp)
+    }
   }
 }
