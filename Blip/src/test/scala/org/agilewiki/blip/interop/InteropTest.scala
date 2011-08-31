@@ -44,12 +44,12 @@ class SimpleReactor extends Reactor[Any] {
         case afpResponse: MailboxRsp => interop.afpResponse(afpResponse)
         case req: T1 => println("a")
         case req: T2 => {
-          interop.afpSend(simpleActor, SimpleEcho("b"), exh) {
+          interop.afpSend(simpleActor, SimpleEcho("b"), exceptionHandler) {
             rsp => println(rsp)
           }
         }
         case req: T3 => {
-          interop.afpSend(simpleActor, QueryEcho("c"), exh) {
+          interop.afpSend(simpleActor, QueryEcho("c"), exceptionHandler) {
             rsp => println(rsp)
           }
         }
@@ -62,8 +62,8 @@ class SimpleReactor extends Reactor[Any] {
     }
   }
 
-  def exh(ex: Exception) {
-    println(ex.getClass.getName)
+  def exh: PartialFunction[Exception, Unit] = {
+    case ex => println(ex.getClass.getName)
   }
 }
 
