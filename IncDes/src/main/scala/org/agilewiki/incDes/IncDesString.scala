@@ -80,7 +80,7 @@ class IncDesString extends IncDesItem[String] {
           rf(null)
           return
         }
-        this(Writable(tc)) {
+        writable(tc) {
           rsp1 => {
             val ol = stringLength(i)
             i = v

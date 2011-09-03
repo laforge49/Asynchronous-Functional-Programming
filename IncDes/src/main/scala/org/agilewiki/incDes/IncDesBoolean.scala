@@ -61,7 +61,7 @@ class IncDesBoolean extends IncDesItem[Boolean] {
           rf(null)
           return
         }
-        this(Writable(tc)) {
+        writable(tc) {
           rsp1 => {
             i = v
             dser = true

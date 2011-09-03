@@ -89,7 +89,7 @@ class IncDesList[V <: IncDesItem[V1], V1]
     val tc = s.transactionContext
     val v = s.value
     preprocess(tc, v)
-    this(Writable(tc)) {
+    writable(tc) {
       rsp => {
         i.add(v)
         v.partness(this, i.size - 1, this)
@@ -105,7 +105,7 @@ class IncDesList[V <: IncDesItem[V1], V1]
     preprocess(tc, v)
     val index = s.index
     if (index < 0 || index > i.size) throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + i.size)
-    this(Writable(tc)) {
+    writable(tc) {
       rsp => {
         i.add(index, v)
         v.partness(this, i.size - 1, this)
@@ -157,7 +157,7 @@ class IncDesList[V <: IncDesItem[V1], V1]
       return
     }
     val tc = s.transactionContext
-    this(Writable(tc)) {
+    writable(tc) {
       rsp => {
         val r = i.remove(key)
         val l = r.length

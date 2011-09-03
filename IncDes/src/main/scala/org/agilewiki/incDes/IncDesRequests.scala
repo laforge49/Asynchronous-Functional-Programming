@@ -36,8 +36,6 @@ case class Value()
 
 case class Set[V](transactionContext: TransactionContext, value: V)
 
-case class Writable(transactionContext: TransactionContext)
-
 case class AddValue[K](transactionContext: TransactionContext, value: K)
 
 case class Add[V <: IncDesItem[V1], V1](transactionContext: TransactionContext, value: V)

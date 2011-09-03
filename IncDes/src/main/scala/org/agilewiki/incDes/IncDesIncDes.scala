@@ -108,7 +108,7 @@ class IncDesIncDes extends IncDesItem[IncDes] {
     val s = msg.asInstanceOf[MakeSet]
     val tc = s.transactionContext
     val fid = s.factoryId
-    this(Writable(tc)) {
+    writable(tc) {
       r1 => {
         systemServices(Instantiate(fid, mailbox)) {
           r2 => {
@@ -147,7 +147,7 @@ class IncDesIncDes extends IncDesItem[IncDes] {
       }
       if (v.systemServices == null && !v.opened) v.setSystemServices(systemServices)
     }
-    this(Writable(tc)) {
+    writable(tc) {
       rsp => {
         val olen = length
         if (i != null) i.clearContainer

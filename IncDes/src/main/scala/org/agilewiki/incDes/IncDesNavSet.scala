@@ -110,7 +110,7 @@ class IncDesNavSet[K]
       return
     }
     val tc = s.transactionContext
-    this(Writable(tc)) {
+    writable(tc) {
       rsp => {
         i.add(k)
         change(tc, keyFactory.length(k), this, {
@@ -131,7 +131,7 @@ class IncDesNavSet[K]
       return
     }
     val tc = s.transactionContext
-    this(Writable(tc)) {
+    writable(tc) {
       rsp => {
         i.remove(k)
         change(tc, -keyFactory.length(k), this, {

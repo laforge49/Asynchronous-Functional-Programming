@@ -77,7 +77,7 @@ class IncDesLong extends IncDesItem[Long] {
           rf(null)
           return
         }
-        this(Writable(tc)) {
+        writable(tc) {
           rsp1 => {
             i = v
             dser = true

@@ -89,7 +89,7 @@ class IncDesNavMap[K, V <: IncDesItem[V1], V1]
     val k = s.key
     val v = s.value
     preprocess(tc, v)
-    this(Writable(tc)) {
+    writable(tc) {
       rsp => {
         val old = i.put(k, v)
         var ol = 0
@@ -117,7 +117,7 @@ class IncDesNavMap[K, V <: IncDesItem[V1], V1]
       rf(v)
       return
     }
-    this(Writable(tc)) {
+    writable(tc) {
       r1 => {
         v = newValue
         i.put(k, v)
@@ -194,7 +194,7 @@ class IncDesNavMap[K, V <: IncDesItem[V1], V1]
       return
     }
     val tc = s.transactionContext
-    this(Writable(tc)) {
+    writable(tc) {
       rsp => {
         val r = i.remove(key)
         val l = r.length

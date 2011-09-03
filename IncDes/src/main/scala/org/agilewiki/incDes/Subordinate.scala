@@ -56,15 +56,4 @@ object SubordinateComponentFactory {
   def apply() = scf
 }
 
-class SubordinateComponent(actor: Actor) extends Component(actor) {
-  bind(classOf[Writable], passUp)
-
-  def incDes = actor.asInstanceOf[IncDes]
-
-  def container = incDes.container
-
-  def passUp(msg: AnyRef, rf: Any => Unit) {
-    if (container == null) rf(null)
-    else container(msg)(rf)
-  }
-}
+class SubordinateComponent(actor: Actor) extends Component(actor) {}

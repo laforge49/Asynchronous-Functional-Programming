@@ -61,7 +61,7 @@ class IncDesBytes extends IncDesItem[Array[Byte]] {
     val s = msg.asInstanceOf[Set[Array[Byte]]]
     val v = s.value
     val tc = s.transactionContext
-    this(Writable(tc)) {
+    writable(tc) {
       rsp1 => {
         val ol = length
         i = v

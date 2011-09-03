@@ -73,6 +73,11 @@ class IncDes extends Actor {
     this._container = null
   }
 
+  def writable(transactionContext: TransactionContext)(rf: Any => Unit) {
+    if (container == null) rf(null)
+    else container.writable(transactionContext)(rf)
+  }
+
   def change(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
     changed(transactionContext, lenDiff, what, rf)
   }
