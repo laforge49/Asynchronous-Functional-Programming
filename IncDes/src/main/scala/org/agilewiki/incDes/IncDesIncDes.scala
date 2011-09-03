@@ -27,15 +27,15 @@ package incDes
 import blip._
 import services._
 
-class SubordinateIncDesFactory(id: FactoryId)
-  extends SubordinateFactory(id) {
+class IncDesIncDesFactory(id: FactoryId)
+  extends IncDesFactory(id) {
 
   override protected def instantiate = new IncDesIncDes
 }
 
 object IncDesIncDes {
   def apply(mailbox: Mailbox) = {
-    new SubordinateIncDesFactory(INC_DES_INCDES_FACTORY_ID).newActor(mailbox).asInstanceOf[IncDesIncDes]
+    new IncDesIncDesFactory(INC_DES_INCDES_FACTORY_ID).newActor(mailbox).asInstanceOf[IncDesIncDes]
   }
 }
 

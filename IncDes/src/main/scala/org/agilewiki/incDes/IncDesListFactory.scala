@@ -26,12 +26,12 @@ package incDes
 
 import blip._
 
-class SubordinateIntListFactory(id: FactoryId)
-  extends SubordinateListFactory[IncDesInt, Int](id, INC_DES_INT_FACTORY_ID)
+class IncDesIntListFactory(id: FactoryId)
+  extends IncDesListFactory[IncDesInt, Int](id, INC_DES_INT_FACTORY_ID)
 
 object IncDesIntList {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateIntListFactory(INC_DES_INT_LIST_FACTORY_ID)
+    val f = new IncDesIntListFactory(INC_DES_INT_LIST_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesInt, Int]]
     a.setSystemServices(systemServices)
@@ -39,12 +39,12 @@ object IncDesIntList {
   }
 }
 
-class SubordinateLongListFactory(id: FactoryId)
-  extends SubordinateListFactory[IncDesLong, Long](id, INC_DES_LONG_FACTORY_ID)
+class IncDesLongListFactory(id: FactoryId)
+  extends IncDesListFactory[IncDesLong, Long](id, INC_DES_LONG_FACTORY_ID)
 
 object IncDesLongList {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateLongListFactory(INC_DES_LONG_LIST_FACTORY_ID)
+    val f = new IncDesLongListFactory(INC_DES_LONG_LIST_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesLong, Long]]
     a.setSystemServices(systemServices)
@@ -52,12 +52,12 @@ object IncDesLongList {
   }
 }
 
-class SubordinateStringListFactory(id: FactoryId)
-  extends SubordinateListFactory[IncDesString, String](id, INC_DES_STRING_FACTORY_ID)
+class IncDesStringListFactory(id: FactoryId)
+  extends IncDesListFactory[IncDesString, String](id, INC_DES_STRING_FACTORY_ID)
 
 object IncDesStringList {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateStringListFactory(INC_DES_STRING_LIST_FACTORY_ID)
+    val f = new IncDesStringListFactory(INC_DES_STRING_LIST_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesString, String]]
     a.setSystemServices(systemServices)
@@ -65,12 +65,12 @@ object IncDesStringList {
   }
 }
 
-class SubordinateBooleanListFactory(id: FactoryId)
-  extends SubordinateListFactory[IncDesBoolean, Boolean](id, INC_DES_BOOLEAN_FACTORY_ID)
+class IncDesBooleanListFactory(id: FactoryId)
+  extends IncDesListFactory[IncDesBoolean, Boolean](id, INC_DES_BOOLEAN_FACTORY_ID)
 
 object IncDesBooleanList {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateBooleanListFactory(INC_DES_BOOLEAN_LIST_FACTORY_ID)
+    val f = new IncDesBooleanListFactory(INC_DES_BOOLEAN_LIST_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesBoolean, Boolean]]
     a.setSystemServices(systemServices)
@@ -78,12 +78,12 @@ object IncDesBooleanList {
   }
 }
 
-class SubordinateBytesListFactory(id: FactoryId)
-  extends SubordinateListFactory[IncDesBytes, Array[Byte]](id, INC_DES_BYTES_FACTORY_ID)
+class IncDesBytesListFactory(id: FactoryId)
+  extends IncDesListFactory[IncDesBytes, Array[Byte]](id, INC_DES_BYTES_FACTORY_ID)
 
 object IncDesBytesList {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateBytesListFactory(INC_DES_BYTES_LIST_FACTORY_ID)
+    val f = new IncDesBytesListFactory(INC_DES_BYTES_LIST_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesBytes, Array[Byte]]]
     a.setSystemServices(systemServices)
@@ -91,12 +91,12 @@ object IncDesBytesList {
   }
 }
 
-class SubordinateIncDesListFactory(id: FactoryId)
-  extends SubordinateListFactory[IncDesIncDes, IncDes](id, INC_DES_INCDES_FACTORY_ID)
+class IncDesIncDesListFactory(id: FactoryId)
+  extends IncDesListFactory[IncDesIncDes, IncDes](id, INC_DES_INCDES_FACTORY_ID)
 
 object IncDesIncDesList {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateIncDesListFactory(INC_DES_INCDES_LIST_FACTORY_ID)
+    val f = new IncDesIncDesListFactory(INC_DES_INCDES_LIST_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesIncDes, IncDes]]
     a.setSystemServices(systemServices)
@@ -104,7 +104,7 @@ object IncDesIncDesList {
   }
 }
 
-class SubordinateListFactory[V <: IncDesItem[V1], V1](id: FactoryId, valueId: FactoryId)
-  extends SubordinateValueCollectionFactory(id, valueId) {
+class IncDesListFactory[V <: IncDesItem[V1], V1](id: FactoryId, valueId: FactoryId)
+  extends IncDesValueCollectionFactory(id, valueId) {
   override protected def instantiate = new IncDesList[V, V1]
 }

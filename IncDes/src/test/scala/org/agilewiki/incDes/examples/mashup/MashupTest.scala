@@ -114,7 +114,7 @@ object MashupComponentFactory extends ComponentFactory {
   override def instantiate(actor: Actor) = new MashupComponent(actor)
 }
 
-class MashupFactory extends SubordinateStringIncDesMapFactory(FactoryId("mashup")) {
+class MashupFactory extends IncDesStringIncDesMapFactory(FactoryId("mashup")) {
   include(MashupComponentFactory)
 }
 

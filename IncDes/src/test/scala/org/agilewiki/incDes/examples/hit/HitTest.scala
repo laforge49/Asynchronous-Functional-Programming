@@ -49,7 +49,7 @@ object HitComponentFactory extends ComponentFactory {
   override def instantiate(actor: Actor) = new HitComponent(actor)
 }
 
-class HitFactory extends SubordinateIntFactory(FactoryId("hit")) {
+class HitFactory extends IncDesIntFactory(FactoryId("hit")) {
   include(HitComponentFactory)
 }
 

@@ -26,11 +26,6 @@ package incDes
 
 import blip._
 
-class SubordinateLongFactory(id: FactoryId)
-  extends IncDesLongFactory(id) {
-  include(SubordinateComponentFactory())
-}
-
 class IncDesLongFactory(id: FactoryId)
   extends IncDesKeyFactory[Long](id) {
 
@@ -49,7 +44,7 @@ class IncDesLongFactory(id: FactoryId)
 
 object IncDesLong {
   def apply(mailbox: Mailbox) = {
-    new SubordinateLongFactory(INC_DES_LONG_FACTORY_ID).newActor(mailbox).asInstanceOf[IncDesLong]
+    new IncDesLongFactory(INC_DES_LONG_FACTORY_ID).newActor(mailbox).asInstanceOf[IncDesLong]
   }
 }
 

@@ -26,15 +26,15 @@ package incDes
 
 import blip._
 
-class SubordinateIntIntMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[Int, IncDesInt, Int](
+class IncDesIntIntMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[Int, IncDesInt, Int](
     id,
     INC_DES_INT_FACTORY_ID,
     INC_DES_INT_FACTORY_ID)
 
 object IncDesIntIntMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateIntIntMapFactory(INC_DES_INT_INT_MAP_FACTORY_ID)
+    val f = new IncDesIntIntMapFactory(INC_DES_INT_INT_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[Int, IncDesInt, Int]]
     a.setSystemServices(systemServices)
@@ -42,15 +42,15 @@ object IncDesIntIntMap {
   }
 }
 
-class SubordinateLongIntMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[Long, IncDesInt, Int](
+class IncDesLongIntMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[Long, IncDesInt, Int](
     id,
     INC_DES_LONG_FACTORY_ID,
     INC_DES_INT_FACTORY_ID)
 
 object IncDesLongIntMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateLongIntMapFactory(INC_DES_LONG_INT_MAP_FACTORY_ID)
+    val f = new IncDesLongIntMapFactory(INC_DES_LONG_INT_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[Long, IncDesInt, Int]]
     a.setSystemServices(systemServices)
@@ -58,15 +58,15 @@ object IncDesLongIntMap {
   }
 }
 
-class SubordinateStringIntMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[String, IncDesInt, Int](
+class IncDesStringIntMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[String, IncDesInt, Int](
     id,
     INC_DES_STRING_FACTORY_ID,
     INC_DES_INT_FACTORY_ID)
 
 object IncDesStringIntMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateStringIntMapFactory(INC_DES_STRING_INT_MAP_FACTORY_ID)
+    val f = new IncDesStringIntMapFactory(INC_DES_STRING_INT_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[String, IncDesInt, Int]]
     a.setSystemServices(systemServices)
@@ -74,15 +74,15 @@ object IncDesStringIntMap {
   }
 }
 
-class SubordinateIntLongMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[Int, IncDesLong, Long](
+class IncDesIntLongMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[Int, IncDesLong, Long](
     id,
     INC_DES_INT_FACTORY_ID,
     INC_DES_LONG_FACTORY_ID)
 
 object IncDesIntLongMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateIntLongMapFactory(INC_DES_INT_LONG_MAP_FACTORY_ID)
+    val f = new IncDesIntLongMapFactory(INC_DES_INT_LONG_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[Int, IncDesLong, Long]]
     a.setSystemServices(systemServices)
@@ -90,15 +90,15 @@ object IncDesIntLongMap {
   }
 }
 
-class SubordinateLongLongMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[Long, IncDesLong, Long](
+class IncDesLongLongMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[Long, IncDesLong, Long](
     id,
     INC_DES_LONG_FACTORY_ID,
     INC_DES_LONG_FACTORY_ID)
 
 object IncDesLongLongMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateLongLongMapFactory(INC_DES_LONG_LONG_MAP_FACTORY_ID)
+    val f = new IncDesLongLongMapFactory(INC_DES_LONG_LONG_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[Long, IncDesLong, Long]]
     a.setSystemServices(systemServices)
@@ -106,15 +106,15 @@ object IncDesLongLongMap {
   }
 }
 
-class SubordinateStringLongMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[String, IncDesLong, Long](
+class IncDesStringLongMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[String, IncDesLong, Long](
     id,
     INC_DES_STRING_FACTORY_ID,
     INC_DES_LONG_FACTORY_ID)
 
 object IncDesStringLongMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateStringLongMapFactory(INC_DES_STRING_LONG_MAP_FACTORY_ID)
+    val f = new IncDesStringLongMapFactory(INC_DES_STRING_LONG_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[String, IncDesLong, Long]]
     a.setSystemServices(systemServices)
@@ -122,15 +122,15 @@ object IncDesStringLongMap {
   }
 }
 
-class SubordinateIntStringMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[Int, IncDesString, String](
+class IncDesIntStringMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[Int, IncDesString, String](
     id,
     INC_DES_INT_FACTORY_ID,
     INC_DES_STRING_FACTORY_ID)
 
 object IncDesIntStringMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateIntStringMapFactory(INC_DES_INT_STRING_MAP_FACTORY_ID)
+    val f = new IncDesIntStringMapFactory(INC_DES_INT_STRING_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[Int, IncDesString, String]]
     a.setSystemServices(systemServices)
@@ -138,15 +138,15 @@ object IncDesIntStringMap {
   }
 }
 
-class SubordinateLongStringMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[Long, IncDesString, String](
+class IncDesLongStringMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[Long, IncDesString, String](
     id,
     INC_DES_LONG_FACTORY_ID,
     INC_DES_STRING_FACTORY_ID)
 
 object IncDesLongStringMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateLongStringMapFactory(INC_DES_LONG_STRING_MAP_FACTORY_ID)
+    val f = new IncDesLongStringMapFactory(INC_DES_LONG_STRING_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[Long, IncDesString, String]]
     a.setSystemServices(systemServices)
@@ -154,15 +154,15 @@ object IncDesLongStringMap {
   }
 }
 
-class SubordinateStringStringMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[String, IncDesString, String](
+class IncDesStringStringMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[String, IncDesString, String](
     id,
     INC_DES_STRING_FACTORY_ID,
     INC_DES_STRING_FACTORY_ID)
 
 object IncDesStringStringMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateStringStringMapFactory(INC_DES_STRING_STRING_MAP_FACTORY_ID)
+    val f = new IncDesStringStringMapFactory(INC_DES_STRING_STRING_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[String, IncDesString, String]]
     a.setSystemServices(systemServices)
@@ -170,15 +170,15 @@ object IncDesStringStringMap {
   }
 }
 
-class SubordinateIntBooleanMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[Int, IncDesBoolean, Boolean](
+class IncDesIntBooleanMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[Int, IncDesBoolean, Boolean](
     id,
     INC_DES_INT_FACTORY_ID,
     INC_DES_BOOLEAN_FACTORY_ID)
 
 object IncDesIntBooleanMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateIntBooleanMapFactory(INC_DES_INT_BOOLEAN_MAP_FACTORY_ID)
+    val f = new IncDesIntBooleanMapFactory(INC_DES_INT_BOOLEAN_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[Int, IncDesBoolean, Boolean]]
     a.setSystemServices(systemServices)
@@ -186,15 +186,15 @@ object IncDesIntBooleanMap {
   }
 }
 
-class SubordinateLongBooleanMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[Long, IncDesBoolean, Boolean](
+class IncDesLongBooleanMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[Long, IncDesBoolean, Boolean](
     id,
     INC_DES_LONG_FACTORY_ID,
     INC_DES_BOOLEAN_FACTORY_ID)
 
 object IncDesLongBooleanMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateLongBooleanMapFactory(INC_DES_LONG_BOOLEAN_MAP_FACTORY_ID)
+    val f = new IncDesLongBooleanMapFactory(INC_DES_LONG_BOOLEAN_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[Long, IncDesBoolean, Boolean]]
     a.setSystemServices(systemServices)
@@ -202,15 +202,15 @@ object IncDesLongBooleanMap {
   }
 }
 
-class SubordinateStringBooleanMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[String, IncDesBoolean, Boolean](
+class IncDesStringBooleanMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[String, IncDesBoolean, Boolean](
     id,
     INC_DES_STRING_FACTORY_ID,
     INC_DES_BOOLEAN_FACTORY_ID)
 
 object IncDesStringBooleanMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateStringBooleanMapFactory(INC_DES_STRING_BOOLEAN_MAP_FACTORY_ID)
+    val f = new IncDesStringBooleanMapFactory(INC_DES_STRING_BOOLEAN_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[String, IncDesBoolean, Boolean]]
     a.setSystemServices(systemServices)
@@ -218,15 +218,15 @@ object IncDesStringBooleanMap {
   }
 }
 
-class SubordinateIntBytesMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[Int, IncDesBytes, Array[Byte]](
+class IncDesIntBytesMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[Int, IncDesBytes, Array[Byte]](
     id,
     INC_DES_INT_FACTORY_ID,
     INC_DES_BYTES_FACTORY_ID)
 
 object IncDesIntBytesMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateIntBytesMapFactory(INC_DES_INT_BYTES_MAP_FACTORY_ID)
+    val f = new IncDesIntBytesMapFactory(INC_DES_INT_BYTES_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[Int, IncDesBytes, Array[Byte]]]
     a.setSystemServices(systemServices)
@@ -234,15 +234,15 @@ object IncDesIntBytesMap {
   }
 }
 
-class SubordinateLongBytesMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[Long, IncDesBytes, Array[Byte]](
+class IncDesLongBytesMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[Long, IncDesBytes, Array[Byte]](
     id,
     INC_DES_LONG_FACTORY_ID,
     INC_DES_BYTES_FACTORY_ID)
 
 object IncDesLongBytesMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateLongBytesMapFactory(INC_DES_LONG_BYTES_MAP_FACTORY_ID)
+    val f = new IncDesLongBytesMapFactory(INC_DES_LONG_BYTES_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[Long, IncDesBytes, Array[Byte]]]
     a.setSystemServices(systemServices)
@@ -250,15 +250,15 @@ object IncDesLongBytesMap {
   }
 }
 
-class SubordinateStringBytesMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[String, IncDesBytes, Array[Byte]](
+class IncDesStringBytesMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[String, IncDesBytes, Array[Byte]](
     id,
     INC_DES_STRING_FACTORY_ID,
     INC_DES_BYTES_FACTORY_ID)
 
 object IncDesStringBytesMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateStringBytesMapFactory(INC_DES_STRING_BYTES_MAP_FACTORY_ID)
+    val f = new IncDesStringBytesMapFactory(INC_DES_STRING_BYTES_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[String, IncDesBytes, Array[Byte]]]
     a.setSystemServices(systemServices)
@@ -266,15 +266,15 @@ object IncDesStringBytesMap {
   }
 }
 
-class SubordinateIntIncDesMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[Int, IncDesIncDes, IncDes](
+class IncDesIntIncDesMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[Int, IncDesIncDes, IncDes](
     id,
     INC_DES_INT_FACTORY_ID,
     INC_DES_INCDES_FACTORY_ID)
 
 object IncDesIntIncDesMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateIntIncDesMapFactory(INC_DES_INT_INCDES_MAP_FACTORY_ID)
+    val f = new IncDesIntIncDesMapFactory(INC_DES_INT_INCDES_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[Int, IncDesIncDes, IncDes]]
     a.setSystemServices(systemServices)
@@ -282,15 +282,15 @@ object IncDesIntIncDesMap {
   }
 }
 
-class SubordinateLongIncDesMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[Long, IncDesIncDes, IncDes](
+class IncDesLongIncDesMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[Long, IncDesIncDes, IncDes](
     id,
     INC_DES_LONG_FACTORY_ID,
     INC_DES_INCDES_FACTORY_ID)
 
-object SubordinateLongIncDesMap {
+object IncDesLongIncDesMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateLongIncDesMapFactory(INC_DES_LONG_INCDES_MAP_FACTORY_ID)
+    val f = new IncDesLongIncDesMapFactory(INC_DES_LONG_INCDES_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[Long, IncDesIncDes, IncDes]]
     a.setSystemServices(systemServices)
@@ -298,15 +298,15 @@ object SubordinateLongIncDesMap {
   }
 }
 
-class SubordinateStringIncDesMapFactory(id: FactoryId)
-  extends SubordinateNavMapFactory[String, IncDesIncDes, IncDes](
+class IncDesStringIncDesMapFactory(id: FactoryId)
+  extends IncDesNavMapFactory[String, IncDesIncDes, IncDes](
     id,
     INC_DES_STRING_FACTORY_ID,
     INC_DES_INCDES_FACTORY_ID)
 
 object IncDesStringIncDesMap {
   def apply(mailbox: Mailbox, systemServices: Actor) = {
-    val f = new SubordinateStringIncDesMapFactory(INC_DES_STRING_INCDES_MAP_FACTORY_ID)
+    val f = new IncDesStringIncDesMapFactory(INC_DES_STRING_INCDES_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[String, IncDesIncDes, IncDes]]
     a.setSystemServices(systemServices)
@@ -314,7 +314,7 @@ object IncDesStringIncDesMap {
   }
 }
 
-class SubordinateNavMapFactory[K, V <: IncDesItem[V1], V1](id: FactoryId, keyId: FactoryId, valueId: FactoryId)
-  extends SubordinateKeyedCollectionFactory(id, keyId, valueId) {
+class IncDesNavMapFactory[K, V <: IncDesItem[V1], V1](id: FactoryId, keyId: FactoryId, valueId: FactoryId)
+  extends IncDesKeyedCollectionFactory(id, keyId, valueId) {
   override protected def instantiate = new IncDesNavMap[K, V, V1]
 }
