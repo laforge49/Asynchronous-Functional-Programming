@@ -57,7 +57,6 @@ object SubordinateComponentFactory {
 }
 
 class SubordinateComponent(actor: Actor) extends Component(actor) {
-  bind(classOf[VisibleElement], passUp)
   bind(classOf[Writable], passUp)
 
   def incDes = actor.asInstanceOf[IncDes]
