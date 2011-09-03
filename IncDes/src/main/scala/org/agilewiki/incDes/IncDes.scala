@@ -80,7 +80,7 @@ class IncDes extends Actor {
   def changed(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
     data = null
     if (container == null) rf(null)
-    else container(Changed(transactionContext, lenDiff, what))(rf)
+    else container.change(transactionContext, lenDiff, what, rf)
   }
 
   def bytes = {

@@ -36,8 +36,6 @@ case class Value()
 
 case class Set[V](transactionContext: TransactionContext, value: V)
 
-case class Changed(transactionContext: TransactionContext, diff: Int, what: IncDes)
-
 case class Writable(transactionContext: TransactionContext)
 
 case class VisibleElement()
