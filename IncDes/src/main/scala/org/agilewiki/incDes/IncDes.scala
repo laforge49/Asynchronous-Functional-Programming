@@ -74,7 +74,11 @@ class IncDes extends Actor {
   }
 
   def writable(transactionContext: TransactionContext)(rf: Any => Unit) {
-    if (container == null) rf(null)
+    if (container == null) {
+      if (transactionContext != null && transactionContext.isInstanceOf[QueryContext])
+        throw new IllegalStateException("QueryContext does not support writable")
+      rf(null)
+    }
     else container.writable(transactionContext)(rf)
   }
 

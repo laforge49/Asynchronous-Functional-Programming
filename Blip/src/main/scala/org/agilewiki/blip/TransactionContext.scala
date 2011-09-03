@@ -24,4 +24,8 @@
 package org.agilewiki
 package blip
 
-trait TransactionContext
+class TransactionContext
+
+class QueryContext extends TransactionContext
+
+class UpdateContext extends TransactionContext

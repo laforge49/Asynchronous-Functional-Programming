@@ -124,7 +124,9 @@ abstract class Transaction(messageFunction: (AnyRef, Any => Unit) => Unit)
     transactionProcessor.addPendingTransaction(mailboxReq)
   }
 
-  def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq) {
+  def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq)
+
+  def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq, transactionContext: TransactionContext) {
     val transactionProcessor = mailboxReq.target
     mailbox.curMsg = mailboxReq
     mailbox.exceptionFunction = mailbox.reqExceptionFunction
@@ -152,6 +154,10 @@ class Query(messageFunction: (AnyRef, Any => Unit) => Unit)
   override def level = 5
 
   override def maxCompatibleLevel = 5
+
+  override def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq) {
+    processTransaction(mailbox, mailboxReq, new QueryContext)
+  }
 }
 
 class Update(messageFunction: (AnyRef, Any => Unit) => Unit)
@@ -159,4 +165,8 @@ class Update(messageFunction: (AnyRef, Any => Unit) => Unit)
   override def level = 10
 
   override def maxCompatibleLevel = 0
+
+  override def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq) {
+    processTransaction(mailbox, mailboxReq, new UpdateContext)
+  }
 }
