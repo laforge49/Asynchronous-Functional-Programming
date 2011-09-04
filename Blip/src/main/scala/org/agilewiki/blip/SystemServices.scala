@@ -24,10 +24,14 @@
 package org.agilewiki
 package blip
 
+import services.SetProperties
+
 object SystemServices {
   def apply(rootComponentFactory: ComponentFactory,
-            factoryId: FactoryId = new FactoryId("System")) = {
+            factoryId: FactoryId = new FactoryId("System"),
+            properties: java.util.TreeMap[String, String] = null) = {
     val systemServicesFactory = new CompositeFactory(factoryId, rootComponentFactory)
+    SetProperties(systemServicesFactory, properties)
     val systemServices = systemServicesFactory.newActor(new Mailbox)
     systemServices.setSystemServices(systemServices)
     systemServices._open
@@ -39,8 +43,10 @@ object Subsystem {
   def apply(systemServices: Actor,
             rootComponentFactory: ComponentFactory,
             mailbox: Mailbox = null,
-            factoryId: FactoryId = new FactoryId("System")) = {
+            factoryId: FactoryId = new FactoryId("System"),
+            properties: java.util.TreeMap[String, String] = null) = {
     val subSystemFactory = new CompositeFactory(factoryId, rootComponentFactory)
+    SetProperties(subSystemFactory, properties)
     val _mailbox = if (mailbox == null) systemServices.mailbox else mailbox
     val subSystem = subSystemFactory.newActor(_mailbox)
     subSystem.setSystemServices(subSystem)

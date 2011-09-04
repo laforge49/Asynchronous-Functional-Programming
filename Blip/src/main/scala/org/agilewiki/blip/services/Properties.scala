@@ -29,11 +29,17 @@ import seq.NavMapSeq
 import annotation.tailrec
 
 object SetProperties {
-  def apply (systemServices: Actor, properties: java.util.TreeMap[String, String]) {
-    val factory = systemServices.factory
-    val propertiesComponentFactory = factory.componentFactory(classOf[PropertiesComponentFactory]).
-      asInstanceOf[PropertiesComponentFactory]
-    propertiesComponentFactory.properties = properties
+  def apply (systemServicesFactory: Factory, properties: java.util.TreeMap[String, String]) {
+    val propertiesComponentFactory =
+      systemServicesFactory.componentFactory(classOf[PropertiesComponentFactory]).
+        asInstanceOf[PropertiesComponentFactory]
+    if (properties != null && propertiesComponentFactory == null) throw new UnsupportedOperationException(
+      "PropertiesComponentFactory is missing"
+    )
+    if (propertiesComponentFactory != null) propertiesComponentFactory.properties = {
+      if (properties == null) new java.util.TreeMap[String, String]
+      else properties
+    }
   }
 }
 
@@ -45,10 +51,9 @@ object GetProperty {
     val propertiesComponentFactory = factory.componentFactory(classOf[PropertiesComponentFactory]).
       asInstanceOf[PropertiesComponentFactory]
     val properties = propertiesComponentFactory.properties
-    val value = properties.get(name)
-    if (value != null) return value
+    if (properties.containsKey(name)) return properties.get(name)
     val superior = systemServices.superior
-    if (superior == null) throw new IllegalArgumentException("Unknown Property: "+name)
+    if (superior == null) return null
     apply(name)(superior.activeActor)
   }
 }
