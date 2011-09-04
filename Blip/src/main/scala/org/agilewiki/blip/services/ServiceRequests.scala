@@ -43,6 +43,4 @@ case class ResolveName(name: Name, mailbox: Mailbox)
 
 case class Actors()
 
-case class Property(name: String)
-
 case class Properties()

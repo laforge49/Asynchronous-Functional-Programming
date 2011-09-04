@@ -26,36 +26,37 @@ package blip
 package services
 
 import seq.NavMapSeq
+import annotation.tailrec
 
-object SetProperty {
-  def apply (systemServices: Actor, name: String, value: String) {
+object SetProperties {
+  def apply (systemServices: Actor, properties: java.util.TreeMap[String, String]) {
+    val factory = systemServices.factory
+    val propertiesComponentFactory = factory.componentFactory(classOf[PropertiesComponentFactory]).
+      asInstanceOf[PropertiesComponentFactory]
+    propertiesComponentFactory.properties = properties
+  }
+}
+
+object GetProperty {
+  @tailrec def apply(name: String)(implicit activeActor: ActiveActor): String = {
+    val actor = activeActor.actor
+    val systemServices = actor.systemServices
     val factory = systemServices.factory
     val propertiesComponentFactory = factory.componentFactory(classOf[PropertiesComponentFactory]).
       asInstanceOf[PropertiesComponentFactory]
     val properties = propertiesComponentFactory.properties
-    properties.put(name, value)
+    val value = properties.get(name)
+    if (value != null) return value
+    val superior = systemServices.superior
+    if (superior == null) throw new IllegalArgumentException("Unknown Property: "+name)
+    apply(name)(superior.activeActor)
   }
 }
 
 class PropertiesComponentFactory extends ComponentFactory {
-  val properties = new java.util.TreeMap[String, String]
+  var properties = new java.util.TreeMap[String, String]
 
   override def instantiate(actor: Actor) = new PropertiesComponent(actor)
-}
-
-class SafeProperties(properties: java.util.TreeMap[String, String])
-  extends Safe {
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
-    val name = msg.asInstanceOf[Property].name
-    val value = properties.get(name)
-    if (value != null) {
-      rf(value)
-      return
-    }
-    val superior = target.superior
-    if (superior == null) throw new IllegalArgumentException("Unknown Property: "+name)
-    superior(msg)(rf)
-  }
 }
 
 class PropertiesComponent(actor: Actor)
@@ -64,7 +65,6 @@ class PropertiesComponent(actor: Actor)
   override def setComponentFactory(componentFactory: ComponentFactory) {
     super.setComponentFactory(componentFactory)
     val cf = componentFactory.asInstanceOf[PropertiesComponentFactory]
-    bindSafe(classOf[Property], new SafeProperties(cf.properties))
     bindSafe(classOf[Properties], new SafeConstant(new NavMapSeq(cf.properties)))
   }
 }
