@@ -60,11 +60,13 @@ class IncDesIncDes extends IncDesItem[IncDes] {
 
   override def load(_data: MutableData) {
     super.load(_data)
-    len = _data.readInt
+    len = loadLen(_data)
     if (len > 0) _data.skip(len)
     i = null
     dser = len == -1
   }
+
+  def loadLen(_data: MutableData) = _data.readInt
 
   override def change(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
     len += lenDiff
@@ -73,12 +75,14 @@ class IncDesIncDes extends IncDesItem[IncDes] {
 
   override protected def serialize(_data: MutableData) {
     if (!dser) throw new IllegalStateException
-    _data.writeInt(len)
+    saveLen(_data)
     if (len < 1) return
     val incDesFactoryId = i.factoryId.value
     _data.writeString(incDesFactoryId)
     i.save(_data)
   }
+
+  def saveLen(_data: MutableData) {_data.writeInt(len)}
 
   override def value(msg: AnyRef, rf: Any => Unit) {
     if (dser) {
@@ -87,7 +91,7 @@ class IncDesIncDes extends IncDesItem[IncDes] {
     }
     if (!isSerialized) throw new IllegalStateException
     val m = data.mutable
-    m.skip(intLength)
+    skipLen(m)
     val incDesFactoryId = FactoryId(m.readString)
     systemServices(Instantiate(incDesFactoryId, mailbox)) {
       rsp => {
@@ -99,6 +103,8 @@ class IncDesIncDes extends IncDesItem[IncDes] {
       }
     }
   }
+
+  def skipLen(m: MutableData) {m.skip(intLength)}
 
   def makeSet(msg: AnyRef, rf: Any => Unit) {
     if (len > 0) {
