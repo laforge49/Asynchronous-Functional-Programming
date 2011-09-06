@@ -56,6 +56,12 @@ object GetProperty {
     if (superior == null) return null
     apply(name)(superior.activeActor)
   }
+
+  def int(name: String, default: Int = 0)(implicit activeActor: ActiveActor): Int = {
+    val p = apply(name)(activeActor)
+    if (p != null) p.toInt
+    else default
+  }
 }
 
 class PropertiesComponentFactory extends ComponentFactory {
