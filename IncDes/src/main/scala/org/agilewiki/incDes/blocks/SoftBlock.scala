@@ -25,31 +25,10 @@ package org.agilewiki
 package incDes
 package blocks
 
-import blip._
+import scala.ref._
 
-class BlockFactory(id: FactoryId)
-  extends IncDesFactory(id) {
-
-  override protected def instantiate = new Block
-}
-
-class Block extends IncDesIncDes {
-  val readOnly = false
-
-  override def loadLen(_data: MutableData) = _data.remaining
-
-  override def saveLen(_data: MutableData) {}
-
-  override def skipLen(m: MutableData) {}
-
-  override def changed(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
-    data = null
-  }
-
-  override def writable(transactionContext: TransactionContext)(rf: Any => Unit) {
-    if (transactionContext != null && transactionContext.isInstanceOf[QueryContext])
-      throw new IllegalStateException("QueryContext does not support writable")
-    if (readOnly) throw new IllegalStateException("Block is read-only")
-    rf(null)
-  }
+class SoftBlock(var value: Block, queue: ReferenceQueue[Block])
+  extends SoftReference[Block](value, queue) {
+  val key = value.key
+  value = null
 }

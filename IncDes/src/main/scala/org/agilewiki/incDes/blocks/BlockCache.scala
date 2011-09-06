@@ -25,31 +25,20 @@ package org.agilewiki
 package incDes
 package blocks
 
-import blip._
+class BlockCache(maxSize: Int) {
+  private val linkedHashSet = new java.util.LinkedHashSet[Block]
 
-class BlockFactory(id: FactoryId)
-  extends IncDesFactory(id) {
-
-  override protected def instantiate = new Block
-}
-
-class Block extends IncDesIncDes {
-  val readOnly = false
-
-  override def loadLen(_data: MutableData) = _data.remaining
-
-  override def saveLen(_data: MutableData) {}
-
-  override def skipLen(m: MutableData) {}
-
-  override def changed(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
-    data = null
+  def apply(block: Block) {
+    val newItem = !linkedHashSet.remove(block)
+    linkedHashSet.add(block)
+    if (newItem && linkedHashSet.size > maxSize) {
+      val it = linkedHashSet.iterator
+      it.next
+      it.remove
+    }
   }
 
-  override def writable(transactionContext: TransactionContext)(rf: Any => Unit) {
-    if (transactionContext != null && transactionContext.isInstanceOf[QueryContext])
-      throw new IllegalStateException("QueryContext does not support writable")
-    if (readOnly) throw new IllegalStateException("Block is read-only")
-    rf(null)
-  }
+  def has(block: Block) = linkedHashSet.contains(block)
+
+  def clear {linkedHashSet.clear}
 }

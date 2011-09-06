@@ -25,31 +25,53 @@ package org.agilewiki
 package incDes
 package blocks
 
-import blip._
+import scala.ref._
 
-class BlockFactory(id: FactoryId)
-  extends IncDesFactory(id) {
+case class SoftBlockMap(maxSize: Int) {
+  private val referenceQueue = new ReferenceQueue[Block]
+  private val hashMap = new java.util.HashMap[Any, SoftBlock]
+  private var cache = new BlockCache(maxSize)
 
-  override protected def instantiate = new Block
-}
-
-class Block extends IncDesIncDes {
-  val readOnly = false
-
-  override def loadLen(_data: MutableData) = _data.remaining
-
-  override def saveLen(_data: MutableData) {}
-
-  override def skipLen(m: MutableData) {}
-
-  override def changed(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
-    data = null
+  def clear {
+    cache.clear
   }
 
-  override def writable(transactionContext: TransactionContext)(rf: Any => Unit) {
-    if (transactionContext != null && transactionContext.isInstanceOf[QueryContext])
-      throw new IllegalStateException("QueryContext does not support writable")
-    if (readOnly) throw new IllegalStateException("Block is read-only")
-    rf(null)
+  def iterator = hashMap.keySet.iterator
+
+  def accessed(block: Block) {
+    cache(block)
   }
+
+  def add(block: Block) {
+    cache(block)
+    val nwr = new SoftBlock(block, referenceQueue)
+    hashMap.put(block.key, nwr)
+    var more = true
+    while (more) {
+      referenceQueue.poll match {
+        case Some(ref) => hashMap.remove(ref.asInstanceOf[SoftBlock].key)
+        case None => more = false
+      }
+    }
+  }
+
+  def get(key: String): Block = {
+    val nwr = hashMap.get(key)
+    if (nwr == null) return null
+    nwr.get match {
+      case Some(block) => {
+        cache(block)
+        return block
+      }
+      case None => return null
+    }
+  }
+
+  def has(key: String) = get(key) != null
+
+  def remove(key: String) = {
+    hashMap.remove(key)
+  }
+
+  def size = hashMap.size
 }
