@@ -47,6 +47,7 @@ object GetProperty {
   @tailrec def apply(name: String)(implicit activeActor: ActiveActor): String = {
     val actor = activeActor.actor
     val systemServices = actor.systemServices
+    if (systemServices == null) return null
     val factory = systemServices.factory
     val propertiesComponentFactory = factory.componentFactory(classOf[PropertiesComponentFactory]).
       asInstanceOf[PropertiesComponentFactory]
