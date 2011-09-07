@@ -57,6 +57,18 @@ class ActorRegistryComponent(actor: Actor)
     actor.requiredService(classOf[Instantiate])
   }
 
+  override def close {
+    try {
+      val it = actors.keySet.iterator
+      while (it.hasNext) {
+        val a = actors.get(it.next)
+        a.asInstanceOf[Actor].close
+      }
+    } catch {
+      case _ =>
+    }
+  }
+
   private def register(msg: Any, rf: Any => Unit) {
     val actor = msg.asInstanceOf[Register].actor
     val actorId = actor.id
