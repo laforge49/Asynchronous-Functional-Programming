@@ -29,8 +29,9 @@ import services.SetProperties
 object SystemServices {
   def apply(rootComponentFactory: ComponentFactory,
             factoryId: FactoryId = new FactoryId("System"),
-            properties: java.util.TreeMap[String, String] = null) = {
-    val systemServicesFactory = new CompositeFactory(factoryId, rootComponentFactory)
+            properties: java.util.TreeMap[String, String] = null,
+            actorClass: Class[_ <: Actor] = classOf[Actor]) = {
+    val systemServicesFactory = new CompositeFactory(factoryId, rootComponentFactory, actorClass)
     SetProperties(systemServicesFactory, properties)
     val systemServices = systemServicesFactory.newActor(new Mailbox)
     systemServices.setSystemServices(systemServices)
@@ -44,11 +45,16 @@ object Subsystem {
             rootComponentFactory: ComponentFactory,
             mailbox: Mailbox = null,
             factoryId: FactoryId = new FactoryId("System"),
-            properties: java.util.TreeMap[String, String] = null) = {
-    val subSystemFactory = new CompositeFactory(factoryId, rootComponentFactory)
+            properties: java.util.TreeMap[String, String] = null,
+            actorClass: Class[_ <: Id_Actor] = classOf[Id_Actor],
+            actorId: ActorId = null) = {
+    val subSystemFactory = new CompositeFactory(factoryId, rootComponentFactory, actorClass)
     SetProperties(subSystemFactory, properties)
     val _mailbox = if (mailbox == null) systemServices.mailbox else mailbox
-    val subSystem = subSystemFactory.newActor(_mailbox)
+    val subSystem = subSystemFactory.newActor(_mailbox).asInstanceOf[Id_Actor]
+    if (actorId != null) {
+      subSystem.id(actorId)
+    }
     subSystem.setSystemServices(subSystem)
     subSystem.setSuperior(systemServices)
     subSystem._open

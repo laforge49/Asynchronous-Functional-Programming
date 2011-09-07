@@ -69,3 +69,5 @@ trait IdActor {
     actorId = _id
   }
 }
+
+class Id_Actor extends Actor with IdActor
