@@ -24,7 +24,11 @@
 package org.agilewiki
 package blip
 
-class CompositeFactory(factoryId: FactoryId, rootComponentFactory: ComponentFactory)
+class CompositeFactory(factoryId: FactoryId,
+                       rootComponentFactory: ComponentFactory,
+                       actorClass: Class[_ <: Actor] = classOf[Actor])
   extends Factory(factoryId) {
   include(rootComponentFactory)
+
+  override protected def instantiate = actorClass.newInstance
 }
