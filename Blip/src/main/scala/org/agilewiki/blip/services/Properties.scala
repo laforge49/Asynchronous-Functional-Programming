@@ -29,7 +29,7 @@ import seq.NavMapSeq
 import annotation.tailrec
 
 object SetProperties {
-  def apply (systemServicesFactory: Factory, properties: java.util.TreeMap[String, String]) {
+  def apply(systemServicesFactory: Factory, properties: java.util.TreeMap[String, String]) {
     val propertiesComponentFactory =
       systemServicesFactory.componentFactory(classOf[PropertiesComponentFactory]).
         asInstanceOf[PropertiesComponentFactory]
@@ -51,8 +51,10 @@ object GetProperty {
     val factory = systemServices.factory
     val propertiesComponentFactory = factory.componentFactory(classOf[PropertiesComponentFactory]).
       asInstanceOf[PropertiesComponentFactory]
-    val properties = propertiesComponentFactory.properties
-    if (properties.containsKey(name)) return properties.get(name)
+    if (propertiesComponentFactory != null) {
+      val properties = propertiesComponentFactory.properties
+      if (properties.containsKey(name)) return properties.get(name)
+    }
     val superior = systemServices.superior
     if (superior == null) return null
     apply(name)(superior.activeActor)

@@ -27,7 +27,7 @@ package blocks
 
 import scala.ref._
 
-class SoftBlock(var value: Block, queue: ReferenceQueue[Block])
+class SoftBlockReference(var value: Block, queue: ReferenceQueue[Block])
   extends SoftReference[Block](value, queue) {
   val key = value.key
   value = null
