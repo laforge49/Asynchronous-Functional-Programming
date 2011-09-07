@@ -25,16 +25,29 @@ package org.agilewiki
 package incDes
 package blocks
 
-case class BlockCacheClear()
+import blip._
+import services._
 
-case class BlockCacheRemove(key: Any)
+class RandomIO extends Actor {
+  var pathname: String = null
+  var accessMode: String = null
+  var file: java.io.File = null
+  var randomAccessFile: java.io.RandomAccessFile = null
 
-case class BlockCacheAdd(block: Block)
+  override def open {
+    super.open
+    pathname = GetProperty.required("randomIOPathname")
+    accessMode = GetProperty.string("accessMode", "rw")
+    file = new java.io.File(pathname)
+    randomAccessFile = new java.io.RandomAccessFile(file, accessMode)
+  }
 
-case class BlockCacheGet(key: Any)
-
-case class DirtyBlock(block: Block)
-
-case class Clean()
-
-case class ReadOnly(value: Boolean)
+  override def close {
+    try {
+      randomAccessFile.close
+    } catch {
+      case unknown => {}
+    }
+    super.close
+  }
+}

@@ -60,9 +60,21 @@ object GetProperty {
     apply(name)(superior.activeActor)
   }
 
+  def required(name: String)(implicit activeActor: ActiveActor): String = {
+    val p = apply(name)(activeActor)
+    if (p == null) throw new IllegalArgumentException("No such property: " + name)
+    p
+  }
+
   def int(name: String, default: Int = 0)(implicit activeActor: ActiveActor): Int = {
     val p = apply(name)(activeActor)
     if (p != null) p.toInt
+    else default
+  }
+
+  def string(name: String, default: String = "")(implicit activeActor: ActiveActor): String = {
+    val p = apply(name)(activeActor)
+    if (p != null) p
     else default
   }
 }

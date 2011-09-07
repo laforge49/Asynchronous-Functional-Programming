@@ -50,7 +50,10 @@ class Actor
     }
     opened = true
     true
+    open
   }
+
+  def open {}
 
   def close {
     if (componentList == null) return

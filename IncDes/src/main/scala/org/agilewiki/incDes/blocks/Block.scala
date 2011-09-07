@@ -40,13 +40,20 @@ object Block {
 }
 
 class Block extends IncDesIncDes {
-  val readOnly = false
-  var dirty = false
+  private var readOnly = false
+  private var dirty = false
 
-  bind(classOf[BlockClean], clean)
+  bind(classOf[Clean], clean)
+  bind(classOf[ReadOnly], setReadOnly)
 
   def clean(msg:AnyRef, rf: Any => Unit) {
     dirty = false
+  }
+
+  def setReadOnly(msg: AnyRef, rf: Any => Unit) {
+    if (dirty) throw new IllegalStateException
+    readOnly = msg.asInstanceOf[ReadOnly].value
+    rf(null)
   }
 
   override def loadLen(_data: MutableData) = _data.remaining
@@ -60,11 +67,15 @@ class Block extends IncDesIncDes {
   }
 
   override def writable(transactionContext: TransactionContext)(rf: Any => Unit) {
-    if (transactionContext == null) throw new IllegalArgumentException("transactionContext is null")
-    if (transactionContext.isInstanceOf[QueryContext])
+    if (transactionContext != null && transactionContext.isInstanceOf[QueryContext])
       throw new IllegalStateException("QueryContext does not support writable")
     if (readOnly) throw new IllegalStateException("Block is read-only")
+    if (transactionContext == null) {
+      rf(null)
+      return
+    }
     if (dirty) rf(null)
+    dirty = true
     systemServices(DirtyBlock(this))(rf)
   }
 }
