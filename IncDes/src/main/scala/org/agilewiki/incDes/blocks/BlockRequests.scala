@@ -32,3 +32,7 @@ case class BlockCacheRemove(key: Any)
 case class BlockCacheAdd(block: Block)
 
 case class BlockCacheGet(key: Any)
+
+case class DirtyBlock(block: Block)
+
+case class BlockClean()
