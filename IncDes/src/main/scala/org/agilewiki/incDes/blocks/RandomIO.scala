@@ -28,11 +28,52 @@ package blocks
 import blip._
 import services._
 
+class RandomIOComponentFactory extends ComponentFactory {
+  override def instantiate(actor: Actor) = new RandomIOComponent(actor)
+}
+
+class RandomIOComponent(actor: Actor)
+  extends Component(actor) {
+  val randomIO = new RandomIO
+
+  bindSafe(classOf[ReadBlock], new SafeForward(randomIO))
+  bindSafe(classOf[WriteBlock], new SafeForward(randomIO))
+
+  override def open {
+    super.open
+    randomIO.setSystemServices(systemServices)
+  }
+
+  override def close {
+    randomIO.close
+    super.close
+  }
+}
+
 class RandomIO extends Actor {
   var pathname: String = null
   var accessMode: String = null
   var file: java.io.File = null
   var randomAccessFile: java.io.RandomAccessFile = null
+
+  setMailbox(new Mailbox)
+  bind(classOf[ReadBlock], read)
+  bind(classOf[WriteBlock], write)
+
+  def read(msg: AnyRef, rf: Any => Unit) {
+    val req = msg.asInstanceOf[ReadBlock]
+    val bytes = new Array[Byte](req.length)
+    randomAccessFile.seek(req.offset)
+    randomAccessFile.readFully(bytes)
+    rf(bytes)
+  }
+
+  def write(msg: AnyRef, rf: Any => Unit) {
+    val req = msg.asInstanceOf[WriteBlock]
+    randomAccessFile.seek(req.offset)
+    randomAccessFile.write(req.bytes)
+    rf(null)
+  }
 
   override def open {
     super.open

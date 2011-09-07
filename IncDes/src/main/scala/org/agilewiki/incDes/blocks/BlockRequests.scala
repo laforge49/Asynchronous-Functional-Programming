@@ -38,3 +38,7 @@ case class DirtyBlock(block: Block)
 case class Clean()
 
 case class ReadOnly(value: Boolean)
+
+case class ReadBlock(offset: Long, length: Int)
+
+case class WriteBlock(offset: Long, bytes: Array[Byte])
