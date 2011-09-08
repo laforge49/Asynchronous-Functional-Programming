@@ -39,6 +39,6 @@ case class Clean()
 
 case class ReadOnly(value: Boolean)
 
-case class ReadBlock(offset: Long, length: Int)
+case class ReadBytes(offset: Long, length: Int)
 
-case class WriteBlock(offset: Long, bytes: Array[Byte])
+case class WriteBytes(offset: Long, bytes: Array[Byte])

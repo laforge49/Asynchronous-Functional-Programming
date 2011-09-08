@@ -14,7 +14,7 @@ class BlockCacheTest extends SpecificationWithJUnit {
       val l=10000//0000
       while (i < l) {
         i += 1
-        val b = new Block
+        val b = Block(null)
         b.partness(null, i, null)
         Future(systemServices, BlockCacheAdd(b))
       }

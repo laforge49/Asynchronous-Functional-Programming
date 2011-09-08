@@ -69,8 +69,17 @@ class BlockCacheComponent(actor: Actor)
   def add(msg: AnyRef, rf: Any => Unit) {
     val block = msg.asInstanceOf[BlockCacheAdd].block
     accessed(block)
-    val nwr = new SoftBlockReference(block, referenceQueue)
-    hashMap.put(block.key, nwr)
+    val key = block.key
+    var nwr = hashMap.get(key)
+    if (nwr != null) nwr.get match {
+      case Some(blk) => {
+        if (blk != block) throw new IllegalArgumentException("duplicate key")
+        rf(null)
+      }
+      case None =>
+    }
+    nwr = new SoftBlockReference(block, referenceQueue)
+    hashMap.put(key, nwr)
     var more = true
     while (more) {
       referenceQueue.poll match {
@@ -93,7 +102,10 @@ class BlockCacheComponent(actor: Actor)
         accessed(block)
         rf(block)
       }
-      case None => rf(null)
+      case None => {
+        hashMap.remove(key)
+        rf(null)
+      }
     }
   }
 }

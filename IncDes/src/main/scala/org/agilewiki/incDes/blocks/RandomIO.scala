@@ -36,8 +36,8 @@ class RandomIOComponent(actor: Actor)
   extends Component(actor) {
   val randomIO = new RandomIO
 
-  bindSafe(classOf[ReadBlock], new SafeForward(randomIO))
-  bindSafe(classOf[WriteBlock], new SafeForward(randomIO))
+  bindSafe(classOf[ReadBytes], new SafeForward(randomIO))
+  bindSafe(classOf[WriteBytes], new SafeForward(randomIO))
 
   override def open {
     super.open
@@ -57,11 +57,11 @@ class RandomIO extends Actor {
   var randomAccessFile: java.io.RandomAccessFile = null
 
   setMailbox(new Mailbox)
-  bind(classOf[ReadBlock], read)
-  bind(classOf[WriteBlock], write)
+  bind(classOf[ReadBytes], read)
+  bind(classOf[WriteBytes], write)
 
   def read(msg: AnyRef, rf: Any => Unit) {
-    val req = msg.asInstanceOf[ReadBlock]
+    val req = msg.asInstanceOf[ReadBytes]
     val bytes = new Array[Byte](req.length)
     randomAccessFile.seek(req.offset)
     randomAccessFile.readFully(bytes)
@@ -69,7 +69,7 @@ class RandomIO extends Actor {
   }
 
   def write(msg: AnyRef, rf: Any => Unit) {
-    val req = msg.asInstanceOf[WriteBlock]
+    val req = msg.asInstanceOf[WriteBytes]
     randomAccessFile.seek(req.offset)
     randomAccessFile.write(req.bytes)
     rf(null)
@@ -77,8 +77,8 @@ class RandomIO extends Actor {
 
   override def open {
     super.open
-    pathname = GetProperty.required("randomIOPathname")
-    accessMode = GetProperty.string("accessMode", "rw")
+    pathname = GetProperty.required("dbPathname")
+    accessMode = GetProperty.string("dbAccessMode", "rw")
     file = new java.io.File(pathname)
     randomAccessFile = new java.io.RandomAccessFile(file, accessMode)
   }
