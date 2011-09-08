@@ -24,4 +24,6 @@
 package org.agilewiki
 package blip
 
-class Chain extends java.util.ArrayList[Op]
+class Chain extends java.util.ArrayList[Op] {
+  def add(actor: Actor, msg: AnyRef) {add(new Op(actor, msg))}
+}
