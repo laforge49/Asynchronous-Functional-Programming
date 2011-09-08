@@ -72,6 +72,7 @@ class Block extends IncDesIncDes {
 
   override def changed(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
     data = null
+    rf(null)
   }
 
   override def writable(transactionContext: TransactionContext)(rf: Any => Unit) {
