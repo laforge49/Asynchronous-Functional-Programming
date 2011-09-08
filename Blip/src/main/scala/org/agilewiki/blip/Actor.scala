@@ -38,6 +38,11 @@ class Actor
   var transactionActivityLevel = 0
   lazy val pendingTransactions = new java.util.ArrayDeque[MailboxReq]
   lazy val activeTransactions = new java.util.HashSet[MailboxReq]
+  private val _activeActor = ActiveActor(this)
+
+  override implicit def activeActor: ActiveActor = _activeActor
+
+  bind(classOf[Chain], eval)
 
   lazy val _open = {
     if (!components.isEmpty) {
@@ -91,10 +96,6 @@ class Actor
   override def mailbox = _mailbox
 
   override def factory = _factory
-
-  private val _activeActor = ActiveActor(this)
-
-  override implicit def activeActor: ActiveActor = _activeActor
 
   var _systemServices: Actor = null
 
@@ -188,5 +189,35 @@ class Actor
     val l = mailboxReq.binding.asInstanceOf[Transaction].level
     activeTransactions.remove(mailboxReq)
     if (l == transactionActivityLevel) transactionActivityLevel = maxLevel
+  }
+
+  def eval(msg: AnyRef, rf: Any => Unit) {
+    val chain = msg.asInstanceOf[Chain]
+    eval(chain, 0, rf)
+  }
+
+  private def _eval(chain: Chain, pos: Int, rf: Any => Unit) {
+    eval(chain, pos, rf)
+  }
+
+  @tailrec final def eval(chain: Chain, pos: Int, rf: Any => Unit) {
+    if (pos >= chain.size) {
+      rf(null)
+      return
+    }
+    var async = false
+    var sync = false
+    val op = chain.get(pos)
+    op.actor(op.msg) {
+      rsp => {
+        if (async) _eval(chain, pos + 1, rf)
+        else sync = true
+      }
+    }
+    if (!sync) {
+      async = true
+      return
+    }
+    eval(chain, pos + 1, rf)
   }
 }
