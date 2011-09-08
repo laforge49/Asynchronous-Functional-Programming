@@ -42,9 +42,17 @@ object Block {
 class Block extends IncDesIncDes {
   private var readOnly = false
   private var dirty = false
+  private var _handle: Handle = null
 
   bind(classOf[Clean], clean)
   bind(classOf[ReadOnly], setReadOnly)
+
+  def setHandle(handle: Handle) {
+    if (opened) throw new IllegalStateException
+    _handle = handle
+  }
+
+  def handle = _handle
 
   def clean(msg:AnyRef, rf: Any => Unit) {
     dirty = false

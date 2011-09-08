@@ -30,6 +30,8 @@ import services._
 
 class RandomIOComponentFactory extends ComponentFactory {
   override def instantiate(actor: Actor) = new RandomIOComponent(actor)
+
+  addDependency(classOf[PropertiesComponentFactory])
 }
 
 class RandomIOComponent(actor: Actor)
@@ -42,6 +44,7 @@ class RandomIOComponent(actor: Actor)
   override def open {
     super.open
     randomIO.setSystemServices(systemServices)
+    randomIO._open
   }
 
   override def close {
