@@ -209,7 +209,7 @@ class Actor
     var sync = false
     var last: Any = null
     val op = chain.get(pos)
-    op.actor()(op.msg()) {
+    op.actor().asInstanceOf[Actor](op.msg()) {
       rsp => {
         last = rsp
         val key = op.result

@@ -24,4 +24,6 @@
 package org.agilewiki
 package blip
 
-class Results extends java.util.TreeMap[String, Any]
+class Results extends java.util.TreeMap[String, Any] {
+  def apply(key: String) = {get(key)}
+}

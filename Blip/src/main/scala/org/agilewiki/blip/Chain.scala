@@ -26,7 +26,7 @@ package blip
 
 class Chain(_results: Results = new Results) extends java.util.ArrayList[Op] {
 
-  def addFuncs(actor: Unit => Actor, msg: Unit => AnyRef, result: String = null) {
+  def addFuncs(actor: Unit => Any, msg: Unit => AnyRef, result: String = null) {
     add(new Op(actor, msg, result))
   }
 

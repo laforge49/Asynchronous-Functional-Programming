@@ -72,26 +72,9 @@ class Driver extends Actor {
     val results = new Results
     val chain = new Chain(results)
     chain.add(systemServices, Instantiate(INC_DES_INT_FACTORY_ID, null), "incDesInt")
-    chain.addFuncs(Unit => results.get("incDesInt").asInstanceOf[Actor], Unit => Set(null, 42))
-    chain.addFuncs(Unit => results.get("incDesInt").asInstanceOf[Actor], Unit => Copy(null), "clone")
-    chain.addFuncs(Unit => results.get("clone").asInstanceOf[Actor], Unit => Value())
+    chain.addFuncs(Unit => results("incDesInt"), Unit => Set(null, 42))
+    chain.addFuncs(Unit => results("incDesInt"), Unit => Copy(null), "clone")
+    chain.addFuncs(Unit => results("clone"), Unit => Value())
     this(chain)(rf)
-    /*
-    systemServices(Instantiate(INC_DES_INT_FACTORY_ID, null)) {
-      rsp => {
-        val j6 = rsp.asInstanceOf[Actor]
-        j6(Set(null, 42)) {
-          rsp1 => {
-            j6(Copy(null)) {
-              rsp2 => {
-                val j7 = rsp2.asInstanceOf[Actor]
-                j7(Value())(rf)
-              }
-            }
-          }
-        }
-      }
-    }
-    */
   }
 }
