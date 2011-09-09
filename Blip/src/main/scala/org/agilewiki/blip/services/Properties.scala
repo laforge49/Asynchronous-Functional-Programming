@@ -28,8 +28,10 @@ package services
 import seq.NavMapSeq
 import annotation.tailrec
 
+class Properties extends java.util.TreeMap[String, String]
+
 object SetProperties {
-  def apply(systemServicesFactory: Factory, properties: java.util.TreeMap[String, String]) {
+  def apply(systemServicesFactory: Factory, properties: Properties) {
     val propertiesComponentFactory =
       systemServicesFactory.componentFactory(classOf[PropertiesComponentFactory]).
         asInstanceOf[PropertiesComponentFactory]
@@ -37,7 +39,7 @@ object SetProperties {
       "PropertiesComponentFactory is missing"
     )
     if (propertiesComponentFactory != null) propertiesComponentFactory.properties = {
-      if (properties == null) new java.util.TreeMap[String, String]
+      if (properties == null) new Properties
       else properties
     }
   }
@@ -80,7 +82,7 @@ object GetProperty {
 }
 
 class PropertiesComponentFactory extends ComponentFactory {
-  var properties = new java.util.TreeMap[String, String]
+  var properties = new Properties
 
   override def instantiate(actor: Actor) = new PropertiesComponent(actor)
 }

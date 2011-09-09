@@ -38,7 +38,7 @@ class BlockIOTest extends SpecificationWithJUnit {
       val dbName = "BlockIOTest.db"
       val file = new java.io.File(dbName)
       file.delete
-      val properties = new java.util.TreeMap[String, String]
+      val properties = new Properties
       properties.put("dbPathname", dbName)
       val systemServices = SystemServices(new BlockIOComponentFactory, properties = properties)
       val driver = new Driver

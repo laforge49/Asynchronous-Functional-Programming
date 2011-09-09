@@ -4,6 +4,7 @@ package blocks
 package randomIO
 
 import blip._
+import services._
 import org.specs.SpecificationWithJUnit
 
 case class DoIt()
@@ -30,7 +31,7 @@ class RandomIOTest extends SpecificationWithJUnit {
       val dbName = "RandomIOTest.db"
       val file = new java.io.File(dbName)
       file.delete
-      val properties = new java.util.TreeMap[String, String]
+      val properties = new Properties
       properties.put("dbPathname", dbName)
       val systemServices = SystemServices(new RandomIOComponentFactory, properties = properties)
       val driver = new Driver

@@ -22,12 +22,12 @@ class Driver extends Actor {
 class PropertiesTest extends SpecificationWithJUnit {
   "PropertiesTest" should {
     "use properties" in {
-      val p1 = new java.util.TreeMap[String, String]
+      val p1 = new Properties
       p1.put("a", "1")
       p1.put("b", "2")
       p1.put("c", "3")
       val systemServices = SystemServices(new PropertiesComponentFactory, properties = p1)
-      val p2 = new java.util.TreeMap[String, String]
+      val p2 = new Properties
       p2.put("b", null)
       p2.put("c", "11")
       p2.put("d", "12")
