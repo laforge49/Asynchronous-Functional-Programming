@@ -11,7 +11,7 @@ class Driver extends Actor {
   bind(classOf[DoIt], doIt)
 
   def doIt(msg: AnyRef, rf: Any => Unit) {
-    systemServices(Properties()) {
+    systemServices(PropertiesSeq()) {
       rsp1 => {
         val seq = rsp1.asInstanceOf[Sequence[String, String]]
         seq(Loop((key: String, value: String) => println(key+" -> "+value))) {
