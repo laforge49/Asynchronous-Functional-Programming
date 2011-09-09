@@ -24,4 +24,8 @@
 package org.agilewiki
 package blip
 
-case class Op(actor: Actor, msg: AnyRef)
+class Op(_actor: Actor, _msg: Unit => AnyRef, _result: String) {
+  def actor = _actor
+  def msg = _msg
+  def result = _result
+}

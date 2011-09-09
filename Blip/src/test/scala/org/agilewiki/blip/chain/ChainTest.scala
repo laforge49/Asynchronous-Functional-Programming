@@ -5,12 +5,20 @@ import org.specs.SpecificationWithJUnit
 
 case class Prnt(value: Any)
 
+case class UltimateAnswer()
+
 class SimpleActor extends Actor {
   bind(classOf[Prnt], prnt)
+  bind(classOf[UltimateAnswer], ultimateAnswer)
+
   private def prnt(msg: AnyRef, rf: Any => Unit) {
     val req = msg.asInstanceOf[Prnt]
     println(req.value)
     rf(null)
+  }
+
+  private def ultimateAnswer(msg: AnyRef, rf: Any => Unit) {
+    rf(42)
   }
 }
 
@@ -23,7 +31,18 @@ class ChainTest extends SpecificationWithJUnit {
       chain.add(simpleActor, Prnt(2))
       chain.add(simpleActor, Prnt(3))
       chain.add(simpleActor, Prnt("scadoo!"))
-      println(Future(simpleActor, chain))
+      Future(simpleActor, chain)
+    }
+    "pass results" in {
+      val results = new Results
+      val chain = new Chain(results)
+      val simpleActor = new SimpleActor
+      chain.add(simpleActor, UltimateAnswer(), "ultimateAnswer")
+      chain.addFunc(
+        simpleActor,
+        Unit => Prnt("The Ultimate Answer to Everything: " + results.get("ultimateAnswer").asInstanceOf[Int])
+      )
+      Future(simpleActor, chain)
     }
   }
 }
