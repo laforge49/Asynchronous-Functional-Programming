@@ -38,8 +38,8 @@ class ChainTest extends SpecificationWithJUnit {
       val chain = new Chain(results)
       val simpleActor = new SimpleActor
       chain.add(simpleActor, UltimateAnswer(), "ultimateAnswer")
-      chain.addFunc(
-        simpleActor,
+      chain.addFuncs(
+        Unit => simpleActor,
         Unit => Prnt("The Ultimate Answer to Everything: " + results.get("ultimateAnswer").asInstanceOf[Int])
       )
       Future(simpleActor, chain)

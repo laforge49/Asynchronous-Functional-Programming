@@ -208,7 +208,7 @@ class Actor
     var async = false
     var sync = false
     val op = chain.get(pos)
-    op.actor(op.msg()) {
+    op.actor()(op.msg()) {
       rsp => {
         val key = op.result
         if (key != null) chain.results.put(key, rsp)
