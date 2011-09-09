@@ -69,6 +69,14 @@ class Driver extends Actor {
   setMailbox(new Mailbox)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
+    val results = new Results
+    val chain = new Chain(results)
+    chain.add(systemServices, Instantiate(INC_DES_INT_FACTORY_ID, null), "incDesInt")
+    chain.addFuncs(Unit => results.get("incDesInt").asInstanceOf[Actor], Unit => Set(null, 42))
+    chain.addFuncs(Unit => results.get("incDesInt").asInstanceOf[Actor], Unit => Copy(null), "clone")
+    chain.addFuncs(Unit => results.get("clone").asInstanceOf[Actor], Unit => Value())
+    this(chain)(rf)
+    /*
     systemServices(Instantiate(INC_DES_INT_FACTORY_ID, null)) {
       rsp => {
         val j6 = rsp.asInstanceOf[Actor]
@@ -84,5 +92,6 @@ class Driver extends Actor {
         }
       }
     }
+    */
   }
 }

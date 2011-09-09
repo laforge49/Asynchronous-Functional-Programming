@@ -193,30 +193,28 @@ class Actor
 
   def eval(msg: AnyRef, rf: Any => Unit) {
     val chain = msg.asInstanceOf[Chain]
-    eval(chain, 0)(rf)
+    eval(chain, 0, null)(rf)
   }
 
-  private def _eval(chain: Chain, pos: Int)(rf: Any => Unit) {
-    eval(chain, pos)(rf)
+  private def _eval(chain: Chain, pos: Int, last: Any)(rf: Any => Unit) {
+    eval(chain, pos, last)(rf)
   }
 
-  @tailrec final def eval(chain: Chain, pos: Int)(rf: Any => Unit) {
+  @tailrec final def eval(chain: Chain, pos: Int, _last: Any)(rf: Any => Unit) {
     if (pos >= chain.size) {
-      rf(null)
+      rf(_last)
       return
     }
     var async = false
     var sync = false
+    var last: Any = null
     val op = chain.get(pos)
     op.actor()(op.msg()) {
       rsp => {
+        last = rsp
         val key = op.result
         if (key != null) chain.results.put(key, rsp)
-        if (async) _eval(chain, pos + 1) {
-          rslt => {
-            rf(null)
-          }
-        }
+        if (async) _eval(chain, pos + 1, last)(rf)
         else sync = true
       }
     }
@@ -224,10 +222,6 @@ class Actor
       async = true
       return
     }
-    eval(chain, pos + 1) {
-      rslt => {
-        rf(null)
-      }
-    }
+    eval(chain, pos + 1, last)(rf)
   }
 }
