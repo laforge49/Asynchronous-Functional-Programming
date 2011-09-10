@@ -47,6 +47,8 @@ class Block extends IncDesIncDes {
   bind(classOf[Clean], clean)
   bind(classOf[ReadOnly], setReadOnly)
 
+  override def length = if (len == -1) 0 else len
+
   def setHandle(handle: Handle) {
     if (opened) throw new IllegalStateException
     _handle = handle

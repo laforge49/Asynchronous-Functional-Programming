@@ -40,8 +40,7 @@ class ChainTest extends SpecificationWithJUnit {
       chain.add(simpleActor, UltimateAnswer(), "ultimateAnswer")
       chain.addFuncs(
         Unit => simpleActor,
-        Unit => Prnt("The Ultimate Answer to Everything: " +
-          results("ultimateAnswer"))
+        Unit => Prnt("The Ultimate Answer to Everything: " + results("ultimateAnswer"))
       )
       Future(simpleActor, chain)
     }

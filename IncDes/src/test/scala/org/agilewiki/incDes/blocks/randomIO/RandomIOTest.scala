@@ -39,6 +39,7 @@ class RandomIOTest extends SpecificationWithJUnit {
       driver.setSystemServices(systemServices)
       val bytes = Future(driver, DoIt()).asInstanceOf[Array[Byte]]
       bytes.length must be equalTo(5000)
+      systemServices.close
     }
   }
 }

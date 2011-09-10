@@ -41,7 +41,7 @@ object IncDesIncDes {
 
 class IncDesIncDes extends IncDesItem[IncDes] {
   private var i: IncDes = null
-  private var len = -1
+  protected var len = -1
 
   bind(classOf[MakeSet], makeSet)
 

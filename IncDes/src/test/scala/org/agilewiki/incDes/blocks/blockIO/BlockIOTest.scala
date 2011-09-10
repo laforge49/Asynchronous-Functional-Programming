@@ -16,9 +16,13 @@ class Driver extends Actor {
     val block = Block(new Mailbox)
     block.setSystemServices(systemServices)
     val incDesString = IncDesString(null)
-    val chain = new Chain
+    val results = new Results
+    val chain = new Chain(results)
     chain.add(block, Set(null, incDesString))
     chain.add(incDesString, Set(null, "abc"))
+    chain.add(block, Bytes(), "bytes")
+    chain.add(systemServices,
+      WriteBytes(0L, results("bytes").asInstanceOf[Array[Byte]]))
     this(chain) {
       rsp => {
         incDesString(Value())(rf)
@@ -44,7 +48,7 @@ class BlockIOTest extends SpecificationWithJUnit {
       val driver = new Driver
       driver.setMailbox(new Mailbox)
       driver.setSystemServices(systemServices)
-      println(Future(driver, DoIt()))
+      Future(driver, DoIt())
     }
   }
 }
