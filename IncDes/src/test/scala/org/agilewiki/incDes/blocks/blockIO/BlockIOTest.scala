@@ -16,7 +16,7 @@ class Driver extends Actor {
   bind(classOf[Writeit], writeit)
 
   def writeit(msg: AnyRef, rf: Any => Unit) {
-    val block = Block(new Mailbox)
+    val block = Block(mailbox)
     block.setSystemServices(systemServices)
     val incDesString = IncDesString(null)
     val blockLength = IncDesInt(null)
@@ -39,7 +39,7 @@ class Driver extends Actor {
   }
 
   def readit(msg: AnyRef, rf: Any => Unit) {
-    val block = Block(new Mailbox)
+    val block = Block(mailbox)
     block.setSystemServices(systemServices)
     val blockLength = IncDesInt(null)
     val results = new Results
@@ -80,7 +80,7 @@ class BlockIOTest extends SpecificationWithJUnit {
       properties.put("dbPathname", dbName)
       val systemServices = SystemServices(new BlockIOComponentFactory, properties = properties)
       val driver = new Driver
-      driver.setMailbox(new Mailbox)
+      driver.setMailbox(systemServices.mailbox)
       driver.setSystemServices(systemServices)
       Future(driver, Writeit())
       systemServices.close
@@ -91,7 +91,7 @@ class BlockIOTest extends SpecificationWithJUnit {
       properties.put("dbPathname", dbName)
       val systemServices = SystemServices(new BlockIOComponentFactory, properties = properties)
       val driver = new Driver
-      driver.setMailbox(new Mailbox)
+      driver.setMailbox(systemServices.mailbox)
       driver.setSystemServices(systemServices)
       Future(driver, Readit()) must be equalTo("abc")
       systemServices.close

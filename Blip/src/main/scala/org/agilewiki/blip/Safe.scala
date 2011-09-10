@@ -101,7 +101,7 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
   }
 }
 
-abstract class Transaction(messageFunction: (AnyRef, Any => Unit) => Unit)
+abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
   extends Bound(messageFunction) {
   def level: Int
 
@@ -150,7 +150,7 @@ abstract class Transaction(messageFunction: (AnyRef, Any => Unit) => Unit)
 }
 
 class Query(messageFunction: (AnyRef, Any => Unit) => Unit)
-  extends Transaction(messageFunction) {
+  extends BoundTransaction(messageFunction) {
   override def level = 5
 
   override def maxCompatibleLevel = 5
@@ -161,7 +161,7 @@ class Query(messageFunction: (AnyRef, Any => Unit) => Unit)
 }
 
 class Update(messageFunction: (AnyRef, Any => Unit) => Unit)
-  extends Transaction(messageFunction) {
+  extends BoundTransaction(messageFunction) {
   override def level = 10
 
   override def maxCompatibleLevel = 0

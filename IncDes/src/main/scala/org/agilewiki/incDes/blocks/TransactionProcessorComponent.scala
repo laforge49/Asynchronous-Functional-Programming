@@ -25,30 +25,19 @@ package org.agilewiki
 package incDes
 package blocks
 
-case class BlockCacheClear()
+import blip._
 
-case class BlockCacheRemove(key: Any)
+class TransactionProcessorComponentFactory extends ComponentFactory {
+  override def instantiate(actor: Actor) = new RandomIOComponent(actor)
+}
 
-case class BlockCacheAdd(block: Block)
+class TransactionProcessorComponent(actor: Actor)
+  extends Component(actor) {
 
-case class BlockCacheGet(key: Any)
+  bindSafe(classOf[QueryTransaction], new Query(process))
+  bindSafe(classOf[UpdateTransaction], new Update(process))
 
-case class DirtyBlock(block: Block)
+  private def process(msg: AnyRef, rf: Any => Unit) {
 
-case class Clean()
-
-case class ReadOnly(value: Boolean)
-
-case class ReadBytes(offset: Long, length: Int)
-
-case class WriteBytes(offset: Long, bytes: Array[Byte])
-
-case class Transaction(block: Block)
-
-class QueryTransaction(block: Block)
-  extends Transaction(block)
-
-class UpdateTransaction(block: Block)
-  extends Transaction(block)
-
-case class Commit()
+  }
+}

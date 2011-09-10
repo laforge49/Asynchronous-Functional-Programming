@@ -154,7 +154,7 @@ class Actor
     var level = 0
     val it = activeTransactions.iterator
     while (it.hasNext) {
-      val l = it.next.binding.asInstanceOf[Transaction].level
+      val l = it.next.binding.asInstanceOf[BoundTransaction].level
       if (l > level) level = l
     }
     level
@@ -171,22 +171,22 @@ class Actor
     if (!isTransactionCompatible(mailboxReq)) return
     pendingTransactions.removeFirst
     addActiveTransaction(mailboxReq)
-    val transaction = mailboxReq.binding.asInstanceOf[Transaction]
+    val transaction = mailboxReq.binding.asInstanceOf[BoundTransaction]
     transaction.processTransaction(mailbox, mailboxReq)
     runPendingTransaction
   }
 
   def isTransactionCompatible(mailboxReq: MailboxReq) =
-    mailboxReq.binding.asInstanceOf[Transaction].maxCompatibleLevel >= transactionActivityLevel
+    mailboxReq.binding.asInstanceOf[BoundTransaction].maxCompatibleLevel >= transactionActivityLevel
 
   def addActiveTransaction(mailboxReq: MailboxReq) {
-    val l = mailboxReq.binding.asInstanceOf[Transaction].level
+    val l = mailboxReq.binding.asInstanceOf[BoundTransaction].level
     if (l > transactionActivityLevel) transactionActivityLevel = l
     activeTransactions.add(mailboxReq)
   }
 
   def removeActiveTransaction(mailboxReq: MailboxReq) {
-    val l = mailboxReq.binding.asInstanceOf[Transaction].level
+    val l = mailboxReq.binding.asInstanceOf[BoundTransaction].level
     activeTransactions.remove(mailboxReq)
     if (l == transactionActivityLevel) transactionActivityLevel = maxLevel
   }
