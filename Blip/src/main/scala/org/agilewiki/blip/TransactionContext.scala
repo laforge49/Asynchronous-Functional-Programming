@@ -24,8 +24,8 @@
 package org.agilewiki
 package blip
 
-class TransactionContext
+class TransactionContext(transactionProcerssor: Actor)
 
-class QueryContext extends TransactionContext
+class QueryContext(transactionProcerssor: Actor) extends TransactionContext(transactionProcerssor)
 
-class UpdateContext extends TransactionContext
+class UpdateContext(transactionProcerssor: Actor) extends TransactionContext(transactionProcerssor)
