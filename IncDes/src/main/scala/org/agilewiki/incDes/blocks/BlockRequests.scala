@@ -25,6 +25,8 @@ package org.agilewiki
 package incDes
 package blocks
 
+import blip._
+
 case class BlockCacheClear()
 
 case class BlockCacheRemove(key: Any)
@@ -50,5 +52,7 @@ class QueryTransaction(block: Block)
 
 class UpdateTransaction(block: Block)
   extends Transaction(block)
+
+case class Process(transactionContext: TransactionContext)
 
 case class Commit()

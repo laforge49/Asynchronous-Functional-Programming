@@ -37,7 +37,21 @@ class TransactionProcessorComponent(actor: Actor)
   bindSafe(classOf[QueryTransaction], new Query(process))
   bindSafe(classOf[UpdateTransaction], new Update(process))
 
-  private def process(msg: AnyRef, rf: Any => Unit) {
+    override def open {
+      actor.requiredService(classOf[Commit])
+      actor.requiredService(classOf[DirtyBlock])
+    }
 
+  private def process(msg: AnyRef, rf: Any => Unit) {
+    val journalEntry = msg.asInstanceOf[Transaction].block
+    journalEntry(ReadOnly(true)) {
+      rsp1 => {
+        journalEntry(Process(mailbox.transactionContext)){
+          rsp2 => {
+            actor(Commit())(rf)
+          }
+        }
+      }
+    }
   }
 }
