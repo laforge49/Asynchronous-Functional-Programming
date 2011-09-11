@@ -27,19 +27,19 @@ class ChainTest extends SpecificationWithJUnit {
     "print bunches" in {
       val chain = new Chain
       val simpleActor = new SimpleActor
-      chain.add(simpleActor, Prnt(1))
-      chain.add(simpleActor, Prnt(2))
-      chain.add(simpleActor, Prnt(3))
-      chain.add(simpleActor, Prnt("scadoo!"))
+      chain.op(simpleActor, Prnt(1))
+      chain.op(simpleActor, Prnt(2))
+      chain.op(simpleActor, Prnt(3))
+      chain.op(simpleActor, Prnt("scadoo!"))
       Future(simpleActor, chain)
     }
     "pass results" in {
       val results = new Results
       val chain = new Chain(results)
       val simpleActor = new SimpleActor
-      chain.add(simpleActor, UltimateAnswer(), "ultimateAnswer")
-      chain.addFuncs(
-        Unit => simpleActor,
+      chain.op(simpleActor, UltimateAnswer(), "ultimateAnswer")
+      chain.op(
+        simpleActor,
         Unit => Prnt("The Ultimate Answer to Everything: " + results("ultimateAnswer"))
       )
       Future(simpleActor, chain)

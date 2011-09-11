@@ -209,11 +209,13 @@ class Actor
     var sync = false
     var last: Any = null
     val op = chain.get(pos)
-    op.actor().asInstanceOf[Actor](op.msg()) {
+    op.actor().asInstanceOf[Actor](op.msg().asInstanceOf[AnyRef]) {
       rsp => {
         last = rsp
         val key = op.result
-        if (key != null) chain.results.put(key, rsp)
+        if (key != null) {
+          chain.results.put(key, rsp)
+        }
         if (async) _eval(chain, pos + 1, last)(rf)
         else sync = true
       }

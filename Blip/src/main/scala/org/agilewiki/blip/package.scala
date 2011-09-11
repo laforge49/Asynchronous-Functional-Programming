@@ -22,10 +22,7 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki
-package blip
 
-class Op(_actor: Unit => Any, _msg: Unit => Any, _result: String) {
-  def actor = _actor
-  def msg = _msg
-  def result = _result
+package object blip {
+  implicit def AnyToFunc(value: Any): Unit => Any = {Unit => value}
 }

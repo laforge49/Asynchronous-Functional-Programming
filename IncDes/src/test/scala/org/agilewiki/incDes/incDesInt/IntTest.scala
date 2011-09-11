@@ -71,10 +71,10 @@ class Driver extends Actor {
   def doit(msg: AnyRef, rf: Any => Unit) {
     val results = new Results
     val chain = new Chain(results)
-    chain.add(systemServices, Instantiate(INC_DES_INT_FACTORY_ID, null), "incDesInt")
-    chain.addFuncs(Unit => results("incDesInt"), Unit => Set(null, 42))
-    chain.addFuncs(Unit => results("incDesInt"), Unit => Copy(null), "clone")
-    chain.addFuncs(Unit => results("clone"), Unit => Value())
+    chain.op(systemServices, Instantiate(INC_DES_INT_FACTORY_ID, null), "incDesInt")
+    chain.op(Unit => results("incDesInt"), Set(null, 42))
+    chain.op(Unit => results("incDesInt"), Copy(null), "clone")
+    chain.op(Unit => results("clone"), Value())
     this(chain)(rf)
   }
 }

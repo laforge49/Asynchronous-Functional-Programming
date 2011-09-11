@@ -22,18 +22,18 @@ class Driver extends Actor {
     val blockLength = IncDesInt(null)
     val results = new Results
     val chain = new Chain(results)
-    chain.add(block, Set(null, incDesString))
-    chain.add(incDesString, Set(null, "abc"))
-    chain.add(block, Bytes(), "bytes")
-    chain.addFuncs(Unit => blockLength,
+    chain.op(block, Set(null, incDesString))
+    chain.op(incDesString, Set(null, "abc"))
+    chain.op(block, Bytes(), "bytes")
+    chain.op(blockLength,
       Unit => {
         val blkLen = results("bytes").asInstanceOf[Array[Byte]].length
         Set(null, blkLen)
       })
-    chain.add(blockLength, Bytes(), "header")
-    chain.addFuncs(Unit => systemServices,
+    chain.op(blockLength, Bytes(), "header")
+    chain.op(systemServices,
       Unit => WriteBytes(0L, results("header").asInstanceOf[Array[Byte]]))
-    chain.addFuncs(Unit => systemServices,
+    chain.op(systemServices,
       Unit => WriteBytes(4L, results("bytes").asInstanceOf[Array[Byte]]))
     this(chain)(rf)
   }
@@ -44,23 +44,23 @@ class Driver extends Actor {
     val blockLength = IncDesInt(null)
     val results = new Results
     val chain = new Chain(results)
-    chain.add(systemServices, ReadBytes(0L, 4), "header")
-    chain.addFuncs(Unit => blockLength,
+    chain.op(systemServices, ReadBytes(0L, 4), "header")
+    chain.op(blockLength,
       Unit => {
         blockLength.load(results("header").asInstanceOf[Array[Byte]])
         Value()
       }, "length")
-    chain.addFuncs(Unit => systemServices,
+    chain.op(systemServices,
       Unit => {
         val blkLen = results("length").asInstanceOf[Int]
         ReadBytes(4L, blkLen)
       }, "bytes")
-    chain.addFuncs(Unit => block,
+    chain.op(block,
       Unit => {
         block.load(results("bytes").asInstanceOf[Array[Byte]])
         Value()
       }, "incDesString")
-    chain.addFuncs(Unit => results("incDesString").asInstanceOf[Actor], Unit => Value())
+    chain.op(Unit => results("incDesString").asInstanceOf[Actor], Value())
     this(chain)(rf)
   }
 }
