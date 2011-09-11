@@ -39,8 +39,6 @@ case class DirtyBlock(block: Block)
 
 case class Clean()
 
-case class ReadOnly(value: Boolean)
-
 case class ReadBytes(offset: Long, length: Int)
 
 case class WriteBytes(offset: Long, bytes: Array[Byte])
@@ -53,6 +51,6 @@ class QueryTransaction(block: Block)
 class UpdateTransaction(block: Block)
   extends Transaction(block)
 
-case class Process(transactionContext: TransactionContext)
+case class Process()
 
 case class Commit()

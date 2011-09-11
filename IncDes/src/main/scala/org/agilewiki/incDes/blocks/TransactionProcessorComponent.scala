@@ -37,20 +37,21 @@ class TransactionProcessorComponent(actor: Actor)
   bindSafe(classOf[QueryTransaction], new Query(process))
   bindSafe(classOf[UpdateTransaction], new Update(process))
 
-    override def open {
-      actor.requiredService(classOf[Commit])
-      actor.requiredService(classOf[DirtyBlock])
-    }
+  override def open {
+    actor.requiredService(classOf[Commit])
+    actor.requiredService(classOf[DirtyBlock])
+  }
 
   private def process(msg: AnyRef, rf: Any => Unit) {
-    val journalEntry = msg.asInstanceOf[Transaction].block
-    journalEntry(ReadOnly(true)) {
+    val block = msg.asInstanceOf[Transaction].block
+    var journalEntry: Block = Block(new Mailbox)
+    journalEntry.setSystemServices(actor)
+    journalEntry.setReadOnly
+    block(Bytes()) {
       rsp1 => {
-        journalEntry(Process(mailbox.transactionContext)){
-          rsp2 => {
-            actor(Commit())(rf)
-          }
-        }
+        val bytes = rsp1.asInstanceOf[Array[Byte]]
+        journalEntry.load(bytes)
+        journalEntry(Process)(rf)
       }
     }
   }

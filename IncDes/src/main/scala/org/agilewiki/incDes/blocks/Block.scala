@@ -45,7 +45,7 @@ class Block extends IncDesIncDes {
   private var _handle: Handle = null
 
   bind(classOf[Clean], clean)
-  bind(classOf[ReadOnly], setReadOnly)
+  bind(classOf[Process], process)
 
   override def length = if (len == -1) 0 else len
 
@@ -56,14 +56,19 @@ class Block extends IncDesIncDes {
 
   def handle = _handle
 
-  def clean(msg:AnyRef, rf: Any => Unit) {
+  def clean(msg: AnyRef, rf: Any => Unit) {
     dirty = false
   }
 
-  def setReadOnly(msg: AnyRef, rf: Any => Unit) {
-    if (dirty) throw new IllegalStateException
-    readOnly = msg.asInstanceOf[ReadOnly].value
-    rf(null)
+  def process(msg: AnyRef, rf: Any => Unit) {
+    this(Value()) {
+      rsp => rsp.asInstanceOf[IncDes](Process())(rf)
+    }
+  }
+
+  def setReadOnly {
+    if (opened) throw new IllegalStateException
+    readOnly = true
   }
 
   override def loadLen(_data: MutableData) = _data.remaining

@@ -97,7 +97,7 @@ class Actor
 
   override def factory = _factory
 
-  var _systemServices: Actor = null
+  protected var _systemServices: Actor = null
 
   def setSystemServices(systemServices: Actor) {
     if (opened) throw new IllegalStateException
