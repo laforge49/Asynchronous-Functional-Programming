@@ -27,36 +27,15 @@ package blocks
 
 import blip._
 
-case class BlockCacheClear()
+class UpdateRequestComponentFactory extends ComponentFactory {
+  override def instantiate(actor: Actor) = new UpdateRequestComponent(actor)
+}
 
-case class BlockCacheRemove(key: Any)
+class UpdateRequestComponent(actor: Actor)
+  extends Component(actor) {
+  bind(classOf[IsQuery], isQuery)
 
-case class BlockCacheAdd(block: Block)
-
-case class BlockCacheGet(key: Any)
-
-case class DirtyBlock(block: Block)
-
-case class Clean()
-
-case class ReadBytes(offset: Long, length: Int)
-
-case class WriteBytes(offset: Long, bytes: Array[Byte])
-
-case class Transaction(block: Block)
-
-class QueryTransaction(block: Block)
-  extends Transaction(block)
-
-class UpdateTransaction(block: Block)
-  extends Transaction(block)
-
-case class Process()
-
-case class Commit()
-
-case class Abort(exception: Exception)
-
-case class DbRoot()
-
-case class IsQuery()
+  private def isQuery(msg: AnyRef, rf: Any => Unit) {
+    rf(false)
+  }
+}

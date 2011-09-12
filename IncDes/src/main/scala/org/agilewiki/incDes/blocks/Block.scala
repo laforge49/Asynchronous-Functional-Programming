@@ -46,6 +46,7 @@ class Block extends IncDesIncDes {
 
   bind(classOf[Clean], clean)
   bind(classOf[Process], process)
+  bind(classOf[IsQuery], isQuery)
 
   override def length = if (len == -1) 0 else len
 
@@ -93,5 +94,13 @@ class Block extends IncDesIncDes {
     if (dirty) rf(null)
     dirty = true
     systemServices(DirtyBlock(this))(rf)
+  }
+
+  private def isQuery(msg: AnyRef, rf: Any => Unit) {
+    this(Value) {
+      rsp => {
+        rsp.asInstanceOf[IncDes](msg)(rf)
+      }
+    }
   }
 }
