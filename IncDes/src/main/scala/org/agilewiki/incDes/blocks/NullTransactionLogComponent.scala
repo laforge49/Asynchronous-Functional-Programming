@@ -27,42 +27,15 @@ package blocks
 
 import blip._
 
-case class BlockCacheClear()
+class NullTransactionLogComponentFactory extends ComponentFactory {
+  override def instantiate(actor: Actor) = new NullTransactionLogComponent(actor)
+}
 
-case class BlockCacheRemove(key: Any)
+class NullTransactionLogComponent(actor: Actor)
+  extends Component(actor) {
+  bind(classOf[LogTransaction], logTransaction)
 
-case class BlockCacheAdd(block: Block)
-
-case class BlockCacheGet(key: Any)
-
-case class DirtyBlock(block: Block)
-
-case class Clean()
-
-case class ReadBytes(offset: Long, length: Int)
-
-case class WriteBytes(offset: Long, bytes: Array[Byte])
-
-case class TransactionRequest(block: Block)
-
-case class Transaction(timestamp: Long, bytes: Array[Byte])
-
-class QueryTransaction(timestamp: Long, bytes: Array[Byte])
-  extends Transaction(timestamp, bytes)
-
-class UpdateTransaction(timestamp: Long, bytes: Array[Byte])
-  extends Transaction(timestamp, bytes)
-
-case class Process()
-
-case class Commit()
-
-case class Abort(exception: Exception)
-
-case class DbRoot()
-
-case class IsQuery()
-
-case class GetTimestamp()
-
-case class LogTransaction(timestamp: Long, bytes: Array[Byte])
+  private def logTransaction(msg: AnyRef, rf: Any => Unit) {
+    rf(null)
+  }
+}

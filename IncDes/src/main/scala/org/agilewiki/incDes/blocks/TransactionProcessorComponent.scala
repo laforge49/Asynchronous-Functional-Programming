@@ -49,24 +49,26 @@ class TransactionProcessorComponent(actor: Actor)
     actor.requiredService(classOf[Abort])
     actor.requiredService(classOf[DirtyBlock])
     actor.requiredService(classOf[DbRoot])
+    actor.requiredService(classOf[LogTransaction])
   }
 
   private def transactionRequest(msg: AnyRef, rf: Any => Unit) {
     val block = msg.asInstanceOf[TransactionRequest].block
-    systemServices(GetTimestamp) {
+    val results = new Results
+    val chain = new Chain(results)
+    chain.op(systemServices, GetTimestamp(), "timestamp")
+    chain.op(block, Bytes(), "bytes")
+    chain.op(systemServices, Unit => LogTransaction(
+      results("timestamp").asInstanceOf[Long],
+      results("bytes").asInstanceOf[Array[Byte]]))
+    chain.op(block, IsQuery(), "isQuery")
+    actor(chain) {
       rsp => {
-        val timestamp = rsp.asInstanceOf[Long]
-        block(Bytes()) {
-          rsp0 => {
-            val bytes = rsp0.asInstanceOf[Array[Byte]]
-            block(IsQuery()) {
-              rsp1 => {
-                if (rsp1.asInstanceOf[Boolean]) actor(new QueryTransaction(timestamp, bytes))(rf)
-                else actor(new UpdateTransaction(timestamp, bytes))(rf)
-              }
-            }
-          }
-        }
+        val timestamp = results("timestamp").asInstanceOf[Long]
+        val bytes = results("bytes").asInstanceOf[Array[Byte]]
+        val isQuery = results("isQuery").asInstanceOf[Boolean]
+        if (isQuery) actor(new QueryTransaction(timestamp, bytes))(rf)
+        else actor(new UpdateTransaction(timestamp, bytes))(rf)
       }
     }
   }
