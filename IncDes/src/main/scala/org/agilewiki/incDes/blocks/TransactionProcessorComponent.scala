@@ -34,6 +34,7 @@ class TransactionProcessorComponentFactory extends ComponentFactory {
 class TransactionProcessorComponent(actor: Actor)
   extends Component(actor) {
 
+  bind(classOf[TransactionRequest], transactionRequest)
   bindSafe(classOf[QueryTransaction], new Query(process))
   bindSafe(classOf[UpdateTransaction], new Update({
     (msg, rf) => exceptionHandler(msg, rf, process) {
@@ -48,22 +49,33 @@ class TransactionProcessorComponent(actor: Actor)
     actor.requiredService(classOf[DbRoot])
   }
 
-  private def process(msg: AnyRef, rf: Any => Unit) {
-    val block = msg.asInstanceOf[Transaction].block
-    var journalEntry: Block = Block(new Mailbox)
-    journalEntry.setSystemServices(actor)
-    journalEntry.setReadOnly
+  private def transactionRequest(msg: AnyRef, rf: Any => Unit) {
+    val block = msg.asInstanceOf[TransactionRequest].block
     block(Bytes()) {
-      rsp1 => {
-        val bytes = rsp1.asInstanceOf[Array[Byte]]
-        journalEntry.load(bytes)
-        journalEntry(Process) {
-          rsp2 => {
-            systemServices(Commit()) {
-              rsp3 => {
-                rf(rsp2)
-              }
-            }
+      rsp0 => {
+        val bytes = rsp0.asInstanceOf[Array[Byte]]
+        val key = block.key
+        block(IsQuery()) {
+          rsp1 => {
+            if (rsp1.asInstanceOf[Boolean]) actor(new QueryTransaction(key, bytes))(rf)
+            else actor(new UpdateTransaction(key, bytes))(rf)
+          }
+        }
+      }
+    }
+  }
+
+  private def process(msg: AnyRef, rf: Any => Unit) {
+    val transaction = msg.asInstanceOf[Transaction]
+    var journalEntry: Block = Block(mailbox)
+    journalEntry.partness(null, transaction.key, null)
+    journalEntry.setSystemServices(actor)
+    journalEntry.load(transaction.bytes)
+    journalEntry(Process) {
+      rsp2 => {
+        systemServices(Commit()) {
+          rsp3 => {
+            rf(rsp2)
           }
         }
       }

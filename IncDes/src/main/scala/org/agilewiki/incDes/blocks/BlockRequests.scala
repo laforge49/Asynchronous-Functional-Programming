@@ -43,13 +43,15 @@ case class ReadBytes(offset: Long, length: Int)
 
 case class WriteBytes(offset: Long, bytes: Array[Byte])
 
-case class Transaction(block: Block)
+case class TransactionRequest(block: Block)
 
-class QueryTransaction(block: Block)
-  extends Transaction(block)
+case class Transaction(key: Any, bytes: Array[Byte])
 
-class UpdateTransaction(block: Block)
-  extends Transaction(block)
+class QueryTransaction(key: Any, bytes: Array[Byte])
+  extends Transaction(key, bytes)
+
+class UpdateTransaction(key: Any, bytes: Array[Byte])
+  extends Transaction(key, bytes)
 
 case class Process()
 
