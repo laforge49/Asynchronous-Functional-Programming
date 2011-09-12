@@ -28,6 +28,8 @@ package blocks
 import blip._
 
 class TransactionProcessorComponentFactory extends ComponentFactory {
+  addDependency(classOf[TimestampComponentFactory])
+
   override def instantiate(actor: Actor) = new TransactionProcessorComponent(actor)
 }
 
@@ -51,14 +53,18 @@ class TransactionProcessorComponent(actor: Actor)
 
   private def transactionRequest(msg: AnyRef, rf: Any => Unit) {
     val block = msg.asInstanceOf[TransactionRequest].block
-    block(Bytes()) {
-      rsp0 => {
-        val bytes = rsp0.asInstanceOf[Array[Byte]]
-        val key = block.key
-        block(IsQuery()) {
-          rsp1 => {
-            if (rsp1.asInstanceOf[Boolean]) actor(new QueryTransaction(key, bytes))(rf)
-            else actor(new UpdateTransaction(key, bytes))(rf)
+    systemServices(GetTimestamp) {
+      rsp => {
+        val timestamp = rsp.asInstanceOf[Long]
+        block(Bytes()) {
+          rsp0 => {
+            val bytes = rsp0.asInstanceOf[Array[Byte]]
+            block(IsQuery()) {
+              rsp1 => {
+                if (rsp1.asInstanceOf[Boolean]) actor(new QueryTransaction(timestamp, bytes))(rf)
+                else actor(new UpdateTransaction(timestamp, bytes))(rf)
+              }
+            }
           }
         }
       }
@@ -68,7 +74,7 @@ class TransactionProcessorComponent(actor: Actor)
   private def process(msg: AnyRef, rf: Any => Unit) {
     val transaction = msg.asInstanceOf[Transaction]
     var journalEntry: Block = Block(mailbox)
-    journalEntry.partness(null, transaction.key, null)
+    journalEntry.partness(null, transaction.timestamp, null)
     journalEntry.setSystemServices(actor)
     journalEntry.load(transaction.bytes)
     journalEntry(Process) {

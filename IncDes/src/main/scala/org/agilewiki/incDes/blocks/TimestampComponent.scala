@@ -26,41 +26,44 @@ package incDes
 package blocks
 
 import blip._
+import org.joda.time.{DateTimeZone, DateTime}
 
-case class BlockCacheClear()
+class TimestampComponentFactory extends ComponentFactory {
+  override def instantiate(actor: Actor) = new TimestampComponent(actor)
+}
 
-case class BlockCacheRemove(key: Any)
+class TimestampComponent(actor: Actor)
+  extends Component(actor) {
+  private var previousTime: java.lang.Long = _
+  private var previousSequence: Int = _
 
-case class BlockCacheAdd(block: Block)
+  bind(classOf[GetTimestamp], timestamp)
 
-case class BlockCacheGet(key: Any)
+  private def timestamp(msg: AnyRef, rf: Any => Unit) {
+    val dt = new DateTime
+    val millisecondTime = dt.getMillis() << 10
+    if (millisecondTime == previousTime) {
+      previousSequence += 1
+    } else {
+      previousSequence = 0
+      previousTime = millisecondTime
+    }
+    val uniqueTime = millisecondTime + previousSequence
+    val rv = java.lang.Long.toHexString(uniqueTime)
+    rf(rv)
+  }
+}
 
-case class DirtyBlock(block: Block)
+object Timestamp {
+  def format(ts: Long, offset: Long): String = {
+    format(ts, offset, "yyyy-MM-dd HH:mm:ss SSS")
+  }
 
-case class Clean()
-
-case class ReadBytes(offset: Long, length: Int)
-
-case class WriteBytes(offset: Long, bytes: Array[Byte])
-
-case class TransactionRequest(block: Block)
-
-case class Transaction(timestamp: Long, bytes: Array[Byte])
-
-class QueryTransaction(timestamp: Long, bytes: Array[Byte])
-  extends Transaction(timestamp, bytes)
-
-class UpdateTransaction(timestamp: Long, bytes: Array[Byte])
-  extends Transaction(timestamp, bytes)
-
-case class Process()
-
-case class Commit()
-
-case class Abort(exception: Exception)
-
-case class DbRoot()
-
-case class IsQuery()
-
-case class GetTimestamp()
+  def format(ts: Long, offset: Long, form: String): String = {
+    val long2 = (ts / 1024)
+    val long3 = (long2 + offset)
+    val dt = new DateTime(long3, DateTimeZone.UTC)
+    val rv = dt.toString(form)
+    rv
+  }
+}
