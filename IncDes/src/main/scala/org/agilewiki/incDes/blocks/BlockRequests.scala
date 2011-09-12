@@ -54,3 +54,7 @@ class UpdateTransaction(block: Block)
 case class Process()
 
 case class Commit()
+
+case class Abort(exception: Exception)
+
+case class DbRoot()

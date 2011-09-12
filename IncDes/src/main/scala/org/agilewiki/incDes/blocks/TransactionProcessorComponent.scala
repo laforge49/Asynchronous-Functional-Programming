@@ -28,18 +28,24 @@ package blocks
 import blip._
 
 class TransactionProcessorComponentFactory extends ComponentFactory {
-  override def instantiate(actor: Actor) = new RandomIOComponent(actor)
+  override def instantiate(actor: Actor) = new TransactionProcessorComponent(actor)
 }
 
 class TransactionProcessorComponent(actor: Actor)
   extends Component(actor) {
 
   bindSafe(classOf[QueryTransaction], new Query(process))
-  bindSafe(classOf[UpdateTransaction], new Update(process))
+  bind(classOf[UpdateTransaction], {
+    (msg, rf) => exceptionHandler(msg, rf, process) {
+      ex => systemServices(Abort(ex))(rf)
+    }
+  })
 
   override def open {
     actor.requiredService(classOf[Commit])
+    actor.requiredService(classOf[Abort])
     actor.requiredService(classOf[DirtyBlock])
+    actor.requiredService(classOf[DbRoot])
   }
 
   private def process(msg: AnyRef, rf: Any => Unit) {
@@ -51,7 +57,15 @@ class TransactionProcessorComponent(actor: Actor)
       rsp1 => {
         val bytes = rsp1.asInstanceOf[Array[Byte]]
         journalEntry.load(bytes)
-        journalEntry(Process)(rf)
+        journalEntry(Process) {
+          rsp2 => {
+            systemServices(Commit()) {
+              rsp3 => {
+                rf(rsp2)
+              }
+            }
+          }
+        }
       }
     }
   }
