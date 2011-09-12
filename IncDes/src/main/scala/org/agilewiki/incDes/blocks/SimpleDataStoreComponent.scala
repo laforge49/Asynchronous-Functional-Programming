@@ -24,7 +24,6 @@
 package org.agilewiki
 package incDes
 package blocks
-package simpleDataStore
 
 import blip._
 
@@ -69,6 +68,7 @@ class DataStoreComponent(actor: Actor)
   }
 
   private def abort(msg: AnyRef, rf: Any => Unit) {
+    if (dirty) block = null
     throw msg.asInstanceOf[Abort].exception
   }
 

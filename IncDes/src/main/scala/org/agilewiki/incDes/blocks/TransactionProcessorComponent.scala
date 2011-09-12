@@ -35,11 +35,11 @@ class TransactionProcessorComponent(actor: Actor)
   extends Component(actor) {
 
   bindSafe(classOf[QueryTransaction], new Query(process))
-  bind(classOf[UpdateTransaction], {
+  bindSafe(classOf[UpdateTransaction], new Update({
     (msg, rf) => exceptionHandler(msg, rf, process) {
       ex => systemServices(Abort(ex))(rf)
     }
-  })
+  }))
 
   override def open {
     actor.requiredService(classOf[Commit])
