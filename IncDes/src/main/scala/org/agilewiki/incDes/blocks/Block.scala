@@ -98,7 +98,7 @@ class Block extends IncDesIncDes {
   }
 
   private def isQuery(msg: AnyRef, rf: Any => Unit) {
-    this(Value) {
+    this(Value()) {
       rsp => {
         rsp.asInstanceOf[IncDes](msg)(rf)
       }

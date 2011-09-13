@@ -31,7 +31,7 @@ import services._
 
 class SimpleNoLogDataStoreComponentFactory
   extends ComponentFactory {
-  addDependency(classOf[BlocksComponentFactory])
+  addDependency(classOf[SimpleNullLogDataStoreComponentFactory])
 
   override def configure(compositeFactory: Factory) {
     val factoryRegistryComponentFactory =

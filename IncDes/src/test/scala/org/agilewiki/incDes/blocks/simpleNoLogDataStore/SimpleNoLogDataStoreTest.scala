@@ -10,13 +10,17 @@ import org.specs.SpecificationWithJUnit
 class SimpleNoLogDataStoreTest extends SpecificationWithJUnit {
   "SimpleNoLogDataStoreTest" should {
     "update & query" in {
-      val systemServices = SystemServices(new SimpleNoLogDataStoreComponentFactory)
+      val systemServices = SystemServices(new BlocksComponentFactory)
       val dbName = "SimpleNoLog.db"
       val file = new java.io.File(dbName)
       file.delete
       val properties = new Properties
       properties.put("dbPathname", dbName)
-      SimpleNoLogDataStoreSubsystem(systemServices, properties = properties)
+      val db = Subsystem(
+        systemServices,
+        new SimpleNoLogDataStoreComponentFactory,
+        properties = properties)
+//      println(Future(systemServices, SetRootStringRequest.process(db, "Hello world!")))
     }
   }
 }

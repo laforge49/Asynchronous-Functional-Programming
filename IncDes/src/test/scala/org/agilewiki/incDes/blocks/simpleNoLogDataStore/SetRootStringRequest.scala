@@ -9,7 +9,7 @@ object SetRootStringRequest {
   def apply() = (new SetRootStringRequestFactory).newActor(null).
     asInstanceOf[IncDesString]
 
-  def process(db: Actor, value: String) {
+  def process(db: Actor, value: String) = {
     val je = apply()
     val chain = new Chain
     chain.op(je, Set(null, value))

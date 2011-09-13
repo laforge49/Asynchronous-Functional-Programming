@@ -49,8 +49,7 @@ class TimestampComponent(actor: Actor)
       previousTime = millisecondTime
     }
     val uniqueTime = millisecondTime + previousSequence
-    val rv = java.lang.Long.toHexString(uniqueTime)
-    rf(rv)
+    rf(uniqueTime)
   }
 }
 

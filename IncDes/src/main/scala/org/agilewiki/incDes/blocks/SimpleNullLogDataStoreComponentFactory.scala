@@ -28,27 +28,9 @@ package blocks
 import blip._
 import services._
 
-class SimpleNoLogDataStoreComponentFactory extends ComponentFactory {
+class SimpleNullLogDataStoreComponentFactory extends ComponentFactory {
   addDependency(classOf[DataStoreComponentFactory])
   addDependency(classOf[NullTransactionLogComponentFactory])
   addDependency(classOf[PropertiesComponentFactory])
-}
-
-object SimpleNoLogDataStoreSubsystem {
-  def apply(systemServices: Actor,
-            mailbox: Mailbox = null,
-            factoryId: FactoryId = new FactoryId("System"),
-            properties: Properties = null,
-            actorClass: Class[_ <: Id_Actor] = classOf[Id_Actor],
-            actorId: ActorId = null) = {
-    Subsystem(
-      systemServices,
-      new SimpleNoLogDataStoreComponentFactory,
-      mailbox,
-      factoryId,
-      properties,
-      actorClass,
-      actorId
-    )
-  }
+  addDependency(classOf[FactoryRegistryComponentFactory])
 }
