@@ -53,33 +53,37 @@ class TransactionProcessorComponent(actor: Actor)
   }
 
   private def transactionRequest(msg: AnyRef, rf: Any => Unit) {
-    val block = msg.asInstanceOf[TransactionRequest].block
+    var block = msg.asInstanceOf[TransactionRequest].block
     val results = new Results
     val chain = new Chain(results)
+    var timestamp = 0L
+    var bytes: Array[Byte] = null
     chain.op(systemServices, GetTimestamp(), "timestamp")
     chain.op(block, Bytes(), "bytes")
     chain.op(systemServices, Unit => LogTransaction(
       results("timestamp").asInstanceOf[Long],
       results("bytes").asInstanceOf[Array[Byte]]))
-    chain.op(block, IsQuery(), "isQuery")
+    chain.op(Unit => {
+      timestamp = results("timestamp").asInstanceOf[Long]
+      block = Block(mailbox)
+      block.partness(null, timestamp, null)
+      block.setSystemServices(actor)
+      bytes = results("bytes").asInstanceOf[Array[Byte]]
+      block.load(bytes)
+      block
+    }, IsQuery(), "isQuery")
     actor(chain) {
       rsp => {
-        val timestamp = results("timestamp").asInstanceOf[Long]
-        val bytes = results("bytes").asInstanceOf[Array[Byte]]
         val isQuery = results("isQuery").asInstanceOf[Boolean]
-        if (isQuery) actor(new QueryTransaction(timestamp, bytes))(rf)
-        else actor(new UpdateTransaction(timestamp, bytes))(rf)
+        if (isQuery) actor(new QueryTransaction(block))(rf)
+        else actor(new UpdateTransaction(block))(rf)
       }
     }
   }
 
   private def process(msg: AnyRef, rf: Any => Unit) {
-    val transaction = msg.asInstanceOf[Transaction]
-    var journalEntry: Block = Block(mailbox)
-    journalEntry.partness(null, transaction.timestamp, null)
-    journalEntry.setSystemServices(actor)
-    journalEntry.load(transaction.bytes)
-    journalEntry(Process) {
+    val block = msg.asInstanceOf[Transaction].block
+    block(Process) {
       rsp2 => {
         systemServices(Commit()) {
           rsp3 => {
