@@ -55,9 +55,9 @@ class TransactionProcessorComponent(actor: Actor)
   private def transactionRequest(msg: AnyRef, rf: Any => Unit) {
     val request = msg.asInstanceOf[TransactionRequest].request
     var block = Block(null)
-    val results = new Results
     var timestamp = 0L
     var bytes: Array[Byte] = null
+    val results = new Results
     val chain = new Chain(results)
     chain.op(block, Set(null, request))
     chain.op(systemServices, GetTimestamp(), "timestamp")
