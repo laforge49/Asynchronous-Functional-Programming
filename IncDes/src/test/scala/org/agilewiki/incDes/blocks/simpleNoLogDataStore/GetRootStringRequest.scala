@@ -6,7 +6,15 @@ package simpleNoLogDataStore
 import blip._
 
 object GetRootStringRequest {
-  def apply() = (new GetRootStringRequestFactory).newActor(null).asInstanceOf[GetRootStringRequestFactory]
+  def apply() = (new GetRootStringRequestFactory).newActor(null).
+    asInstanceOf[IncDesString]
+
+  def process(db: Actor) {
+    val je = apply()
+    val chain = new Chain
+    chain.op(db, TransactionRequest(je))
+    chain
+  }
 }
 
 class GetRootStringRequestFactory extends Factory(new FactoryId("GetRootStringRequest")) {
