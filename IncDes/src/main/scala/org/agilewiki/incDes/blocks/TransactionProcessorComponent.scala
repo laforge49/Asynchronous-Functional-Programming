@@ -83,7 +83,7 @@ class TransactionProcessorComponent(actor: Actor)
 
   private def process(msg: AnyRef, rf: Any => Unit) {
     val block = msg.asInstanceOf[Transaction].block
-    block(Process) {
+    block(Process(mailbox.transactionContext)) {
       rsp2 => {
         systemServices(Commit()) {
           rsp3 => {

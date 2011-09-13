@@ -62,8 +62,9 @@ class Block extends IncDesIncDes {
   }
 
   def process(msg: AnyRef, rf: Any => Unit) {
+    val transactionContext = msg.asInstanceOf[Process].transactionContext
     this(Value()) {
-      rsp => rsp.asInstanceOf[IncDes](Process())(rf)
+      rsp => rsp.asInstanceOf[IncDes](Process(transactionContext))(rf)
     }
   }
 

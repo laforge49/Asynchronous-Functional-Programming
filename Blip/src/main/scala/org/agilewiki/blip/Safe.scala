@@ -130,7 +130,7 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
     val transactionProcessor = mailboxReq.target
     mailbox.curMsg = mailboxReq
     mailbox.exceptionFunction = mailbox.reqExceptionFunction
-    mailbox.transactionContext = null
+    mailbox.transactionContext = transactionContext
     try {
       if (transactionProcessor.isInvalid) throw new IllegalStateException
       messageFunction(mailboxReq.req, {

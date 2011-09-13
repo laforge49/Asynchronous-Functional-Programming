@@ -53,7 +53,7 @@ class QueryTransaction(block: Block)
 class UpdateTransaction(block: Block)
   extends Transaction(block)
 
-case class Process()
+case class Process(transactionContext: TransactionContext)
 
 case class Commit()
 
