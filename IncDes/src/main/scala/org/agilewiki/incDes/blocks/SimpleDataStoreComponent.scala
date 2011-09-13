@@ -30,7 +30,7 @@ import blip._
 class DataStoreComponentFactory extends ComponentFactory {
   addDependency(classOf[TransactionProcessorComponentFactory])
 
-  override def instantiate(actor: Actor) = new RandomIOComponent(actor)
+  override def instantiate(actor: Actor) = new DataStoreComponent(actor)
 }
 
 class DataStoreComponent(actor: Actor)

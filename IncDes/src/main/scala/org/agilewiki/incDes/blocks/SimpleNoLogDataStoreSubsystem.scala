@@ -31,6 +31,7 @@ import services._
 class SimpleNoLogDataStoreComponentFactory extends ComponentFactory {
   addDependency(classOf[DataStoreComponentFactory])
   addDependency(classOf[NullTransactionLogComponentFactory])
+  addDependency(classOf[PropertiesComponentFactory])
 }
 
 object SimpleNoLogDataStoreSubsystem {
