@@ -33,8 +33,21 @@ class SimpleNoLogDataStoreComponentFactory extends ComponentFactory {
   addDependency(classOf[NullTransactionLogComponentFactory])
 }
 
-object SimpleNoLogDataStoreServices {
-  def apply(properties: Properties) = {
-    SystemServices(new SimpleNoLogDataStoreComponentFactory, properties = properties)
+object SimpleNoLogDataStoreSubsystem {
+  def apply(systemServices: Actor,
+            mailbox: Mailbox = null,
+            factoryId: FactoryId = new FactoryId("System"),
+            properties: Properties = null,
+            actorClass: Class[_ <: Id_Actor] = classOf[Id_Actor],
+            actorId: ActorId = null) = {
+    Subsystem(
+      systemServices,
+      new SimpleNoLogDataStoreComponentFactory,
+      mailbox,
+      factoryId,
+      properties,
+      actorClass,
+      actorId
+    )
   }
 }
