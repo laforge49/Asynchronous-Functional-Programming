@@ -43,7 +43,7 @@ case class ReadBytes(offset: Long, length: Int)
 
 case class WriteBytes(offset: Long, bytes: Array[Byte])
 
-case class TransactionRequest(block: Block)
+case class TransactionRequest(request: IncDes)
 
 case class Transaction(block: Block)
 

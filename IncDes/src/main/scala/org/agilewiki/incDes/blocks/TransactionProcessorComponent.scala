@@ -53,22 +53,24 @@ class TransactionProcessorComponent(actor: Actor)
   }
 
   private def transactionRequest(msg: AnyRef, rf: Any => Unit) {
-    var block = msg.asInstanceOf[TransactionRequest].block
+    val request = msg.asInstanceOf[TransactionRequest].request
+    var block = Block(null)
     val results = new Results
-    val chain = new Chain(results)
     var timestamp = 0L
     var bytes: Array[Byte] = null
+    val chain = new Chain(results)
+    chain.op(block, Set(null, request))
     chain.op(systemServices, GetTimestamp(), "timestamp")
     chain.op(block, Bytes(), "bytes")
-    chain.op(systemServices, Unit => LogTransaction(
-      results("timestamp").asInstanceOf[Long],
-      results("bytes").asInstanceOf[Array[Byte]]))
-    chain.op(Unit => {
+    chain.op(systemServices, Unit => {
       timestamp = results("timestamp").asInstanceOf[Long]
+      bytes = results("bytes").asInstanceOf[Array[Byte]]
+      LogTransaction(timestamp, bytes)
+    })
+    chain.op(Unit => {
       block = Block(mailbox)
       block.partness(null, timestamp, null)
       block.setSystemServices(actor)
-      bytes = results("bytes").asInstanceOf[Array[Byte]]
       block.load(bytes)
       block
     }, IsQuery(), "isQuery")
