@@ -78,7 +78,11 @@ class TransactionProcessorComponent(actor: Actor)
       rsp => {
         val isQuery = results("isQuery").asInstanceOf[Boolean]
         if (isQuery) actor(new QueryTransaction(block))(rf)
-        else actor(new UpdateTransaction(block))(rf)
+        else actor(new UpdateTransaction(block)) {
+          rsp1 => {
+            rf(timestamp)
+          }
+        }
       }
     }
   }
