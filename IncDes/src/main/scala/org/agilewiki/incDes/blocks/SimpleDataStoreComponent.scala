@@ -27,13 +27,13 @@ package blocks
 
 import blip._
 
-class DataStoreComponentFactory extends ComponentFactory {
+class SimpleDataStoreComponentFactory extends ComponentFactory {
   addDependency(classOf[TransactionProcessorComponentFactory])
 
-  override def instantiate(actor: Actor) = new DataStoreComponent(actor)
+  override def instantiate(actor: Actor) = new SimpleDataStoreComponent(actor)
 }
 
-class DataStoreComponent(actor: Actor)
+class SimpleDataStoreComponent(actor: Actor)
   extends Component(actor) {
   var dirty = false
   var block: Block = null
@@ -100,10 +100,12 @@ class DataStoreComponent(actor: Actor)
       }, "bytes")
     actor(chain) {
       rsp => {
-        val bytes = results("bytes").asInstanceOf[Array[Byte]]
-        block = Block(mailbox)
-        block.setSystemServices(systemServices)
-        block.load(bytes)
+        if (block == null) {
+          val bytes = results("bytes").asInstanceOf[Array[Byte]]
+          block = Block(mailbox)
+          block.setSystemServices(systemServices)
+          block.load(bytes)
+        }
         rf(block)
       }
     }
