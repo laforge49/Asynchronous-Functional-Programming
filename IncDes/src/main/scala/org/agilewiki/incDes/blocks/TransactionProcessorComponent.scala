@@ -31,6 +31,7 @@ import services._
 class TransactionProcessorComponentFactory extends ComponentFactory {
   addDependency(classOf[TimestampComponentFactory])
   addDependency(classOf[FactoryRegistryComponentFactory])
+  addDependency(classOf[BlocksComponentFactory])
 
   override def instantiate(actor: Actor) = new TransactionProcessorComponent(actor)
 }
