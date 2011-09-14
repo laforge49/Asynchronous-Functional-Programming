@@ -138,8 +138,12 @@ class Actor
 
   def requiredService(reqClass: Class[_ <: AnyRef]) {
     if (opened) throw new IllegalStateException
-    if (!messageFunctions.containsKey(reqClass))
-      throw new UnsupportedOperationException("service missing for " + reqClass.getName)
+    var actor = this
+    while (!actor.messageFunctions.containsKey(reqClass)) {
+      if (superior == null)
+        throw new UnsupportedOperationException("service missing for " + reqClass.getName)
+      actor = superior
+    }
   }
 
   override def ctrl = mailbox
