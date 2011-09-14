@@ -26,9 +26,12 @@ package incDes
 package blocks
 
 import blip._
+import services._
 
 class TransactionProcessorComponentFactory extends ComponentFactory {
   addDependency(classOf[TimestampComponentFactory])
+  addDependency(classOf[PropertiesComponentFactory])
+  addDependency(classOf[FactoryRegistryComponentFactory])
 
   override def instantiate(actor: Actor) = new TransactionProcessorComponent(actor)
 }
