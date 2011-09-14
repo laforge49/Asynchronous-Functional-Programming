@@ -43,7 +43,9 @@ class TransactionProcessorComponent(actor: Actor)
   bindSafe(classOf[QueryTransaction], new Query(process))
   bindSafe(classOf[UpdateTransaction], new Update({
     (msg, rf) => exceptionHandler(msg, rf, process) {
-      ex => systemServices(Abort(ex))(rf)
+      ex => {
+        systemServices(Abort(ex))(rf)
+      }
     }
   }))
 
@@ -82,9 +84,11 @@ class TransactionProcessorComponent(actor: Actor)
       rsp => {
         val isQuery = results("isQuery").asInstanceOf[Boolean]
         if (isQuery) actor(new QueryTransaction(block))(rf)
-        else actor(new UpdateTransaction(block)) {
-          rsp1 => {
-            rf(timestamp)
+        else {
+          actor(new UpdateTransaction(block)) {
+            rsp1 => {
+              rf(timestamp)
+            }
           }
         }
       }

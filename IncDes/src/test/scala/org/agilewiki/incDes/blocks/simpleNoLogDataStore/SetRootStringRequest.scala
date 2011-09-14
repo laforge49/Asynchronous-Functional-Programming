@@ -40,8 +40,9 @@ class SetRootStringRequestComponent(actor: Actor)
     val chain = new Chain(results)
     chain.op(actor, Value(), "value")
     chain.op(systemServices, DbRoot(), "dbRoot")
-    chain.op(Unit => results("dbRoot"), MakeSet(
-      transactionContext, INC_DES_STRING_FACTORY_ID), "incDesString")
+    chain.op(Unit => {
+      results("dbRoot")
+    }, MakeSet(transactionContext, INC_DES_STRING_FACTORY_ID), "incDesString")
     chain.op(Unit => results("incDesString"), Unit => Set(transactionContext, results("value")))
     actor(chain)(rf)
  }

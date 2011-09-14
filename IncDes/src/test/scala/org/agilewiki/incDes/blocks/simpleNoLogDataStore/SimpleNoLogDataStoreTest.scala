@@ -20,7 +20,8 @@ class SimpleNoLogDataStoreTest extends SpecificationWithJUnit {
         systemServices,
         new SimpleNoLogDataStoreComponentFactory,
         properties = properties)
-      //println(Future(systemServices, SetRootStringRequest.process(db, "Hello world!")))
+      println(Future(systemServices, SetRootStringRequest.process(db, "Hello world!")))
+      println(Future(systemServices, GetRootStringRequest.process(db)))
     }
   }
 }

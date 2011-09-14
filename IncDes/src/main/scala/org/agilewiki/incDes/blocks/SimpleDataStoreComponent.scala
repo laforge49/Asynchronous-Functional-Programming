@@ -29,6 +29,7 @@ import blip._
 
 class SimpleDataStoreComponentFactory extends ComponentFactory {
   addDependency(classOf[TransactionProcessorComponentFactory])
+  addDependency(classOf[RandomIOComponentFactory])
 
   override def instantiate(actor: Actor) = new SimpleDataStoreComponent(actor)
 }
@@ -43,7 +44,9 @@ class SimpleDataStoreComponent(actor: Actor)
   bind(classOf[DirtyBlock], dirtyBlock)
   bind(classOf[DbRoot], {
     (msg, rf) => exceptionHandler(msg, rf, dbRoot) {
-      ex => init(rf)
+      ex => {
+        init(rf)
+      }
     }
   })
 
@@ -66,7 +69,7 @@ class SimpleDataStoreComponent(actor: Actor)
       Unit => WriteBytes(0L, results("header").asInstanceOf[Array[Byte]]))
     chain.op(systemServices,
       Unit => WriteBytes(4L, results("bytes").asInstanceOf[Array[Byte]]))
-    this(chain)(rf)
+    actor(chain)(rf)
   }
 
   private def abort(msg: AnyRef, rf: Any => Unit) {
@@ -114,5 +117,6 @@ class SimpleDataStoreComponent(actor: Actor)
   private def init(rf: Any => Unit) {
     block = Block(mailbox)
     block.setSystemServices(systemServices)
+    rf(block)
   }
 }
