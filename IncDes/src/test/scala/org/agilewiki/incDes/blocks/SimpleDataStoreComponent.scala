@@ -26,7 +26,6 @@ package incDes
 package blocks
 
 import blip._
-import services._
 
 class SimpleDataStoreComponentFactory extends ComponentFactory {
   addDependency(classOf[TransactionProcessorComponentFactory])

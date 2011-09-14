@@ -7,16 +7,10 @@ import blip._
 import services._
 import org.specs.SpecificationWithJUnit
 
-class SomeComponentFactory
-  extends ComponentFactory {
-  addDependency(classOf[FactoryRegistryComponentFactory])
-  addDependency(classOf[ActorRegistryComponentFactory])
-}
-
 class SimpleNoLogDataStoreTest extends SpecificationWithJUnit {
   "SimpleNoLogDataStoreTest" should {
     "update & query" in {
-      val systemServices = SystemServices(new SomeComponentFactory)
+      val systemServices = SystemServices(new ServicesRootComponentFactory)
       val dbName = "SimpleNoLog.db"
       val file = new java.io.File(dbName)
       file.delete
