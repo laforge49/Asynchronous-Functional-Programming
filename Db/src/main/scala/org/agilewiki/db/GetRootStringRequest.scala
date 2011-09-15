@@ -1,9 +1,9 @@
 package org.agilewiki
-package incDes
-package blocks
 package db
 
 import blip._
+import incDes._
+import blocks._
 
 object GetRootStringRequest {
   def apply() = (new GetRootStringRequestFactory).newActor(null).

@@ -22,13 +22,13 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki
-package incDes
-package blocks
 package db
 package simpleNoLogDataStore
 
 import blip._
 import services._
+import incDes._
+import blocks._
 
 class SimpleNoLogDataStoreComponentFactory
   extends ComponentFactory {

@@ -22,11 +22,11 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki
-package incDes
-package blocks
 package db
 
 import blip._
+import incDes._
+import blocks._
 
 class SimpleDataStoreComponentFactory extends ComponentFactory {
   addDependency(classOf[TransactionProcessorComponentFactory])

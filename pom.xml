@@ -156,6 +156,7 @@
     <modules>
         <module>Blip</module>
         <module>IncDes</module>
+        <module>Db</module>
         <!--
         <module>AW5Kernel</module>
 	    <module>AW5Core</module>
