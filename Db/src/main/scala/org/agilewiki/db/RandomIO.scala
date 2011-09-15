@@ -22,8 +22,7 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki
-package incDes
-package blocks
+package db
 
 import blip._
 import services._
@@ -33,6 +32,10 @@ class RandomIOComponentFactory extends ComponentFactory {
 
   addDependency(classOf[PropertiesComponentFactory])
 }
+
+case class ReadBytes(offset: Long, length: Int)
+
+case class WriteBytes(offset: Long, bytes: Array[Byte])
 
 class RandomIOComponent(actor: Actor)
   extends Component(actor) {

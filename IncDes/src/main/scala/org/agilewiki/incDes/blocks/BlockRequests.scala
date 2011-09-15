@@ -39,10 +39,6 @@ case class DirtyBlock(block: Block)
 
 case class Clean()
 
-case class ReadBytes(offset: Long, length: Int)
-
-case class WriteBytes(offset: Long, bytes: Array[Byte])
-
 case class TransactionRequest(request: IncDes)
 
 case class Transaction(block: Block)
