@@ -1,7 +1,7 @@
 package org.agilewiki
 package incDes
 package blocks
-package simpleNoLogDataStore
+package db
 
 import blip._
 
