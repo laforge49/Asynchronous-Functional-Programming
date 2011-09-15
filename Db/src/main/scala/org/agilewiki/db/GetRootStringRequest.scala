@@ -7,7 +7,7 @@ import blocks._
 
 object GetRootStringRequest {
   def apply() = (new GetRootStringRequestFactory).newActor(null).
-    asInstanceOf[IncDesString]
+    asInstanceOf[IncDes]
 
   def process(db: Actor) = {
     val je = apply()
@@ -20,7 +20,7 @@ object GetRootStringRequest {
 class GetRootStringRequestFactory extends Factory(new FactoryId("GetRootStringRequest")) {
   include(new GetRootStringRequestComponentFactory)
 
-  override protected def instantiate = new IncDesString
+  override protected def instantiate = new IncDes
 }
 
 class GetRootStringRequestComponentFactory extends ComponentFactory {
