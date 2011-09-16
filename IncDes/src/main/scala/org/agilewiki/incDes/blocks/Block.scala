@@ -59,6 +59,7 @@ class Block extends IncDesIncDes {
 
   def clean(msg: AnyRef, rf: Any => Unit) {
     dirty = false
+    rf(null)
   }
 
   def process(msg: AnyRef, rf: Any => Unit) {
