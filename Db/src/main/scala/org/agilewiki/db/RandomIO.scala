@@ -33,10 +33,6 @@ class RandomIOComponentFactory extends ComponentFactory {
   addDependency(classOf[PropertiesComponentFactory])
 }
 
-case class ReadBytes(offset: Long, length: Int)
-
-case class WriteBytes(offset: Long, bytes: Array[Byte])
-
 class RandomIOComponent(actor: Actor)
   extends Component(actor) {
   val randomIO = new RandomIO

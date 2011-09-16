@@ -46,3 +46,7 @@ case class DbRoot()
 case class GetTimestamp()
 
 case class LogTransaction(timestamp: Long, bytes: Array[Byte])
+
+case class ReadBytes(offset: Long, length: Int)
+
+case class WriteBytes(offset: Long, bytes: Array[Byte])
