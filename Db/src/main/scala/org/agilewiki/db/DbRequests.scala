@@ -22,20 +22,27 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki
-package incDes
-package blocks
+package db
 
-import blip._
+import incDes._
+import blocks._
 
-class NullTransactionLogComponentFactory extends ComponentFactory {
-  override def instantiate(actor: Actor) = new NullTransactionLogComponent(actor)
-}
+case class TransactionRequest(request: IncDes)
 
-class NullTransactionLogComponent(actor: Actor)
-  extends Component(actor) {
-  bind(classOf[LogTransaction], logTransaction)
+case class Transaction(block: Block)
 
-  private def logTransaction(msg: AnyRef, rf: Any => Unit) {
-    rf(null)
-  }
-}
+class QueryTransaction(block: Block)
+  extends Transaction(block)
+
+class UpdateTransaction(block: Block)
+  extends Transaction(block)
+
+case class Commit()
+
+case class Abort(exception: Exception)
+
+case class DbRoot()
+
+case class GetTimestamp()
+
+case class LogTransaction(timestamp: Long, bytes: Array[Byte])

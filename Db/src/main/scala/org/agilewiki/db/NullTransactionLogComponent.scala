@@ -22,23 +22,19 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki
-package incDes
-package blocks
+package db
 
 import blip._
 
-case class BlockCacheClear()
+class NullTransactionLogComponentFactory extends ComponentFactory {
+  override def instantiate(actor: Actor) = new NullTransactionLogComponent(actor)
+}
 
-case class BlockCacheRemove(key: Any)
+class NullTransactionLogComponent(actor: Actor)
+  extends Component(actor) {
+  bind(classOf[LogTransaction], logTransaction)
 
-case class BlockCacheAdd(block: Block)
-
-case class BlockCacheGet(key: Any)
-
-case class DirtyBlock(block: Block)
-
-case class Clean()
-
-case class IsQuery()
-
-case class Process(transactionContext: TransactionContext)
+  private def logTransaction(msg: AnyRef, rf: Any => Unit) {
+    rf(null)
+  }
+}
