@@ -30,6 +30,8 @@ case class Length()
 
 case class Bytes()
 
+case class Save(data: MutableData)
+
 case class Copy(mailbox: Mailbox)
 
 case class Value()

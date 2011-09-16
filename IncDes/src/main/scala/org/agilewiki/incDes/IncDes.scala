@@ -32,6 +32,7 @@ class IncDes extends Actor {
   protected var _key: Any = null
   bind(classOf[Length], _length)
   bind(classOf[Bytes], _bytes)
+  bind(classOf[Save], _save)
   bind(classOf[Copy], _copy)
 
   def load(_data: MutableData) {
@@ -58,6 +59,12 @@ class IncDes extends Actor {
 
   def _bytes(msg: Any, rf: Any => Unit) {
     rf(bytes)
+  }
+
+  def _save(msg: Any, rf: Any => Unit) {
+    val data = msg.asInstanceOf[Save].data
+    save(data)
+    rf(null)
   }
 
   def _copy(msg: Any, rf: Any => Unit) {

@@ -26,6 +26,7 @@ package db
 
 import blip._
 import services._
+import incDes._
 
 class RootBlockComponentFactory extends ComponentFactory {
 
@@ -37,15 +38,25 @@ class RootBlockComponentFactory extends ComponentFactory {
 class RootBlockComponent(actor: Actor)
   extends Component(actor) {
   private var currentRootOffset = 0
+  private var maxBlockSize = 0
 
   bind(classOf[ReadRootBlock], readRootBlock)
   bind(classOf[WriteRootBlock], writeRootBlock)
+
+  override def open {
+    super.open
+    maxBlockSize = GetProperty.int("maxRootBlockSize", 1024)
+  }
 
   private def readRootBlock(msg: AnyRef, rf: Any => Unit) {
 
   }
 
   private def writeRootBlock(msg: AnyRef, rf: Any => Unit) {
-
+    val rootBlock = msg.asInstanceOf[WriteRootBlock].rootBlock
+    var bytes: Array[Byte] = null
+    val results = new Results
+    val chain = new Chain(results)
+    chain.op(rootBlock, Bytes(), "bytes")
   }
 }
