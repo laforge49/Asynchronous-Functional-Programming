@@ -24,35 +24,28 @@
 package org.agilewiki
 package db
 
-import incDes._
-import blocks._
+import blip._
+import services._
 
-case class TransactionRequest(request: IncDes)
+class RootBlockComponentFactory extends ComponentFactory {
 
-case class Transaction(block: Block)
+  addDependency(classOf[PropertiesComponentFactory])
 
-class QueryTransaction(block: Block)
-  extends Transaction(block)
+  override def instantiate(actor: Actor) = new RootBlockComponent(actor)
+}
 
-class UpdateTransaction(block: Block)
-  extends Transaction(block)
+class RootBlockComponent(actor: Actor)
+  extends Component(actor) {
+  private var currentRootOffset = 0
 
-case class Commit()
+  bind(classOf[ReadRootBlock], readRootBlock)
+  bind(classOf[WriteRootBlock], writeRootBlock)
 
-case class Abort(exception: Exception)
+  private def readRootBlock(msg: AnyRef, rf: Any => Unit) {
 
-case class DbRoot()
+  }
 
-case class GetTimestamp()
+  private def writeRootBlock(msg: AnyRef, rf: Any => Unit) {
 
-case class LogTransaction(timestamp: Long, bytes: Array[Byte])
-
-case class ReadBytes(offset: Long, length: Int)
-
-case class ReadBytesOrNull(offset: Long, length: Int)
-
-case class WriteBytes(offset: Long, bytes: Array[Byte])
-
-case class ReadRootBlock()
-
-case class WriteRootBlock(rootBlock: Block)
+  }
+}

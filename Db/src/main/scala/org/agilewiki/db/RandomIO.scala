@@ -28,17 +28,28 @@ import blip._
 import services._
 
 class RandomIOComponentFactory extends ComponentFactory {
-  override def instantiate(actor: Actor) = new RandomIOComponent(actor)
 
   addDependency(classOf[PropertiesComponentFactory])
+
+  override def instantiate(actor: Actor) = new RandomIOComponent(actor)
 }
 
 class RandomIOComponent(actor: Actor)
   extends Component(actor) {
-  val randomIO = new RandomIO
+  private val randomIO = new RandomIO
 
   bindSafe(classOf[ReadBytes], new SafeForward(randomIO))
   bindSafe(classOf[WriteBytes], new SafeForward(randomIO))
+  bind(classOf[ReadBytesOrNull], {
+    (msg, rf) => exceptionHandler(msg, rf, readBytes) {
+      exceptionHandler => rf(null)
+    }
+  })
+
+  private def readBytes(msg: AnyRef, rf: Any => Unit) {
+    val req = msg.asInstanceOf[ReadBytesOrNull]
+    randomIO(ReadBytes(req.offset, req.length))(rf)
+  }
 
   override def open {
     super.open
