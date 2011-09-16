@@ -78,7 +78,10 @@ class SimpleDataStoreComponent(actor: Actor)
   }
 
   private def abort(msg: AnyRef, rf: Any => Unit) {
-    if (dirty) block = null
+    if (dirty) {
+      block = null
+      dirty = false
+    }
     throw msg.asInstanceOf[Abort].exception
   }
 
