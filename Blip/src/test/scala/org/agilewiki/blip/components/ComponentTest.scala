@@ -39,7 +39,7 @@ class DoubleFactory extends Factory(null) {
   override protected def instantiate = {
     val saver = new Saver
     val doubleComponent = new DoubleComponent(saver)
-    addComponent(saver, doubleComponent)
+    addComponent(doubleComponent)
     saver
   }
 }

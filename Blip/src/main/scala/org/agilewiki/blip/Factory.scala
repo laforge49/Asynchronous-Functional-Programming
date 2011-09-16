@@ -44,12 +44,13 @@ abstract class Factory(_id: FactoryId) {
       val componentFactoryClass = fit.next
       val componentFactory = componentFactories.get(componentFactoryClass)
       val component = componentFactory.newComponent(actor)
-      addComponent(actor, component)
+      addComponent(component)
     }
     actor
   }
 
-  def addComponent(actor: Actor, component: Component) {
+  def addComponent(component: Component) {
+    val actor = component.actor
     if (actor.opened) throw new IllegalStateException("already opened")
     val actorMsgFunctions = actor.messageFunctions
     val componentMsgFunctions = component.messageFunctions

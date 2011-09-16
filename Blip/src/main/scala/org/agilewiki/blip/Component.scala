@@ -24,7 +24,8 @@
 package org.agilewiki
 package blip
 
-class Component(actor: Actor) extends Responder {
+class Component(_actor: Actor) extends Responder {
+  val actor = _actor
   var _componentFactory: ComponentFactory = null
 
   def componentFactory = _componentFactory
