@@ -70,7 +70,10 @@ class SimpleDataStoreComponent(actor: Actor)
       Unit => WriteBytes(0L, results("header").asInstanceOf[Array[Byte]]))
     chain.op(systemServices,
       Unit => WriteBytes(4L, results("bytes").asInstanceOf[Array[Byte]]))
-    chain.op(block, Clean())
+    chain.op(block, Unit => {
+      dirty = false
+      Clean()
+    })
     actor(chain)(rf)
   }
 
