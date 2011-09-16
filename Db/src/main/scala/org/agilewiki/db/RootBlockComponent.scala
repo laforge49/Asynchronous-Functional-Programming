@@ -27,6 +27,7 @@ package db
 import blip._
 import services._
 import incDes._
+import java.util.zip.Adler32
 
 class RootBlockComponentFactory extends ComponentFactory {
 
@@ -37,6 +38,7 @@ class RootBlockComponentFactory extends ComponentFactory {
 
 class RootBlockComponent(actor: Actor)
   extends Component(actor) {
+  val HEADER_LENGTH = 4 + 8
   private var currentRootOffset = 0
   private var maxBlockSize = 0
 
@@ -53,10 +55,36 @@ class RootBlockComponent(actor: Actor)
   }
 
   private def writeRootBlock(msg: AnyRef, rf: Any => Unit) {
+    currentRootOffset = maxBlockSize - currentRootOffset
     val rootBlock = msg.asInstanceOf[WriteRootBlock].rootBlock
     var bytes: Array[Byte] = null
+    var length = 0
+    val blockLength = new IncDesInt
+    val checksum = new IncDesLong
+    var data: MutableData = null
     val results = new Results
     val chain = new Chain(results)
-    chain.op(rootBlock, Bytes(), "bytes")
+    chain.op(rootBlock, Length(), "length")
+    chain.op(blockLength, Unit => {
+      length = results("length").asInstanceOf[Int]
+      Set(null, length)
+    })
+    chain.op(blockLength, Unit => {
+      bytes = new Array[Byte](HEADER_LENGTH + length)
+      data = new MutableData(bytes, 8)
+      Save(data)
+    })
+    chain.op(rootBlock, Save(data))
+    chain.op(checksum, Unit => {
+      val adler32 = new Adler32
+      adler32.update(bytes, 8, length + 4)
+      val cs = adler32.getValue
+      Set(null, cs)
+    })
+    chain.op(checksum, Unit => {
+      data.rewind
+      Save(data)
+    })
+    chain.op(actor, WriteBytes(currentRootOffset, bytes))
   }
 }
