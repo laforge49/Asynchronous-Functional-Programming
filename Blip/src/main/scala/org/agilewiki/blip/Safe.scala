@@ -31,7 +31,7 @@ abstract class Safe {
 class SafeConstant(any: Any)
   extends Safe {
   override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
-    rf(any)
+    if (rf != null) rf(any)
   }
 }
 
@@ -95,9 +95,10 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
     if (srcMailbox == null && target.mailbox != null) throw new UnsupportedOperationException(
       "An immutable actor can only send to another immutable actor."
     )
-    if (target.mailbox == null || target.mailbox == srcMailbox)
-      messageFunction(msg, responseFunction)
-    else asyncSendReq(srcMailbox, target, msg, responseFunction)
+    if (target.mailbox == null || target.mailbox == srcMailbox) {
+      if (responseFunction == null) messageFunction(msg, AnyRef => {})
+      else messageFunction(msg, responseFunction)
+    } else asyncSendReq(srcMailbox, target, msg, responseFunction)
   }
 }
 
@@ -109,6 +110,7 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
 
   override def func(target: Actor, msg: AnyRef, responseFunction: Any => Unit)
                    (implicit srcActor: ActiveActor) {
+    if (responseFunction == null) throw new IllegalArgumentException("transaction requests require a response function")
     val srcMailbox = {
       if (srcActor == null) null
       else srcActor.actor.mailbox

@@ -114,7 +114,7 @@ class Mailbox
 
   def reply(content: Any) {
     val req = currentRequestMessage
-    if (!req.active) {
+    if (!req.active || req.responseFunction == null) {
       return
     }
     req.active = false

@@ -106,6 +106,9 @@ class Actor
 
   override def systemServices: Actor = _systemServices
 
+  //one-way messages, untested
+  //def !(msg: AnyRef)(implicit srcActor: ActiveActor) {apply(msg)(null)(srcActor)}
+
   def apply(msg: AnyRef)
            (responseFunction: Any => Unit)
            (implicit srcActor: ActiveActor) {
