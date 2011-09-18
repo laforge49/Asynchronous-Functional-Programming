@@ -32,7 +32,7 @@ import java.util.zip.Adler32
 
 class RootBlockComponentFactory extends ComponentFactory {
 
-  addDependency(classOf[PropertiesComponentFactory])
+  addDependency(classOf[RandomIOComponentFactory])
 
   override def instantiate(actor: Actor) = new RootBlockComponent(actor)
 }
