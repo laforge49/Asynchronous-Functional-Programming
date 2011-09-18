@@ -29,15 +29,14 @@ class SetRootStringRequestFactory extends Factory(new FactoryId("SetRootStringRe
 
 class SetRootStringRequestComponent(actor: Actor)
   extends Component(actor) {
-  bind(classOf[Process], new ChainFactory(process))
+  bindSafe(classOf[Process], new ChainFactory(process))
 
-  private def process(msg: AnyRef, chain) {
+  private def process(msg: AnyRef, chain: Chain) {
     val transactionContext = msg.asInstanceOf[Process].transactionContext
     chain.op(actor, Value(), "value")
     chain.op(systemServices, DbRoot(), "dbRoot")
-    chain.op(Unit => {
-      chain("dbRoot")
-    }, MakeSet(transactionContext, INC_DES_STRING_FACTORY_ID), "incDesString")
+    chain.op(Unit => chain("dbRoot"),
+      MakeSet(transactionContext, INC_DES_STRING_FACTORY_ID), "incDesString")
     chain.op(Unit => chain("incDesString"), Unit => Set(transactionContext, chain("value")))
  }
 }
