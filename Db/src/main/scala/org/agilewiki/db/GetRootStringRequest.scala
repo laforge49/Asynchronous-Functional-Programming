@@ -36,11 +36,7 @@ class GetRootStringRequestComponent(actor: Actor)
     val chain = new Chain(results)
     chain.op(systemServices, DbRoot(), "dbRoot")
     chain.op(Unit => results("dbRoot"), Value(), "incDesString")
-    chain.op(Unit => results("incDesString"), Value(), "value")
-    actor(chain) {
-      rsp => {
-        rf(results("value"))
-      }
-    }
+    chain.op(Unit => results("incDesString"), Value())
+    actor(chain)(rf)
  }
 }

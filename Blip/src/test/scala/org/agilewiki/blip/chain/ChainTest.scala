@@ -26,7 +26,7 @@ class SimpleActor extends Actor {
 
   private def doIt(msg: AnyRef, rf: Any => Unit) {this(PrntChain())(rf)}
 
-  private def chainFunction(chain: Chain) {
+  private def chainFunction(msg: AnyRef, chain: Chain) {
     chain.op(this, Prnt(1))
     chain.op(this, Prnt(2))
     chain.op(this, Prnt(3))

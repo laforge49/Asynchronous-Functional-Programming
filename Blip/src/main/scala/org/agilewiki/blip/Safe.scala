@@ -42,11 +42,11 @@ class SafeForward(actor: Actor)
   }
 }
 
-class ChainFactory(chainFunction: Chain => Unit)
+class ChainFactory(chainFunction: (AnyRef, Chain) => Unit)
   extends Safe {
   override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit srcActor: ActiveActor) {
     val chain = new Chain
-    chainFunction(chain)
+    chainFunction(msg, chain)
     target(chain)(rf)
   }
 }
