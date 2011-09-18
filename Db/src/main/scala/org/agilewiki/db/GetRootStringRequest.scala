@@ -28,15 +28,11 @@ class GetRootStringRequestFactory extends Factory(new FactoryId("GetRootStringRe
 
 class GetRootStringRequestComponent(actor: Actor)
   extends Component(actor) {
-  bind(classOf[Process], process)
+  bindSafe(classOf[Process], new ChainFactory(process))
 
-  private def process(msg: AnyRef, rf: Any => Unit) {
-    val transactionContext = msg.asInstanceOf[Process].transactionContext
-    val results = new Results
-    val chain = new Chain(results)
+  private def process(msg: AnyRef, chain: Chain) {
     chain.op(systemServices, DbRoot(), "dbRoot")
-    chain.op(Unit => results("dbRoot"), Value(), "incDesString")
-    chain.op(Unit => results("incDesString"), Value())
-    actor(chain)(rf)
+    chain.op(Unit => chain("dbRoot"), Value(), "incDesString")
+    chain.op(Unit => chain("incDesString"), Value())
  }
 }
