@@ -38,12 +38,12 @@ class RootBlockComponentFactory extends ComponentFactory {
 
 class RootBlockComponent(actor: Actor)
   extends Component(actor) {
-  val HEADER_LENGTH = 4 + 8
+  val HEADER_LENGTH = 8 + 8 + 4
   private var currentRootOffset = 0
   private var maxBlockSize = 0
 
   bind(classOf[ReadRootBlock], readRootBlock)
-  bind(classOf[WriteRootBlock], writeRootBlock)
+  bindSafe(classOf[WriteRootBlock], new ChainFactory(writeRootBlock))
 
   override def open {
     super.open
@@ -54,30 +54,32 @@ class RootBlockComponent(actor: Actor)
 
   }
 
-  private def writeRootBlock(msg: AnyRef, rf: Any => Unit) {
+  private def writeRootBlock(msg: AnyRef, chain: Chain) {
     currentRootOffset = maxBlockSize - currentRootOffset
     val rootBlock = msg.asInstanceOf[WriteRootBlock].rootBlock
     var bytes: Array[Byte] = null
     var length = 0
     val blockLength = new IncDesInt
     val checksum = new IncDesLong
+    val timestamp = new IncDesLong
     var data: MutableData = null
-    val results = new Results
-    val chain = new Chain(results)
+    chain.op(systemServices, GetTimestamp, "timestamp")
+    chain.op(timestamp, Unit => Set(null, chain("timestamp")))
     chain.op(rootBlock, Length(), "length")
     chain.op(blockLength, Unit => {
-      length = results("length").asInstanceOf[Int]
+      length = chain("length").asInstanceOf[Int]
       Set(null, length)
     })
-    chain.op(blockLength, Unit => {
+    chain.op(timestamp, Unit => {
       bytes = new Array[Byte](HEADER_LENGTH + length)
       data = new MutableData(bytes, 8)
       Save(data)
     })
+    chain.op(blockLength, Unit => Save(data))
     chain.op(rootBlock, Save(data))
     chain.op(checksum, Unit => {
       val adler32 = new Adler32
-      adler32.update(bytes, 8, length + 4)
+      adler32.update(bytes, 8, length + HEADER_LENGTH - 8)
       val cs = adler32.getValue
       Set(null, cs)
     })
