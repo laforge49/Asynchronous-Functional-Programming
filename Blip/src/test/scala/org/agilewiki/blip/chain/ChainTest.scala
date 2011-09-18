@@ -1,20 +1,36 @@
-package org.agilewiki.blip
+package org.agilewiki
+package blip
 package chain
 
 import org.specs.SpecificationWithJUnit
 
 case class Prnt(value: Any)
 
+case class DoIt()
+
+case class PrntChain(value: Any)
+
 case class UltimateAnswer()
 
 class SimpleActor extends Actor {
   bind(classOf[Prnt], prnt)
+  bind(classOf[DoIt], doIt)
+  bindSafe(classOf[PrntChain], new ChainFactory(chainFunction))
   bind(classOf[UltimateAnswer], ultimateAnswer)
 
   private def prnt(msg: AnyRef, rf: Any => Unit) {
     val req = msg.asInstanceOf[Prnt]
     println(req.value)
     rf(null)
+  }
+
+  private def doIt(msg: AnyRef, rf: Any => Unit) {this(PrntChain())(rf)}
+
+  private def chainFunction(chain: Chain) {
+    chain.op(this, Prnt(1))
+    chain.op(this, Prnt(2))
+    chain.op(this, Prnt(3))
+    chain.op(this, Prnt("scadoo!"))
   }
 
   private def ultimateAnswer(msg: AnyRef, rf: Any => Unit) {
@@ -32,6 +48,10 @@ class ChainTest extends SpecificationWithJUnit {
       chain.op(simpleActor, Prnt(3))
       chain.op(simpleActor, Prnt("scadoo!"))
       Future(simpleActor, chain)
+    }
+    "print chain" in {
+      val simpleActor = new SimpleActor
+      Future(simpleActor, DoIt())
     }
     "pass results" in {
       val results = new Results
