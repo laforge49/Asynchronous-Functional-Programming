@@ -30,5 +30,7 @@ class Chain(_results: Results = new Results) extends java.util.ArrayList[Op] {
     add(new Op(actor, msg, result))
   }
 
+  def apply(result: String) = _results(result)
+
   def results = _results
 }

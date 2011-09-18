@@ -44,5 +44,15 @@ class ChainTest extends SpecificationWithJUnit {
       )
       Future(simpleActor, chain)
     }
+    "simplified" in {
+      val chain = new Chain
+      val simpleActor = new SimpleActor
+      chain.op(simpleActor, UltimateAnswer(), "ultimateAnswer")
+      chain.op(
+        simpleActor,
+        Unit => Prnt("The Ultimate Answer to Everything: " + chain("ultimateAnswer"))
+      )
+      Future(simpleActor, chain)
+    }
   }
 }
