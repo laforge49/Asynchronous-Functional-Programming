@@ -216,20 +216,24 @@ class Actor
     var sync = false
     var last: Any = null
     val op = chain.get(pos)
-    op.actor().asInstanceOf[Actor](op.msg().asInstanceOf[AnyRef]) {
-      rsp => {
-        last = rsp
-        val key = op.result
-        if (key != null) {
-          chain.results.put(key, rsp)
+    val target = op.actor().asInstanceOf[Actor]
+    val msg = op.msg().asInstanceOf[AnyRef]
+    if (target != null && msg != null) {
+      target(msg) {
+        rsp => {
+          last = rsp
+          val key = op.result
+          if (key != null) {
+            chain.results.put(key, rsp)
+          }
+          if (async) _eval(chain, pos + 1, last)(rf)
+          else sync = true
         }
-        if (async) _eval(chain, pos + 1, last)(rf)
-        else sync = true
       }
-    }
-    if (!sync) {
-      async = true
-      return
+      if (!sync) {
+        async = true
+        return
+      }
     }
     eval(chain, pos + 1, last)(rf)
   }
