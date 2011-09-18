@@ -63,25 +63,19 @@ class RootBlockComponent(actor: Actor)
               val block = Block(mailbox)
               block.setSystemServices(systemServices)
               rf(block)
-              return
-            }
-            if (b1 == null) {
+            } else if (b1 == null) {
               currentRootOffset = 0
               rf(b0)
-              return
-            }
-            if (b0 == null) {
+            } else if (b0 == null) {
               currentRootOffset = maxBlockSize
               rf(b1)
-              return
-            }
-            if (b0.key.asInstanceOf[Long] > b1.key.asInstanceOf[Long]) {
+            } else if (b0.key.asInstanceOf[Long] > b1.key.asInstanceOf[Long]) {
               currentRootOffset = 0
               rf(b0)
-              return
+            } else {
+              currentRootOffset = maxBlockSize
+              rf(b1)
             }
-            currentRootOffset = maxBlockSize
-            rf(b1)
           }
         }
       }
@@ -92,50 +86,44 @@ class RootBlockComponent(actor: Actor)
     val headerBytes: Array[Byte] = null
     systemServices(ReadBytesOrNull(offset, HEADER_LENGTH)) {
       rsp1 => {
-        if (rsp1 == null) {
-          rf(null)
-          return
-        }
-        val headerBytes = rsp1.asInstanceOf[Array[Byte]]
-        val data = new MutableData(headerBytes, 0)
-        val checksum = new IncDesLong
-        checksum.load(data)
-        val timestamp = new IncDesLong
-        timestamp.load(data)
-        val blockLength = new IncDesInt
-        blockLength.load(data)
-        blockLength(Value()) {
-          rsp2 => {
-            val length = rsp2.asInstanceOf[Int]
-            if (length < 1 || length + HEADER_LENGTH > maxBlockSize) {
-              rf(null)
-              return
-            }
-            systemServices(ReadBytesOrNull(offset + HEADER_LENGTH, length)) {
-              rsp3 => {
-                if (rsp3 == null) {
-                  rf(null)
-                  return
-                }
-                val blockBytes = rsp3.asInstanceOf[Array[Byte]]
-                val adler32 = new Adler32
-                adler32.update(headerBytes, 8, HEADER_LENGTH - 8)
-                adler32.update(blockBytes)
-                val newcs = adler32.getValue
-                checksum(Value()) {
-                  rsp4 => {
-                    val cs = rsp4.asInstanceOf[Long]
-                    if (cs != newcs) {
-                      rf(null)
-                      return
-                    }
-                    val rootBlock = Block(mailbox)
-                    rootBlock.setSystemServices(systemServices)
-                    rootBlock.load(blockBytes)
-                    timestamp(Value()) {
-                      rsp5 => {
-                        rootBlock.partness(null, rsp5, null)
-                        rf(rootBlock)
+        if (rsp1 == null) rf(null)
+        else {
+          val headerBytes = rsp1.asInstanceOf[Array[Byte]]
+          val data = new MutableData(headerBytes, 0)
+          val checksum = new IncDesLong
+          checksum.load(data)
+          val timestamp = new IncDesLong
+          timestamp.load(data)
+          val blockLength = new IncDesInt
+          blockLength.load(data)
+          blockLength(Value()) {
+            rsp2 => {
+              val length = rsp2.asInstanceOf[Int]
+              if (length < 1 || length + HEADER_LENGTH > maxBlockSize) rf(null)
+              else systemServices(ReadBytesOrNull(offset + HEADER_LENGTH, length)) {
+                rsp3 => {
+                  if (rsp3 == null) rf(null)
+                  else {
+                    val blockBytes = rsp3.asInstanceOf[Array[Byte]]
+                    val adler32 = new Adler32
+                    adler32.update(headerBytes, 8, HEADER_LENGTH - 8)
+                    adler32.update(blockBytes)
+                    val newcs = adler32.getValue
+                    checksum(Value()) {
+                      rsp4 => {
+                        val cs = rsp4.asInstanceOf[Long]
+                        if (cs != newcs) rf(null)
+                        else {
+                          val rootBlock = Block(mailbox)
+                          rootBlock.setSystemServices(systemServices)
+                          rootBlock.load(blockBytes)
+                          timestamp(Value()) {
+                            rsp5 => {
+                              rootBlock.partness(null, rsp5, null)
+                              rf(rootBlock)
+                            }
+                          }
+                        }
                       }
                     }
                   }
@@ -157,7 +145,7 @@ class RootBlockComponent(actor: Actor)
     val checksum = new IncDesLong
     val timestamp = new IncDesLong
     var data: MutableData = null
-    chain.op(systemServices, GetTimestamp, "timestamp")
+    chain.op(systemServices, GetTimestamp(), "timestamp")
     chain.op(timestamp, Unit => Set(null, chain("timestamp")))
     chain.op(rootBlock, Length(), "length")
     chain.op(blockLength, Unit => {
@@ -169,8 +157,12 @@ class RootBlockComponent(actor: Actor)
       data = new MutableData(bytes, 8)
       Save(data)
     })
-    chain.op(blockLength, Unit => Save(data))
-    chain.op(rootBlock, Save(data))
+    chain.op(blockLength, Unit => {
+      Save(data)
+    })
+    chain.op(rootBlock, Unit => {
+      Save(data)
+    })
     chain.op(checksum, Unit => {
       val adler32 = new Adler32
       adler32.update(bytes, 8, length + HEADER_LENGTH - 8)
@@ -181,6 +173,6 @@ class RootBlockComponent(actor: Actor)
       data.rewind
       Save(data)
     })
-    chain.op(actor, WriteBytes(currentRootOffset, bytes))
+    chain.op(actor, Unit => WriteBytes(currentRootOffset, bytes))
   }
 }

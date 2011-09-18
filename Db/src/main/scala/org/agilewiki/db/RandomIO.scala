@@ -42,7 +42,9 @@ class RandomIOComponent(actor: Actor)
   bindSafe(classOf[WriteBytes], new SafeForward(randomIO))
   bind(classOf[ReadBytesOrNull], {
     (msg, rf) => exceptionHandler(msg, rf, readBytes) {
-      exceptionHandler => rf(null)
+      ex => {
+        rf(null)
+      }
     }
   })
 

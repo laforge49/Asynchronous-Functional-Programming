@@ -46,11 +46,8 @@ class SmallDataStoreComponent(actor: Actor)
   bind(classOf[DbRoot], dbRoot)
 
   private def commit(msg: AnyRef, rf: Any => Unit) {
-    if (!dirty) {
-      rf(null)
-      return
-    }
-    systemServices(WriteRootBlock(block)) {
+    if (!dirty) rf(null)
+    else systemServices(WriteRootBlock(block)) {
       rsp => {
         dirty = false
         block(Clean())(rf)
@@ -72,11 +69,8 @@ class SmallDataStoreComponent(actor: Actor)
   }
 
   private def dbRoot(msg: AnyRef, rf: Any => Unit) {
-    if (block != null) {
-      rf(block)
-      return
-    }
-    systemServices(ReadRootBlock) {
+    if (block != null) rf(block)
+    else systemServices(ReadRootBlock()) {
       rsp => {
         block = rsp.asInstanceOf[Block]
         rf(block)

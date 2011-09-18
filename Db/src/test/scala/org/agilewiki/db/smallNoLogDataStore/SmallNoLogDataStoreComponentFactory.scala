@@ -23,14 +23,14 @@
  */
 package org.agilewiki
 package db
-package simpleNoLogDataStore
+package smallNoLogDataStore
 
 import blip._
 import services._
 
-class SimpleNoLogDataStoreComponentFactory
+class SmallNoLogDataStoreComponentFactory
   extends ComponentFactory {
-  addDependency(classOf[SimpleDataStoreComponentFactory])
+  addDependency(classOf[SmallDataStoreComponentFactory])
   addDependency(classOf[NullTransactionLogComponentFactory])
 
   override def configure(compositeFactory: Factory) {
