@@ -27,6 +27,7 @@ package db
 import blip._
 import services._
 import incDes._
+import blocks._
 import java.util.zip.Adler32
 
 class RootBlockComponentFactory extends ComponentFactory {
@@ -52,6 +53,65 @@ class RootBlockComponent(actor: Actor)
 
   private def readRootBlock(msg: AnyRef, rf: Any => Unit) {
 
+  }
+
+  private def _readRootBlock(offset: Long, rf: Any => Unit) {
+    val headerBytes: Array[Byte] = null
+    systemServices(ReadBytesOrNull(offset, HEADER_LENGTH)) {
+      rsp1 => {
+        if (rsp1 == null) {
+          rf(null)
+          return
+        }
+        val headerBytes = rsp1.asInstanceOf[Array[Byte]]
+        val data = new MutableData(headerBytes, 0)
+        val checksum = new IncDesLong
+        checksum.load(data)
+        val timestamp = new IncDesLong
+        timestamp.load(data)
+        val blockLength = new IncDesInt
+        blockLength.load(data)
+        blockLength(Value()) {
+          rsp2 => {
+            val length = rsp2.asInstanceOf[Int]
+            if (length < 1 || length + HEADER_LENGTH > maxBlockSize) {
+              rf(null)
+              return
+            }
+            systemServices(ReadBytesOrNull(offset + HEADER_LENGTH, length)) {
+              rsp3 => {
+                if (rsp3 == null) {
+                  rf(null)
+                  return
+                }
+                val blockBytes = rsp3.asInstanceOf[Array[Byte]]
+                val adler32 = new Adler32
+                adler32.update(headerBytes, 8, HEADER_LENGTH - 8)
+                adler32.update(blockBytes)
+                val newcs = adler32.getValue
+                checksum(Value()) {
+                  rsp4 => {
+                    val cs = rsp4.asInstanceOf[Long]
+                    if (cs != newcs) {
+                      rf(null)
+                      return
+                    }
+                    val rootBlock = new Block
+                    rootBlock.load(blockBytes)
+                    timestamp(Value()) {
+                      rsp5 => {
+                        rootBlock.partness(null, rsp5, null)
+                        rf(rootBlock)
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   private def writeRootBlock(msg: AnyRef, chain: Chain) {
