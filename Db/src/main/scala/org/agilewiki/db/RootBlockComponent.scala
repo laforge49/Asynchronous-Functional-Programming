@@ -52,10 +52,43 @@ class RootBlockComponent(actor: Actor)
   }
 
   private def readRootBlock(msg: AnyRef, rf: Any => Unit) {
-
+    _readRootBlock(0L) {
+      rsp1 => {
+        val b0 = rsp1.asInstanceOf[Block]
+        _readRootBlock(maxBlockSize) {
+          rsp2 => {
+            val b1 = rsp2.asInstanceOf[Block]
+            if (b0 == null && b1 == null) {
+              currentRootOffset = maxBlockSize
+              val block = Block(mailbox)
+              block.setSystemServices(systemServices)
+              rf(block)
+              return
+            }
+            if (b1 == null) {
+              currentRootOffset = 0
+              rf(b0)
+              return
+            }
+            if (b0 == null) {
+              currentRootOffset = maxBlockSize
+              rf(b1)
+              return
+            }
+            if (b0.key.asInstanceOf[Long] > b1.key.asInstanceOf[Long]) {
+              currentRootOffset = 0
+              rf(b0)
+              return
+            }
+            currentRootOffset = maxBlockSize
+            rf(b1)
+          }
+        }
+      }
+    }
   }
 
-  private def _readRootBlock(offset: Long, rf: Any => Unit) {
+  private def _readRootBlock(offset: Long)(rf: Any => Unit) {
     val headerBytes: Array[Byte] = null
     systemServices(ReadBytesOrNull(offset, HEADER_LENGTH)) {
       rsp1 => {
@@ -96,7 +129,8 @@ class RootBlockComponent(actor: Actor)
                       rf(null)
                       return
                     }
-                    val rootBlock = new Block
+                    val rootBlock = Block(mailbox)
+                    rootBlock.setSystemServices(systemServices)
                     rootBlock.load(blockBytes)
                     timestamp(Value()) {
                       rsp5 => {
