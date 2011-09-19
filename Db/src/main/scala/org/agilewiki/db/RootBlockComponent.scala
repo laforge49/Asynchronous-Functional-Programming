@@ -156,7 +156,7 @@ class RootBlockComponent(actor: Actor)
     chain.op(blockLength, Unit => {
       length = chain("length").asInstanceOf[Int]
       if (length + HEADER_LENGTH > maxBlockSize)
-        throw new IllegalArgumentException("Root block size exceeds maxRootBlockSize parameter: " +
+        throw new IllegalArgumentException("Root block size exceeds maxRootBlockSize property: " +
         length + HEADER_LENGTH + " > " + maxBlockSize)
       Set(null, length)
     })
