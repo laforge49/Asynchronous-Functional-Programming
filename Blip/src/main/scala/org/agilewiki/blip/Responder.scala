@@ -61,6 +61,7 @@ trait Responder extends SystemServicesGetter {
     mailbox.exceptionFunction = exceptionFunction
     try {
       messageFunction(msg, rsp => {
+        mailbox.exceptionFunction = oldExceptionFunction
         try {
           responseFunction(rsp)
         } catch {
@@ -71,10 +72,10 @@ trait Responder extends SystemServicesGetter {
       case ex: TransparentException => {
         exceptionFunction(ex.getCause.asInstanceOf[Exception])
       }
-      case ex: Exception =>
+      case ex: Exception => {
+        mailbox.exceptionFunction = oldExceptionFunction
         exceptionFunction(ex)
-    } finally {
-      mailbox.exceptionFunction = oldExceptionFunction
+      }
     }
   }
 }
