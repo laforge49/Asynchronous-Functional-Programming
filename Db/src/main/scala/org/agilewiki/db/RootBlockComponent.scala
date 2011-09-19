@@ -59,6 +59,11 @@ class RootBlockComponent(actor: Actor)
           rsp2 => {
             val b1 = rsp2.asInstanceOf[Block]
             if (b0 == null && b1 == null) {
+              val pathname = GetProperty.required("dbPathname")
+              val file = new java.io.File(pathname)
+              val fileLength = file.length
+              if (fileLength > maxBlockSize)
+                throw new IllegalStateException("Db corrupted")
               currentRootOffset = maxBlockSize
               val block = Block(mailbox)
               block.setSystemServices(systemServices)
@@ -150,6 +155,9 @@ class RootBlockComponent(actor: Actor)
     chain.op(rootBlock, Length(), "length")
     chain.op(blockLength, Unit => {
       length = chain("length").asInstanceOf[Int]
+      if (length + HEADER_LENGTH > maxBlockSize)
+        throw new IllegalArgumentException("Root block size exceeds maxRootBlockSize parameter: " +
+        length + HEADER_LENGTH + " > " + maxBlockSize)
       Set(null, length)
     })
     chain.op(timestamp, Unit => {
