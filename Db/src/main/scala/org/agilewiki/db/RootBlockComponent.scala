@@ -52,34 +52,37 @@ class RootBlockComponent(actor: Actor)
   }
 
   private def readRootBlock(msg: AnyRef, rf: Any => Unit) {
-    _readRootBlock(0L) {
-      rsp1 => {
-        val b0 = rsp1.asInstanceOf[Block]
-        _readRootBlock(maxBlockSize) {
-          rsp2 => {
-            val b1 = rsp2.asInstanceOf[Block]
-            if (b0 == null && b1 == null) {
-              val pathname = GetProperty.required("dbPathname")
-              val file = new java.io.File(pathname)
-              val fileLength = file.length
-              if (fileLength > maxBlockSize)
+    val pathname = GetProperty.required("dbPathname")
+    val file = new java.io.File(pathname)
+    val fileLength = file.length
+    if (fileLength == 0L) {
+      currentRootOffset = maxBlockSize
+      val block = Block(mailbox)
+      block.setSystemServices(systemServices)
+      rf(block)
+    } else {
+      _readRootBlock(0L) {
+        rsp1 => {
+          val b0 = rsp1.asInstanceOf[Block]
+          _readRootBlock(maxBlockSize) {
+            rsp2 => {
+              val b1 = rsp2.asInstanceOf[Block]
+              if (b0 == null && b1 == null) {
                 throw new IllegalStateException("Db corrupted")
-              currentRootOffset = maxBlockSize
-              val block = Block(mailbox)
-              block.setSystemServices(systemServices)
-              rf(block)
-            } else if (b1 == null) {
-              currentRootOffset = 0
-              rf(b0)
-            } else if (b0 == null) {
-              currentRootOffset = maxBlockSize
-              rf(b1)
-            } else if (b0.key.asInstanceOf[Long] > b1.key.asInstanceOf[Long]) {
-              currentRootOffset = 0
-              rf(b0)
-            } else {
-              currentRootOffset = maxBlockSize
-              rf(b1)
+                if (b1 == null) {
+                  currentRootOffset = 0
+                  rf(b0)
+                } else if (b0 == null) {
+                  currentRootOffset = maxBlockSize
+                  rf(b1)
+                } else if (b0.key.asInstanceOf[Long] > b1.key.asInstanceOf[Long]) {
+                  currentRootOffset = 0
+                  rf(b0)
+                } else {
+                  currentRootOffset = maxBlockSize
+                  rf(b1)
+                }
+              }
             }
           }
         }
@@ -157,7 +160,7 @@ class RootBlockComponent(actor: Actor)
       length = chain("length").asInstanceOf[Int]
       if (length + HEADER_LENGTH > maxBlockSize)
         throw new IllegalArgumentException("Root block size exceeds maxRootBlockSize property: " +
-        length + HEADER_LENGTH + " > " + maxBlockSize)
+          length + HEADER_LENGTH + " > " + maxBlockSize)
       Set(null, length)
     })
     chain.op(timestamp, Unit => {
