@@ -67,21 +67,22 @@ class RootBlockComponent(actor: Actor)
           _readRootBlock(maxBlockSize) {
             rsp2 => {
               val b1 = rsp2.asInstanceOf[Block]
-              if (b0 == null && b1 == null) {
+              println(b0)
+              println(b1)
+              if (b0 == null && b1 == null)
                 throw new IllegalStateException("Db corrupted")
-                if (b1 == null) {
-                  currentRootOffset = 0
-                  rf(b0)
-                } else if (b0 == null) {
-                  currentRootOffset = maxBlockSize
-                  rf(b1)
-                } else if (b0.key.asInstanceOf[Long] > b1.key.asInstanceOf[Long]) {
-                  currentRootOffset = 0
-                  rf(b0)
-                } else {
-                  currentRootOffset = maxBlockSize
-                  rf(b1)
-                }
+              if (b1 == null) {
+                currentRootOffset = 0
+                rf(b0)
+              } else if (b0 == null) {
+                currentRootOffset = maxBlockSize
+                rf(b1)
+              } else if (b0.key.asInstanceOf[Long] > b1.key.asInstanceOf[Long]) {
+                currentRootOffset = 0
+                rf(b0)
+              } else {
+                currentRootOffset = maxBlockSize
+                rf(b1)
               }
             }
           }
@@ -91,11 +92,16 @@ class RootBlockComponent(actor: Actor)
   }
 
   private def _readRootBlock(offset: Long)(rf: Any => Unit) {
+    println("start _read")
     val headerBytes: Array[Byte] = null
     systemServices(ReadBytesOrNull(offset, HEADER_LENGTH)) {
       rsp1 => {
-        if (rsp1 == null) rf(null)
+        if (rsp1 == null) {
+          println("null read")
+          rf(null)
+        }
         else {
+          println("not null read")
           val headerBytes = rsp1.asInstanceOf[Array[Byte]]
           val data = new MutableData(headerBytes, 0)
           val checksum = new IncDesLong
@@ -130,7 +136,7 @@ class RootBlockComponent(actor: Actor)
                           timestamp(Value()) {
                             rsp5 => {
                               rootBlock.partness(null, rsp5, null)
-                              maxSize(Value()){
+                              maxSize(Value()) {
                                 rsp6 => {
                                   val ms = rsp6.asInstanceOf[Int]
                                   if (ms != maxBlockSize) throw new IllegalArgumentException(
