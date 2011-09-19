@@ -39,7 +39,7 @@ class RootBlockComponentFactory extends ComponentFactory {
 
 class RootBlockComponent(actor: Actor)
   extends Component(actor) {
-  val HEADER_LENGTH = 8 + 8 + 4
+  val HEADER_LENGTH = 8 + 8 + 4 + 4
   private var currentRootOffset = 0
   private var maxBlockSize = 0
 
@@ -102,6 +102,8 @@ class RootBlockComponent(actor: Actor)
           checksum.load(data)
           val timestamp = new IncDesLong
           timestamp.load(data)
+          val maxSize = new IncDesInt
+          maxSize.load(data)
           val blockLength = new IncDesInt
           blockLength.load(data)
           blockLength(Value()) {
@@ -128,7 +130,14 @@ class RootBlockComponent(actor: Actor)
                           timestamp(Value()) {
                             rsp5 => {
                               rootBlock.partness(null, rsp5, null)
-                              rf(rootBlock)
+                              maxSize(Value()){
+                                rsp6 => {
+                                  val ms = rsp6.asInstanceOf[Int]
+                                  if (ms != maxBlockSize) throw new IllegalArgumentException(
+                                    "maxRootBlockSize property must be " + ms)
+                                  rf(rootBlock)
+                                }
+                              }
                             }
                           }
                         }
@@ -149,11 +158,13 @@ class RootBlockComponent(actor: Actor)
     val rootBlock = msg.asInstanceOf[WriteRootBlock].rootBlock
     var bytes: Array[Byte] = null
     var length = 0
-    val blockLength = new IncDesInt
     val checksum = new IncDesLong
     val timestamp = new IncDesLong
+    val maxSize = new IncDesInt
+    val blockLength = new IncDesInt
     var data: MutableData = null
     chain.op(systemServices, GetTimestamp(), "timestamp")
+    chain.op(maxSize, Set(null, maxBlockSize))
     chain.op(timestamp, Unit => Set(null, chain("timestamp")))
     chain.op(rootBlock, Length(), "length")
     chain.op(blockLength, Unit => {
@@ -168,12 +179,9 @@ class RootBlockComponent(actor: Actor)
       data = new MutableData(bytes, 8)
       Save(data)
     })
-    chain.op(blockLength, Unit => {
-      Save(data)
-    })
-    chain.op(rootBlock, Unit => {
-      Save(data)
-    })
+    chain.op(maxSize, Unit => Save(data))
+    chain.op(blockLength, Unit => Save(data))
+    chain.op(rootBlock, Unit => Save(data))
     chain.op(checksum, Unit => {
       val adler32 = new Adler32
       adler32.update(bytes, 8, length + HEADER_LENGTH - 8)
