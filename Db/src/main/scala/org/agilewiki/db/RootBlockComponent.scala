@@ -67,8 +67,6 @@ class RootBlockComponent(actor: Actor)
           _readRootBlock(maxBlockSize) {
             rsp2 => {
               val b1 = rsp2.asInstanceOf[Block]
-              println(b0)
-              println(b1)
               if (b0 == null && b1 == null)
                 throw new IllegalStateException("Db corrupted")
               if (b1 == null) {
@@ -92,16 +90,13 @@ class RootBlockComponent(actor: Actor)
   }
 
   private def _readRootBlock(offset: Long)(rf: Any => Unit) {
-    println("start _read")
     val headerBytes: Array[Byte] = null
     systemServices(ReadBytesOrNull(offset, HEADER_LENGTH)) {
       rsp1 => {
         if (rsp1 == null) {
-          println("null read")
           rf(null)
         }
         else {
-          println("not null read")
           val headerBytes = rsp1.asInstanceOf[Array[Byte]]
           val data = new MutableData(headerBytes, 0)
           val checksum = new IncDesLong
