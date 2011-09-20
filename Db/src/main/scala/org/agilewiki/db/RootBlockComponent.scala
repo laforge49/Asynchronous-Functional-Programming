@@ -40,8 +40,8 @@ class RootBlockComponentFactory extends ComponentFactory {
 class RootBlockComponent(actor: Actor)
   extends Component(actor) {
   val HEADER_LENGTH = 8 + 8 + 4 + 4
-  private var currentRootOffset = 0
   private var maxBlockSize = 0
+  private var currentRootOffset = 0
 
   bind(classOf[ReadRootBlock], readRootBlock)
   bindSafe(classOf[WriteRootBlock], new ChainFactory(writeRootBlock))
