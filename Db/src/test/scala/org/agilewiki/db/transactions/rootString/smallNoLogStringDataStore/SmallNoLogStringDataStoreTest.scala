@@ -19,7 +19,7 @@ class SmallNoLogStringDataStoreTest extends SpecificationWithJUnit {
       properties.put("dbPathname", dbName)
       val db = Subsystem(
         systemServices,
-        new SmallNoLogDataStoreStringComponentFactory,
+        new SmallNoLogStringDataStoreComponentFactory,
         properties = properties,
         actorId = ActorId("db"))
       val results = new Results
@@ -37,7 +37,7 @@ class SmallNoLogStringDataStoreTest extends SpecificationWithJUnit {
       properties.put("dbPathname", dbName)
       val db = Subsystem(
         systemServices,
-        new SmallNoLogDataStoreStringComponentFactory,
+        new SmallNoLogStringDataStoreComponentFactory,
         properties = properties,
         actorId = ActorId("db"))
       val results = new Results

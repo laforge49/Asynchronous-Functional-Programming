@@ -30,7 +30,7 @@ package smallNoLogStringDataStore
 import blip._
 import services._
 
-class SmallNoLogDataStoreStringComponentFactory
+class SmallNoLogStringDataStoreComponentFactory
   extends ComponentFactory {
   addDependency(classOf[SmallDataStoreComponentFactory])
   addDependency(classOf[NullTransactionLogComponentFactory])
