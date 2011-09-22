@@ -23,6 +23,8 @@
  */
 package org.agilewiki
 package db
+package transactions
+package rootString
 package smallNoLogDataStore
 
 import blip._

@@ -1,5 +1,7 @@
 package org.agilewiki
 package db
+package transactions
+package rootString
 package simpleNoLogDataStore
 
 import blip._
