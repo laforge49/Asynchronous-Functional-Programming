@@ -138,9 +138,11 @@ class IncDesIncDes extends IncDesItem[IncDes] {
     val v = s.value
     val tc = s.transactionContext
     if (v != null) {
-      if (v.container != null) throw new IllegalArgumentException("already in use")
+      if (v.container != null)
+        throw new IllegalArgumentException("already in use: " + v)
       val vfactory = v.factory
-      if (vfactory == null) throw new IllegalArgumentException("factory is null")
+      if (vfactory == null)
+        throw new IllegalArgumentException("factory is null: "+v.getClass.getName)
       val fid = vfactory.id
       if (fid == null) throw new IllegalArgumentException("factory id is null")
       if (factoryRegistryComponentFactory == null)

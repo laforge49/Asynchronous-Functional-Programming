@@ -18,7 +18,7 @@ object GetRootRequest {
   }
 }
 
-class GetRootRequestFactory extends Factory(new FactoryId("GetRootStringRequest")) {
+class GetRootRequestFactory extends Factory(new FactoryId("GetRootRequest")) {
   override protected def instantiate = {
     val req = new IncDes
     addComponent(new QueryRequestComponent(req))

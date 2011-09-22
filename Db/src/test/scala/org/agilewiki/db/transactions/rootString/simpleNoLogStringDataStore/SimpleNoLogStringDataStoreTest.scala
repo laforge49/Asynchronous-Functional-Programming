@@ -12,7 +12,7 @@ class SimpleNoLogStringDataStoreTest extends SpecificationWithJUnit {
   "SimpleNoLogStringDataStoreTest" should {
     "update & query" in {
       val systemServices = SystemServices(new ServicesRootComponentFactory)
-      val dbName = "SimpleNoLog.db"
+      val dbName = "SimpleNoLogString.db"
       val file = new java.io.File(dbName)
       file.delete
       val properties = new Properties

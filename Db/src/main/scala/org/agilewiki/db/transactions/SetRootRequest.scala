@@ -12,6 +12,7 @@ object SetRootRequest {
 
   def process(db: Actor, value: IncDes) = {
     val je = apply()
+    je.setSystemServices(db.systemServices)
     val chain = new Chain
     chain.op(je, Set(null, value))
     chain.op(db, TransactionRequest(je))
@@ -19,7 +20,7 @@ object SetRootRequest {
   }
 }
 
-class SetRootRequestFactory extends Factory(new FactoryId("SetRootStringRequest")) {
+class SetRootRequestFactory extends Factory(new FactoryId("SetRootRequest")) {
   override protected def instantiate = {
     val req = new IncDesIncDes
     addComponent(new UpdateRequestComponent(req))
@@ -35,7 +36,8 @@ class SetRootRequestComponent(actor: Actor)
   private def process(msg: AnyRef, chain: Chain) {
     val transactionContext = msg.asInstanceOf[Process].transactionContext
     chain.op(actor, Value(), "value")
+    chain.op(Unit => chain("value"), Copy(null), "copy")
     chain.op(systemServices, DbRoot(), "dbRoot")
-    chain.op(Unit => chain("dbRoot"), Set(transactionContext, chain("value")))
+    chain.op(Unit => chain("dbRoot"), Unit => Set(transactionContext, chain("copy")))
  }
 }
