@@ -25,12 +25,12 @@ package org.agilewiki
 package db
 package transactions
 package rootString
-package simpleNoLogDataStore
+package simpleNoLogStringDataStore
 
 import blip._
 import services._
 
-class SimpleNoLogDataStoreComponentFactory
+class SimpleNoLogStringDataStoreComponentFactory
   extends ComponentFactory {
   addDependency(classOf[SimpleDataStoreComponentFactory])
   addDependency(classOf[NullTransactionLogComponentFactory])
