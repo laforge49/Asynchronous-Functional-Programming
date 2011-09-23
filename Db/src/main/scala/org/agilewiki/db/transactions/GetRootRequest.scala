@@ -33,6 +33,7 @@ class GetRootRequestComponent(actor: Actor)
 
   private def process(msg: AnyRef, chain: Chain) {
     chain.op(systemServices, DbRoot(), "dbRoot")
-    chain.op(Unit => chain("dbRoot"), Value())
+    chain.op(Unit => chain("dbRoot"), Value(), "value")
+    chain.op(Unit => chain("value"), Copy(null))
   }
 }

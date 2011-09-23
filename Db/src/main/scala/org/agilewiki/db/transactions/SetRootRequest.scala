@@ -39,5 +39,5 @@ class SetRootRequestComponent(actor: Actor)
     chain.op(Unit => chain("value"), Copy(null), "copy")
     chain.op(systemServices, DbRoot(), "dbRoot")
     chain.op(Unit => chain("dbRoot"), Unit => Set(transactionContext, chain("copy")))
- }
+  }
 }
