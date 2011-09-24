@@ -1,14 +1,14 @@
 package org.agilewiki
 package db
 package transactions
-package smallNoLogDataStore
+package rootRequests
 
 import blip._
 import services._
 import incDes._
 import org.specs.SpecificationWithJUnit
 
-class SmallNoLogDataStoreTest extends SpecificationWithJUnit {
+class RootRequestsTest extends SpecificationWithJUnit {
   "SmallNoLogStringDataStoreTest" should {
     "update" in {
       val systemServices = SystemServices(new ServicesRootComponentFactory)
@@ -19,7 +19,7 @@ class SmallNoLogDataStoreTest extends SpecificationWithJUnit {
       properties.put("dbPathname", dbName)
       val db = Subsystem(
         systemServices,
-        new SmallNoLogDataStoreComponentFactory,
+        new SmallNoLogComponentFactory,
         properties = properties,
         actorId = ActorId("db"))
       val results = new Results
@@ -37,7 +37,7 @@ class SmallNoLogDataStoreTest extends SpecificationWithJUnit {
       properties.put("dbPathname", dbName)
       val db = Subsystem(
         systemServices,
-        new SmallNoLogDataStoreComponentFactory,
+        new SmallNoLogComponentFactory,
         properties = properties,
         actorId = ActorId("db"))
       val results = new Results
