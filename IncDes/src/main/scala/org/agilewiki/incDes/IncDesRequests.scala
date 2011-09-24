@@ -66,3 +66,4 @@ case class MakePutSet[K, V1](transactionContext: TransactionContext, key: K, val
 
 case class MakePutMakeSet[K](transactionContext: TransactionContext, key: K, factoryId: FactoryId)
 
+case class Resolve(pathname: String)

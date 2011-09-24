@@ -34,6 +34,7 @@ class IncDes extends Actor {
   bind(classOf[Bytes], _bytes)
   bind(classOf[Save], _save)
   bind(classOf[Copy], _copy)
+  bind(classOf[Resolve], resolve)
 
   def load(_data: MutableData) {
     if (opened) throw new IllegalStateException
@@ -51,6 +52,12 @@ class IncDes extends Actor {
     if (container == this) throw new IllegalArgumentException
     _container = container
     _key = key
+  }
+
+  def resolve(msg: AnyRef, rf: Any => Unit) {
+    val pathname = msg.asInstanceOf[Resolve].pathname
+    if (pathname.length > 0) throw new IllegalArgumentException("Invalid pathname")
+    rf((this, ""))
   }
 
   def _length(msg: Any, rf: Any => Unit) {

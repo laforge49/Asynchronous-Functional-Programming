@@ -82,7 +82,9 @@ class IncDesIncDes extends IncDesItem[IncDes] {
     i.save(_data)
   }
 
-  def saveLen(_data: MutableData) {_data.writeInt(len)}
+  def saveLen(_data: MutableData) {
+    _data.writeInt(len)
+  }
 
   override def value(msg: AnyRef, rf: Any => Unit) {
     if (dser) {
@@ -104,7 +106,34 @@ class IncDesIncDes extends IncDesItem[IncDes] {
     }
   }
 
-  def skipLen(m: MutableData) {m.skip(intLength)}
+  override def resolve(msg: AnyRef, rf: Any => Unit) {
+    val pathname = msg.asInstanceOf[Resolve].pathname
+    if (pathname.length == 0) {
+      rf((this, ""))
+      return
+    }
+    if (pathname.startsWith("/"))
+      throw new IllegalArgumentException("Unexpected pathname: " + pathname)
+    if (pathname == "$") {
+      rf((this, "$"))
+      return
+    }
+    if (!pathname.startsWith("$/"))
+      throw new IllegalArgumentException("No match for pathname: " + pathname)
+    var newPathname = pathname.substring(2)
+    value(Value(), {
+      rsp => {
+        if (rsp == null)
+          throw new IllegalArgumentException("No match for pathname: " + pathname)
+        val incDes = rsp.asInstanceOf[IncDes]
+        incDes(Resolve(newPathname))(rf)
+      }
+    })
+  }
+
+  def skipLen(m: MutableData) {
+    m.skip(intLength)
+  }
 
   def makeSet(msg: AnyRef, rf: Any => Unit) {
     if (len > 0) {
@@ -142,7 +171,7 @@ class IncDesIncDes extends IncDesItem[IncDes] {
         throw new IllegalArgumentException("already in use: " + v)
       val vfactory = v.factory
       if (vfactory == null)
-        throw new IllegalArgumentException("factory is null: "+v.getClass.getName)
+        throw new IllegalArgumentException("factory is null: " + v.getClass.getName)
       val fid = vfactory.id
       if (fid == null) throw new IllegalArgumentException("factory id is null")
       if (factoryRegistryComponentFactory == null)

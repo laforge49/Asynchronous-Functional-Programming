@@ -88,6 +88,22 @@ class IncDesNavSet[K]
     rf(i.size)
   }
 
+  override def resolve(msg: AnyRef, rf: Any => Unit) {
+    val pathname = msg.asInstanceOf[Resolve].pathname
+    if (pathname.length == 0) {
+      rf((this, ""))
+      return
+    }
+    if (pathname.startsWith("/"))
+      throw new IllegalArgumentException("Unexpected pathname: " + pathname)
+    val i = pathname.indexOf('/')
+    if (i == -1) {
+      rf((this, pathname))
+      return
+    }
+    throw new IllegalArgumentException("Unexpected pathname: " + pathname)
+  }
+
   def addValue(msg: AnyRef, rf: Any => Unit) {
     deserialize
     val s = msg.asInstanceOf[AddValue[K]]
