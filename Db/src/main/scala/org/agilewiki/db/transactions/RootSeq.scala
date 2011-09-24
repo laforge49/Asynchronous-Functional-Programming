@@ -73,7 +73,8 @@ class FirstRootRequestComponent(actor: Actor)
     chain.op(systemServices, DbRoot(), "dbRoot")
     chain.op(Unit => chain("dbRoot"), Value(), "items")
     chain.op(Unit => chain("items"), ValuesSeq(), "seq")
-    chain.op(Unit => chain("seq"), First())
+    chain.op(Unit => chain("seq"), First(), "item")
+    chain.op(Unit => chain("item"), Copy(null))
  }
 }
 
@@ -96,7 +97,8 @@ class CurrentRootRequestComponent(actor: Actor)
     chain.op(systemServices, DbRoot(), "dbRoot")
     chain.op(Unit => chain("dbRoot"), Value(), "items")
     chain.op(Unit => chain("items"), ValuesSeq(), "seq")
-    chain.op(Unit => chain("seq"), Unit => Current(chain("key")))
+    chain.op(Unit => chain("seq"), Unit => Current(chain("key")), "item")
+    chain.op(Unit => chain("item"), Copy(null))
  }
 }
 
@@ -119,6 +121,7 @@ class NextRootRequestComponent(actor: Actor)
     chain.op(systemServices, DbRoot(), "dbRoot")
     chain.op(Unit => chain("dbRoot"), Value(), "items")
     chain.op(Unit => chain("items"), ValuesSeq(), "seq")
-    chain.op(Unit => chain("seq"), Unit => Next(chain("key")))
+    chain.op(Unit => chain("seq"), Unit => Next(chain("key")), "item")
+    chain.op(Unit => chain("item"), Copy(null))
  }
 }
