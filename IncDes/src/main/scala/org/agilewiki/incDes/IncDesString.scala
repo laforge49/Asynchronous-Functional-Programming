@@ -39,6 +39,8 @@ class IncDesStringFactory(id: FactoryId)
     data.writeString(k)
   }
 
+  override def convert(s: String) = s
+
   override def length(k: String) = stringLength(k)
 }
 

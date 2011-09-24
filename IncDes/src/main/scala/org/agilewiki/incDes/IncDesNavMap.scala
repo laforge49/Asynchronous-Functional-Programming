@@ -163,6 +163,32 @@ class IncDesNavMap[K, V <: IncDesItem[V1], V1]
     rf(i.get(key))
   }
 
+  override def resolve(msg: AnyRef, rf: Any => Unit) {
+    val pathname = msg.asInstanceOf[Resolve].pathname
+    if (pathname.length == 0) {
+      rf((this, ""))
+      return
+    }
+    if (pathname.startsWith("/"))
+      throw new IllegalArgumentException("Unexpected pathname: " + pathname)
+    val i = pathname.indexOf('/')
+    if (i == -1) {
+      rf((this, pathname))
+      return
+    }
+    var newPathname = pathname.substring(i + 1)
+    var key = pathname.substring(0, i)
+    val k = keyFactory.convert(key)
+    get(Get(k), {
+      rsp => {
+        if (rsp == null)
+          throw new IllegalArgumentException("No match for pathname: " + pathname)
+        val incDes = rsp.asInstanceOf[IncDes]
+        incDes(Resolve(newPathname))(rf)
+      }
+    })
+  }
+
   override def getValue(msg: AnyRef, rf: Any => Unit) {
     deserialize
     val key = msg.asInstanceOf[GetValue[K]].key

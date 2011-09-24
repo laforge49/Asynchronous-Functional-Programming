@@ -33,5 +33,7 @@ abstract class IncDesKeyFactory[K](id: FactoryId)
 
   def write(data: MutableData, k: K)
 
+  def convert(s: String): Any
+
   def length(k: K): Int
 }

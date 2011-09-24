@@ -39,6 +39,8 @@ class IncDesIntFactory(id: FactoryId)
     data.writeInt(k)
   }
 
+  override def convert(s: String) = s.toInt
+
   override def length(k: Int) = intLength
 }
 
