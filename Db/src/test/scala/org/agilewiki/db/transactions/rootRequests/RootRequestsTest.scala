@@ -9,7 +9,7 @@ import incDes._
 import org.specs.SpecificationWithJUnit
 
 class RootRequestsTest extends SpecificationWithJUnit {
-  "SmallNoLogStringDataStoreTest" should {
+  "RootRequestsTest" should {
     "update" in {
       val systemServices = SystemServices(new ServicesRootComponentFactory)
       val dbName = "SmallNoLog.db"
