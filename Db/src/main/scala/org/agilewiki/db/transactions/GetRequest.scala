@@ -30,14 +30,11 @@ import incDes._
 import blocks._
 
 object GetRequest {
-  def apply() = (new GetRequestFactory).newActor(null).
-    asInstanceOf[IncDes]
-
   def process(db: Actor, pathname: String) = {
     var pn = pathname
     if (pn.startsWith("/")) pn = pn.substring(1)
     if (!pn.endsWith("/") && pn.length > 0) pn = pn + "/"
-    val je = apply()
+    val je = (new GetRequestFactory).newActor(null).asInstanceOf[IncDes]
     val chain = new Chain
     chain.op(je, Set(null, pn))
     chain.op(db, TransactionRequest(je))
@@ -45,9 +42,9 @@ object GetRequest {
   }
 }
 
-class GetRequestFactory extends Factory(new FactoryId("GetRequest")) {
+class GetRequestFactory extends IncDesStringFactory(new FactoryId("GetRequest")) {
   override protected def instantiate = {
-    val req = new IncDesString
+    val req = super.instantiate
     addComponent(new QueryRequestComponent(req))
     addComponent(new GetRequestComponent(req))
     req
