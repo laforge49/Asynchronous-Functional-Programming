@@ -36,7 +36,7 @@ object GetRequest {
   def process(db: Actor, pathname: String) = {
     var pn = pathname
     if (pn.startsWith("/")) pn = pn.substring(1)
-    if (!pn.endsWith("/")) pn = pn + "/"
+    if (!pn.endsWith("/") && pn.length > 0) pn = pn + "/"
     val je = apply()
     val chain = new Chain
     chain.op(je, Set(null, pn))

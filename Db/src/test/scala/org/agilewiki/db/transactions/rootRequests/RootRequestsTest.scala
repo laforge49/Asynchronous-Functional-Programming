@@ -40,12 +40,12 @@ class RootRequestsTest extends SpecificationWithJUnit {
         new SmallNoLogComponentFactory,
         properties = properties,
         actorId = ActorId("db"))
-      val results = new Results
-      val chain = new Chain(results)
+      val chain = new Chain
       chain.op(systemServices, Register(db))
+      chain.op(db, GetRequest.process(db, "/"), "root")
       chain.op(db, GetRequest.process(db, "/$"), "IncDesInt")
       Future(systemServices, chain)
-      println(results)
+      println(chain.results)
       systemServices.close
     }
   }
