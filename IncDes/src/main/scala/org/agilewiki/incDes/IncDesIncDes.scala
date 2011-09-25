@@ -124,10 +124,13 @@ class IncDesIncDes extends IncDesItem[IncDes] {
     var newPathname = pathname.substring(2)
     value(Value(), {
       rsp => {
-        if (rsp == null)
-          throw new IllegalArgumentException("No match for pathname: " + pathname)
-        val incDes = rsp.asInstanceOf[IncDes]
-        incDes(Resolve(newPathname))(rf)
+        if (rsp == null) {
+          if (pathname == "$/") rf((null, ""))
+          else throw new IllegalArgumentException("No match for pathname: " + pathname)
+        } else {
+          val incDes = rsp.asInstanceOf[IncDes]
+          incDes(Resolve(newPathname))(rf)
+        }
       }
     })
   }

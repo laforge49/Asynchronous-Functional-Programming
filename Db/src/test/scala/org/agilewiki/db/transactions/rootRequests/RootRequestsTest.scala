@@ -44,6 +44,8 @@ class RootRequestsTest extends SpecificationWithJUnit {
       chain.op(systemServices, Register(db))
       chain.op(db, GetRequest.process(db, "/"), "root")
       chain.op(db, GetRequest.process(db, "/$"), "IncDesInt")
+      chain.op(db, SetRequest.process(db, "/$", null), "timestamp")
+      chain.op(db, GetRequest.process(db, "/$"), "null")
       Future(systemServices, chain)
       println(chain.results)
       systemServices.close
