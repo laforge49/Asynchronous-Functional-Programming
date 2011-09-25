@@ -23,46 +23,10 @@
  */
 package org.agilewiki
 package db
-package transactions
 
 import blip._
-import incDes._
-import blocks._
 
-object GetRequest {
-  def process(db: Actor, pathname: String) = {
-    var pn = pathname
-    if (pn.startsWith("/")) pn = pn.substring(1)
-    if (!pn.endsWith("/") && pn.length > 0) pn = pn + "/"
-    val je = (new GetRequestFactory).newActor(null).asInstanceOf[IncDes]
-    val chain = new Chain
-    chain.op(je, Set(null, pn))
-    chain.op(db, TransactionRequest(je))
-    chain
-  }
-}
-
-class GetRequestFactory extends IncDesStringFactory(DBT_GET) {
-  override protected def instantiate = {
-    val req = super.instantiate
-    addComponent(new QueryRequestComponent(req))
-    addComponent(new GetRequestComponent(req))
-    req
-  }
-}
-
-class GetRequestComponent(actor: Actor)
-  extends Component(actor) {
-  bindSafe(classOf[Process], new ChainFactory(process))
-
-  private def process(msg: AnyRef, chain: Chain) {
-    chain.op(actor, Value(), "pathname")
-    chain.op(systemServices, DbRoot(), "dbRoot")
-    chain.op(Unit => chain("dbRoot"),
-      Unit => Resolve(chain("pathname").asInstanceOf[String]), "tuple")
-    chain.op(Unit => {
-      val (value, key) = chain("tuple").asInstanceOf[(IncDes, String)]
-      value
-    }, Copy(null))
-  }
+package object transactions {
+  val DBT_GET = FactoryId("dbg")
+  val DBT_SET = FactoryId("dbs")
 }

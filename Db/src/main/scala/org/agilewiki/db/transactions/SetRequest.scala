@@ -53,7 +53,7 @@ object SetRequest {
 }
 
 class SetRequestFactory
-  extends IncDesStringIncDesMapFactory(new FactoryId("SetRequest")) {
+  extends IncDesStringIncDesMapFactory(DBT_SET) {
   override protected def instantiate = {
     val req = super.instantiate
     addComponent(new UpdateRequestComponent(req))
