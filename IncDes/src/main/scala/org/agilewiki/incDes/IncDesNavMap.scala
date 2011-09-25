@@ -190,10 +190,13 @@ class IncDesNavMap[K, V <: IncDesItem[V1], V1]
     val k = keyFactory.convert(key)
     get(Get(k), {
       rsp => {
-        if (rsp == null)
-          throw new IllegalArgumentException("No match for pathname: " + pathname)
-        val incDes = rsp.asInstanceOf[IncDes]
-        incDes(Resolve(newPathname))(rf)
+        if (rsp == null) {
+          if (newPathname.length == 0) rf((null, ""))
+          else throw new IllegalArgumentException("No match for pathname: " + pathname)
+        } else {
+          val incDes = rsp.asInstanceOf[IncDes]
+          incDes(Resolve(newPathname))(rf)
+        }
       }
     })
   }
