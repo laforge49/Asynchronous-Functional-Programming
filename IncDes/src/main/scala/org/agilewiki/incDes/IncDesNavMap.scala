@@ -107,6 +107,15 @@ class IncDesNavMap[K, V <: IncDesItem[V1], V1]
     }
   }
 
+  override def assign(msg: AnyRef, rf: Any => Unit) {
+    val s = msg.asInstanceOf[Assign]
+    val tc = s.transactionContext
+    val k = keyFactory.convert(s.key).asInstanceOf[K]
+    val v = s.value.asInstanceOf[V]
+    if (v == null) remove(Remove[K](tc, k), rf)
+    else put(Put[K, V, V1](tc, k, v), rf)
+  }
+
   override def makePut(msg: AnyRef, rf: Any => Unit) {
     val s = msg.asInstanceOf[MakePut[K]]
     val tc = s.transactionContext

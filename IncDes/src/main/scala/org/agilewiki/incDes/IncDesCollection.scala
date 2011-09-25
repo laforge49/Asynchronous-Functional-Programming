@@ -25,7 +25,6 @@ package org.agilewiki
 package incDes
 
 import blip._
-import services._
 import seq._
 
 abstract class IncDesCollection[K]
@@ -35,6 +34,7 @@ abstract class IncDesCollection[K]
   bind(classOf[Size], size)
   bind(classOf[Remove[K]], remove)
   bind(classOf[Seq], seq)
+  bind(classOf[Assign], assign)
 
   def containsKey(msg: AnyRef, rf: Any => Unit)
 
@@ -43,4 +43,8 @@ abstract class IncDesCollection[K]
   def remove(msg: AnyRef, rf: Any => Unit)
 
   def seq(msg: AnyRef, rf: Any => Unit)
+
+  def assign(msg: AnyRef, rf: Any => Unit) {
+    throw new UnsupportedOperationException
+  }
 }

@@ -30,7 +30,7 @@ class RootRequestsTest extends SpecificationWithJUnit {
       println(results)
       systemServices.close
     }
-    "query" in {
+    "query, remove" in {
       val systemServices = SystemServices(new ServicesRootComponentFactory)
       val dbName = "SmallNoLog.db"
       val properties = new Properties
