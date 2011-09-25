@@ -36,7 +36,7 @@ class TransactionsComponentFactory
       compositeFactory.componentFactory(classOf[FactoryRegistryComponentFactory]).
         asInstanceOf[FactoryRegistryComponentFactory]
 
-    factoryRegistryComponentFactory.registerFactory(new SetRootRequestFactory)
-    factoryRegistryComponentFactory.registerFactory(new GetRootRequestFactory)
+    factoryRegistryComponentFactory.registerFactory(new SetRequestFactory)
+    factoryRegistryComponentFactory.registerFactory(new GetRequestFactory)
   }
 }

@@ -44,6 +44,7 @@ class IncDesIncDes extends IncDesItem[IncDes] {
   protected var len = -1
 
   bind(classOf[MakeSet], makeSet)
+  bind(classOf[Assign], assign)
 
   lazy val factoryRegistryComponentFactory = {
     if (systemServices == null) throw new IllegalStateException("SystemServices is required")
@@ -198,5 +199,14 @@ class IncDesIncDes extends IncDesItem[IncDes] {
         changed(tc, length - olen, this, rf)
       }
     }
+  }
+
+  def assign(msg: AnyRef, rf: Any => Unit) {
+    val s = msg.asInstanceOf[Assign]
+    val key = s.key
+    if (key != "$") throw new IllegalArgumentException("Invalid key: " + key)
+    val v = s.value
+    val tc = s.transactionContext
+    set(Set(tc, v), rf)
   }
 }

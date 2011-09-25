@@ -26,37 +26,60 @@ package db
 package transactions
 
 import blip._
+import seq._
 import incDes._
 import blocks._
 
-object GetRootRequest {
-  def apply() = (new GetRootRequestFactory).newActor(null).
-    asInstanceOf[IncDes]
-
-  def process(db: Actor) = {
-    val je = apply()
+object SetRequest {
+  def process(db: Actor, pathname: String, value: IncDes) = {
+    var pn = pathname
+    if (pn.startsWith("/")) pn = pn.substring(1)
+    val pnid = IncDesString(null)
+    val pnidid = IncDesIncDes(null)
+    val vidid = IncDesIncDes(null)
+    val jef = new SetRequestFactory
+    jef.configure(db)
+    val je = jef.newActor(null).asInstanceOf[IncDes]
+    je.setSystemServices(db.systemServices)
     val chain = new Chain
+    chain.op(je, Put[String, IncDesIncDes, IncDes](null, "pathname", pnidid))
+    chain.op(pnidid, Set(null, pnid))
+    chain.op(pnid, Set(null, pn))
+    chain.op(je, Put[String, IncDesIncDes, IncDes](null, "value", vidid))
+    chain.op(vidid, Set(null, value))
     chain.op(db, TransactionRequest(je))
     chain
   }
 }
 
-class GetRootRequestFactory extends Factory(new FactoryId("GetRootRequest")) {
+class SetRequestFactory
+  extends IncDesStringIncDesMapFactory(new FactoryId("SetRequest")) {
   override protected def instantiate = {
-    val req = new IncDes
-    addComponent(new QueryRequestComponent(req))
-    addComponent(new GetRootRequestComponent(req))
+    val req = super.instantiate
+    addComponent(new UpdateRequestComponent(req))
+    addComponent(new SetRequestComponent(req))
     req
   }
 }
 
-class GetRootRequestComponent(actor: Actor)
+class SetRequestComponent(actor: Actor)
   extends Component(actor) {
   bindSafe(classOf[Process], new ChainFactory(process))
 
   private def process(msg: AnyRef, chain: Chain) {
+    val transactionContext = msg.asInstanceOf[Process].transactionContext
+    var key = ""
+    chain.op(actor, GetValue("pathname"), "pathnameId")
+    chain.op(Unit => chain("pathnameId"), Value(), "pathname")
+    chain.op(actor, GetValue("value"), "value")
+    chain.op(Unit => chain("value"), Copy(null), "copy")
     chain.op(systemServices, DbRoot(), "dbRoot")
-    chain.op(Unit => chain("dbRoot"), Value(), "value")
-    chain.op(Unit => chain("value"), Copy(null))
+    chain.op(Unit => chain("dbRoot"),
+      Unit => Resolve(chain("pathname").asInstanceOf[String]), "tuple")
+    chain.op(Unit => {
+      val (incDes, k) = chain("tuple").asInstanceOf[(IncDes, String)]
+      key = k
+      incDes
+    }, Unit => Assign(transactionContext, key, chain("copy").asInstanceOf[IncDes]))
   }
 }

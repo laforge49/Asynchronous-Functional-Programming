@@ -29,38 +29,43 @@ import blip._
 import incDes._
 import blocks._
 
-object SetRootRequest {
-  def apply() = (new SetRootRequestFactory).newActor(null).
-    asInstanceOf[IncDesIncDes]
+object GetRequest {
+  def apply() = (new GetRequestFactory).newActor(null).
+    asInstanceOf[IncDes]
 
-  def process(db: Actor, value: IncDes) = {
+  def process(db: Actor, pathname: String) = {
+    var pn = pathname
+    if (pn.startsWith("/")) pn = pn.substring(1)
+    if (!pn.endsWith("/")) pn = pn + "/"
     val je = apply()
-    je.setSystemServices(db.systemServices)
     val chain = new Chain
-    chain.op(je, Set(null, value))
+    chain.op(je, Set(null, pn))
     chain.op(db, TransactionRequest(je))
     chain
   }
 }
 
-class SetRootRequestFactory extends Factory(new FactoryId("SetRootRequest")) {
+class GetRequestFactory extends Factory(new FactoryId("GetRequest")) {
   override protected def instantiate = {
-    val req = new IncDesIncDes
-    addComponent(new UpdateRequestComponent(req))
-    addComponent(new SetRootRequestComponent(req))
+    val req = new IncDesString
+    addComponent(new QueryRequestComponent(req))
+    addComponent(new GetRequestComponent(req))
     req
   }
 }
 
-class SetRootRequestComponent(actor: Actor)
+class GetRequestComponent(actor: Actor)
   extends Component(actor) {
   bindSafe(classOf[Process], new ChainFactory(process))
 
   private def process(msg: AnyRef, chain: Chain) {
-    val transactionContext = msg.asInstanceOf[Process].transactionContext
-    chain.op(actor, Value(), "value")
-    chain.op(Unit => chain("value"), Copy(null), "copy")
+    chain.op(actor, Value(), "pathname")
     chain.op(systemServices, DbRoot(), "dbRoot")
-    chain.op(Unit => chain("dbRoot"), Unit => Set(transactionContext, chain("copy")))
+    chain.op(Unit => chain("dbRoot"),
+      Unit => Resolve(chain("pathname").asInstanceOf[String]), "tuple")
+    chain.op(Unit => {
+      val (value, key) = chain("tuple").asInstanceOf[(IncDes, String)]
+      value
+    }, Copy(null))
   }
 }
