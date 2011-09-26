@@ -1,14 +1,14 @@
 package org.agilewiki
 package db
 package transactions
-package strings
+package navMap
 
 import blip._
 import services._
 import incDes._
 import org.specs.SpecificationWithJUnit
 
-class StringsTest extends SpecificationWithJUnit {
+class NavMapTest extends SpecificationWithJUnit {
   "StringsTest" should {
     "update & query" in {
       val systemServices = SystemServices(new ServicesRootComponentFactory)
