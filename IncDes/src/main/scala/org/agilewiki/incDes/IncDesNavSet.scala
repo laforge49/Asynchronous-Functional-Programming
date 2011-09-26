@@ -34,7 +34,6 @@ class IncDesNavSet[K]
   private var navSetSeq: NavSetSeq[K] = null
 
   bind(classOf[AddValue[K]], addValue)
-  bind(classOf[Get[K]], get)
 
   def keyFactory = factory.asInstanceOf[IncDesNavSetFactory[K]].keyFactory
 
@@ -84,18 +83,6 @@ class IncDesNavSet[K]
     rf(i.contains(key))
   }
 
-  def get(msg: AnyRef, rf: Any => Unit) {
-    deserialize
-    val key = msg.asInstanceOf[Get[K]].key
-    val b = IncDesBoolean(null)
-    val r = i.contains(key)
-    b(Set(null, r)){
-      rsp => {
-        rf(b)
-      }
-    }
-  }
-
   override def size(msg: AnyRef, rf: Any => Unit) {
     deserialize
     rf(i.size)
@@ -109,12 +96,23 @@ class IncDesNavSet[K]
     }
     if (pathname.startsWith("/"))
       throw new IllegalArgumentException("Unexpected pathname: " + pathname)
-    val i = pathname.indexOf('/')
-    if (i == -1) {
+    val ndx = pathname.indexOf('/')
+    if (ndx == -1) {
       rf((this, pathname))
       return
     }
-    throw new IllegalArgumentException("Unexpected pathname: " + pathname)
+    val newPathname = pathname.substring(ndx + 1)
+    if (newPathname != "")
+      throw new IllegalArgumentException("Unexpected pathname: " + pathname)
+    var key = pathname.substring(0, ndx)
+    val k = keyFactory.convert(key).asInstanceOf[K]
+    val b = IncDesBoolean(null)
+    val r = i.contains(k)
+    b(Set(null, r)){
+      rsp => {
+        rf(b)
+      }
+    }
   }
 
   def addValue(msg: AnyRef, rf: Any => Unit) {

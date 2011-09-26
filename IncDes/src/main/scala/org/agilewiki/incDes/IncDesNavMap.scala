@@ -185,7 +185,7 @@ class IncDesNavMap[K, V <: IncDesItem[V1], V1]
       rf((this, pathname))
       return
     }
-    var newPathname = pathname.substring(i + 1)
+    val newPathname = pathname.substring(i + 1)
     var key = pathname.substring(0, i)
     val k = keyFactory.convert(key)
     get(Get(k), {
