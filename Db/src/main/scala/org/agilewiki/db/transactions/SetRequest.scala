@@ -46,7 +46,8 @@ object SetRequest {
     chain.op(pnidid, Set(null, pnid))
     chain.op(pnid, Set(null, pn))
     chain.op(je, Put[String, IncDesIncDes, IncDes](null, "value", vidid))
-    chain.op(vidid, Set(null, value))
+    chain.op(value, Copy(null), "copy")
+    chain.op(vidid, Unit => Set(null, chain("copy").asInstanceOf[IncDes]))
     chain.op(db, TransactionRequest(je))
     chain
   }

@@ -9,7 +9,7 @@ import incDes._
 import org.specs.SpecificationWithJUnit
 
 class NavMapTest extends SpecificationWithJUnit {
-  "StringsTest" should {
+  "NavMapTest" should {
     "update & query" in {
       val systemServices = SystemServices(new ServicesRootComponentFactory)
       val dbName = "IntStringMapNoLog.db"
