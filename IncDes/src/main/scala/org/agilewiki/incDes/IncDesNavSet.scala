@@ -34,6 +34,7 @@ class IncDesNavSet[K]
   private var navSetSeq: NavSetSeq[K] = null
 
   bind(classOf[AddValue[K]], addValue)
+  bind(classOf[Get[K]], get)
 
   def keyFactory = factory.asInstanceOf[IncDesNavSetFactory[K]].keyFactory
 
@@ -83,6 +84,18 @@ class IncDesNavSet[K]
     rf(i.contains(key))
   }
 
+  def get(msg: AnyRef, rf: Any => Unit) {
+    deserialize
+    val key = msg.asInstanceOf[Get[K]].key
+    val b = IncDesBoolean(null)
+    val r = i.contains(key)
+    b(Set(null, r)){
+      rsp => {
+        rf(b)
+      }
+    }
+  }
+
   override def size(msg: AnyRef, rf: Any => Unit) {
     deserialize
     rf(i.size)
@@ -121,6 +134,20 @@ class IncDesNavSet[K]
             rf(null)
           }
         })
+      }
+    }
+  }
+
+  override def assign(msg: AnyRef, rf: Any => Unit) {
+    val s = msg.asInstanceOf[Assign]
+    val tc = s.transactionContext
+    val k = keyFactory.convert(s.key).asInstanceOf[K]
+    val v = s.value.asInstanceOf[IncDesBoolean]
+    v(Value()) {
+      rsp => {
+        val b = rsp.asInstanceOf[Boolean]
+        if (b) addValue(AddValue[K](tc, k), rf)
+        else remove(Remove[K](tc, k), rf)
       }
     }
   }

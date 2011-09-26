@@ -12,7 +12,7 @@ class NavMapTest extends SpecificationWithJUnit {
   "StringsTest" should {
     "update & query" in {
       val systemServices = SystemServices(new ServicesRootComponentFactory)
-      val dbName = "StringsNoLog.db"
+      val dbName = "IntStringMapNoLog.db"
       val file = new java.io.File(dbName)
       file.delete
       val properties = new Properties
@@ -29,8 +29,6 @@ class NavMapTest extends SpecificationWithJUnit {
       val chain = new Chain
       chain.op(systemServices, Register(db))
       chain.op(db, SetRequest.process(db, "/$", IncDesIntStringMap(null, db)))
-      chain.op(db, GetRequest.process(db, "/"), "root")
-      chain.op(db, GetRequest.process(db, "/$"), "IncDesIntStringMap")
       chain.op(one, Set(null, "One"))
       chain.op(db, SetRequest.process(db, "/$/1", one))
       chain.op(two, Set(null, "Two"))
