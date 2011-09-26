@@ -22,9 +22,18 @@ class NavSetTest extends SpecificationWithJUnit {
         new SmallNoLogComponentFactory,
         properties = properties,
         actorId = ActorId("db"))
+      val tru = IncDesBoolean(null)
+      val fls = IncDesBoolean(null)
       val chain = new Chain
       chain.op(systemServices, Register(db))
       chain.op(db, SetRequest.process(db, "/$", IncDesStringSet(null, db)))
+      chain.op(tru, Set(null, true))
+      chain.op(fls, Set(null, false))
+      chain.op(db, SetRequest.process(db, "/$/1", tru))
+      chain.op(db, SetRequest.process(db, "/$/2", tru))
+      chain.op(db, SetRequest.process(db, "/$/2", fls))
+      chain.op(db, SetRequest.process(db, "/$/3", tru))
+      chain.op(db, SetRequest.process(db, "/$/10", tru))
       Future(systemServices, chain)
       println(chain.results)
       systemServices.close
