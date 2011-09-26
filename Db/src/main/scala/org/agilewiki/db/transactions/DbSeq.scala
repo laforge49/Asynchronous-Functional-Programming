@@ -30,7 +30,7 @@ import seq._
 import incDes._
 import blocks._
 
-class RootSeq[V](db: Actor)
+class DbStringSeq[V](db: Actor, pathname: String)
   extends Sequence[String, V] {
 
   override def first(msg: AnyRef, rf: Any => Unit) {
@@ -56,7 +56,7 @@ class RootSeq[V](db: Actor)
 }
 
 class FirstRootRequestFactory
-  extends Factory(new FactoryId("FirstRootRequest")) {
+  extends Factory(DBT_SEQ_FIRST) {
   override protected def instantiate = {
     val req = new IncDes
     addComponent(new QueryRequestComponent(req))
@@ -79,7 +79,7 @@ class FirstRootRequestComponent(actor: Actor)
 }
 
 class CurrentRootRequestFactory
-  extends Factory(new FactoryId("CurrentRootRequest")) {
+  extends Factory(DBT_SEQ_CURRENT) {
   override protected def instantiate = {
     val req = new IncDesString
     addComponent(new QueryRequestComponent(req))
@@ -103,7 +103,7 @@ class CurrentRootRequestComponent(actor: Actor)
 }
 
 class NextRootRequestFactory
-  extends Factory(new FactoryId("NextRootRequest")) {
+  extends Factory(DBT_SEQ_NEXT) {
   override protected def instantiate = {
     val req = new IncDesString
     addComponent(new QueryRequestComponent(req))
