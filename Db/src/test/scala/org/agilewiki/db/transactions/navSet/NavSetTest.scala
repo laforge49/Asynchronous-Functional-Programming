@@ -12,7 +12,7 @@ class NavSetTest extends SpecificationWithJUnit {
   "NavSetTest" should {
     "update & query" in {
       val systemServices = SystemServices(new ServicesRootComponentFactory)
-      val dbName = "IntStringMapNoLog.db"
+      val dbName = "IntStringSetNoLog.db"
       val file = new java.io.File(dbName)
       file.delete
       val properties = new Properties
