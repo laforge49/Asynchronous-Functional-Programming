@@ -119,7 +119,9 @@ class IncDesList[V <: IncDesItem[V1], V1]
     deserialize
     val key = msg.asInstanceOf[Get[Int]].key
     if (key < 0 || key >= i.size) rf(null)
-    else rf(i.get(key))
+    else {
+      rf(i.get(key))
+    }
   }
 
   override def resolve(msg: AnyRef, rf: Any => Unit) {

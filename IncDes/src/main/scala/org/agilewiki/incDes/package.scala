@@ -69,7 +69,7 @@ package object incDes {
   val intLength = 4
   val longLength = 8
 
-  def stringLen(length: Int): Int = intLength + 2 * length
+  def stringLen(length: Int): Int = if (length > -1) intLength + 2 * length else intLength
 
   def stringLength(string: String): Int =
     if (string == null) intLength

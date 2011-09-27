@@ -89,7 +89,11 @@ class IncDesString extends IncDesItem[String] {
     })
   }
 
-  override def length = if (dser) stringLength(i) else stringLen(len)
+  override def length = if (dser) {
+    stringLength(i)
+  } else {
+    stringLen(len)
+  }
 
   override protected def serialize(_data: MutableData) {
     if (!dser) throw new IllegalStateException
