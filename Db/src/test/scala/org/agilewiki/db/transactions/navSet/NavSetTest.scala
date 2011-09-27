@@ -34,6 +34,10 @@ class NavSetTest extends SpecificationWithJUnit {
       chain.op(db, SetRequest.process(db, "/$/2", fls))
       chain.op(db, SetRequest.process(db, "/$/3", tru))
       chain.op(db, SetRequest.process(db, "/$/10", tru))
+      chain.op(db, GetRequest.process(db, "/$/1"), "one")
+      chain.op(Unit => chain("one"), Value(), "1")
+      chain.op(db, GetRequest.process(db, "/$/2"), "two")
+      chain.op(Unit => chain("two"), Value(), "2")
       Future(systemServices, chain)
       println(chain.results)
       systemServices.close

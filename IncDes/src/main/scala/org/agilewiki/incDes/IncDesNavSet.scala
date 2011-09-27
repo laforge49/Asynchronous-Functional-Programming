@@ -110,7 +110,7 @@ class IncDesNavSet[K]
     val r = i.contains(k)
     b(Set(null, r)){
       rsp => {
-        rf(b)
+        rf((b, ""))
       }
     }
   }
