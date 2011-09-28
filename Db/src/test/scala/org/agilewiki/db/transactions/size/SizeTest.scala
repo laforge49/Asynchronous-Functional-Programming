@@ -33,9 +33,9 @@ class SizeTest extends SpecificationWithJUnit {
         IncDesIncDes(null)))
       chain.op(db, SetRequest.process(db, "/$/0/$",
         IncDesBytesList(null, db)))
-      chain.op(db, SizeRequest.process(db, "/$"), "mapSize")
-      chain.op(db, SizeRequest.process(db, "/$/-111111111111111111/$"), "setSize")
-      chain.op(db, SizeRequest.process(db, "/$/0/$"), "listSize")
+      chain.op(db, SizeRequest(db, "/$"), "mapSize")
+      chain.op(db, SizeRequest(db, "/$/-111111111111111111/$"), "setSize")
+      chain.op(db, SizeRequest(db, "/$/0/$"), "listSize")
       Future(systemServices, chain)
       println(chain.results)
       systemServices.close

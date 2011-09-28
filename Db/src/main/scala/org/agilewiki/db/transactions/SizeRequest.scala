@@ -30,7 +30,7 @@ import incDes._
 import blocks._
 
 object SizeRequest {
-  def process(db: Actor, pathname: String) = {
+  def apply(db: Actor, pathname: String) = {
     var pn = pathname
     if (pn.startsWith("/")) pn = pn.substring(1)
     if (!pn.endsWith("/") && pn.length > 0) pn = pn + "/"
