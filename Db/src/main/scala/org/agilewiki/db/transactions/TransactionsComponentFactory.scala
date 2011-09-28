@@ -38,5 +38,6 @@ class TransactionsComponentFactory
 
     factoryRegistryComponentFactory.registerFactory(new SetRequestFactory)
     factoryRegistryComponentFactory.registerFactory(new GetRequestFactory)
+    factoryRegistryComponentFactory.registerFactory(new SizeRequestFactory)
   }
 }

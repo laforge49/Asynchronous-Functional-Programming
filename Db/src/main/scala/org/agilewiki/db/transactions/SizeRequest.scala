@@ -42,7 +42,7 @@ object SizeRequest {
   }
 }
 
-class SizeRequestFactory extends IncDesStringFactory(DBT_GET) {
+class SizeRequestFactory extends IncDesStringFactory(DBT_SIZE) {
   override protected def instantiate = {
     val req = super.instantiate
     addComponent(new QueryRequestComponent(req))

@@ -28,6 +28,7 @@ import blip._
 
 package object transactions {
   val DBT_GET = FactoryId("dbg")
+  val DBT_SIZE = FactoryId("dbz")
   val DBT_SET = FactoryId("dbs")
   val DBT_SEQ_FIRST = FactoryId("dbf")
   val DBT_SEQ_CURRENT = FactoryId("dbc")
