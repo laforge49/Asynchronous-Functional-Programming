@@ -26,7 +26,7 @@ class RootRequestsTest extends SpecificationWithJUnit {
       val results = new Results
       val chain = new Chain(results)
       chain.op(systemServices, Register(db))
-      chain.op(db, SetRequest.process(db, "/$", IncDesInt(null)), "timestamp")
+      chain.op(db, SetRequest(db, "/$", IncDesInt(null)), "timestamp")
       Future(systemServices, chain)
       println(results)
       systemServices.close
@@ -45,7 +45,7 @@ class RootRequestsTest extends SpecificationWithJUnit {
       chain.op(systemServices, Register(db))
       chain.op(db, GetRequest(db, "/"), "root")
       chain.op(db, GetRequest(db, "/$"), "IncDesInt")
-      chain.op(db, SetRequest.process(db, "/$", null), "timestamp")
+      chain.op(db, SetRequest(db, "/$", null), "timestamp")
       chain.op(db, GetRequest(db, "/$"), "null")
       Future(systemServices, chain)
       println(chain.results)

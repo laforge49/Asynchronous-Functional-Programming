@@ -28,7 +28,7 @@ class ListTest extends SpecificationWithJUnit {
       val chain = new Chain
       chain.op(systemServices, Register(db))
       chain.op(list, Add[IncDesString, String](null, ids0))
-      chain.op(db, SetRequest.process(db, "/$", list))
+      chain.op(db, SetRequest(db, "/$", list))
       chain.op(db, GetRequest(db, "/$/0"), "0")
       chain.op(db, GetRequest(db, "/$/1"), "1")
       Future(systemServices, chain)

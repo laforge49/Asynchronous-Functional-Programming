@@ -24,14 +24,14 @@ class SizeTest extends SpecificationWithJUnit {
         actorId = ActorId("db"))
       val chain = new Chain
       chain.op(systemServices, Register(db))
-      chain.op(db, SetRequest.process(db, "/$", IncDesLongIncDesMap(null, db)))
-      chain.op(db, SetRequest.process(db, "/$/-111111111111111111",
+      chain.op(db, SetRequest(db, "/$", IncDesLongIncDesMap(null, db)))
+      chain.op(db, SetRequest(db, "/$/-111111111111111111",
         IncDesIncDes(null)))
-      chain.op(db, SetRequest.process(db, "/$/-111111111111111111/$",
+      chain.op(db, SetRequest(db, "/$/-111111111111111111/$",
         IncDesStringSet(null, db)))
-      chain.op(db, SetRequest.process(db, "/$/0",
+      chain.op(db, SetRequest(db, "/$/0",
         IncDesIncDes(null)))
-      chain.op(db, SetRequest.process(db, "/$/0/$",
+      chain.op(db, SetRequest(db, "/$/0/$",
         IncDesBytesList(null, db)))
       chain.op(db, SizeRequest(db, "/$"), "mapSize")
       chain.op(db, SizeRequest(db, "/$/-111111111111111111/$"), "setSize")
