@@ -24,24 +24,24 @@
 package org.agilewiki
 package db
 package transactions
+package dbSeq
 
 import blip._
-import services._
-import dbSeq._
+import seq._
+import incDes._
 
-class TransactionsComponentFactory
-  extends ComponentFactory {
-
-  override def configure(compositeFactory: Factory) {
-    val factoryRegistryComponentFactory =
-      compositeFactory.componentFactory(classOf[FactoryRegistryComponentFactory]).
-        asInstanceOf[FactoryRegistryComponentFactory]
-
-    factoryRegistryComponentFactory.registerFactory(new SetRequestFactory)
-    factoryRegistryComponentFactory.registerFactory(new GetRequestFactory)
-    factoryRegistryComponentFactory.registerFactory(new SizeRequestFactory)
-    factoryRegistryComponentFactory.registerFactory(new FirstRequestFactory)
-    factoryRegistryComponentFactory.registerFactory(new CurrentStringRequestFactory)
-    factoryRegistryComponentFactory.registerFactory(new NextStringRequestFactory)
+class KVCopySafe extends Safe {
+  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+    val kvPair = msg.asInstanceOf[KVPair[Any, Any]]
+    val value = kvPair.value
+    if (!value.isInstanceOf[IncDes]) {
+      rf(kvPair)
+      return
+    }
+    value.asInstanceOf[IncDes](Copy(target.mailbox)) {
+      rsp => {
+        rf(new KVPair(kvPair.key, rsp))
+      }
+    }
   }
 }

@@ -35,7 +35,7 @@ class NextStringRequestFactory
   override protected def instantiate = {
     val req = new IncDesString
     addComponent(new QueryRequestComponent(req))
-    addComponent(new NextStringRequestComponent(req))
+    addComponent(new NextRequestComponent(req))
     req
   }
 }

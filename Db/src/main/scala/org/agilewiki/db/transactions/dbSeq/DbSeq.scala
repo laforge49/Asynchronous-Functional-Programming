@@ -33,6 +33,8 @@ import incDes._
 class DbStringSeq[V](db: Actor, pathname: String)
   extends Sequence[String, V] {
 
+  setMailbox(db.mailbox)
+
   override def first(msg: AnyRef, rf: Any => Unit) {
     val je = (new FirstRequestFactory).newActor(null)
     db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)

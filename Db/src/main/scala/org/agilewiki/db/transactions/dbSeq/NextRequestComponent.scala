@@ -31,7 +31,7 @@ import seq._
 import incDes._
 import blocks._
 
-class NextStringRequestComponent(actor: Actor)
+class NextRequestComponent(actor: Actor)
   extends Component(actor) {
   bindSafe(classOf[Process], new ChainFactory(process))
 
@@ -40,7 +40,10 @@ class NextStringRequestComponent(actor: Actor)
     chain.op(systemServices, DbRoot(), "dbRoot")
     chain.op(Unit => chain("dbRoot"), Value(), "items")
     chain.op(Unit => chain("items"), ValuesSeq(), "seq")
-    chain.op(Unit => chain("seq"), Unit => Next(chain("key")), "item")
-    chain.op(Unit => chain("item"), Copy(null))
+    chain.op(
+      Unit => new MapSafeSeq(
+        chain("seq").asInstanceOf[Sequence[Any, Any]],
+        new KVCopySafe),
+      Unit => Next(chain("key")))
  }
 }

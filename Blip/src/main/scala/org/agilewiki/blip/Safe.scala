@@ -101,9 +101,17 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
       if (srcActor == null) null
       else srcActor.actor.mailbox
     }
-    if (srcMailbox == null && target.mailbox != null) throw new UnsupportedOperationException(
-      "An immutable actor can only send to another immutable actor."
-    )
+    if (srcMailbox == null && target.mailbox != null) {
+      /*
+      println(srcActor)
+      println(srcMailbox)
+      println(target)
+      println(target.mailbox)
+      */
+      throw new UnsupportedOperationException(
+        "An immutable actor can only send to another immutable actor."
+      )
+    }
     if (target.mailbox == null || target.mailbox == srcMailbox) {
       if (responseFunction == null) messageFunction(msg, AnyRef => {})
       else messageFunction(msg, responseFunction)
