@@ -56,3 +56,57 @@ class DbStringSeq[V](db: Actor, pathname: String)
     }
   }
 }
+
+class DbLongSeq[V](db: Actor, pathname: String)
+  extends Sequence[String, V] {
+
+  setMailbox(db.mailbox)
+
+  override def first(msg: AnyRef, rf: Any => Unit) {
+    val je = (new FirstRequestFactory).newActor(null)
+    db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
+  }
+
+  override def current(msg: AnyRef, rf: Any => Unit) {
+    val key = msg.asInstanceOf[Current[Long]].key
+    val je = (new CurrentLongRequestFactory).newActor(null)
+    je(Set(null, key)) {
+      rsp => db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
+    }
+  }
+
+  override def next(msg: AnyRef, rf: Any => Unit) {
+    val key = msg.asInstanceOf[Next[Long]].key
+    val je = (new NextLongRequestFactory).newActor(null)
+    je(Set(null, key)) {
+      rsp => db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
+    }
+  }
+}
+
+class DbIntSeq[V](db: Actor, pathname: String)
+  extends Sequence[String, V] {
+
+  setMailbox(db.mailbox)
+
+  override def first(msg: AnyRef, rf: Any => Unit) {
+    val je = (new FirstRequestFactory).newActor(null)
+    db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
+  }
+
+  override def current(msg: AnyRef, rf: Any => Unit) {
+    val key = msg.asInstanceOf[Current[Int]].key
+    val je = (new CurrentIntRequestFactory).newActor(null)
+    je(Set(null, key)) {
+      rsp => db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
+    }
+  }
+
+  override def next(msg: AnyRef, rf: Any => Unit) {
+    val key = msg.asInstanceOf[Next[Int]].key
+    val je = (new NextIntRequestFactory).newActor(null)
+    je(Set(null, key)) {
+      rsp => db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
+    }
+  }
+}

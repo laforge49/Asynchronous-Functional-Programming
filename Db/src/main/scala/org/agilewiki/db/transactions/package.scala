@@ -32,9 +32,9 @@ package object transactions {
   val DBT_SET = FactoryId("dbs")
   val DBT_SEQ_FIRST = FactoryId("dbf")
   val DBT_SEQ_STRING_CURRENT = FactoryId("dbsc")
-  val DBT_SEQ_lONG_CURRENT = FactoryId("dblc")
+  val DBT_SEQ_LONG_CURRENT = FactoryId("dblc")
   val DBT_SEQ_INT_CURRENT = FactoryId("dbic")
   val DBT_SEQ_STRING_NEXT = FactoryId("dbsn")
-  val DBT_SEQ_lONG_NEXT = FactoryId("dbln")
-  val DBT_SEQ_ING_NEXT = FactoryId("dbin")
+  val DBT_SEQ_LONG_NEXT = FactoryId("dbln")
+  val DBT_SEQ_INT_NEXT = FactoryId("dbin")
 }

@@ -39,3 +39,23 @@ class CurrentStringRequestFactory
     req
   }
 }
+
+class CurrentLongRequestFactory
+  extends Factory(DBT_SEQ_LONG_CURRENT) {
+  override protected def instantiate = {
+    val req = new IncDesLong
+    addComponent(new QueryRequestComponent(req))
+    addComponent(new CurrentRequestComponent(req))
+    req
+  }
+}
+
+class CurrentIntRequestFactory
+  extends Factory(DBT_SEQ_INT_CURRENT) {
+  override protected def instantiate = {
+    val req = new IncDesInt
+    addComponent(new QueryRequestComponent(req))
+    addComponent(new CurrentRequestComponent(req))
+    req
+  }
+}
