@@ -23,18 +23,23 @@
  */
 package org.agilewiki
 package db
+package transactions
+package dbSeq
 
 import blip._
+import seq._
+import incDes._
+import blocks._
 
-package object transactions {
-  val DBT_GET = FactoryId("dbg")
-  val DBT_SIZE = FactoryId("dbz")
-  val DBT_SET = FactoryId("dbs")
-  val DBT_SEQ_FIRST = FactoryId("dbf")
-  val DBT_SEQ_STRING_CURRENT = FactoryId("dbsc")
-  val DBT_SEQ_lONG_CURRENT = FactoryId("dblc")
-  val DBT_SEQ_INT_CURRENT = FactoryId("dbic")
-  val DBT_SEQ_STRING_NEXT = FactoryId("dbsn")
-  val DBT_SEQ_lONG_NEXT = FactoryId("dbln")
-  val DBT_SEQ_ING_NEXT = FactoryId("dbin")
+class FirstRequestComponent(actor: Actor)
+  extends Component(actor) {
+  bindSafe(classOf[Process], new ChainFactory(process))
+
+  private def process(msg: AnyRef, chain: Chain) {
+    chain.op(systemServices, DbRoot(), "dbRoot")
+    chain.op(Unit => chain("dbRoot"), Value(), "items")
+    chain.op(Unit => chain("items"), ValuesSeq(), "seq")
+    chain.op(Unit => chain("seq"), First(), "item")
+    chain.op(Unit => chain("item"), Copy(null))
+ }
 }

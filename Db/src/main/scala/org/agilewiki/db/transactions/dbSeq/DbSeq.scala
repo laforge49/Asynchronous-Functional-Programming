@@ -23,18 +23,34 @@
  */
 package org.agilewiki
 package db
+package transactions
+package dbSeq
 
 import blip._
+import seq._
+import incDes._
 
-package object transactions {
-  val DBT_GET = FactoryId("dbg")
-  val DBT_SIZE = FactoryId("dbz")
-  val DBT_SET = FactoryId("dbs")
-  val DBT_SEQ_FIRST = FactoryId("dbf")
-  val DBT_SEQ_STRING_CURRENT = FactoryId("dbsc")
-  val DBT_SEQ_lONG_CURRENT = FactoryId("dblc")
-  val DBT_SEQ_INT_CURRENT = FactoryId("dbic")
-  val DBT_SEQ_STRING_NEXT = FactoryId("dbsn")
-  val DBT_SEQ_lONG_NEXT = FactoryId("dbln")
-  val DBT_SEQ_ING_NEXT = FactoryId("dbin")
+class DbStringSeq[V](db: Actor, pathname: String)
+  extends Sequence[String, V] {
+
+  override def first(msg: AnyRef, rf: Any => Unit) {
+    val je = (new FirstRequestFactory).newActor(null)
+    db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
+  }
+
+  override def current(msg: AnyRef, rf: Any => Unit) {
+    val key = msg.asInstanceOf[Current[String]].key
+    val je = (new CurrentStringRequestFactory).newActor(null)
+    je(Set(null, key)) {
+      rsp => db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
+    }
+  }
+
+  override def next(msg: AnyRef, rf: Any => Unit) {
+    val key = msg.asInstanceOf[Next[String]].key
+    val je = (new NextStringRequestFactory).newActor(null)
+    je(Set(null, key)) {
+      rsp => db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
+    }
+  }
 }

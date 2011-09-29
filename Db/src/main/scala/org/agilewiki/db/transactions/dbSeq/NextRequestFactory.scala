@@ -23,18 +23,19 @@
  */
 package org.agilewiki
 package db
+package transactions
+package dbSeq
 
 import blip._
+import incDes._
+import blocks._
 
-package object transactions {
-  val DBT_GET = FactoryId("dbg")
-  val DBT_SIZE = FactoryId("dbz")
-  val DBT_SET = FactoryId("dbs")
-  val DBT_SEQ_FIRST = FactoryId("dbf")
-  val DBT_SEQ_STRING_CURRENT = FactoryId("dbsc")
-  val DBT_SEQ_lONG_CURRENT = FactoryId("dblc")
-  val DBT_SEQ_INT_CURRENT = FactoryId("dbic")
-  val DBT_SEQ_STRING_NEXT = FactoryId("dbsn")
-  val DBT_SEQ_lONG_NEXT = FactoryId("dbln")
-  val DBT_SEQ_ING_NEXT = FactoryId("dbin")
+class NextStringRequestFactory
+  extends Factory(DBT_SEQ_STRING_NEXT) {
+  override protected def instantiate = {
+    val req = new IncDesString
+    addComponent(new QueryRequestComponent(req))
+    addComponent(new NextStringRequestComponent(req))
+    req
+  }
 }
