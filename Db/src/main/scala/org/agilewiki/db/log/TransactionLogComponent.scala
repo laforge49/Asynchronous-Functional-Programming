@@ -29,25 +29,48 @@ import blip._
 import services._
 
 class TransactionLogComponentFactory extends ComponentFactory {
-  addDependency(classOf[TimestampComponentFactory])
-
   override def instantiate(actor: Actor) = new TransactionLogComponent(actor)
 }
 
 class TransactionLogComponent(actor: Actor)
   extends Component(actor) {
   private var _logDirPathname: String = null
+  private var writer: java.io.DataOutputStream = null
+  private var flush = false
+  val logTS = (new org.joda.time.DateTime).toString("yyyy-MM-dd_HH-mm-ss_SSS")
 
   bind(classOf[LogTransaction], logTransaction)
 
   def logDirPathname = _logDirPathname
 
   private def logTransaction(msg: AnyRef, rf: Any => Unit) {
+    initialize
+    val logTransaction = msg.asInstanceOf[LogTransaction]
+    val timestamp = logTransaction.timestamp
+    val bytes = logTransaction.bytes
+    writer.writeLong(timestamp)
+    writer.writeInt(bytes.length)
+    writer.write(bytes)
+    if (flush) writer.flush
     rf(null)
+  }
+
+  def initialize {
+    if (writer != null) return
+    val dir = new java.io.File(_logDirPathname)
+    if (!dir.exists) dir.mkdirs
+    val fileName = dir.getCanonicalPath + java.io.File.separator + logTS + ".jnl"
+    writer = new java.io.DataOutputStream(new java.io.FileOutputStream(fileName))
   }
 
   override def open {
     super.open
     _logDirPathname = GetProperty.required("logDirPathname")
+    flush = "true" == GetProperty("flushLog")
+  }
+
+  override def close {
+    super.close
+    writer.close
   }
 }
