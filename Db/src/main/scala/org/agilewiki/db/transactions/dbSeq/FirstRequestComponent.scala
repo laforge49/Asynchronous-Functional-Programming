@@ -38,7 +38,7 @@ class FirstRequestComponent(actor: Actor)
   private def process(msg: AnyRef, chain: Chain) {
     chain.op(systemServices, DbRoot(), "dbRoot")
     chain.op(Unit => chain("dbRoot"), Value(), "items")
-    chain.op(Unit => chain("items"), ValuesSeq(), "seq")
+    chain.op(Unit => chain("items"), Seq(), "seq")
     chain.op(
       Unit => new MapSafeSeq(
         chain("seq").asInstanceOf[Sequence[Any, Any]],

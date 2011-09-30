@@ -35,13 +35,9 @@ class KVCopySafe extends Safe {
     val kvPair = msg.asInstanceOf[KVPair[Any, Any]]
     val value = kvPair.value
     if (!value.isInstanceOf[IncDes]) {
-      rf(kvPair)
+      rf(value)
       return
     }
-    value.asInstanceOf[IncDes](Copy(target.mailbox)) {
-      rsp => {
-        rf(new KVPair(kvPair.key, rsp))
-      }
-    }
+    value.asInstanceOf[IncDes](Copy(target.mailbox))(rf)
   }
 }
