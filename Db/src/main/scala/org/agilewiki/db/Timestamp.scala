@@ -35,10 +35,27 @@ class TimestampComponent(actor: Actor)
   extends Component(actor) {
   private var previousTime: java.lang.Long = _
   private var previousSequence: Int = _
+  private var master:Actor = null
 
   bind(classOf[GetTimestamp], timestamp)
 
+  override def open {
+    super.open
+    var s = actor.superior
+    while (s != null) {
+      if (s.components.get(classOf[TimestampComponentFactory]) != null) {
+        master = s
+        return
+      }
+      s = s.superior
+    }
+  }
+
   private def timestamp(msg: AnyRef, rf: Any => Unit) {
+    if (master != null) {
+      master(msg)(rf)
+      return
+    }
     val dt = new DateTime
     val millisecondTime = dt.getMillis() << 10
     if (millisecondTime == previousTime) {

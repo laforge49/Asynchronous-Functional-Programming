@@ -26,16 +26,28 @@ package db
 package log
 
 import blip._
+import services._
 
 class TransactionLogComponentFactory extends ComponentFactory {
+  addDependency(classOf[TimestampComponentFactory])
+
   override def instantiate(actor: Actor) = new TransactionLogComponent(actor)
 }
 
 class TransactionLogComponent(actor: Actor)
   extends Component(actor) {
+  private var _logDirPathname: String = null
+
   bind(classOf[LogTransaction], logTransaction)
+
+  def logDirPathname = _logDirPathname
 
   private def logTransaction(msg: AnyRef, rf: Any => Unit) {
     rf(null)
+  }
+
+  override def open {
+    super.open
+    _logDirPathname = GetProperty.required("logDirPathname")
   }
 }
