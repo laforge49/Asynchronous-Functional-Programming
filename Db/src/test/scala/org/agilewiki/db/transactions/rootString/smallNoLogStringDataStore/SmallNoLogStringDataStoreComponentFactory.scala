@@ -29,6 +29,7 @@ package smallNoLogStringDataStore
 
 import blip._
 import services._
+import log._
 
 class SmallNoLogStringDataStoreComponentFactory
   extends ComponentFactory {

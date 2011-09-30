@@ -24,24 +24,13 @@
 package org.agilewiki
 package db
 package transactions
-package rootString
-package simpleNoLogStringDataStore
 
 import blip._
-import services._
 import log._
 
-class SimpleNoLogStringDataStoreComponentFactory
+class SmallComponentFactory
   extends ComponentFactory {
-  addDependency(classOf[SimpleDataStoreComponentFactory])
-  addDependency(classOf[NullTransactionLogComponentFactory])
-
-  override def configure(compositeFactory: Factory) {
-    val factoryRegistryComponentFactory =
-      compositeFactory.componentFactory(classOf[FactoryRegistryComponentFactory]).
-        asInstanceOf[FactoryRegistryComponentFactory]
-
-    factoryRegistryComponentFactory.registerFactory(new SetRootStringRequestFactory)
-    factoryRegistryComponentFactory.registerFactory(new GetRootStringRequestFactory)
-  }
+  addDependency(classOf[SmallDataStoreComponentFactory])
+  addDependency(classOf[TransactionLogComponentFactory])
+  addDependency(classOf[TransactionsComponentFactory])
 }

@@ -23,14 +23,15 @@
  */
 package org.agilewiki
 package db
+package log
 
 import blip._
 
-class NullTransactionLogComponentFactory extends ComponentFactory {
-  override def instantiate(actor: Actor) = new NullTransactionLogComponent(actor)
+class TransactionLogComponentFactory extends ComponentFactory {
+  override def instantiate(actor: Actor) = new TransactionLogComponent(actor)
 }
 
-class NullTransactionLogComponent(actor: Actor)
+class TransactionLogComponent(actor: Actor)
   extends Component(actor) {
   bind(classOf[LogTransaction], logTransaction)
 

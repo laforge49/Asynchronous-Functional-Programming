@@ -26,6 +26,7 @@ package db
 package transactions
 
 import blip._
+import log._
 
 class SmallNoLogComponentFactory
   extends ComponentFactory {
