@@ -14,7 +14,7 @@ class DbIntSeqTest extends SpecificationWithJUnit {
   "DbIntSeqTest" should {
     "sequence" in {
       val systemServices = SystemServices(new ServicesRootComponentFactory)
-      val dbName = "DbStringSeqNoLog.db"
+      val dbName = "DbIntSeqNoLog.db"
       val file = new java.io.File(dbName)
       file.delete
       val properties = new Properties

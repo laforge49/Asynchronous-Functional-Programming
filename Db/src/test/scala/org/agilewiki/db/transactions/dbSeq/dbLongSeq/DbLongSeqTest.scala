@@ -14,7 +14,7 @@ class DbLongSeqTest extends SpecificationWithJUnit {
   "DbLongSeqTest" should {
     "sequence" in {
       val systemServices = SystemServices(new ServicesRootComponentFactory)
-      val dbName = "DbStringSeqNoLog.db"
+      val dbName = "DbLongSeqNoLog.db"
       val file = new java.io.File(dbName)
       file.delete
       val properties = new Properties
