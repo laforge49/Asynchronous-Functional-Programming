@@ -53,7 +53,8 @@ class TransactionLog
   extends Actor {
   var logDirPathname: String = null
   var flush = false
-  private val logTS = (new org.joda.time.DateTime).toString("yyyy-MM-dd_HH-mm-ss_SSS")
+  private val logTS = (new org.joda.time.DateTime(org.joda.time.DateTimeZone.UTC)).
+    toString("yyyy-MM-dd_HH-mm-ss_SSS")
   private var writer: java.io.DataOutputStream = null
 
   setMailbox(new Mailbox)
