@@ -34,14 +34,30 @@ class TransactionLogComponentFactory extends ComponentFactory {
 
 class TransactionLogComponent(actor: Actor)
   extends Component(actor) {
-  private var _logDirPathname: String = null
+  private var transactionLog = new TransactionLog
+  bindSafe(classOf[LogTransaction], new SafeForward(transactionLog))
+
+  override def open {
+    super.open
+    transactionLog.logDirPathname = GetProperty.required("logDirPathname")
+    transactionLog.flush = "true" == GetProperty("flushLog")
+  }
+
+  override def close {
+    transactionLog.close
+    super.close
+  }
+}
+
+class TransactionLog
+  extends Actor {
+  var logDirPathname: String = null
+  var flush = false
+  private val logTS = (new org.joda.time.DateTime).toString("yyyy-MM-dd_HH-mm-ss_SSS")
   private var writer: java.io.DataOutputStream = null
-  private var flush = false
-  val logTS = (new org.joda.time.DateTime).toString("yyyy-MM-dd_HH-mm-ss_SSS")
 
+  setMailbox(new Mailbox)
   bind(classOf[LogTransaction], logTransaction)
-
-  def logDirPathname = _logDirPathname
 
   private def logTransaction(msg: AnyRef, rf: Any => Unit) {
     initialize
@@ -57,20 +73,18 @@ class TransactionLogComponent(actor: Actor)
 
   def initialize {
     if (writer != null) return
-    val dir = new java.io.File(_logDirPathname)
+    val dir = new java.io.File(logDirPathname)
     if (!dir.exists) dir.mkdirs
     val fileName = dir.getCanonicalPath + java.io.File.separator + logTS + ".jnl"
     writer = new java.io.DataOutputStream(new java.io.FileOutputStream(fileName))
   }
 
-  override def open {
-    super.open
-    _logDirPathname = GetProperty.required("logDirPathname")
-    flush = "true" == GetProperty("flushLog")
-  }
-
   override def close {
+    try {
+      writer.close
+    } catch {
+      case unknown => {}
+    }
     super.close
-    writer.close
   }
 }
