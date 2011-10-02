@@ -71,6 +71,7 @@ class RecoveryTest extends SpecificationWithJUnit {
       val results = new Results
       val chain = new Chain(results)
       chain.op(systemServices, Register(db))
+      chain.op(db, Recover())
       Future(systemServices, chain)
       systemServices.close
     }

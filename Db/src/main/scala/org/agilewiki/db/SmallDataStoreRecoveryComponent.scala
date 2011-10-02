@@ -40,4 +40,10 @@ class SmallDataStoreRecoveryComponentFactory extends ComponentFactory {
 
 class SmallDataStoreRecoveryComponent(actor: Actor)
   extends Component(actor) {
+  bind(classOf[Recover], recover)
+
+  private def recover(msg: AnyRef, rf: Any => Unit) {
+    println("recovery not yet implemented")
+    rf(null)
+  }
 }

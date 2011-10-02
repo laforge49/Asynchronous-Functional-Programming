@@ -56,3 +56,6 @@ case class WriteBytes(offset: Long, bytes: Array[Byte])
 case class ReadRootBlock()
 
 case class WriteRootBlock(rootBlock: Block)
+
+case class Recover()
+
