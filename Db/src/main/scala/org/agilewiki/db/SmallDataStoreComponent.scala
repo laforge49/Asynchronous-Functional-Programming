@@ -45,6 +45,10 @@ class SmallDataStoreComponent(actor: Actor)
   bind(classOf[DirtyBlock], dirtyBlock)
   bind(classOf[DbRoot], dbRoot)
 
+  override def open {
+    actor.requiredService(classOf[LogAbort])
+  }
+
   private def commit(msg: AnyRef, rf: Any => Unit) {
     if (!dirty) rf(null)
     else systemServices(WriteRootBlock(block)) {
@@ -56,11 +60,15 @@ class SmallDataStoreComponent(actor: Actor)
   }
 
   private def abort(msg: AnyRef, rf: Any => Unit) {
-    if (dirty) {
-      block = null
-      dirty = false
+    systemServices(LogAbort()) {
+      rsp => {
+        if (dirty) {
+          block = null
+          dirty = false
+        }
+        throw msg.asInstanceOf[Abort].exception
+      }
     }
-    throw msg.asInstanceOf[Abort].exception
   }
 
   private def dirtyBlock(msg: AnyRef, rf: Any => Unit) {

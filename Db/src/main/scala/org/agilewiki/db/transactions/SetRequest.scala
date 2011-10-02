@@ -26,7 +26,6 @@ package db
 package transactions
 
 import blip._
-import seq._
 import incDes._
 import blocks._
 

@@ -47,6 +47,8 @@ case class GetTimestamp()
 
 case class LogTransaction(timestamp: Long, bytes: Array[Byte])
 
+case class LogAbort()
+
 case class ReadBytes(offset: Long, length: Int)
 
 case class ReadBytesOrNull(offset: Long, length: Int)

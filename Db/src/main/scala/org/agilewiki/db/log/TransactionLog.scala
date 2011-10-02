@@ -36,6 +36,7 @@ class TransactionLogComponent(actor: Actor)
   extends Component(actor) {
   private var transactionLog = new TransactionLog
   bindSafe(classOf[LogTransaction], new SafeForward(transactionLog))
+  bindSafe(classOf[LogAbort], new SafeForward(transactionLog))
 
   override def open {
     super.open
@@ -59,6 +60,7 @@ class TransactionLog
 
   setMailbox(new Mailbox)
   bind(classOf[LogTransaction], logTransaction)
+  bind(classOf[LogAbort], logAbort)
 
   private def logTransaction(msg: AnyRef, rf: Any => Unit) {
     initialize
@@ -68,6 +70,12 @@ class TransactionLog
     writer.writeLong(timestamp)
     writer.writeInt(bytes.length)
     writer.write(bytes)
+    if (flush) writer.flush
+    rf(null)
+  }
+
+  private def logAbort(msg: AnyRef, rf: Any => Unit) {
+    writer.writeLong(0L)
     if (flush) writer.flush
     rf(null)
   }

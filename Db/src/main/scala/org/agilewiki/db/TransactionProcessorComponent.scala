@@ -29,6 +29,7 @@ import services._
 import incDes._
 import blocks._
 
+
 class TransactionProcessorComponentFactory extends ComponentFactory {
   addDependency(classOf[TimestampComponentFactory])
   addDependency(classOf[FactoryRegistryComponentFactory])

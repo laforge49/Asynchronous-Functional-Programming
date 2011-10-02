@@ -34,8 +34,13 @@ class NullTransactionLogComponentFactory extends ComponentFactory {
 class NullTransactionLogComponent(actor: Actor)
   extends Component(actor) {
   bind(classOf[LogTransaction], logTransaction)
+  bind(classOf[LogAbort], logAbort)
 
   private def logTransaction(msg: AnyRef, rf: Any => Unit) {
+    rf(null)
+  }
+
+  private def logAbort(msg: AnyRef, rf: Any => Unit) {
     rf(null)
   }
 }
