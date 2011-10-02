@@ -39,7 +39,7 @@ class RootBlockComponentFactory extends ComponentFactory {
 
 class RootBlockComponent(actor: Actor)
   extends Component(actor) {
-  val HEADER_LENGTH = 8 + 8 + 4 + 4
+  val HEADER_LENGTH = longLength + longLength + intLength + intLength
   private var maxBlockSize = 0
   private var currentRootOffset = 0
 
@@ -117,7 +117,7 @@ class RootBlockComponent(actor: Actor)
                   else {
                     val blockBytes = rsp3.asInstanceOf[Array[Byte]]
                     val adler32 = new Adler32
-                    adler32.update(headerBytes, 8, HEADER_LENGTH - 8)
+                    adler32.update(headerBytes, longLength, HEADER_LENGTH - longLength)
                     adler32.update(blockBytes)
                     val newcs = adler32.getValue
                     checksum(Value()) {
@@ -177,7 +177,7 @@ class RootBlockComponent(actor: Actor)
     })
     chain.op(timestamp, Unit => {
       bytes = new Array[Byte](HEADER_LENGTH + length)
-      data = new MutableData(bytes, 8)
+      data = new MutableData(bytes, longLength)
       Save(data)
     })
     chain.op(maxSize, Unit => Save(data))
@@ -185,7 +185,7 @@ class RootBlockComponent(actor: Actor)
     chain.op(rootBlock, Unit => Save(data))
     chain.op(checksum, Unit => {
       val adler32 = new Adler32
-      adler32.update(bytes, 8, length + HEADER_LENGTH - 8)
+      adler32.update(bytes, longLength, length + HEADER_LENGTH - longLength)
       val cs = adler32.getValue
       Set(null, cs)
     })
