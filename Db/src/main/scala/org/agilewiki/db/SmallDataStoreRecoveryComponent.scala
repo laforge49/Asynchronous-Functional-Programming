@@ -25,11 +25,15 @@ package org.agilewiki
 package db
 
 import blip._
+import services._
 import incDes._
 import blocks._
 
 class SmallDataStoreRecoveryComponentFactory extends ComponentFactory {
   addDependency(classOf[RootBlockComponentFactory])
+  addDependency(classOf[TimestampComponentFactory])
+  addDependency(classOf[FactoryRegistryComponentFactory])
+  addDependency(classOf[BlocksComponentFactory])
 
   override def instantiate(actor: Actor) = new SmallDataStoreRecoveryComponent(actor)
 }
