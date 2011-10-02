@@ -26,6 +26,7 @@ package db
 
 import blip._
 import services._
+import seq._
 import incDes._
 import blocks._
 
@@ -43,7 +44,29 @@ class SmallDataStoreRecoveryComponent(actor: Actor)
   bind(classOf[Recover], recover)
 
   private def recover(msg: AnyRef, rf: Any => Unit) {
-    println("recovery not yet implemented")
-    rf(null)
+    val logDirPathname = GetProperty.required("logDirPathname")
+    val dir = new java.io.File(logDirPathname)
+    val list = dir.list
+    val set = new java.util.TreeSet[String]
+    var i = 0
+    while (i < list.size) {
+      val fileName = list(i)
+      if (!fileName.endsWith(".jnl")) println("ignoring " + fileName)
+      else {
+        set.add(fileName)
+      }
+      i += 1
+    }
+    val seq = new NavSetSeq(set)
+    seq(LoopSafe(JnlFilesSafe))(rf)
+  }
+}
+
+object JnlFilesSafe extends Safe {
+  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)
+                   (implicit sender: ActiveActor) {
+    val nvPair = msg.asInstanceOf[KVPair[String, String]]
+    println("recovering "+nvPair.value)
+    rf(true)
   }
 }
