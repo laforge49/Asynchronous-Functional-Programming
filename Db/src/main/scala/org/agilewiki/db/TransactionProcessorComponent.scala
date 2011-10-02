@@ -70,12 +70,9 @@ class TransactionProcessorComponent(actor: Actor)
     chain.op(block, Set(null, request))
     chain.op(systemServices, GetTimestamp(), "timestamp")
     chain.op(block, Bytes(), "bytes")
-    chain.op(systemServices, Unit => {
+    chain.op(Unit => {
       timestamp = results("timestamp").asInstanceOf[Long]
       bytes = results("bytes").asInstanceOf[Array[Byte]]
-      LogTransaction(timestamp, bytes)
-    })
-    chain.op(Unit => {
       block = Block(mailbox)
       block.partness(null, timestamp, null)
       block.setSystemServices(actor)
@@ -89,7 +86,11 @@ class TransactionProcessorComponent(actor: Actor)
         else {
           actor(new UpdateTransaction(block)) {
             rsp1 => {
-              rf(timestamp)
+              systemServices(LogTransaction(timestamp, bytes)) {
+                rsp2 => {
+                  rf(timestamp)
+                }
+              }
             }
           }
         }
