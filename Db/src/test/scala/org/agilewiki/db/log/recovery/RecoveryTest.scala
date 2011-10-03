@@ -34,7 +34,7 @@ class RecoveryTest extends SpecificationWithJUnit {
       Future(systemServices, chain)
       systemServices.close
     }
-    "log more" in {
+    "log 2 more" in {
       val systemServices = SystemServices(new ServicesRootComponentFactory)
       val dbName = "smallrecovery.db"
       val logDirPathname = "smallRecovery"
@@ -51,6 +51,7 @@ class RecoveryTest extends SpecificationWithJUnit {
       val chain = new Chain(results)
       chain.op(systemServices, Register(db))
       chain.op(db, SetRequest(db, "/$", IncDesString(null)))
+      chain.op(db, SetRequest(db, "/$", IncDesBytes(null)))
       Future(systemServices, chain)
       systemServices.close
     }
