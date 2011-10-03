@@ -33,11 +33,24 @@ class TransactionsSeq(pathname: String, jeMailbox: Mailbox)
   private var kvPair: KVPair[Long, Block] = _
   private var reader: java.io.DataInputStream = _
 
+  setMailbox(new Mailbox)
+
   private def read {
-    val timestamp = reader.readLong
-    val len = reader.readInt
-    val bytes = new Array[Byte](len)
-    reader.readFully(bytes)
+    var timestamp = 0L
+    var len = 0
+    var bytes: Array[Byte] = null
+    try {
+      timestamp = reader.readLong
+      len = reader.readInt
+      bytes = new Array[Byte](len)
+      reader.readFully(bytes)
+    } catch {
+      case ex: Exception => {
+        println(ex)
+        kvPair = null
+        return
+      }
+    }
     var block = Block(jeMailbox)
     block.setSystemServices(systemServices)
     block.partness(null, timestamp, null)
