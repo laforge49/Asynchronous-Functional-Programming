@@ -25,6 +25,7 @@ package org.agilewiki
 package db
 
 import blip._
+import log._
 import services._
 import seq._
 import incDes._
@@ -45,7 +46,9 @@ class SmallDataStoreRecoveryComponent(actor: Actor)
 
   private def recover(msg: AnyRef, rf: Any => Unit) {
     val logDirPathname = GetProperty.required("logDirPathname")
-    (new Files)(FilesSeq(logDirPathname)) {
+    val files = new Files
+    files.setSystemServices(systemServices)
+    (files)(FilesSeq(logDirPathname)) {
       rsp => {
         rsp.asInstanceOf[Actor](LoopSafe(JnlFilesSafe))(rf)
       }
@@ -57,12 +60,14 @@ object JnlFilesSafe extends Safe {
   override def func(target: Actor, msg: AnyRef, rf: Any => Unit)
                    (implicit sender: ActiveActor) {
     val nvPair = msg.asInstanceOf[KVPair[String, String]]
-    val filename = nvPair.value
-    if (!filename.endsWith(".jnl")) {
+    val pathname = nvPair.value
+    if (!pathname.endsWith(".jnl")) {
       rf(true)
       return
     }
-    println("recovering "+filename)
+    println("recovering "+pathname)
+    val seq = new TransactionsSeq(pathname, target.systemServices.mailbox)
+    seq.setSystemServices(target.systemServices)
     rf(true)
   }
 }

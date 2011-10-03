@@ -22,6 +22,8 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki
+package db
+package log
 
 import blip._
 import seq._

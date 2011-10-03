@@ -32,17 +32,20 @@ class Files extends Actor {
   bind(classOf[FilesSeq], filesSeq)
 
   private def filesSeq(msg: AnyRef, rf: Any => Unit) {
-    val dir = new java.io.File(msg.asInstanceOf[FilesSeq].dirPathname)
+    val dirPathname = msg.asInstanceOf[FilesSeq].dirPathname
+    val dir = new java.io.File(dirPathname)
     val list = dir.list
     val set = new java.util.TreeSet[String]
 
     var i = 0
     while (i < list.size) {
       val fileName = list(i)
-      set.add(fileName)
+      set.add(dirPathname + java.io.File.separator + fileName)
       i += 1
     }
-    rf(new NavSetSeq(set))
+    val seq = new NavSetSeq(set)
+    seq.setSystemServices(systemServices)
+    rf(seq)
   }
 
 }
