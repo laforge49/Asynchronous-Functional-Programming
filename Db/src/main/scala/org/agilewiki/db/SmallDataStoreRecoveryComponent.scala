@@ -43,6 +43,13 @@ class SmallDataStoreRecoveryComponentFactory extends ComponentFactory {
 class SmallDataStoreRecoveryComponent(actor: Actor)
   extends Component(actor) {
   bind(classOf[Recover], recover)
+  bind(classOf[ProcessFile], {
+    (msg, rf) => exceptionHandler(msg, rf, processFile) {
+      ex => {
+        abort(rf)
+      }
+    }
+  })
 
   private def recover(msg: AnyRef, rf: Any => Unit) {
     val logDirPathname = GetProperty.required("logDirPathname")
@@ -53,6 +60,20 @@ class SmallDataStoreRecoveryComponent(actor: Actor)
         rsp.asInstanceOf[Actor](LoopSafe(JnlFilesSafe))(rf)
       }
     }
+  }
+
+  private def processFile(msg: AnyRef, rf: Any => Unit) {
+    val jnlPathname = msg.asInstanceOf[ProcessFile].jnlPathname
+    println("recovering " + jnlPathname)
+    val seq = new TransactionsSeq(jnlPathname, mailbox)
+    seq.setSystemServices(systemServices)
+    seq(LoopSafe(JnlsSafe)) {
+      rsp => rf(true)
+    }
+  }
+
+  private def abort(rf: Any => Unit) {
+
   }
 }
 
@@ -65,12 +86,7 @@ object JnlFilesSafe extends Safe {
       rf(true)
       return
     }
-    println("recovering "+pathname)
-    val seq = new TransactionsSeq(pathname, target.systemServices.mailbox)
-    seq.setSystemServices(target.systemServices)
-    seq(LoopSafe(JnlsSafe)) {
-      rsp => rf(true)
-    }
+    target.systemServices(ProcessFile(pathname))(rf)
   }
 }
 

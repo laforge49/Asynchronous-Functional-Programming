@@ -59,6 +59,8 @@ case class WriteRootBlock(rootBlock: Block)
 
 case class Recover()
 
+case class ProcessFile(jnlPathname: String)
+
 case class FilesSeq(dirPathname: String)
 
 
