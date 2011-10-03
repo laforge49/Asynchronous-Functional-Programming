@@ -46,10 +46,11 @@ class SmallDataStoreRecoveryComponent(actor: Actor)
   bind(classOf[ProcessFile], {
     (msg, rf) => exceptionHandler(msg, rf, processFile) {
       ex => {
-        abort(rf)
+        abort(ex, rf)
       }
     }
   })
+  bindSafe(classOf[UpdateTransaction], new Update(process))
 
   private def recover(msg: AnyRef, rf: Any => Unit) {
     val logDirPathname = GetProperty.required("logDirPathname")
@@ -72,8 +73,14 @@ class SmallDataStoreRecoveryComponent(actor: Actor)
     }
   }
 
-  private def abort(rf: Any => Unit) {
+  private def abort(ex: Exception, rf: Any => Unit) {
+    throw ex
+  }
 
+  private def process(msg: AnyRef, rf: Any => Unit) {
+    val je = msg.asInstanceOf[UpdateTransaction].block
+    println(je.key)
+    rf(null)
   }
 }
 
@@ -86,7 +93,9 @@ object JnlFilesSafe extends Safe {
       rf(true)
       return
     }
-    target.systemServices(ProcessFile(pathname))(rf)
+    target.systemServices(ProcessFile(pathname)) {
+      rsp => rf(true)
+    }
   }
 }
 
@@ -94,7 +103,8 @@ object JnlsSafe extends Safe {
   override def func(target: Actor, msg: AnyRef, rf: Any => Unit)
                    (implicit sender: ActiveActor) {
     val nvPair = msg.asInstanceOf[KVPair[Long, Block]]
-    println(nvPair)
-    rf(true)
+    target.systemServices(new UpdateTransaction(nvPair.value)) {
+      rsp => rf(true)
+    }
   }
 }
