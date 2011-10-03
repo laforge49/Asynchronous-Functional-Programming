@@ -44,6 +44,7 @@ class Files extends Actor {
       i += 1
     }
     val seq = new NavSetSeq(set)
+    seq.setMailbox(systemServices.mailbox)
     seq.setSystemServices(systemServices)
     rf(seq)
   }

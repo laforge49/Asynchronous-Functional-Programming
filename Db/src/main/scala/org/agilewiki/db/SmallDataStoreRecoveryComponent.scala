@@ -68,6 +68,17 @@ object JnlFilesSafe extends Safe {
     println("recovering "+pathname)
     val seq = new TransactionsSeq(pathname, target.systemServices.mailbox)
     seq.setSystemServices(target.systemServices)
+    seq(LoopSafe(JnlsSafe)) {
+      rsp => rf(true)
+    }
+  }
+}
+
+object JnlsSafe extends Safe {
+  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)
+                   (implicit sender: ActiveActor) {
+    val nvPair = msg.asInstanceOf[KVPair[Long, Block]]
+    println(nvPair)
     rf(true)
   }
 }

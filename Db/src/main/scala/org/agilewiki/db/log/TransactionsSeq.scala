@@ -65,7 +65,7 @@ class TransactionsSeq(pathname: String, jeMailbox: Mailbox)
   }
 
   override def first(msg: AnyRef, rf: Any => Unit) {
-    if (kvPair != 0) throw new IllegalStateException
+    if (kvPair != null) throw new IllegalStateException
     init
     read
     rf(kvPair)
