@@ -59,3 +59,6 @@ case class WriteRootBlock(rootBlock: Block)
 
 case class Recover()
 
+case class FilesSeq(dirPathname: String)
+
+

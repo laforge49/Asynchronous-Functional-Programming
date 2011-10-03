@@ -25,44 +25,24 @@ package org.agilewiki
 package db
 
 import blip._
-import services._
 import seq._
-import incDes._
-import blocks._
 
-class SmallDataStoreRecoveryComponentFactory extends ComponentFactory {
-  addDependency(classOf[RootBlockComponentFactory])
-  addDependency(classOf[TimestampComponentFactory])
-  addDependency(classOf[FactoryRegistryComponentFactory])
-  addDependency(classOf[BlocksComponentFactory])
+class Files extends Actor {
+  setMailbox(new Mailbox)
+  bind(classOf[FilesSeq], filesSeq)
 
-  override def instantiate(actor: Actor) = new SmallDataStoreRecoveryComponent(actor)
-}
+  private def filesSeq(msg: AnyRef, rf: Any => Unit) {
+    val dir = new java.io.File(msg.asInstanceOf[FilesSeq].dirPathname)
+    val list = dir.list
+    val set = new java.util.TreeSet[String]
 
-class SmallDataStoreRecoveryComponent(actor: Actor)
-  extends Component(actor) {
-  bind(classOf[Recover], recover)
-
-  private def recover(msg: AnyRef, rf: Any => Unit) {
-    val logDirPathname = GetProperty.required("logDirPathname")
-    (new Files)(FilesSeq(logDirPathname)) {
-      rsp => {
-        rsp.asInstanceOf[Actor](LoopSafe(JnlFilesSafe))(rf)
-      }
+    var i = 0
+    while (i < list.size) {
+      val fileName = list(i)
+      set.add(fileName)
+      i += 1
     }
+    rf(new NavSetSeq(set))
   }
-}
 
-object JnlFilesSafe extends Safe {
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)
-                   (implicit sender: ActiveActor) {
-    val nvPair = msg.asInstanceOf[KVPair[String, String]]
-    val filename = nvPair.value
-    if (!filename.endsWith(".jnl")) {
-      rf(true)
-      return
-    }
-    println("recovering "+filename)
-    rf(true)
-  }
 }
