@@ -47,6 +47,10 @@ class TransactionsSeq(pathname: String, jeMailbox: Mailbox)
       bytes = new Array[Byte](len)
       reader.readFully(bytes)
     } catch {
+      case ex: java.io.EOFException => {
+        kvPair = null
+        return
+      }
       case ex: Exception => {
         println(ex)
         kvPair = null

@@ -42,6 +42,9 @@ class SmallDataStoreRecoveryComponentFactory extends ComponentFactory {
 
 class SmallDataStoreRecoveryComponent(actor: Actor)
   extends Component(actor) {
+  var dirty = false
+  var block: Block = null
+
   bind(classOf[Recover], recover)
   bind(classOf[ProcessFile], {
     (msg, rf) => exceptionHandler(msg, rf, processFile) {
@@ -51,6 +54,8 @@ class SmallDataStoreRecoveryComponent(actor: Actor)
     }
   })
   bindSafe(classOf[UpdateTransaction], new Update(process))
+  bind(classOf[DbRoot], dbRoot)
+  bind(classOf[DirtyBlock], dirtyBlock)
 
   private def recover(msg: AnyRef, rf: Any => Unit) {
     val logDirPathname = GetProperty.required("logDirPathname")
@@ -69,17 +74,45 @@ class SmallDataStoreRecoveryComponent(actor: Actor)
     val seq = new TransactionsSeq(jnlPathname, mailbox)
     seq.setSystemServices(systemServices)
     seq(LoopSafe(JnlsSafe)) {
-      rsp => rf(true)
+      rsp => {
+        if (!dirty) rf(true)
+        else systemServices(WriteRootBlock(block)) {
+          rsp => {
+            dirty = false
+            block(Clean()) {
+              rsp1 => rf(true)
+            }
+          }
+        }
+      }
     }
   }
 
   private def abort(ex: Exception, rf: Any => Unit) {
+    if (dirty) {
+      block = null
+      dirty = false
+    }
     throw ex
   }
 
   private def process(msg: AnyRef, rf: Any => Unit) {
     val je = msg.asInstanceOf[UpdateTransaction].block
-    println(je.key)
+    je(Process(mailbox.transactionContext))(rf)
+  }
+
+  private def dbRoot(msg: AnyRef, rf: Any => Unit) {
+    if (block != null) rf(block)
+    else systemServices(ReadRootBlock()) {
+      rsp => {
+        block = rsp.asInstanceOf[Block]
+        rf(block)
+      }
+    }
+  }
+
+  private def dirtyBlock(msg: AnyRef, rf: Any => Unit) {
+    dirty = true
     rf(null)
   }
 }
