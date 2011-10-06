@@ -30,5 +30,5 @@ import blip._
 class SmallRecoveryComponentFactory
   extends ComponentFactory {
   addDependency(classOf[SmallDataStoreRecoveryComponentFactory])
-  addDependency(classOf[TransactionsComponentFactory])
+  addDependency(classOf[SmallTransactionsComponentFactory])
 }

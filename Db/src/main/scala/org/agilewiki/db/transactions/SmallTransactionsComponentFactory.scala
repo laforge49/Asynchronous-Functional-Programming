@@ -29,7 +29,7 @@ import blip._
 import services._
 import dbSeq._
 
-class TransactionsComponentFactory
+class SmallTransactionsComponentFactory
   extends ComponentFactory {
 
   addDependency(classOf[NoDbInitializationComponentFactory])

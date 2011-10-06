@@ -32,5 +32,5 @@ class SmallNoLogComponentFactory
   extends ComponentFactory {
   addDependency(classOf[SmallDataStoreComponentFactory])
   addDependency(classOf[NullTransactionLogComponentFactory])
-  addDependency(classOf[TransactionsComponentFactory])
+  addDependency(classOf[SmallTransactionsComponentFactory])
 }
