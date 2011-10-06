@@ -24,45 +24,21 @@
 package org.agilewiki
 package db
 
+import blip._
+import services._
 import incDes._
 import blocks._
 
-case class TransactionRequest(request: IncDes)
+class NoDbInitializationComponentFactory extends ComponentFactory {
+  override def instantiate(actor: Actor) = new NoDbInitializationComponent(actor)
+}
 
-case class Transaction(block: Block)
+class NoDbInitializationComponent(actor: Actor)
+  extends Component(actor) {
 
-class QueryTransaction(block: Block)
-  extends Transaction(block)
+  bind(classOf[InitDb], initDb)
 
-class UpdateTransaction(block: Block)
-  extends Transaction(block)
-
-case class Commit()
-
-case class Abort(exception: Exception)
-
-case class DbRoot()
-
-case class GetTimestamp()
-
-case class LogTransaction(timestamp: Long, bytes: Array[Byte])
-
-case class ReadBytes(offset: Long, length: Int)
-
-case class ReadBytesOrNull(offset: Long, length: Int)
-
-case class WriteBytes(offset: Long, bytes: Array[Byte])
-
-case class ReadRootBlock()
-
-case class WriteRootBlock(rootBlock: Block)
-
-case class InitDb(rootBlock: Block)
-
-case class Recover()
-
-case class ProcessFile(jnlPathname: String)
-
-case class FilesSeq(dirPathname: String)
-
-
+  private def initDb(msg: AnyRef, rf: Any => Unit) {
+    rf(null)
+  }
+}
