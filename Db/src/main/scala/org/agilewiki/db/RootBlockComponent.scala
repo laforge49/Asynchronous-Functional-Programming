@@ -49,6 +49,7 @@ class RootBlockComponent(actor: Actor)
   override def open {
     super.open
     maxBlockSize = GetProperty.int("maxRootBlockSize", 1024)
+    actor.requiredService(classOf[InitDb])
   }
 
   private def readRootBlock(msg: AnyRef, rf: Any => Unit) {
@@ -59,7 +60,7 @@ class RootBlockComponent(actor: Actor)
       currentRootOffset = maxBlockSize
       val block = Block(mailbox)
       block.setSystemServices(systemServices)
-      rf(block)
+      actor(InitDb(block))(rf)
     } else {
       _readRootBlock(0L) {
         rsp1 => {

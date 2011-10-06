@@ -32,6 +32,8 @@ import dbSeq._
 class TransactionsComponentFactory
   extends ComponentFactory {
 
+  addDependency(classOf[NoDbInitializationComponentFactory])
+
   override def configure(compositeFactory: Factory) {
     val factoryRegistryComponentFactory =
       compositeFactory.componentFactory(classOf[FactoryRegistryComponentFactory]).

@@ -25,9 +25,6 @@ package org.agilewiki
 package db
 
 import blip._
-import services._
-import incDes._
-import blocks._
 
 class NoDbInitializationComponentFactory extends ComponentFactory {
   override def instantiate(actor: Actor) = new NoDbInitializationComponent(actor)
@@ -39,6 +36,7 @@ class NoDbInitializationComponent(actor: Actor)
   bind(classOf[InitDb], initDb)
 
   private def initDb(msg: AnyRef, rf: Any => Unit) {
-    rf(null)
+    val rootBlock = msg.asInstanceOf[InitDb].rootBlock
+    rf(rootBlock)
   }
 }

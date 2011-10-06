@@ -35,6 +35,7 @@ class SmallNoLogStringDataStoreComponentFactory
   extends ComponentFactory {
   addDependency(classOf[SmallDataStoreComponentFactory])
   addDependency(classOf[NullTransactionLogComponentFactory])
+  addDependency(classOf[NoDbInitializationComponentFactory])
 
   override def configure(compositeFactory: Factory) {
     val factoryRegistryComponentFactory =
