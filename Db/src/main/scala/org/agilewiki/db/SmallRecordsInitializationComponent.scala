@@ -66,12 +66,22 @@ class SmallRecordsInitializationComponent(actor: Actor)
   private def assignRecord(msg: AnyRef, rf: Any => Unit) {
     val req = msg.asInstanceOf[AssignRecord]
     val tc = req.transactionContext
+    val ts = tc.timestamp
     val recordKey = req.recordKey
-    val value = req.value
+    val record = req.record
     val chain = new Chain
     chain.op(actor, DbRoot(), "root")
     chain.op(Unit => chain("root"), Value(), "records")
-    chain.op(Unit => chain("records"), Assign(tc, recordKey, value))
-    actor(chain)(rf)
+    chain.op(Unit => chain("records"), Assign(tc, recordKey, record))
+    actor(chain) {
+      rsp1 => {
+        if (record == null) rf(rsp1)
+        else {
+          record(SetTimestamp(tc, ts)) {
+            rsp2 => rf(rsp1)
+          }
+        }
+      }
+    }
   }
 }

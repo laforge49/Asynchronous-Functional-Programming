@@ -26,6 +26,7 @@ package db
 
 import blip._
 import incDes._
+import records._
 import blocks._
 
 case class TransactionRequest(request: IncDes)
@@ -70,5 +71,5 @@ case class FilesSeq(dirPathname: String)
 
 case class GetRecord(recordKey: String)
 
-case class AssignRecord(transactionContext: UpdateContext, recordKey: String, value: IncDes)
+case class AssignRecord(transactionContext: UpdateContext, recordKey: String, record: Record)
 
