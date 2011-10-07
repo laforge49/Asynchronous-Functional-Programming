@@ -25,7 +25,9 @@ package org.agilewiki
 package db
 
 import blip._
+import seq._
 import incDes._
+import blocks._
 import records._
 
 class SmallRecordsInitializationComponentFactory extends ComponentFactory {
@@ -36,6 +38,12 @@ class SmallRecordsInitializationComponent(actor: Actor)
   extends Component(actor) {
 
   bind(classOf[InitDb], initDb)
+  bind(classOf[GetRecord], getRecord)
+  bind(classOf[AssignRecord], assignRecord)
+
+  override def open {
+    actor.requiredService(classOf[DbRoot])
+  }
 
   private def initDb(msg: AnyRef, rf: Any => Unit) {
     val rootBlock = msg.asInstanceOf[InitDb].rootBlock
@@ -43,5 +51,27 @@ class SmallRecordsInitializationComponent(actor: Actor)
     rootBlock(Set(null, records)) {
       rsp => rf(rootBlock)
     }
+  }
+
+  private def getRecord(msg: AnyRef, rf: Any => Unit) {
+    val req = msg.asInstanceOf[GetRecord]
+    val recordKey = req.recordKey
+    val chain = new Chain
+    chain.op(actor, DbRoot(), "root")
+    chain.op(Unit => chain("root"), Value(), "records")
+    chain.op(Unit => chain("records"), Get(recordKey))
+    actor(chain)(rf)
+  }
+
+  private def assignRecord(msg: AnyRef, rf: Any => Unit) {
+    val req = msg.asInstanceOf[AssignRecord]
+    val tc = req.transactionContext
+    val recordKey = req.recordKey
+    val value = req.value
+    val chain = new Chain
+    chain.op(actor, DbRoot(), "root")
+    chain.op(Unit => chain("root"), Value(), "records")
+    chain.op(Unit => chain("records"), Assign(tc, recordKey, value))
+    actor(chain)(rf)
   }
 }

@@ -24,6 +24,7 @@
 package org.agilewiki
 package db
 
+import blip._
 import incDes._
 import blocks._
 
@@ -67,4 +68,7 @@ case class ProcessFile(jnlPathname: String)
 
 case class FilesSeq(dirPathname: String)
 
+case class GetRecord(recordKey: String)
+
+case class AssignRecord(transactionContext: UpdateContext, recordKey: String, value: IncDes)
 
