@@ -28,11 +28,11 @@ import blip._
 import incDes._
 import records._
 
-class RecordsComponentFactory extends ComponentFactory {
-  override def instantiate(actor: Actor) = new RecordsComponent(actor)
+class SmallRecordsInitializationComponentFactory extends ComponentFactory {
+  override def instantiate(actor: Actor) = new SmallRecordsInitializationComponent(actor)
 }
 
-class RecordsComponent(actor: Actor)
+class SmallRecordsInitializationComponent(actor: Actor)
   extends Component(actor) {
 
   bind(classOf[InitDb], initDb)
