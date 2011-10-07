@@ -65,6 +65,8 @@ package object incDes {
   val INC_DES_LONG_SET_FACTORY_ID = FactoryId("idsl")
   val INC_DES_STRING_SET_FACTORY_ID = FactoryId("idsS")
 
+  val INC_DES_RECORD_FACTORY_ID = FactoryId("idR")
+
   val booleanLength = 1
   val intLength = 4
   val longLength = 8

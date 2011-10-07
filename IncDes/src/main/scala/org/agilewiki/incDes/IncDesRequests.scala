@@ -69,3 +69,7 @@ case class MakePutMakeSet[K](transactionContext: TransactionContext, key: K, fac
 case class Resolve(pathname: String)
 
 case class Assign(transactionContext: TransactionContext, key: String, value: IncDes)
+
+case class SetTimestamp(transactionContext: TransactionContext, timestamp: Long)
+
+case class GetTimestamp()

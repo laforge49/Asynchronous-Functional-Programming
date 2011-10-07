@@ -40,7 +40,7 @@ object IncDesIncDes {
 }
 
 class IncDesIncDes extends IncDesItem[IncDes] {
-  private var i: IncDes = null
+  protected var i: IncDes = null
   protected var len = -1
 
   bind(classOf[MakeSet], makeSet)
@@ -87,9 +87,9 @@ class IncDesIncDes extends IncDesItem[IncDes] {
     _data.writeInt(len)
   }
 
-  override def value(msg: AnyRef, rf: Any => Unit) {
+  protected def deserialize(rf: Any => Unit) {
     if (dser) {
-      rf(i)
+      rf(null)
       return
     }
     if (!isSerialized) throw new IllegalStateException
@@ -102,8 +102,14 @@ class IncDesIncDes extends IncDesItem[IncDes] {
         i.load(m)
         i.partness(this, key, this)
         dser = true
-        rf(i)
+        rf(null)
       }
+    }
+  }
+
+  override def value(msg: AnyRef, rf: Any => Unit) {
+    deserialize {
+      rsp => rf(i)
     }
   }
 
