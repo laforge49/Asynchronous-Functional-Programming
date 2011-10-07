@@ -34,8 +34,10 @@ case class Transaction(block: Block)
 class QueryTransaction(block: Block)
   extends Transaction(block)
 
-class UpdateTransaction(block: Block)
-  extends Transaction(block)
+class UpdateTransaction(_timestamp: Long, block: Block)
+  extends Transaction(block) {
+  def timestamp = _timestamp
+}
 
 case class Commit()
 

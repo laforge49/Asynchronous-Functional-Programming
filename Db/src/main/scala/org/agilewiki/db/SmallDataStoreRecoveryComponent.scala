@@ -97,8 +97,12 @@ class SmallDataStoreRecoveryComponent(actor: Actor)
   }
 
   private def process(msg: AnyRef, rf: Any => Unit) {
-    val je = msg.asInstanceOf[UpdateTransaction].block
-    je(Process(mailbox.transactionContext))(rf)
+    val req = msg.asInstanceOf[UpdateTransaction]
+    val je = req.block
+    val ts = req.timestamp
+    val tc = mailbox.transactionContext.asInstanceOf[UpdateContext]
+    tc.timestamp = ts
+    je(Process(tc))(rf)
   }
 
   private def dbRoot(msg: AnyRef, rf: Any => Unit) {
@@ -136,7 +140,7 @@ object JnlsSafe extends Safe {
   override def func(target: Actor, msg: AnyRef, rf: Any => Unit)
                    (implicit sender: ActiveActor) {
     val nvPair = msg.asInstanceOf[KVPair[Long, Block]]
-    target.systemServices(new UpdateTransaction(nvPair.value)) {
+    target.systemServices(new UpdateTransaction(nvPair.key, nvPair.value)) {
       rsp => rf(true)
     }
   }

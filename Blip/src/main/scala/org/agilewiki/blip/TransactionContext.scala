@@ -28,4 +28,6 @@ class TransactionContext(transactionProcerssor: Actor)
 
 class QueryContext(transactionProcerssor: Actor) extends TransactionContext(transactionProcerssor)
 
-class UpdateContext(transactionProcerssor: Actor) extends TransactionContext(transactionProcerssor)
+class UpdateContext(transactionProcerssor: Actor) extends TransactionContext(transactionProcerssor) {
+  var timestamp = 0L
+}

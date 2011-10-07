@@ -84,7 +84,7 @@ class TransactionProcessorComponent(actor: Actor)
         val isQuery = results("isQuery").asInstanceOf[Boolean]
         if (isQuery) actor(new QueryTransaction(block))(rf)
         else {
-          actor(new UpdateTransaction(block)) {
+          actor(new UpdateTransaction(timestamp, block)) {
             rsp1 => {
               systemServices(LogTransaction(timestamp, bytes)) {
                 rsp2 => {
@@ -99,8 +99,15 @@ class TransactionProcessorComponent(actor: Actor)
   }
 
   private def process(msg: AnyRef, rf: Any => Unit) {
-    val block = msg.asInstanceOf[Transaction].block
-    block(Process(mailbox.transactionContext)) {
+    val req = msg.asInstanceOf[Transaction]
+    val block = req.block
+    val tc = mailbox.transactionContext
+    if (req.isInstanceOf[UpdateTransaction]) {
+      val ts = req.asInstanceOf[UpdateTransaction].timestamp
+      val utc = tc.asInstanceOf[UpdateContext]
+      utc.timestamp = ts
+    }
+    block(Process(tc)) {
       rsp2 => {
         systemServices(Commit()) {
           rsp3 => {
