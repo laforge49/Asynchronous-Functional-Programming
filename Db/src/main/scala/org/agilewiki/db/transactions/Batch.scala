@@ -41,7 +41,7 @@ object Batch {
 }
 
 class BatchFactory
-  extends IncDesIncDesListFactory(DBT_SET) {
+  extends IncDesIncDesListFactory(DBT_BATCH) {
   override protected def instantiate = {
     val req = super.instantiate
     addComponent(new UpdateRequestComponent(req))

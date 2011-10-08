@@ -48,5 +48,6 @@ class SmallRecordsTransactionsComponentFactory
     factoryRegistryComponentFactory.registerFactory(new NextStringRequestFactory)
     factoryRegistryComponentFactory.registerFactory(new NextLongRequestFactory)
     factoryRegistryComponentFactory.registerFactory(new NextIntRequestFactory)
+    factoryRegistryComponentFactory.registerFactory(new BatchFactory)
   }
 }
