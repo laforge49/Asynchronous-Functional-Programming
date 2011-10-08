@@ -73,3 +73,5 @@ case class GetRecord(recordKey: String)
 
 case class AssignRecord(transactionContext: UpdateContext, recordKey: String, record: Record)
 
+case class BatchItem(batchItem: IncDes)
+

@@ -53,6 +53,7 @@ class BatchFactory
 class BatchComponent(actor: Actor)
   extends Component(actor) {
   bind(classOf[Process], process)
+  bind(classOf[BatchItem], batchItem)
 
   private def process(msg: AnyRef, rf: Any => Unit) {
     val tc = msg.asInstanceOf[Process].transactionContext
@@ -62,6 +63,16 @@ class BatchComponent(actor: Actor)
         seq(LoopSafe(new BatchSafe(tc)))(rf)
       }
     }
+  }
+
+  private def batchItem(msg: AnyRef, rf: Any => Unit) {
+    val req = msg.asInstanceOf[BatchItem]
+    val batchItem = req.batchItem
+    val incDesIncDes = IncDesIncDes(null)
+    val chain = new Chain
+    chain.op(actor, Add[IncDesIncDes, IncDes](null, incDesIncDes))
+    chain.op(incDesIncDes, Set(null, batchItem))
+    actor(chain)(rf)
   }
 }
 
