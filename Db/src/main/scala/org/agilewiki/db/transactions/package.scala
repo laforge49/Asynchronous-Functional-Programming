@@ -38,4 +38,6 @@ package object transactions {
   val DBT_SEQ_LONG_NEXT = FactoryId("dbln")
   val DBT_SEQ_INT_NEXT = FactoryId("dbin")
   val DBT_BATCH = FactoryId("dbb")
+  val DBT_RECORD_UPDATE = FactoryId("dbru")
+  val DBT_NEW_RECORD = FactoryId("dbnr")
 }

@@ -29,74 +29,42 @@ package batch
 import blip._
 import incDes._
 import blocks._
+import records._
 
-object RecordUpdate {
-  def apply(batch: IncDes, recordKey: String, pathname: String, value: IncDes) = {
-    val rkid = IncDesString(null)
-    val rkidid = IncDesIncDes(null)
-    var pn = pathname
-    if (pn.startsWith("/")) pn = pn.substring(1)
-    val pnid = IncDesString(null)
-    val pnidid = IncDesIncDes(null)
-    val vidid = IncDesIncDes(null)
-    val jef = new RecordUpdateFactory
+object NewRecord {
+  def apply(batch: IncDes, recordKey: String) = {
+    val jef = new NewRecordFactory
     jef.configure(batch.systemServices)
     val je = jef.newActor(null).asInstanceOf[IncDes]
     je.setSystemServices(batch.systemServices)
     val chain = new Chain
-    chain.op(je, Put[String, IncDesIncDes, IncDes](null, "recordKey", rkidid))
-    chain.op(rkidid, Set(null, rkid))
-    chain.op(rkid, Set(null, recordKey))
-    chain.op(je, Put[String, IncDesIncDes, IncDes](null, "pathname", pnidid))
-    chain.op(pnidid, Set(null, pnid))
-    chain.op(pnid, Set(null, pn))
-    chain.op(je, Put[String, IncDesIncDes, IncDes](null, "value", vidid))
-    chain.op(value, Copy(null), "copy")
-    chain.op(vidid, Unit => Set(null, chain("copy").asInstanceOf[IncDes]))
+    chain.op(je, Set(null, recordKey))
     chain.op(batch, BatchItem(je))
     chain
   }
 }
 
-class RecordUpdateFactory
-  extends IncDesStringIncDesMapFactory(DBT_RECORD_UPDATE) {
+class NewRecordFactory
+  extends IncDesStringFactory(DBT_NEW_RECORD) {
   override protected def instantiate = {
     val req = super.instantiate
     addComponent(new UpdateRequestComponent(req))
-    addComponent(new RecordUpdateComponent(req))
+    addComponent(new NewRecordComponent(req))
     req
   }
 }
 
-class RecordUpdateComponent(actor: Actor)
+class NewRecordComponent(actor: Actor)
   extends Component(actor) {
   bindSafe(classOf[Process], new ChainFactory(process))
 
   private def process(msg: AnyRef, chain: Chain) {
     val tc = msg.asInstanceOf[Process].transactionContext.asInstanceOf[UpdateContext]
     val ts = tc.timestamp
-    var key = ""
-    chain.op(actor, GetValue("recordKey"), "recordKeyId")
-    chain.op(Unit => chain("recordKeyId"), Value(), "recordKey")
-    chain.op(actor, GetValue("pathname"), "pathnameId")
-    chain.op(Unit => chain("pathnameId"), Value(), "pathname")
-    chain.op(actor, GetValue("value"), "value")
-    chain.op(Unit => chain("value"), Copy(null), "copy")
+    val record = Record(null)
+    chain.op(actor, Value(), "recordKey")
     chain.op(systemServices,
-      Unit => GetRecord(chain("recordKey").asInstanceOf[String]), "record")
-    chain.op(
-      Unit => {
-        val r = chain("record")
-        if (r == null)
-          throw new IllegalStateException("no such record: " + chain("recordKey").asInstanceOf[String])
-        r
-      },
-      Unit => Resolve(chain("pathname").asInstanceOf[String]), "tuple")
-    chain.op(Unit => {
-      val (incDes, k) = chain("tuple").asInstanceOf[(IncDes, String)]
-      key = k
-      incDes
-    }, Unit => Assign(tc, key, chain("copy").asInstanceOf[IncDes]))
+      Unit => AssignRecord(tc, chain("recordKey").asInstanceOf[String], record))
     chain.op(Unit => chain("record"), SetTimestamp(tc, ts))
   }
 }
