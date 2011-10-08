@@ -73,7 +73,8 @@ class RecordUpdateComponent(actor: Actor)
   bindSafe(classOf[Process], new ChainFactory(process))
 
   private def process(msg: AnyRef, chain: Chain) {
-    val transactionContext = msg.asInstanceOf[Process].transactionContext
+    val tc = msg.asInstanceOf[Process].transactionContext.asInstanceOf[UpdateContext]
+    val ts = tc.timestamp
     var key = ""
     chain.op(actor, GetValue("recordKey"), "recordKeyId")
     chain.op(Unit => chain("recordKeyId"), Value(), "recordKey")
@@ -95,6 +96,7 @@ class RecordUpdateComponent(actor: Actor)
       val (incDes, k) = chain("tuple").asInstanceOf[(IncDes, String)]
       key = k
       incDes
-    }, Unit => Assign(transactionContext, key, chain("copy").asInstanceOf[IncDes]))
+    }, Unit => Assign(tc, key, chain("copy").asInstanceOf[IncDes]))
+    chain.op(Unit => chain("record"), SetTimestamp(tc, ts))
   }
 }
