@@ -52,7 +52,7 @@ class SmallRecordsTest extends SpecificationWithJUnit {
       println(Future(systemServices, chain))
       systemServices.close
     }
-    "Create a record" in {
+    "Create two records" in {
       val systemServices = SystemServices(new ServicesRootComponentFactory)
       val dbName = "smallRecords.db"
       val logDirPathname = "smallRecords"
@@ -68,7 +68,8 @@ class SmallRecordsTest extends SpecificationWithJUnit {
       val batch = Batch(db)
       val chain = new Chain
       chain.op(systemServices, Register(db))
-      chain.op(db, NewRecord(batch, "fun"))
+//      chain.op(db, NewRecord(batch, "fun"))
+//      chain.op(db, NewRecord(batch, "games"))
       chain.op(db, TransactionRequest(batch), "timestamp")
       chain.op(db, SizeRequest(db, "/$"), "record count")
       Future(systemServices, chain)

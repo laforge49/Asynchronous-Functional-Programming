@@ -64,20 +64,21 @@ class IncDesIncDes extends IncDesItem[IncDes] {
     len = loadLen(_data)
     if (len > 0) _data.skip(len)
     i = null
-    dser = len == -1
+    dser = false
   }
 
   def loadLen(_data: MutableData) = _data.readInt
 
   override def change(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
-    len += lenDiff
+    if (len == -1) len = lenDiff
+    else len += lenDiff
     changed(transactionContext, lenDiff, what, rf)
   }
 
   override protected def serialize(_data: MutableData) {
     if (!dser) throw new IllegalStateException
     saveLen(_data)
-    if (len < 1) return
+    if (len < 0) return
     val incDesFactoryId = i.factoryId.value
     _data.writeString(incDesFactoryId)
     i.save(_data)
@@ -95,6 +96,11 @@ class IncDesIncDes extends IncDesItem[IncDes] {
     if (!isSerialized) throw new IllegalStateException
     val m = data.mutable
     skipLen(m)
+    if (len == -1) {
+      dser = true
+      rf(null)
+      return
+    }
     val incDesFactoryId = FactoryId(m.readString)
     systemServices(Instantiate(incDesFactoryId, mailbox)) {
       rsp => {
@@ -146,7 +152,7 @@ class IncDesIncDes extends IncDesItem[IncDes] {
   }
 
   def makeSet(msg: AnyRef, rf: Any => Unit) {
-    if (len > 0) {
+    if (len > -1) {
       value(Value(), rf)
       return
     }
@@ -199,8 +205,9 @@ class IncDesIncDes extends IncDesItem[IncDes] {
         val olen = length
         if (i != null) i.clearContainer
         i = v
-        if (i == null) len = -1
-        else {
+        if (i == null) {
+          len = -1
+        } else {
           len = stringLength(i.factoryId.value) + i.length
           i.partness(this, key, this)
         }

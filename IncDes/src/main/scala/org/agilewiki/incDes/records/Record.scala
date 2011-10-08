@@ -47,6 +47,14 @@ class Record extends IncDesIncDes {
 
   override def length = if (len == -1) intLength else intLength + longLength + len
 
+  override def load(_data: MutableData) {
+    super.load(_data)
+    len = loadLen(_data)
+    if (len > -1) _data.skip(longLength + len)
+    i = null
+    dser = len == -1
+  }
+
   override protected def serialize(_data: MutableData) {
     if (!dser) throw new IllegalStateException
     saveLen(_data)
@@ -67,6 +75,10 @@ class Record extends IncDesIncDes {
     skipLen(m)
     ts = m.readLong
     val incDesFactoryId = FactoryId(m.readString)
+    if (incDesFactoryId == null) {
+      rf(null)
+      return
+    }
     systemServices(Instantiate(incDesFactoryId, mailbox)) {
       rsp => {
         i = rsp.asInstanceOf[IncDes]
