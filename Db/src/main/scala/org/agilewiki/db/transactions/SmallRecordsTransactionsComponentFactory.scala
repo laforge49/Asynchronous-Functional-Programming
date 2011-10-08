@@ -25,6 +25,7 @@ package org.agilewiki
 package db
 package transactions
 
+import batch._
 import blip._
 import services._
 import dbSeq._
