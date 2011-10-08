@@ -23,19 +23,53 @@
  */
 package org.agilewiki
 package db
+package transactions
 
 import blip._
+import seq._
+import incDes._
+import blocks._
 
-package object transactions {
-  val DBT_GET = FactoryId("dbg")
-  val DBT_SIZE = FactoryId("dbz")
-  val DBT_SET = FactoryId("dbs")
-  val DBT_SEQ_FIRST = FactoryId("dbf")
-  val DBT_SEQ_STRING_CURRENT = FactoryId("dbsc")
-  val DBT_SEQ_LONG_CURRENT = FactoryId("dblc")
-  val DBT_SEQ_INT_CURRENT = FactoryId("dbic")
-  val DBT_SEQ_STRING_NEXT = FactoryId("dbsn")
-  val DBT_SEQ_LONG_NEXT = FactoryId("dbln")
-  val DBT_SEQ_INT_NEXT = FactoryId("dbin")
-  val DBT_BATCH = FactoryId("dbb")
+object Batch {
+  def apply(db: Actor) = {
+    val jef = new BatchFactory
+    jef.configure(db)
+    val je = jef.newActor(null).asInstanceOf[IncDes]
+    je.setSystemServices(db.systemServices)
+    je
+  }
+}
+
+class BatchFactory
+  extends IncDesIncDesListFactory(DBT_SET) {
+  override protected def instantiate = {
+    val req = super.instantiate
+    addComponent(new UpdateRequestComponent(req))
+    addComponent(new BatchComponent(req))
+    req
+  }
+}
+
+class BatchComponent(actor: Actor)
+  extends Component(actor) {
+  bind(classOf[Process], process)
+
+  private def process(msg: AnyRef, rf: Any => Unit) {
+    val tc = msg.asInstanceOf[Process].transactionContext
+    actor(ValuesSeq()) {
+      rsp1 => {
+        val seq = rsp1.asInstanceOf[Sequence[IncDes, IncDes]]
+        seq(LoopSafe(new BatchSafe(tc)))(rf)
+      }
+    }
+  }
+}
+
+class BatchSafe(tc: TransactionContext) extends Safe {
+  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+    val kvPair = msg.asInstanceOf[KVPair[IncDes, IncDes]]
+    kvPair.value(Process(tc)) {
+      rsp => rf(true)
+    }
+  }
 }

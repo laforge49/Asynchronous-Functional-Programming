@@ -27,7 +27,6 @@ package db
 import blip._
 import seq._
 import incDes._
-import blocks._
 import records._
 
 class SmallRecordsInitializationComponentFactory extends ComponentFactory {
