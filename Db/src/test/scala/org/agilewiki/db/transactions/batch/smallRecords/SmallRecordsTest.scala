@@ -1,11 +1,11 @@
 package org.agilewiki
 package db
 package transactions
+package batch
 package smallRecords
 
 import blip._
 import blip.services._
-import incDes._
 import log._
 import org.specs.SpecificationWithJUnit
 

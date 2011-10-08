@@ -24,6 +24,7 @@
 package org.agilewiki
 package db
 package transactions
+package batch
 
 import blip._
 import seq._
