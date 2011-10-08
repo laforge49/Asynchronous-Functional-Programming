@@ -45,7 +45,7 @@ class Record extends IncDesIncDes {
   bind(classOf[GetTimestamp], getTimestamp)
   bind(classOf[SetTimestamp], setTimestamp)
 
-  override def length = if (len == -1) intLength + longLength else intLength + longLength + len
+  override def length = if (len == -1) intLength else intLength + longLength + len
 
   override protected def serialize(_data: MutableData) {
     if (!dser) throw new IllegalStateException

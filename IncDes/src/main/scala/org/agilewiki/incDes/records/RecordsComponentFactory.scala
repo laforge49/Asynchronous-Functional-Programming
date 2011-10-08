@@ -22,37 +22,24 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki
-package db
-package transactions
+package incDes
+package records
 
-import batch._
 import blip._
 import services._
-import dbSeq._
-import incDes._
-import records._
+import blocks._
 
-class SmallRecordsTransactionsComponentFactory
+class RecordsComponentFactory
   extends ComponentFactory {
-
-  addDependency(classOf[SmallRecordsInitializationComponentFactory])
-  addDependency(classOf[RecordsComponentFactory])
+  addDependency(classOf[BlocksComponentFactory])
 
   override def configure(compositeFactory: Factory) {
     val factoryRegistryComponentFactory =
       compositeFactory.componentFactory(classOf[FactoryRegistryComponentFactory]).
         asInstanceOf[FactoryRegistryComponentFactory]
 
-    factoryRegistryComponentFactory.registerFactory(new GetRequestFactory)
-    factoryRegistryComponentFactory.registerFactory(new SizeRequestFactory)
-    factoryRegistryComponentFactory.registerFactory(new FirstRequestFactory)
-    factoryRegistryComponentFactory.registerFactory(new CurrentStringRequestFactory)
-    factoryRegistryComponentFactory.registerFactory(new CurrentLongRequestFactory)
-    factoryRegistryComponentFactory.registerFactory(new CurrentIntRequestFactory)
-    factoryRegistryComponentFactory.registerFactory(new NextStringRequestFactory)
-    factoryRegistryComponentFactory.registerFactory(new NextLongRequestFactory)
-    factoryRegistryComponentFactory.registerFactory(new NextIntRequestFactory)
-    factoryRegistryComponentFactory.registerFactory(new BatchFactory)
-    factoryRegistryComponentFactory.registerFactory(new NewRecordFactory)
+    factoryRegistryComponentFactory.registerFactory(new RecordFactory(INC_DES_RECORD_FACTORY_ID))
+    factoryRegistryComponentFactory.registerFactory(
+      new IncDesStringRecordMapFactory(INC_DES_STRING_RECORD_MAP_FACTORY_ID))
   }
 }

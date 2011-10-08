@@ -74,5 +74,6 @@ class IncDesComponentFactory
     factoryRegistryComponentFactory.registerFactory(new IncDesIntSetFactory(INC_DES_INT_SET_FACTORY_ID))
     factoryRegistryComponentFactory.registerFactory(new IncDesLongSetFactory(INC_DES_LONG_SET_FACTORY_ID))
     factoryRegistryComponentFactory.registerFactory(new IncDesStringSetFactory(INC_DES_STRING_SET_FACTORY_ID))
+
   }
 }
