@@ -45,22 +45,19 @@ class Record extends IncDesIncDes {
   bind(classOf[GetTimestamp], getTimestamp)
   bind(classOf[SetTimestamp], setTimestamp)
 
-  override def length = if (len == -1) intLength else intLength + longLength + len
+  override def length = if (len == -1) intLength + longLength else intLength + longLength + len
 
   override def load(_data: MutableData) {
     super.load(_data)
-    len = loadLen(_data)
-    if (len > -1) _data.skip(longLength + len)
-    i = null
-    dser = len == -1
+    _data.skip(longLength)
   }
 
   override protected def serialize(_data: MutableData) {
     if (!dser) throw new IllegalStateException
     saveLen(_data)
-    if (len < 1) return
-    val incDesFactoryId = i.factoryId.value
     _data.writeLong(ts)
+    if (len < 0) return
+    val incDesFactoryId = i.factoryId.value
     _data.writeString(incDesFactoryId)
     i.save(_data)
   }
@@ -74,11 +71,12 @@ class Record extends IncDesIncDes {
     val m = data.mutable
     skipLen(m)
     ts = m.readLong
-    val incDesFactoryId = FactoryId(m.readString)
-    if (incDesFactoryId == null) {
+    if (len == -1) {
+      dser = true
       rf(null)
       return
     }
+    val incDesFactoryId = FactoryId(m.readString)
     systemServices(Instantiate(incDesFactoryId, mailbox)) {
       rsp => {
         i = rsp.asInstanceOf[IncDes]
