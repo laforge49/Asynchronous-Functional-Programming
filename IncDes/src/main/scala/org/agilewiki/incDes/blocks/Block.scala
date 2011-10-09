@@ -95,7 +95,10 @@ class Block extends IncDesIncDes {
       rf(null)
       return
     }
-    if (dirty) rf(null)
+    if (dirty) {
+      rf(null)
+      return
+    }
     dirty = true
     systemServices(DirtyBlock(this))(rf)
   }

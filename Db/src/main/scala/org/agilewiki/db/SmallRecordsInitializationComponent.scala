@@ -71,7 +71,8 @@ class SmallRecordsInitializationComponent(actor: Actor)
     val chain = new Chain
     chain.op(actor, DbRoot(), "root")
     chain.op(Unit => chain("root"), Value(), "records")
-    chain.op(Unit => chain("records"), Assign(tc, recordKey, record))
+    chain.op(Unit => {
+      chain("records")}, Assign(tc, recordKey, record))
     actor(chain) {
       rsp1 => {
         if (record == null) rf(rsp1)

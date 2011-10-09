@@ -65,6 +65,6 @@ class NewRecordComponent(actor: Actor)
     chain.op(actor, Value(), "recordKey")
     chain.op(systemServices,
       Unit => AssignRecord(tc, chain("recordKey").asInstanceOf[String], record))
-    chain.op(Unit => chain("record"), SetTimestamp(tc, ts))
+    chain.op(record, SetTimestamp(tc, ts))
   }
 }
