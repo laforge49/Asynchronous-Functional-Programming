@@ -91,14 +91,16 @@ class IncDesNavMap[K, V <: IncDesItem[V1], V1]
     preprocess(tc, v)
     writable(tc) {
       rsp => {
+        val kl = keyFactory.length(k)
         val old = i.put(k, v)
         var ol = 0
         if (old != null) {
           old.clearContainer
-          ol = old.length
+          ol = kl + old.length
         }
         v.partness(this, k, this)
-        change(tc, keyFactory.length(k) + v.length - ol, this, {
+        val nl = kl + v.length
+        change(tc, nl - ol, this, {
           rsp1: Any => {
             rf(old)
           }
