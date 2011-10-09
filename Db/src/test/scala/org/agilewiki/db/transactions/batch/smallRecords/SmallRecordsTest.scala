@@ -69,7 +69,7 @@ class SmallRecordsTest extends SpecificationWithJUnit {
       val chain = new Chain
       chain.op(systemServices, Register(db))
       chain.op(db, NewRecord(batch, "fun"))
-//      chain.op(db, NewRecord(batch, "games"))
+      chain.op(db, NewRecord(batch, "games"))
       chain.op(db, TransactionRequest(batch), "timestamp")
       chain.op(db, SizeRequest(db, "/$"), "record count")
       Future(systemServices, chain)
