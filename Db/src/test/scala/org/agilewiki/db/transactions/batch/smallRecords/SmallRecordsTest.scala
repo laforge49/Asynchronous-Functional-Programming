@@ -109,5 +109,30 @@ class SmallRecordsTest extends SpecificationWithJUnit {
       println(chain.results)
       systemServices.close
     }
+    "Delete record" in {
+      val systemServices = SystemServices(new ServicesRootComponentFactory)
+      val dbName = "smallRecords.db"
+      val logDirPathname = "smallRecords"
+      val properties = new Properties
+      properties.put("dbPathname", dbName)
+      properties.put("logDirPathname", logDirPathname)
+      properties.put("flushLog", "true")
+      val db = Subsystem(
+        systemServices,
+        new SmallRecordsComponentFactory,
+        properties = properties,
+        actorId = ActorId("db"))
+      val batch = Batch(db)
+      val chain = new Chain
+      chain.op(systemServices, Register(db))
+      chain.op(db, DeleteRecord(batch, "fun"))
+      chain.op(db, TransactionRequest(batch), "timestamp")
+      chain.op(db, SizeRequest(db, "/$"), "record count")
+      chain.op(db, GetRequest(db, "/$/fun"), "fun")
+      chain.op(db, GetRequest(db, "/$/games"), "games")
+      Future(systemServices, chain)
+      println(chain.results)
+      systemServices.close
+    }
   }
 }

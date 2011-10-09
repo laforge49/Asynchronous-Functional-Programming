@@ -23,22 +23,46 @@
  */
 package org.agilewiki
 package db
+package transactions
+package batch
 
 import blip._
+import incDes._
+import blocks._
+import records._
 
-package object transactions {
-  val DBT_GET = FactoryId("dbg")
-  val DBT_SIZE = FactoryId("dbz")
-  val DBT_SET = FactoryId("dbs")
-  val DBT_SEQ_FIRST = FactoryId("dbf")
-  val DBT_SEQ_STRING_CURRENT = FactoryId("dbsc")
-  val DBT_SEQ_LONG_CURRENT = FactoryId("dblc")
-  val DBT_SEQ_INT_CURRENT = FactoryId("dbic")
-  val DBT_SEQ_STRING_NEXT = FactoryId("dbsn")
-  val DBT_SEQ_LONG_NEXT = FactoryId("dbln")
-  val DBT_SEQ_INT_NEXT = FactoryId("dbin")
-  val DBT_BATCH = FactoryId("dbb")
-  val DBT_RECORD_UPDATE = FactoryId("dbru")
-  val DBT_NEW_RECORD = FactoryId("dbnr")
-  val DBT_DELETE_RECORD = FactoryId("dbDr")
+object DeleteRecord {
+  def apply(batch: IncDes, recordKey: String) = {
+    val jef = new DeleteRecordFactory
+    jef.configure(batch.systemServices)
+    val je = jef.newActor(null).asInstanceOf[IncDes]
+    je.setSystemServices(batch.systemServices)
+    val chain = new Chain
+    chain.op(je, Set(null, recordKey))
+    chain.op(batch, BatchItem(je))
+    chain
+  }
+}
+
+class DeleteRecordFactory
+  extends IncDesStringFactory(DBT_DELETE_RECORD) {
+  override protected def instantiate = {
+    val req = super.instantiate
+    addComponent(new UpdateRequestComponent(req))
+    addComponent(new DeleteRecordComponent(req))
+    req
+  }
+}
+
+class DeleteRecordComponent(actor: Actor)
+  extends Component(actor) {
+  bindSafe(classOf[Process], new ChainFactory(process))
+
+  private def process(msg: AnyRef, chain: Chain) {
+    val tc = msg.asInstanceOf[Process].transactionContext.asInstanceOf[UpdateContext]
+    val ts = tc.timestamp
+    chain.op(actor, Value(), "recordKey")
+    chain.op(systemServices,
+      Unit => AssignRecord(tc, chain("recordKey").asInstanceOf[String], null))
+  }
 }
