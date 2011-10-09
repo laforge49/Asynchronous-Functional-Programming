@@ -6,6 +6,7 @@ package smallRecords
 
 import blip._
 import blip.services._
+import incDes._
 import log._
 import org.specs.SpecificationWithJUnit
 
@@ -72,6 +73,38 @@ class SmallRecordsTest extends SpecificationWithJUnit {
       chain.op(db, NewRecord(batch, "games"))
       chain.op(db, TransactionRequest(batch), "timestamp")
       chain.op(db, SizeRequest(db, "/$"), "record count")
+      Future(systemServices, chain)
+      println(chain.results)
+      systemServices.close
+    }
+    "Update records" in {
+      val systemServices = SystemServices(new ServicesRootComponentFactory)
+      val dbName = "smallRecords.db"
+      val logDirPathname = "smallRecords"
+      val properties = new Properties
+      properties.put("dbPathname", dbName)
+      properties.put("logDirPathname", logDirPathname)
+      properties.put("flushLog", "true")
+      val db = Subsystem(
+        systemServices,
+        new SmallRecordsComponentFactory,
+        properties = properties,
+        actorId = ActorId("db"))
+      val funContent = IncDesInt(null)
+      val gamesContent = IncDesString(null)
+      val batch = Batch(db)
+      val chain = new Chain
+      chain.op(systemServices, Register(db))
+      chain.op(funContent, Set(null, 42))
+      chain.op(gamesContent, Set(null, "Checkers"))
+      chain.op(db, RecordUpdate(batch, "fun", "$", funContent))
+      chain.op(db, RecordUpdate(batch, "games", "$", gamesContent))
+      chain.op(db, TransactionRequest(batch), "timestamp")
+      chain.op(db, SizeRequest(db, "/$"), "record count")
+      chain.op(db, GetRequest(db, "/$/fun/$"), "funContent")
+      chain.op(Unit => chain("funContent"), Value(), "funValue")
+      chain.op(db, GetRequest(db, "/$/games/$"), "gamesContent")
+      chain.op(Unit => chain("gamesContent"), Value(), "gamesValue")
       Future(systemServices, chain)
       println(chain.results)
       systemServices.close
