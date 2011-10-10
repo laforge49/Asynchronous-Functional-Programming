@@ -36,13 +36,20 @@ class FirstRequestComponent(actor: Actor)
   bindSafe(classOf[Process], new ChainFactory(process))
 
   private def process(msg: AnyRef, chain: Chain) {
+    chain.op(actor, Value(), "pathname")
     chain.op(systemServices, DbRoot(), "dbRoot")
-    chain.op(Unit => chain("dbRoot"), Value(), "items")
-    chain.op(Unit => chain("items"), Seq(), "seq")
+    chain.op(
+      Unit => chain("dbRoot"),
+      Unit => Resolve(chain("pathname").asInstanceOf[String]), "tuple")
+    chain.op(
+      Unit => {
+        val (value, key) = chain("tuple").asInstanceOf[(IncDes, String)]
+        value
+      }, Seq(), "seq")
     chain.op(
       Unit => new MapSafeSeq(
         chain("seq").asInstanceOf[Sequence[Any, Any]],
         new KVCopySafe),
       First())
- }
+  }
 }

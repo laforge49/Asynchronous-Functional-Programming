@@ -40,5 +40,6 @@ package object transactions {
   val DBT_BATCH = FactoryId("dbb")
   val DBT_RECORD_UPDATE = FactoryId("dbru")
   val DBT_NEW_RECORD = FactoryId("dbnr")
-  val DBT_DELETE_RECORD = FactoryId("dbDr")
+  val DBT_DELETE_RECORD = FactoryId("dbdr")
+  val DBT_RECORDS_COUNT = FactoryId("dbrc")
 }

@@ -24,18 +24,35 @@
 package org.agilewiki
 package db
 package transactions
-package dbSeq
 
 import blip._
 import incDes._
 import blocks._
 
-class FirstRequestFactory
-  extends IncDesStringFactory(DBT_SEQ_FIRST) {
+object RecordsCount {
+  def apply(db: Actor) = {
+    val je = (new RecordsCountFactory).newActor(null).asInstanceOf[IncDes]
+    val chain = new Chain
+    chain.op(db, TransactionRequest(je))
+    chain
+  }
+}
+
+class RecordsCountFactory extends IncDesFactory(DBT_RECORDS_COUNT) {
   override protected def instantiate = {
     val req = super.instantiate
     addComponent(new QueryRequestComponent(req))
-    addComponent(new FirstRequestComponent(req))
+    addComponent(new RecordsCountComponent(req))
     req
+  }
+}
+
+class RecordsCountComponent(actor: Actor)
+  extends Component(actor) {
+  bindSafe(classOf[Process], new ChainFactory(process))
+
+  private def process(msg: AnyRef, chain: Chain) {
+    chain.op(systemServices, Records(), "records")
+    chain.op(Unit => chain("records"), Size())
   }
 }

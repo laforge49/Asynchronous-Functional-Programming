@@ -27,4 +27,6 @@ package incDes
 import blip._
 
 class IncDesFactory(id: FactoryId)
-  extends Factory(id)
+  extends Factory(id) {
+  override protected def instantiate = new IncDes
+}

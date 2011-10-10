@@ -36,8 +36,14 @@ class DbStringSeq[V](db: Actor, pathname: String)
   setMailbox(db.mailbox)
 
   override def first(msg: AnyRef, rf: Any => Unit) {
+    var pn = pathname
+    if (pn.startsWith("/")) pn = pn.substring(1)
+    if (!pn.endsWith("/") && pn.length > 0) pn = pn + "/"
     val je = (new FirstRequestFactory).newActor(null)
-    db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
+    je(Set(null, pn)) {
+      rsp =>
+        db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
+    }
   }
 
   override def current(msg: AnyRef, rf: Any => Unit) {
@@ -63,8 +69,14 @@ class DbLongSeq[V](db: Actor, pathname: String)
   setMailbox(db.mailbox)
 
   override def first(msg: AnyRef, rf: Any => Unit) {
+    var pn = pathname
+    if (pn.startsWith("/")) pn = pn.substring(1)
+    if (!pn.endsWith("/") && pn.length > 0) pn = pn + "/"
     val je = (new FirstRequestFactory).newActor(null)
-    db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
+    je(Set(null, pn)) {
+      rsp =>
+        db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
+    }
   }
 
   override def current(msg: AnyRef, rf: Any => Unit) {
@@ -90,8 +102,14 @@ class DbIntSeq[V](db: Actor, pathname: String)
   setMailbox(db.mailbox)
 
   override def first(msg: AnyRef, rf: Any => Unit) {
+    var pn = pathname
+    if (pn.startsWith("/")) pn = pn.substring(1)
+    if (!pn.endsWith("/") && pn.length > 0) pn = pn + "/"
     val je = (new FirstRequestFactory).newActor(null)
-    db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
+    je(Set(null, pn)) {
+      rsp =>
+        db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
+    }
   }
 
   override def current(msg: AnyRef, rf: Any => Unit) {

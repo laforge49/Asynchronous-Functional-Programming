@@ -37,6 +37,7 @@ class SmallRecordsInitializationComponent(actor: Actor)
   extends Component(actor) {
 
   bind(classOf[InitDb], initDb)
+  bind(classOf[Records], records)
   bind(classOf[GetRecord], getRecord)
   bind(classOf[AssignRecord], assignRecord)
 
@@ -52,12 +53,18 @@ class SmallRecordsInitializationComponent(actor: Actor)
     }
   }
 
+  private def records(msg: AnyRef, rf: Any => Unit) {
+    val chain = new Chain
+    chain.op(actor, DbRoot(), "root")
+    chain.op(Unit => chain("root"), Value())
+    actor(chain)(rf)
+  }
+
   private def getRecord(msg: AnyRef, rf: Any => Unit) {
     val req = msg.asInstanceOf[GetRecord]
     val recordKey = req.recordKey
     val chain = new Chain
-    chain.op(actor, DbRoot(), "root")
-    chain.op(Unit => chain("root"), Value(), "records")
+    chain.op(actor, Records(), "records")
     chain.op(Unit => chain("records"), Get(recordKey))
     actor(chain)(rf)
   }
@@ -69,8 +76,7 @@ class SmallRecordsInitializationComponent(actor: Actor)
     val recordKey = req.recordKey
     val record = req.record
     val chain = new Chain
-    chain.op(actor, DbRoot(), "root")
-    chain.op(Unit => chain("root"), Value(), "records")
+    chain.op(actor, Records(), "records")
     chain.op(Unit => {
       chain("records")}, Assign(tc, recordKey, record))
     actor(chain) {

@@ -69,6 +69,8 @@ case class ProcessFile(jnlPathname: String)
 
 case class FilesSeq(dirPathname: String)
 
+case class Records()
+
 case class GetRecord(recordKey: String)
 
 case class AssignRecord(transactionContext: UpdateContext, recordKey: String, record: Record)
