@@ -63,10 +63,15 @@ class DbStringSeq[V](db: Actor, pathname: String)
 
   override def next(msg: AnyRef, rf: Any => Unit) {
     val key = msg.asInstanceOf[Next[String]].key
-    val je = (new NextStringRequestFactory).newActor(null)
-    je(Set(null, key)) {
-      rsp => db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
-    }
+    val jef = new NextStringRequestFactory
+    jef.configure(systemServices)
+    val je = jef.newActor(null)
+    je.setSystemServices(systemServices)
+    val chain = new Chain
+    chain.op(je, PutString(null, "pathname", pn))
+    chain.op(je, PutString(null, "key", key))
+    chain.op(db, TransactionRequest(je.asInstanceOf[IncDes]))
+    this(chain)(rf)
   }
 }
 
@@ -103,10 +108,15 @@ class DbLongSeq[V](db: Actor, pathname: String)
 
   override def next(msg: AnyRef, rf: Any => Unit) {
     val key = msg.asInstanceOf[Next[Long]].key
-    val je = (new NextLongRequestFactory).newActor(null)
-    je(Set(null, key)) {
-      rsp => db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
-    }
+    val jef = new NextLongRequestFactory
+    jef.configure(systemServices)
+    val je = jef.newActor(null)
+    je.setSystemServices(systemServices)
+    val chain = new Chain
+    chain.op(je, PutString(null, "pathname", pn))
+    chain.op(je, PutLong(null, "key", key))
+    chain.op(db, TransactionRequest(je.asInstanceOf[IncDes]))
+    this(chain)(rf)
   }
 }
 
@@ -143,9 +153,14 @@ class DbIntSeq[V](db: Actor, pathname: String)
 
   override def next(msg: AnyRef, rf: Any => Unit) {
     val key = msg.asInstanceOf[Next[Int]].key
-    val je = (new NextIntRequestFactory).newActor(null)
-    je(Set(null, key)) {
-      rsp => db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
-    }
+    val jef = new NextIntRequestFactory
+    jef.configure(systemServices)
+    val je = jef.newActor(null)
+    je.setSystemServices(systemServices)
+    val chain = new Chain
+    chain.op(je, PutString(null, "pathname", pn))
+    chain.op(je, PutInt(null, "key", key))
+    chain.op(db, TransactionRequest(je.asInstanceOf[IncDes]))
+    this(chain)(rf)
   }
 }

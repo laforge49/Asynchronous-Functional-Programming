@@ -26,14 +26,13 @@ package db
 package transactions
 package dbSeq
 
-import blip._
 import incDes._
 import blocks._
 
 class NextStringRequestFactory
-  extends Factory(DBT_SEQ_STRING_NEXT) {
+  extends IncDesStringIncDesMapFactory(DBT_SEQ_STRING_NEXT) {
   override protected def instantiate = {
-    val req = new IncDesString
+    val req = super.instantiate
     addComponent(new QueryRequestComponent(req))
     addComponent(new NextRequestComponent(req))
     req
@@ -41,9 +40,9 @@ class NextStringRequestFactory
 }
 
 class NextLongRequestFactory
-  extends Factory(DBT_SEQ_LONG_NEXT) {
+  extends IncDesStringIncDesMapFactory(DBT_SEQ_LONG_NEXT) {
   override protected def instantiate = {
-    val req = new IncDesLong
+    val req = super.instantiate
     addComponent(new QueryRequestComponent(req))
     addComponent(new NextRequestComponent(req))
     req
@@ -51,9 +50,9 @@ class NextLongRequestFactory
 }
 
 class NextIntRequestFactory
-  extends Factory(DBT_SEQ_INT_NEXT) {
+  extends IncDesStringIncDesMapFactory(DBT_SEQ_INT_NEXT) {
   override protected def instantiate = {
-    val req = new IncDesInt
+    val req = super.instantiate
     addComponent(new QueryRequestComponent(req))
     addComponent(new NextRequestComponent(req))
     req
