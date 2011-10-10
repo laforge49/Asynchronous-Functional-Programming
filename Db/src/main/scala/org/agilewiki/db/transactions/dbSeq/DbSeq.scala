@@ -34,6 +34,7 @@ class DbStringSeq[V](db: Actor, pathname: String)
   extends Sequence[String, V] {
   private var pn = pathname
 
+  setSystemServices(db)
   if (pn.startsWith("/")) pn = pn.substring(1)
   if (!pn.endsWith("/") && pn.length > 0) pn = pn + "/"
 
@@ -49,10 +50,15 @@ class DbStringSeq[V](db: Actor, pathname: String)
 
   override def current(msg: AnyRef, rf: Any => Unit) {
     val key = msg.asInstanceOf[Current[String]].key
-    val je = (new CurrentStringRequestFactory).newActor(null)
-    je(Set(null, key)) {
-      rsp => db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
-    }
+    val jef = new CurrentStringRequestFactory
+    jef.configure(systemServices)
+    val je = jef.newActor(null)
+    je.setSystemServices(systemServices)
+    val chain = new Chain
+    chain.op(je, PutString(null, "pathname", pn))
+    chain.op(je, PutString(null, "key", key))
+    chain.op(db, TransactionRequest(je.asInstanceOf[IncDes]))
+    this(chain)(rf)
   }
 
   override def next(msg: AnyRef, rf: Any => Unit) {
@@ -68,6 +74,7 @@ class DbLongSeq[V](db: Actor, pathname: String)
   extends Sequence[String, V] {
   private var pn = pathname
 
+  setSystemServices(db)
   if (pn.startsWith("/")) pn = pn.substring(1)
   if (!pn.endsWith("/") && pn.length > 0) pn = pn + "/"
 
@@ -83,10 +90,15 @@ class DbLongSeq[V](db: Actor, pathname: String)
 
   override def current(msg: AnyRef, rf: Any => Unit) {
     val key = msg.asInstanceOf[Current[Long]].key
-    val je = (new CurrentLongRequestFactory).newActor(null)
-    je(Set(null, key)) {
-      rsp => db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
-    }
+    val jef = new CurrentLongRequestFactory
+    jef.configure(systemServices)
+    val je = jef.newActor(null)
+    je.setSystemServices(systemServices)
+    val chain = new Chain
+    chain.op(je, PutString(null, "pathname", pn))
+    chain.op(je, PutLong(null, "key", key))
+    chain.op(db, TransactionRequest(je.asInstanceOf[IncDes]))
+    this(chain)(rf)
   }
 
   override def next(msg: AnyRef, rf: Any => Unit) {
@@ -102,6 +114,7 @@ class DbIntSeq[V](db: Actor, pathname: String)
   extends Sequence[String, V] {
   private var pn = pathname
 
+  setSystemServices(db)
   if (pn.startsWith("/")) pn = pn.substring(1)
   if (!pn.endsWith("/") && pn.length > 0) pn = pn + "/"
 
@@ -117,10 +130,15 @@ class DbIntSeq[V](db: Actor, pathname: String)
 
   override def current(msg: AnyRef, rf: Any => Unit) {
     val key = msg.asInstanceOf[Current[Int]].key
-    val je = (new CurrentIntRequestFactory).newActor(null)
-    je(Set(null, key)) {
-      rsp => db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
-    }
+    val jef = new CurrentIntRequestFactory
+    jef.configure(systemServices)
+    val je = jef.newActor(null)
+    je.setSystemServices(systemServices)
+    val chain = new Chain
+    chain.op(je, PutString(null, "pathname", pn))
+    chain.op(je, PutInt(null, "key", key))
+    chain.op(db, TransactionRequest(je.asInstanceOf[IncDes]))
+    this(chain)(rf)
   }
 
   override def next(msg: AnyRef, rf: Any => Unit) {
