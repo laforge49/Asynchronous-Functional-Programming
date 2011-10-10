@@ -43,7 +43,12 @@ abstract class IncDesKeyedCollection[K, V <: IncDesItem[V1], V1]
   bind(classOf[Put[K, V, V1]], put)
   bind(classOf[MakePut[K]], makePut)
   bind(classOf[MakePutSet[K, V1]], makePutSet)
-  if (isInstanceOf[V1]) bind(classOf[MakePutMakeSet[K]], makePutMakeSet)
+  if (isInstanceOf[V1]) {
+    bind(classOf[MakePutMakeSet[K]], makePutMakeSet)
+    bind(classOf[PutInt[K]], putInt)
+    bind(classOf[PutLong[K]], putLong)
+    bind(classOf[PutString[K]], putString)
+  }
 
   def keyFactory = factory.asInstanceOf[IncDesKeyedCollectionFactory[K]].keyFactory
 
@@ -54,4 +59,28 @@ abstract class IncDesKeyedCollection[K, V <: IncDesItem[V1], V1]
   def makePutSet(msg: AnyRef, rf: Any => Unit)
 
   def makePutMakeSet(msg: AnyRef, rf: Any => Unit)
+
+  def putInt(msg: AnyRef, rf: Any => Unit) {
+    val req = msg.asInstanceOf[PutInt[K]]
+    val tc = req.transactionContext
+    makePutMakeSet(MakePutMakeSet[K](tc, req.key, INC_DES_INT_FACTORY_ID), {
+      rsp => rsp.asInstanceOf[Actor](Set(tc, req.value))(rf)
+    })
+  }
+
+  def putLong(msg: AnyRef, rf: Any => Unit) {
+    val req = msg.asInstanceOf[PutLong[K]]
+    val tc = req.transactionContext
+    makePutMakeSet(MakePutMakeSet[K](tc, req.key, INC_DES_LONG_FACTORY_ID), {
+      rsp => rsp.asInstanceOf[Actor](Set(tc, req.value))(rf)
+    })
+  }
+
+  def putString(msg: AnyRef, rf: Any => Unit) {
+    val req = msg.asInstanceOf[PutString[K]]
+    val tc = req.transactionContext
+    makePutMakeSet(MakePutMakeSet[K](tc, req.key, INC_DES_STRING_FACTORY_ID), {
+      rsp => rsp.asInstanceOf[Actor](Set(tc, req.value))(rf)
+    })
+  }
 }

@@ -65,12 +65,7 @@ class MashupComponent(actor: Actor) extends Component(actor) {
     val st = msg.asInstanceOf[SetTitle]
     val transactionContext = st.transactionContext
     val t = st.title
-    actor(MakePutMakeSet(transactionContext, "title", INC_DES_STRING_FACTORY_ID)) {
-      r1 => {
-        val ids = r1.asInstanceOf[IncDesString]
-        ids(Set(transactionContext, t))(rf)
-      }
-    }
+    actor(PutString(transactionContext, "title", t))(rf)
   }
 
   def strings(msg: AnyRef, rf: Any => Unit) {
