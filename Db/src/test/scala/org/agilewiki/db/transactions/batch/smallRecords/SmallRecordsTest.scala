@@ -5,9 +5,12 @@ package batch
 package smallRecords
 
 import blip._
-import blip.services._
+import services._
+import seq._
 import incDes._
+import records._
 import log._
+import dbSeq._
 import org.specs.SpecificationWithJUnit
 
 class SmallRecordsTest extends SpecificationWithJUnit {
@@ -107,6 +110,24 @@ class SmallRecordsTest extends SpecificationWithJUnit {
       chain.op(Unit => chain("gamesContent"), Value(), "gamesValue")
       Future(systemServices, chain)
       println(chain.results)
+      systemServices.close
+    }
+    "RecordsSeq" in {
+      val systemServices = SystemServices(new ServicesRootComponentFactory)
+      val dbName = "smallRecords.db"
+      val logDirPathname = "smallRecords"
+      val properties = new Properties
+      properties.put("dbPathname", dbName)
+      properties.put("logDirPathname", logDirPathname)
+      properties.put("flushLog", "true")
+      val db = Subsystem(
+        systemServices,
+        new SmallRecordsComponentFactory,
+        properties = properties,
+        actorId = ActorId("db"))
+      Future(systemServices, Register(db))
+      val recordsSeq = new RecordsSeq(db)
+      Future(recordsSeq, Loop((key: String, value: Record) => println(key + "->" + value)))
       systemServices.close
     }
     "Delete record" in {

@@ -85,6 +85,7 @@ class DbStringSeq[V](db: Actor, _pathname: String)
 class DbLongSeq[V](db: Actor, _pathname: String)
   extends Sequence[String, V] {
 
+  bind(classOf[Pathname], pathname)
   setSystemServices(db)
   setMailbox(db.mailbox)
 
@@ -136,6 +137,7 @@ class DbLongSeq[V](db: Actor, _pathname: String)
 class DbIntSeq[V](db: Actor, _pathname: String)
   extends Sequence[String, V] {
 
+  bind(classOf[Pathname], pathname)
   setSystemServices(db)
   setMailbox(db.mailbox)
 
