@@ -44,10 +44,23 @@ abstract class IncDesValueCollection[K, V <: IncDesItem[V1], V1]
   bind(classOf[GetValue[K]], getValue)
   bind(classOf[ValuesSeq], valuesSeq)
   bind(classOf[FlatValuesSeq], flatValuesSeq)
+  if (isInstanceOf[V1]) {
+    bind(classOf[GetValue2[K]], getValue2)
+  }
 
   def get(msg: AnyRef, rf: Any => Unit)
 
   def getValue(msg: AnyRef, rf: Any => Unit)
+
+  def getValue2(msg: AnyRef, rf: Any => Unit) {
+    val key = msg.asInstanceOf[GetValue2[K]].key
+    getValue(GetValue(key), {
+      rsp => {
+        if (rsp == null) rf(null)
+        else rsp.asInstanceOf[Actor](Value())(rf)
+      }
+    })
+  }
 
   def valueFactory = factory.asInstanceOf[IncDesValueCollectionFactory].valueFactory
 
