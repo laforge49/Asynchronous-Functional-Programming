@@ -40,6 +40,7 @@ class SmallRecordsInitializationComponent(actor: Actor)
   bind(classOf[Records], records)
   bind(classOf[GetRecord], getRecord)
   bind(classOf[AssignRecord], assignRecord)
+  bindSafe(classOf[RecordsPathname], new SafeConstant("$/"))
 
   override def open {
     actor.requiredService(classOf[DbRoot])

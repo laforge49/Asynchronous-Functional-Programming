@@ -30,22 +30,27 @@ import blip._
 import seq._
 import incDes._
 
-class DbStringSeq[V](db: Actor, pathname: String)
+class DbStringSeq[V](db: Actor, _pathname: String)
   extends Sequence[String, V] {
-  private var pn = pathname
 
+  bind(classOf[Pathname], pathname)
   setSystemServices(db)
-  if (pn.startsWith("/")) pn = pn.substring(1)
-  if (!pn.endsWith("/") && pn.length > 0) pn = pn + "/"
-
   setMailbox(db.mailbox)
+
+  protected def pathname(msg: AnyRef, rf: Any => Unit) = {
+    var v = _pathname
+    if (v.startsWith("/")) v = v.substring(1)
+    if (!v.endsWith("/") && v.length > 0) v = v + "/"
+    rf(v)
+  }
 
   override def first(msg: AnyRef, rf: Any => Unit) {
     val je = (new FirstRequestFactory).newActor(null)
-    je(Set(null, pn)) {
-      rsp =>
-        db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
-    }
+    val chain = new Chain
+    chain.op(this, Pathname(), "pathname")
+    chain.op(je, Unit => Set(null, chain("pathname")))
+    chain.op(db, TransactionRequest(je.asInstanceOf[IncDes]))
+    this(chain)(rf)
   }
 
   override def current(msg: AnyRef, rf: Any => Unit) {
@@ -55,7 +60,8 @@ class DbStringSeq[V](db: Actor, pathname: String)
     val je = jef.newActor(null)
     je.setSystemServices(systemServices)
     val chain = new Chain
-    chain.op(je, PutString(null, "pathname", pn))
+    chain.op(this, Pathname(), "pathname")
+    chain.op(je, Unit => PutString(null, "pathname", chain("pathname").asInstanceOf[String]))
     chain.op(je, PutString(null, "key", key))
     chain.op(db, TransactionRequest(je.asInstanceOf[IncDes]))
     this(chain)(rf)
@@ -68,29 +74,34 @@ class DbStringSeq[V](db: Actor, pathname: String)
     val je = jef.newActor(null)
     je.setSystemServices(systemServices)
     val chain = new Chain
-    chain.op(je, PutString(null, "pathname", pn))
+    chain.op(this, Pathname(), "pathname")
+    chain.op(je, Unit => PutString(null, "pathname", chain("pathname").asInstanceOf[String]))
     chain.op(je, PutString(null, "key", key))
     chain.op(db, TransactionRequest(je.asInstanceOf[IncDes]))
     this(chain)(rf)
   }
 }
 
-class DbLongSeq[V](db: Actor, pathname: String)
+class DbLongSeq[V](db: Actor, _pathname: String)
   extends Sequence[String, V] {
-  private var pn = pathname
 
   setSystemServices(db)
-  if (pn.startsWith("/")) pn = pn.substring(1)
-  if (!pn.endsWith("/") && pn.length > 0) pn = pn + "/"
-
   setMailbox(db.mailbox)
+
+  protected def pathname(msg: AnyRef, rf: Any => Unit) = {
+    var v = _pathname
+    if (v.startsWith("/")) v = v.substring(1)
+    if (!v.endsWith("/") && v.length > 0) v = v + "/"
+    rf(v)
+  }
 
   override def first(msg: AnyRef, rf: Any => Unit) {
     val je = (new FirstRequestFactory).newActor(null)
-    je(Set(null, pn)) {
-      rsp =>
-        db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
-    }
+    val chain = new Chain
+    chain.op(this, Pathname(), "pathname")
+    chain.op(je, Unit => Set(null, chain("pathname")))
+    chain.op(db, TransactionRequest(je.asInstanceOf[IncDes]))
+    this(chain)(rf)
   }
 
   override def current(msg: AnyRef, rf: Any => Unit) {
@@ -100,7 +111,8 @@ class DbLongSeq[V](db: Actor, pathname: String)
     val je = jef.newActor(null)
     je.setSystemServices(systemServices)
     val chain = new Chain
-    chain.op(je, PutString(null, "pathname", pn))
+    chain.op(this, Pathname(), "pathname")
+    chain.op(je, Unit => PutString(null, "pathname", chain("pathname").asInstanceOf[String]))
     chain.op(je, PutLong(null, "key", key))
     chain.op(db, TransactionRequest(je.asInstanceOf[IncDes]))
     this(chain)(rf)
@@ -113,29 +125,34 @@ class DbLongSeq[V](db: Actor, pathname: String)
     val je = jef.newActor(null)
     je.setSystemServices(systemServices)
     val chain = new Chain
-    chain.op(je, PutString(null, "pathname", pn))
+    chain.op(this, Pathname(), "pathname")
+    chain.op(je, Unit => PutString(null, "pathname", chain("pathname").asInstanceOf[String]))
     chain.op(je, PutLong(null, "key", key))
     chain.op(db, TransactionRequest(je.asInstanceOf[IncDes]))
     this(chain)(rf)
   }
 }
 
-class DbIntSeq[V](db: Actor, pathname: String)
+class DbIntSeq[V](db: Actor, _pathname: String)
   extends Sequence[String, V] {
-  private var pn = pathname
 
   setSystemServices(db)
-  if (pn.startsWith("/")) pn = pn.substring(1)
-  if (!pn.endsWith("/") && pn.length > 0) pn = pn + "/"
-
   setMailbox(db.mailbox)
+
+  protected def pathname(msg: AnyRef, rf: Any => Unit) = {
+    var v = _pathname
+    if (v.startsWith("/")) v = v.substring(1)
+    if (!v.endsWith("/") && v.length > 0) v = v + "/"
+    rf(v)
+  }
 
   override def first(msg: AnyRef, rf: Any => Unit) {
     val je = (new FirstRequestFactory).newActor(null)
-    je(Set(null, pn)) {
-      rsp =>
-        db(TransactionRequest(je.asInstanceOf[IncDes]))(rf)
-    }
+    val chain = new Chain
+    chain.op(this, Pathname(), "pathname")
+    chain.op(je, Unit => Set(null, chain("pathname")))
+    chain.op(db, TransactionRequest(je.asInstanceOf[IncDes]))
+    this(chain)(rf)
   }
 
   override def current(msg: AnyRef, rf: Any => Unit) {
@@ -145,7 +162,8 @@ class DbIntSeq[V](db: Actor, pathname: String)
     val je = jef.newActor(null)
     je.setSystemServices(systemServices)
     val chain = new Chain
-    chain.op(je, PutString(null, "pathname", pn))
+    chain.op(this, Pathname(), "pathname")
+    chain.op(je, Unit => PutString(null, "pathname", chain("pathname").asInstanceOf[String]))
     chain.op(je, PutInt(null, "key", key))
     chain.op(db, TransactionRequest(je.asInstanceOf[IncDes]))
     this(chain)(rf)
@@ -158,7 +176,8 @@ class DbIntSeq[V](db: Actor, pathname: String)
     val je = jef.newActor(null)
     je.setSystemServices(systemServices)
     val chain = new Chain
-    chain.op(je, PutString(null, "pathname", pn))
+    chain.op(this, Pathname(), "pathname")
+    chain.op(je, Unit => PutString(null, "pathname", chain("pathname").asInstanceOf[String]))
     chain.op(je, PutInt(null, "key", key))
     chain.op(db, TransactionRequest(je.asInstanceOf[IncDes]))
     this(chain)(rf)

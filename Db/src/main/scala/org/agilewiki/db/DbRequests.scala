@@ -69,7 +69,11 @@ case class ProcessFile(jnlPathname: String)
 
 case class FilesSeq(dirPathname: String)
 
+case class Pathname()
+
 case class Records()
+
+case class RecordsPathname()
 
 case class GetRecord(recordKey: String)
 
