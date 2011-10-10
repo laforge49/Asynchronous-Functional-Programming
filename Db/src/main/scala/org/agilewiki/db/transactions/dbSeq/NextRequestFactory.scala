@@ -29,28 +29,8 @@ package dbSeq
 import incDes._
 import blocks._
 
-class NextStringRequestFactory
-  extends IncDesStringIncDesMapFactory(DBT_SEQ_STRING_NEXT) {
-  override protected def instantiate = {
-    val req = super.instantiate
-    addComponent(new QueryRequestComponent(req))
-    addComponent(new NextRequestComponent(req))
-    req
-  }
-}
-
-class NextLongRequestFactory
-  extends IncDesStringIncDesMapFactory(DBT_SEQ_LONG_NEXT) {
-  override protected def instantiate = {
-    val req = super.instantiate
-    addComponent(new QueryRequestComponent(req))
-    addComponent(new NextRequestComponent(req))
-    req
-  }
-}
-
-class NextIntRequestFactory
-  extends IncDesStringIncDesMapFactory(DBT_SEQ_INT_NEXT) {
+class NextRequestFactory
+  extends IncDesStringIncDesMapFactory(DBT_SEQ_NEXT) {
   override protected def instantiate = {
     val req = super.instantiate
     addComponent(new QueryRequestComponent(req))

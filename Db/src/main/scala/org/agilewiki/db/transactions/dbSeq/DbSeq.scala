@@ -50,7 +50,7 @@ class DbStringSeq[V](db: Actor, pathname: String)
 
   override def current(msg: AnyRef, rf: Any => Unit) {
     val key = msg.asInstanceOf[Current[String]].key
-    val jef = new CurrentStringRequestFactory
+    val jef = new CurrentRequestFactory
     jef.configure(systemServices)
     val je = jef.newActor(null)
     je.setSystemServices(systemServices)
@@ -63,7 +63,7 @@ class DbStringSeq[V](db: Actor, pathname: String)
 
   override def next(msg: AnyRef, rf: Any => Unit) {
     val key = msg.asInstanceOf[Next[String]].key
-    val jef = new NextStringRequestFactory
+    val jef = new NextRequestFactory
     jef.configure(systemServices)
     val je = jef.newActor(null)
     je.setSystemServices(systemServices)
@@ -95,7 +95,7 @@ class DbLongSeq[V](db: Actor, pathname: String)
 
   override def current(msg: AnyRef, rf: Any => Unit) {
     val key = msg.asInstanceOf[Current[Long]].key
-    val jef = new CurrentLongRequestFactory
+    val jef = new CurrentRequestFactory
     jef.configure(systemServices)
     val je = jef.newActor(null)
     je.setSystemServices(systemServices)
@@ -108,7 +108,7 @@ class DbLongSeq[V](db: Actor, pathname: String)
 
   override def next(msg: AnyRef, rf: Any => Unit) {
     val key = msg.asInstanceOf[Next[Long]].key
-    val jef = new NextLongRequestFactory
+    val jef = new NextRequestFactory
     jef.configure(systemServices)
     val je = jef.newActor(null)
     je.setSystemServices(systemServices)
@@ -140,7 +140,7 @@ class DbIntSeq[V](db: Actor, pathname: String)
 
   override def current(msg: AnyRef, rf: Any => Unit) {
     val key = msg.asInstanceOf[Current[Int]].key
-    val jef = new CurrentIntRequestFactory
+    val jef = new CurrentRequestFactory
     jef.configure(systemServices)
     val je = jef.newActor(null)
     je.setSystemServices(systemServices)
@@ -153,7 +153,7 @@ class DbIntSeq[V](db: Actor, pathname: String)
 
   override def next(msg: AnyRef, rf: Any => Unit) {
     val key = msg.asInstanceOf[Next[Int]].key
-    val jef = new NextIntRequestFactory
+    val jef = new NextRequestFactory
     jef.configure(systemServices)
     val je = jef.newActor(null)
     je.setSystemServices(systemServices)
