@@ -35,7 +35,7 @@ class RecordStringSeq[V](db: Actor, key: String, _pathname: String)
   override protected def pathname(msg: AnyRef, rf: Any => Unit) = {
     var v = _pathname
     if (!v.startsWith("/")) v = "/" + v
-    if (!v.endsWith("/") && v.length > 1) v = v + "/"
+    if (!v.endsWith("/")) v = v + "/"
     db(RecordsPathname()) {
       rsp => {
         rf(rsp.asInstanceOf[String] + key + v)

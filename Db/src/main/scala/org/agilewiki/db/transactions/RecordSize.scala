@@ -33,22 +33,22 @@ import batch._
 object RecordSize {
   def apply(db: Actor, batch: IncDes, recordKey: String, pathname: String) = {
     var pn = pathname
-    if (pn.startsWith("/")) pn = pn.substring(1)
-    if (!pn.endsWith("/") && pn.length > 0) pn = pn + "/"
+    if (!pn.startsWith("/")) pn = "/" + pn
+    if (!pn.endsWith("/")) pn = pn + "/"
+    pn = recordKey+pn
     val jef = new RecordSizeFactory
     jef.configure(db)
     val je = jef.newActor(null).asInstanceOf[IncDes]
     je.setSystemServices(db)
     val chain = new Chain
     if (batch != null) chain.op(db, Unit => RecordLock(batch, recordKey))
-    chain.op(je, MakePutSet(null, "recordKey", recordKey))
-    chain.op(je, MakePutSet(null, "pathname", pn))
+    chain.op(je, Set(null, pn))
     chain.op(db, TransactionRequest(je))
     chain
   }
 }
 
-class RecordSizeFactory extends IncDesStringStringMapFactory(DBT_RECORD_SIZE) {
+class RecordSizeFactory extends IncDesStringFactory(DBT_RECORD_SIZE) {
   override protected def instantiate = {
     val req = super.instantiate
     addComponent(new QueryRequestComponent(req))
@@ -62,18 +62,16 @@ class RecordSizeComponent(actor: Actor)
   bindSafe(classOf[Process], new ChainFactory(process))
 
   private def process(msg: AnyRef, chain: Chain) {
-    chain.op(actor, GetValue("recordKey"), "recordKey")
-    chain.op(actor, GetValue("pathname"), "pathname")
-    chain.op(systemServices,
-      Unit => GetRecord(chain("recordKey").asInstanceOf[String]), "record")
+    chain.op(actor, Value(), "pathname")
+    chain.op(systemServices, RecordsPathname(), "recordsPathname")
+    chain.op(systemServices, DbRoot(), "dbRoot")
     chain.op(
+      Unit => chain("dbRoot"),
       Unit => {
-        val r = chain("record")
-        if (r == null)
-          throw new IllegalStateException("no such record: " + chain("recordKey").asInstanceOf[String])
-        r
-      },
-      Unit => Resolve(chain("pathname").asInstanceOf[String]), "tuple")
+        val rp = chain("recordsPathname").asInstanceOf[String]
+        val p = chain("pathname").asInstanceOf[String]
+        Resolve(rp + p)
+      }, "tuple")
     chain.op(Unit => {
       val (value, key) = chain("tuple").asInstanceOf[(IncDes, String)]
       value
