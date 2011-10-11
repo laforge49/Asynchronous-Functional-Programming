@@ -32,24 +32,16 @@ import blocks._
 
 object RecordUpdate {
   def apply(batch: IncDes, recordKey: String, pathname: String, value: IncDes) = {
-    val rkid = IncDesString(null)
-    val rkidid = IncDesIncDes(null)
     var pn = pathname
-    if (pn.startsWith("/")) pn = pn.substring(1)
-    val pnid = IncDesString(null)
-    val pnidid = IncDesIncDes(null)
+    if (!pn.startsWith("/")) pn = "/" + pn
+    pn = recordKey + pn
     val vidid = IncDesIncDes(null)
     val jef = new RecordUpdateFactory
     jef.configure(batch.systemServices)
     val je = jef.newActor(null).asInstanceOf[IncDes]
     je.setSystemServices(batch.systemServices)
     val chain = new Chain
-    chain.op(je, Put[String, IncDesIncDes, IncDes](null, "recordKey", rkidid))
-    chain.op(rkidid, Set(null, rkid))
-    chain.op(rkid, Set(null, recordKey))
-    chain.op(je, Put[String, IncDesIncDes, IncDes](null, "pathname", pnidid))
-    chain.op(pnidid, Set(null, pnid))
-    chain.op(pnid, Set(null, pn))
+    chain.op(je, PutString(null, "pathname", pn))
     chain.op(je, Put[String, IncDesIncDes, IncDes](null, "value", vidid))
     chain.op(value, Copy(null), "copy")
     chain.op(vidid, Unit => Set(null, chain("copy").asInstanceOf[IncDes]))
@@ -75,22 +67,18 @@ class RecordUpdateComponent(actor: Actor)
     val tc = msg.asInstanceOf[Process].transactionContext.asInstanceOf[UpdateContext]
     val ts = tc.timestamp
     var key = ""
-    chain.op(actor, GetValue("recordKey"), "recordKeyId")
-    chain.op(Unit => chain("recordKeyId"), Value(), "recordKey")
-    chain.op(actor, GetValue("pathname"), "pathnameId")
-    chain.op(Unit => chain("pathnameId"), Value(), "pathname")
+    chain.op(actor, GetValue2("pathname"), "pathname")
     chain.op(actor, GetValue("value"), "value")
     chain.op(Unit => chain("value"), Copy(null), "copy")
-    chain.op(systemServices,
-      Unit => GetRecord(chain("recordKey").asInstanceOf[String]), "record")
+    chain.op(systemServices, RecordsPathname(), "recordsPathname")
+    chain.op(systemServices, DbRoot(), "dbRoot")
     chain.op(
+      Unit => chain("dbRoot"),
       Unit => {
-        val r = chain("record")
-        if (r == null)
-          throw new IllegalStateException("no such record: " + chain("recordKey").asInstanceOf[String])
-        r
-      },
-      Unit => Resolve(chain("pathname").asInstanceOf[String]), "tuple")
+        val rp = chain("recordsPathname").asInstanceOf[String]
+        val p = chain("pathname").asInstanceOf[String]
+        Resolve(rp + p)
+      }, "tuple")
     chain.op(Unit => {
       val (incDes, k) = chain("tuple").asInstanceOf[(IncDes, String)]
       key = k
