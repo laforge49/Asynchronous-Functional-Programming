@@ -175,6 +175,8 @@ class SmallRecordsTest extends SpecificationWithJUnit {
       val batch = Batch(db)
       val chain = new Chain
       chain.op(systemServices, Register(db))
+      chain.op(db, RecordLock(batch, "fun"))
+      chain.op(db, RecordLock(batch, "family"))
       chain.op(db, DeleteRecord(batch, "fun"))
       chain.op(db, TransactionRequest(batch), "timestamp")
       chain.op(db, RecordsCount(db), "record count")

@@ -39,4 +39,5 @@ package object transactions {
   val DBT_DELETE_RECORD = FactoryId("dbdr")
   val DBT_RECORDS_COUNT = FactoryId("dbrc")
   val DBT_VALIDATE_TIMESTAMPS = FactoryId("dbvt")
+  val DBT_RECORD_LOCK = FactoryId("dbrl")
 }

@@ -67,7 +67,8 @@ class ValidateTimestampsComponent(actor: Actor)
   private def validateTimestamp(msg: AnyRef, rf: Any => Unit) {
     val req = msg.asInstanceOf[ValidateTimestamp]
     val recordKey = req.recordKey
-    val timestamp = req.timestamp
+    var timestamp = req.timestamp
+    if (timestamp == 0L) timestamp = -1L
     actor(GetValue(recordKey)) {
       rsp => {
         val ts = rsp.asInstanceOf[Long]
@@ -77,13 +78,15 @@ class ValidateTimestampsComponent(actor: Actor)
             rsp => idL(Set(null, timestamp))(rf)
           }
         } else {
-          if (timestamp != ts) throw new IllegalStateException
+          if (timestamp != ts) throw new TransactionConflictException(recordKey)
           rf(null)
         }
       }
     }
   }
 }
+
+class TransactionConflictException(recordKey: String) extends IllegalStateException(recordKey)
 
 case class ValidateSafe() extends Safe {
   override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
@@ -95,8 +98,9 @@ case class ValidateSafe() extends Safe {
     chain.op(Unit => chain("record"), GetTimestamp())
     target(chain) {
       rsp => {
-        val ts2 = rsp.asInstanceOf[Long]
-        if (ts1 != ts2) throw new IllegalStateException
+        var ts2 = rsp.asInstanceOf[Long]
+        if (ts2 == 0L) ts2 = -1L
+        if (ts1 != ts2) throw new TransactionConflictException(key)
         rf(true)
       }
     }

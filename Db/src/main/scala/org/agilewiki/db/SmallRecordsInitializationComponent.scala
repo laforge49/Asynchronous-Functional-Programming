@@ -64,6 +64,10 @@ class SmallRecordsInitializationComponent(actor: Actor)
   private def getRecord(msg: AnyRef, rf: Any => Unit) {
     val req = msg.asInstanceOf[GetRecord]
     val recordKey = req.recordKey
+    if (recordKey == null) {
+      rf(null)
+      return
+    }
     val chain = new Chain
     chain.op(actor, Records(), "records")
     chain.op(Unit => chain("records"), Get(recordKey))
