@@ -57,6 +57,7 @@ class BatchComponent(actor: Actor)
 
   bind(classOf[Process], process)
   bind(classOf[BatchItem], batchItem)
+  bind(classOf[ValidateTimestamp], validateTimestamp)
 
   private def process(msg: AnyRef, rf: Any => Unit) {
     val tc = msg.asInstanceOf[Process].transactionContext
@@ -66,6 +67,15 @@ class BatchComponent(actor: Actor)
         seq(LoopSafe(new BatchSafe(tc)))(rf)
       }
     }
+  }
+
+  private def validateTimestamp(msg: AnyRef, rf: Any => Unit) {
+    if (validateTimestamps == null) {
+      validateTimestamps = ValidateTimestamps(actor)
+      _batchItem(BatchItem(validateTimestamps), {
+        rsp => validateTimestamps(msg)(rf)
+      })
+    } else validateTimestamps(msg)(rf)
   }
 
   private def batchItem(msg: AnyRef, rf: Any => Unit) {

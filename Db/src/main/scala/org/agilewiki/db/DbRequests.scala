@@ -81,3 +81,5 @@ case class AssignRecord(transactionContext: UpdateContext, recordKey: String, re
 
 case class BatchItem(batchItem: IncDes)
 
+case class ValidateTimestamp(recordKey: String, timestamp: Long)
+

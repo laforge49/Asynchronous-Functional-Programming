@@ -53,12 +53,33 @@ class ValidateTimestampsFactory
 class ValidateTimestampsComponent(actor: Actor)
   extends Component(actor) {
   bind(classOf[Process], process)
+  bind(classOf[ValidateTimestamp], validateTimestamp)
 
   private def process(msg: AnyRef, rf: Any => Unit) {
     actor(ValuesSeq()) {
       rsp1 => {
         val seq = rsp1.asInstanceOf[Sequence[String, IncDesLong]]
         seq(LoopSafe(ValidateSafe()))(rf)
+      }
+    }
+  }
+
+  private def validateTimestamp(msg: AnyRef, rf: Any => Unit) {
+    val req = msg.asInstanceOf[ValidateTimestamp]
+    val recordKey = req.recordKey
+    val timestamp = req.timestamp
+    actor(GetValue(recordKey)) {
+      rsp => {
+        val ts = rsp.asInstanceOf[Long]
+        if (ts == 0) {
+          val idL = IncDesLong(null)
+          actor(Put[String, IncDesLong, Long](null, recordKey, idL)) {
+            rsp => idL(Set(null, timestamp))(rf)
+          }
+        } else {
+          if (timestamp != ts) throw new IllegalStateException
+          rf(null)
+        }
       }
     }
   }
