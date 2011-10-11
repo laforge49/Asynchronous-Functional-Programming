@@ -86,8 +86,6 @@ class ValidateTimestampsComponent(actor: Actor)
   }
 }
 
-class TransactionConflictException(recordKey: String) extends IllegalStateException(recordKey)
-
 case class ValidateSafe() extends Safe {
   override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val kvPair = msg.asInstanceOf[KVPair[String, Long]]
