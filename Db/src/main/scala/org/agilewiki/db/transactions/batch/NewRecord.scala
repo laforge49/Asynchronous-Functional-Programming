@@ -48,7 +48,6 @@ class NewRecordFactory
   extends IncDesStringFactory(DBT_NEW_RECORD) {
   override protected def instantiate = {
     val req = super.instantiate
-    addComponent(new UpdateRequestComponent(req))
     addComponent(new NewRecordComponent(req))
     req
   }

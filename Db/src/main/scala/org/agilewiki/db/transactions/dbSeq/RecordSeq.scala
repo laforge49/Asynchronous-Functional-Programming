@@ -24,44 +24,52 @@
 package org.agilewiki
 package db
 package transactions
-package batch
+package dbSeq
 
 import blip._
 import incDes._
-import blocks._
-import records._
 
-object DeleteRecord {
-  def apply(batch: IncDes, recordKey: String) = {
-    val jef = new DeleteRecordFactory
-    jef.configure(batch.systemServices)
-    val je = jef.newActor(null).asInstanceOf[IncDes]
-    je.setSystemServices(batch.systemServices)
-    val chain = new Chain
-    chain.op(je, Set(null, recordKey))
-    chain.op(batch, BatchItem(je))
-    chain
+class RecordStringSeq[V](db: Actor, key: String, _pathname: String)
+  extends DbStringSeq[V](db, "") {
+
+  override protected def pathname(msg: AnyRef, rf: Any => Unit) = {
+    var v = _pathname
+    if (!v.startsWith("/")) v = "/" + v
+    if (!v.endsWith("/") && v.length > 1) v = v + "/"
+    db(RecordsPathname()) {
+      rsp => {
+        rf(rsp.asInstanceOf[String] + key + v)
+      }
+    }
   }
 }
 
-class DeleteRecordFactory
-  extends IncDesStringFactory(DBT_DELETE_RECORD) {
-  override protected def instantiate = {
-    val req = super.instantiate
-    addComponent(new DeleteRecordComponent(req))
-    req
+class RecordLongSeq[V](db: Actor, key: String, _pathname: String)
+  extends DbLongSeq[V](db, "") {
+
+  override protected def pathname(msg: AnyRef, rf: Any => Unit) = {
+    var v = _pathname
+    if (!v.startsWith("/")) v = "/" + v
+    if (!v.endsWith("/") && v.length > 1) v = v + "/"
+    db(RecordsPathname()) {
+      rsp => {
+        rf(rsp.asInstanceOf[String] + key + v)
+      }
+    }
   }
 }
 
-class DeleteRecordComponent(actor: Actor)
-  extends Component(actor) {
-  bindSafe(classOf[Process], new ChainFactory(process))
+class RecordIntSeq[V](db: Actor, key: String, _pathname: String)
+  extends DbIntSeq[V](db, "") {
 
-  private def process(msg: AnyRef, chain: Chain) {
-    val tc = msg.asInstanceOf[Process].transactionContext.asInstanceOf[UpdateContext]
-    val ts = tc.timestamp
-    chain.op(actor, Value(), "recordKey")
-    chain.op(systemServices,
-      Unit => AssignRecord(tc, chain("recordKey").asInstanceOf[String], null))
+  override protected def pathname(msg: AnyRef, rf: Any => Unit) = {
+    var v = _pathname
+    if (!v.startsWith("/")) v = "/" + v
+    if (!v.endsWith("/") && v.length > 1) v = v + "/"
+    db(RecordsPathname()) {
+      rsp => {
+        rf(rsp.asInstanceOf[String] + key + v)
+      }
+    }
   }
 }

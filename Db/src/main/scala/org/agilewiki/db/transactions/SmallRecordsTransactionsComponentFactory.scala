@@ -53,5 +53,6 @@ class SmallRecordsTransactionsComponentFactory
     factoryRegistryComponentFactory.registerFactory(new DeleteRecordFactory)
     factoryRegistryComponentFactory.registerFactory(new RecordUpdateFactory)
     factoryRegistryComponentFactory.registerFactory(new RecordsCountFactory)
+    factoryRegistryComponentFactory.registerFactory(new ValidateTimestampsFactory)
   }
 }

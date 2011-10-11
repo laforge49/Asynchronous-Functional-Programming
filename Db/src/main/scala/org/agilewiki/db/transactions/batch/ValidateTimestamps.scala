@@ -27,72 +27,57 @@ package transactions
 package batch
 
 import blip._
-import seq._
 import incDes._
 import blocks._
+import seq._
 
-object Batch {
-  def apply(db: Actor) = {
-    val jef = new BatchFactory
-    jef.configure(db)
+object ValidateTimestamps {
+  def apply(batch: Actor) = {
+    val jef = new ValidateTimestampsFactory
+    jef.configure(batch.systemServices)
     val je = jef.newActor(null).asInstanceOf[IncDes]
-    je.setSystemServices(db.systemServices)
+    je.setSystemServices(batch.systemServices)
     je
   }
 }
 
-class BatchFactory
-  extends IncDesIncDesListFactory(DBT_BATCH) {
+class ValidateTimestampsFactory
+  extends IncDesStringLongMapFactory(DBT_VALIDATE_TIMESTAMPS) {
   override protected def instantiate = {
     val req = super.instantiate
-    addComponent(new UpdateRequestComponent(req))
-    addComponent(new BatchComponent(req))
+    addComponent(new ValidateTimestampsComponent(req))
     req
   }
 }
 
-class BatchComponent(actor: Actor)
+class ValidateTimestampsComponent(actor: Actor)
   extends Component(actor) {
-  private var validateTimestamps: IncDes = null
-
   bind(classOf[Process], process)
-  bind(classOf[BatchItem], batchItem)
 
   private def process(msg: AnyRef, rf: Any => Unit) {
-    val tc = msg.asInstanceOf[Process].transactionContext
     actor(ValuesSeq()) {
       rsp1 => {
-        val seq = rsp1.asInstanceOf[Sequence[IncDes, IncDes]]
-        seq(LoopSafe(new BatchSafe(tc)))(rf)
+        val seq = rsp1.asInstanceOf[Sequence[String, IncDesLong]]
+        seq(LoopSafe(ValidateSafe()))(rf)
       }
     }
   }
-
-  private def batchItem(msg: AnyRef, rf: Any => Unit) {
-    if (validateTimestamps == null) {
-      validateTimestamps = ValidateTimestamps(actor)
-      _batchItem(BatchItem(validateTimestamps), {
-        rsp => _batchItem(msg, rf)
-      })
-    } else _batchItem(msg, rf)
-  }
-
-  private def _batchItem(msg: AnyRef, rf: Any => Unit) {
-    val req = msg.asInstanceOf[BatchItem]
-    val batchItem = req.batchItem
-    val incDesIncDes = IncDesIncDes(null)
-    val chain = new Chain
-    chain.op(actor, Add[IncDesIncDes, IncDes](null, incDesIncDes))
-    chain.op(incDesIncDes, Set(null, batchItem))
-    actor(chain)(rf)
-  }
 }
 
-class BatchSafe(tc: TransactionContext) extends Safe {
+case class ValidateSafe() extends Safe {
   override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
-    val kvPair = msg.asInstanceOf[KVPair[Int, IncDes]]
-    kvPair.value(Process(tc)) {
-      rsp => rf(true)
+    val kvPair = msg.asInstanceOf[KVPair[String, Long]]
+    val key = kvPair.key
+    val ts1 = kvPair.value
+    val chain = new Chain
+    chain.op(target.systemServices, GetRecord(key), "record")
+    chain.op(Unit => chain("record"), GetTimestamp())
+    target(chain) {
+      rsp => {
+        val ts2 = rsp.asInstanceOf[Long]
+        if (ts1 != ts2) throw new IllegalStateException
+        rf(true)
+      }
     }
   }
 }

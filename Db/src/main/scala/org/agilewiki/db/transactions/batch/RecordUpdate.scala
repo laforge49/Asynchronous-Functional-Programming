@@ -62,7 +62,6 @@ class RecordUpdateFactory
   extends IncDesStringIncDesMapFactory(DBT_RECORD_UPDATE) {
   override protected def instantiate = {
     val req = super.instantiate
-    addComponent(new UpdateRequestComponent(req))
     addComponent(new RecordUpdateComponent(req))
     req
   }

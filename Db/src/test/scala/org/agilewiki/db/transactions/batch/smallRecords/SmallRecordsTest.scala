@@ -130,6 +130,35 @@ class SmallRecordsTest extends SpecificationWithJUnit {
       Future(recordsSeq, Loop((key: String, value: Record) => println(key + "->" + value)))
       systemServices.close
     }
+    "RecordIntSeq" in {
+      val systemServices = SystemServices(new ServicesRootComponentFactory)
+      val dbName = "smallRecords.db"
+      val logDirPathname = "smallRecords"
+      val properties = new Properties
+      properties.put("dbPathname", dbName)
+      properties.put("logDirPathname", logDirPathname)
+      properties.put("flushLog", "true")
+      val db = Subsystem(
+        systemServices,
+        new SmallRecordsComponentFactory,
+        properties = properties,
+        actorId = ActorId("db"))
+      val gamesContent = IncDesIntIncDesMap(null, db)
+      val gamesSeq = new RecordIntSeq(db, "games", "$")
+      val batch = Batch(db)
+      val chain = new Chain
+      chain.op(systemServices, Register(db))
+      chain.op(db, NewRecord(batch, "games"))
+      chain.op(gamesContent, PutString(null, 1, "Chess"))
+      chain.op(gamesContent, PutString(null, 2, "Checkers"))
+      chain.op(gamesContent, PutString(null, 3, "Spider"))
+      chain.op(db, RecordUpdate(batch, "games", "$", gamesContent))
+      chain.op(db, TransactionRequest(batch), "timestamp")
+      chain.op(gamesSeq, LoopSafe(PrintIntStringMap()))
+      Future(systemServices, chain)
+      println(chain.results)
+      systemServices.close
+    }
     "Delete record" in {
       val systemServices = SystemServices(new ServicesRootComponentFactory)
       val dbName = "smallRecords.db"
@@ -154,6 +183,22 @@ class SmallRecordsTest extends SpecificationWithJUnit {
       Future(systemServices, chain)
       println(chain.results)
       systemServices.close
+    }
+  }
+}
+
+case class PrintIntStringMap() extends Safe {
+  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+    val nvPair = msg.asInstanceOf[KVPair[Int, IncDesIncDes]]
+    nvPair.value(Value()) {
+      rsp => {
+        rsp.asInstanceOf[Actor](Value()) {
+          rsp2 => {
+            println(nvPair.key + " -> " + rsp2)
+            rf(true)
+          }
+        }
+      }
     }
   }
 }
