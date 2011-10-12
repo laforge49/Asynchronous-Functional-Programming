@@ -179,13 +179,56 @@ class SmallRecordsTest extends SpecificationWithJUnit {
       val batch = Batch(db)
       val chain = new Chain
       chain.op(systemServices, Register(db))
-      chain.op(db, RecordLock(batch, "fun"))
-      chain.op(db, RecordLock(batch, "family"))
       chain.op(db, DeleteRecord(batch, "fun"))
       chain.op(db, TransactionRequest(batch), "timestamp")
       chain.op(db, RecordsCount(db), "record count")
       chain.op(db, RecordExists(db, null, "fun", ""), "funExists")
       chain.op(db, RecordExists(db, null, "games", ""), "gamesExists")
+      Future(systemServices, chain)
+      println(chain.results)
+      systemServices.close
+    }
+    "recover" in {
+      val systemServices = SystemServices(new ServicesRootComponentFactory)
+      val dbName = "smallRecords.db"
+      val logDirPathname = "smallRecords"
+      val file = new java.io.File(dbName)
+      file.delete
+      val properties = new Properties
+      properties.put("dbPathname", dbName)
+      properties.put("logDirPathname", logDirPathname)
+      val db = Subsystem(
+        systemServices,
+        new SmallRecordsRecoveryComponentFactory,
+        properties = properties,
+        actorId = ActorId("db"))
+      val chain = new Chain
+      chain.op(systemServices, Register(db))
+      chain.op(db, Recover())
+      Future(systemServices, chain)
+      systemServices.close
+    }
+    "Check recovery" in {
+      val systemServices = SystemServices(new ServicesRootComponentFactory)
+      val dbName = "smallRecords.db"
+      val logDirPathname = "smallRecords"
+      val properties = new Properties
+      properties.put("dbPathname", dbName)
+      properties.put("logDirPathname", logDirPathname)
+      properties.put("flushLog", "true")
+      val db = Subsystem(
+        systemServices,
+        new SmallRecordsComponentFactory,
+        properties = properties,
+        actorId = ActorId("db"))
+      val gamesSeq = new RecordIntSeq(db, "games", "$")
+      val chain = new Chain
+      chain.op(systemServices, Register(db))
+      chain.op(db, RecordsCount(db), "record count")
+      chain.op(db, RecordExists(db, null, "fun", ""), "funExists")
+      chain.op(db, RecordExists(db, null, "games", ""), "gamesExists")
+      chain.op(db, RecordSize(db, null, "games", "$"), "gamesSize")
+      chain.op(gamesSeq, LoopSafe(PrintIntStringMap()))
       Future(systemServices, chain)
       println(chain.results)
       systemServices.close
