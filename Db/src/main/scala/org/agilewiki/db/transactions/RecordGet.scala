@@ -73,11 +73,10 @@ class RecordGetComponent(actor: Actor)
         val p = chain("pathname").asInstanceOf[String]
         Resolve(rp + p)
       }, "tuple")
-    actor(chain) {
-      rsp => {
-        val (value, key) = rsp.asInstanceOf[(IncDes, String)]
-        rf(value)
-      }
-    }
+    chain.op(Unit => {
+      val (value, key) = chain("tuple").asInstanceOf[(IncDes, String)]
+      value
+    }, Copy(null))
+    actor(chain)(rf)
   }
 }
