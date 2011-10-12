@@ -40,6 +40,7 @@ package object transactions {
   val DBT_RECORDS_COUNT = FactoryId("dbRc")
   val DBT_RECORD_SIZE = FactoryId("dbrs")
   val DBT_RECORD_GET = FactoryId("dbrg")
+  val DBT_RECORD_EXISTS = FactoryId("dbre")
   val DBT_VALIDATE_TIMESTAMPS = FactoryId("dbvt")
   val DBT_RECORD_LOCK = FactoryId("dbrl")
 }

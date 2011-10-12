@@ -55,6 +55,7 @@ class SmallRecordsTransactionsComponentFactory
     factoryRegistryComponentFactory.registerFactory(new RecordsCountFactory)
     factoryRegistryComponentFactory.registerFactory(new RecordSizeFactory)
     factoryRegistryComponentFactory.registerFactory(new RecordGetFactory)
+    factoryRegistryComponentFactory.registerFactory(new RecordExistsFactory)
     factoryRegistryComponentFactory.registerFactory(new ValidateTimestampsFactory)
     factoryRegistryComponentFactory.registerFactory(new RecordLockFactory)
   }

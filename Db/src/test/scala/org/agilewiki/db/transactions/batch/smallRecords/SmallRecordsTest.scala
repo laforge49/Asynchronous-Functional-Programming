@@ -184,8 +184,8 @@ class SmallRecordsTest extends SpecificationWithJUnit {
       chain.op(db, DeleteRecord(batch, "fun"))
       chain.op(db, TransactionRequest(batch), "timestamp")
       chain.op(db, RecordsCount(db), "record count")
-      chain.op(db, RecordGet(db, null, "fun", ""), "fun")
-      chain.op(db, RecordGet(db, null, "games", ""), "games")
+      chain.op(db, RecordExists(db, null, "fun", ""), "funExists")
+      chain.op(db, RecordExists(db, null, "games", ""), "gamesExists")
       Future(systemServices, chain)
       println(chain.results)
       systemServices.close
