@@ -33,14 +33,14 @@ import blocks._
 object RecordUpdate {
   def apply(batch: IncDes, recordKey: String, pathname: String, value: IncDes) = {
     var pn = pathname
-    if (!pn.startsWith("/")) pn = "/" + pn
-    pn = recordKey + pn
+    if (pn.startsWith("/")) pn = pn.substring(1)
     val vidid = IncDesIncDes(null)
     val jef = new RecordUpdateFactory
     jef.configure(batch.systemServices)
     val je = jef.newActor(null).asInstanceOf[IncDes]
     je.setSystemServices(batch.systemServices)
     val chain = new Chain
+    chain.op(je, PutString(null, "recordKey", recordKey))
     chain.op(je, PutString(null, "pathname", pn))
     chain.op(je, Put[String, IncDesIncDes, IncDes](null, "value", vidid))
     chain.op(value, Copy(null), "copy")
@@ -67,23 +67,29 @@ class RecordUpdateComponent(actor: Actor)
     val tc = msg.asInstanceOf[Process].transactionContext.asInstanceOf[UpdateContext]
     val ts = tc.timestamp
     var key = ""
+    chain.op(actor, GetValue2("recordKey"), "recordKey")
+    chain.op(systemServices, Unit => GetRecord(chain("recordKey").asInstanceOf[String]), "record")
     chain.op(actor, GetValue2("pathname"), "pathname")
     chain.op(actor, GetValue("value"), "value")
     chain.op(Unit => chain("value"), Copy(null), "copy")
     chain.op(systemServices, RecordsPathname(), "recordsPathname")
-    chain.op(systemServices, DbRoot(), "dbRoot")
     chain.op(
-      Unit => chain("dbRoot"),
       Unit => {
-        val rp = chain("recordsPathname").asInstanceOf[String]
+        val record = chain("record")
+        if (record == null) throw new IllegalArgumentException(
+          "no such record: " + chain("recordKey").asInstanceOf[String])
+        record
+      },
+      Unit => {
         val p = chain("pathname").asInstanceOf[String]
-        Resolve(rp + p)
+        Resolve(p)
       }, "tuple")
-    chain.op(Unit => {
-      val (incDes, k) = chain("tuple").asInstanceOf[(IncDes, String)]
-      key = k
-      incDes
-    }, Unit => Assign(tc, key, chain("copy").asInstanceOf[IncDes]))
+    chain.op(
+      Unit => {
+        val (incDes, k) = chain("tuple").asInstanceOf[(IncDes, String)]
+        key = k
+        incDes
+      }, Unit => Assign(tc, key, chain("copy").asInstanceOf[IncDes]))
     chain.op(Unit => chain("record"), SetTimestamp(tc, ts))
   }
 }
