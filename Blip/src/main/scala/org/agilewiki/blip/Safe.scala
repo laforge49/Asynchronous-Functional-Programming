@@ -31,7 +31,7 @@ abstract class Safe {
 class SafeConstant(any: Any)
   extends Safe {
   override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
-    if (rf != null) rf(any)
+    rf(any)
   }
 }
 
