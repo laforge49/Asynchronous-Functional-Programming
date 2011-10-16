@@ -88,7 +88,11 @@ class TransactionProcessorComponent(actor: Actor)
             rsp1 => {
               systemServices(LogTransaction(timestamp, bytes)) {
                 rsp2 => {
-                  rf(timestamp)
+                  systemServices(Commit()) {
+                    rsp3 => {
+                      rf(timestamp)
+                    }
+                  }
                 }
               }
             }
@@ -107,14 +111,6 @@ class TransactionProcessorComponent(actor: Actor)
       val utc = tc.asInstanceOf[UpdateContext]
       utc.timestamp = ts
     }
-    block(Process(tc)) {
-      rsp2 => {
-        systemServices(Commit()) {
-          rsp3 => {
-            rf(rsp2)
-          }
-        }
-      }
-    }
+    block(Process(tc))(rf)
   }
 }
