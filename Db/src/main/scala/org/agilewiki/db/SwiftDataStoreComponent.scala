@@ -38,7 +38,7 @@ class SwiftDataStoreComponentFactory extends ComponentFactory {
 class SwiftDataStoreComponent(actor: Actor)
   extends Component(actor) {
   var dirty = false
-  var block: Block = null
+  var rootBlock: Block = null
 
   bind(classOf[Commit], commit)
   bind(classOf[Abort], abort)
@@ -46,18 +46,25 @@ class SwiftDataStoreComponent(actor: Actor)
   bind(classOf[DbRoot], dbRoot)
 
   private def commit(msg: AnyRef, rf: Any => Unit) {
-    if (!dirty) rf(null)
-    else systemServices(WriteRootBlock(block)) {
-      rsp => {
-        dirty = false
-        block(Clean())(rf)
-      }
+    if (!dirty) {
+      rf(null)
+      return
     }
+    val chain = new Chain
+    chain.op(systemServices, LogInfo(), "tuple")
+    chain.op(rootBlock, Value(), "rootMap")
+    chain.op(systemServices, WriteRootBlock(rootBlock))
+    chain.op(
+      Unit => {
+        dirty = false
+        rootBlock
+      }, Clean())
+    actor(chain)(rf)
   }
 
   private def abort(msg: AnyRef, rf: Any => Unit) {
     if (dirty) {
-      block = null
+      rootBlock = null
       dirty = false
     }
     throw msg.asInstanceOf[Abort].exception
@@ -69,11 +76,11 @@ class SwiftDataStoreComponent(actor: Actor)
   }
 
   private def dbRoot(msg: AnyRef, rf: Any => Unit) {
-    if (block != null) rf(block)
+    if (rootBlock != null) rf(rootBlock)
     else systemServices(ReadRootBlock()) {
       rsp => {
-        block = rsp.asInstanceOf[Block]
-        rf(block)
+        rootBlock = rsp.asInstanceOf[Block]
+        rf(rootBlock)
       }
     }
   }

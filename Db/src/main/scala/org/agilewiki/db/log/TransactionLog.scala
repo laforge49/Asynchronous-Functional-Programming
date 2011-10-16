@@ -36,6 +36,7 @@ class TransactionLogComponent(actor: Actor)
   extends Component(actor) {
   private var transactionLog = new TransactionLog
   bindSafe(classOf[LogTransaction], new SafeForward(transactionLog))
+  bindSafe(classOf[LogInfo], new SafeForward(transactionLog))
 
   override def open {
     super.open
