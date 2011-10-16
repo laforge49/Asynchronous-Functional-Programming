@@ -52,6 +52,7 @@ class TransactionLogComponent(actor: Actor)
 class TransactionLog
   extends Actor {
   var logDirPathname: String = null
+  var logFile: java.io.File = null
   var flush = false
   private val logTS = (new org.joda.time.DateTime(org.joda.time.DateTimeZone.UTC)).
     toString("yyyy-MM-dd_HH-mm-ss_SSS")
@@ -59,7 +60,12 @@ class TransactionLog
 
   setMailbox(new Mailbox)
   bind(classOf[LogTransaction], logTransaction)
-  bind(classOf[LogTransaction], logTransaction)
+  bind(classOf[LogInfo], logInfo)
+
+  private def logInfo(msg: AnyRef, rf: Any => Unit) {
+    initialize
+    rf((logTS, logFile.length))
+  }
 
   private def logTransaction(msg: AnyRef, rf: Any => Unit) {
     initialize
@@ -78,7 +84,8 @@ class TransactionLog
     val dir = new java.io.File(logDirPathname)
     if (!dir.exists) dir.mkdirs
     val fileName = dir.getCanonicalPath + java.io.File.separator + logTS + ".jnl"
-    writer = new java.io.DataOutputStream(new java.io.FileOutputStream(fileName))
+    logFile = new java.io.File(fileName)
+    writer = new java.io.DataOutputStream(new java.io.FileOutputStream(logFile))
   }
 
   override def close {
