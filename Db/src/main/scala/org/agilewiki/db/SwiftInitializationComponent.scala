@@ -25,7 +25,6 @@ package org.agilewiki
 package db
 
 import blip._
-import seq._
 import incDes._
 import records._
 
@@ -36,7 +35,7 @@ class SwiftInitializationComponentFactory extends ComponentFactory {
 class SwiftInitializationComponent(actor: Actor)
   extends SmallRecordsInitializationComponent(actor) {
 
-  override protected def recordsPathname = "$/records/"
+  override protected def recordsPathname = "$/records/$/"
 
   override protected def initDb(msg: AnyRef, rf: Any => Unit) {
     val rootBlock = msg.asInstanceOf[InitDb].rootBlock
@@ -57,7 +56,8 @@ class SwiftInitializationComponent(actor: Actor)
   override protected def records(msg: AnyRef, rf: Any => Unit) {
     val chain = new Chain
     chain.op(actor, DbRoot(), "root")
-    chain.op(Unit => chain("root"), GetValue("records"))
+    chain.op(Unit => chain("root"), Value(), "rootMap")
+    chain.op(Unit => chain("rootMap"), Unit => GetValue("records"))
     actor(chain)(rf)
   }
 }
