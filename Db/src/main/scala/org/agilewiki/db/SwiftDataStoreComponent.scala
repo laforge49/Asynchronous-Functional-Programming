@@ -53,6 +53,14 @@ class SwiftDataStoreComponent(actor: Actor)
     val chain = new Chain
     chain.op(systemServices, LogInfo(), "tuple")
     chain.op(rootBlock, Value(), "rootMap")
+    chain.op(Unit => chain("rootMap"), Unit => {
+      val (logFileTimestamp, logFilePosition) = chain("tuple").asInstanceOf[(String, Long)]
+      PutLong(null, "logFilePosition", logFilePosition)
+    })
+    chain.op(Unit => chain("rootMap"), Unit => {
+      val (logFileTimestamp, logFilePosition) = chain("tuple").asInstanceOf[(String, Long)]
+      PutString(null, "logFileTimestamp", logFileTimestamp)
+    })
     chain.op(systemServices, WriteRootBlock(rootBlock))
     chain.op(
       Unit => {
