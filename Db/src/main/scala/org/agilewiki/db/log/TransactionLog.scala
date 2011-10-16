@@ -40,7 +40,6 @@ class TransactionLogComponent(actor: Actor)
   override def open {
     super.open
     transactionLog.logDirPathname = GetProperty.required("logDirPathname")
-    transactionLog.flush = "true" == GetProperty("flushLog")
   }
 
   override def close {
@@ -53,7 +52,6 @@ class TransactionLog
   extends Actor {
   var logDirPathname: String = null
   var logFile: java.io.File = null
-  var flush = false
   private val logTS = (new org.joda.time.DateTime(org.joda.time.DateTimeZone.UTC)).
     toString("yyyy-MM-dd_HH-mm-ss_SSS")
   private var writer: java.io.DataOutputStream = null
@@ -75,7 +73,7 @@ class TransactionLog
     writer.writeLong(timestamp)
     writer.writeInt(bytes.length)
     writer.write(bytes)
-    if (flush) writer.flush
+    writer.flush
     rf(null)
   }
 

@@ -58,7 +58,6 @@ class RecordLockTest extends SpecificationWithJUnit {
       val properties = new Properties
       properties.put("dbPathname", dbName)
       properties.put("logDirPathname", logDirPathname)
-      properties.put("flushLog", "true")
       val db = Subsystem(
         systemServices,
         new SmallRecordsComponentFactory,
@@ -83,7 +82,6 @@ class RecordLockTest extends SpecificationWithJUnit {
       val properties = new Properties
       properties.put("dbPathname", dbName)
       properties.put("logDirPathname", logDirPathname)
-      properties.put("flushLog", "true")
       val db = Subsystem(
         systemServices,
         new SmallRecordsComponentFactory,
