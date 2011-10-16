@@ -88,7 +88,7 @@ class TransactionProcessorComponent(actor: Actor)
             rsp1 => {
               systemServices(LogTransaction(timestamp, bytes)) {
                 rsp2 => {
-                  systemServices(Commit()) {
+                  systemServices(Commit(block)) {
                     rsp3 => {
                       rf(timestamp)
                     }
