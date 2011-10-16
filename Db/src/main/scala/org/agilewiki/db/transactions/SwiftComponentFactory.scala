@@ -30,7 +30,7 @@ import db.log._
 
 class SwiftComponentFactory
   extends ComponentFactory {
-  addDependency(classOf[SmallDataStoreComponentFactory])
+  addDependency(classOf[SwiftDataStoreComponentFactory])
   addDependency(classOf[TransactionLogComponentFactory])
   addDependency(classOf[SwiftTransactionsComponentFactory])
 }
