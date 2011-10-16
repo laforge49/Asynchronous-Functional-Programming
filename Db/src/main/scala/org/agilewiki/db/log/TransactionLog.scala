@@ -62,8 +62,8 @@ class TransactionLog
   bind(classOf[LogInfo], logInfo)
 
   private def logInfo(msg: AnyRef, rf: Any => Unit) {
-    initialize
-    rf((logTS, logFile.length))
+    val position = if (logFile == null) 0L else logFile.length
+    rf((logTS, position))
   }
 
   private def logTransaction(msg: AnyRef, rf: Any => Unit) {

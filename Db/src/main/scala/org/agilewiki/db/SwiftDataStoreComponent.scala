@@ -38,6 +38,7 @@ class SwiftDataStoreComponentFactory extends ComponentFactory {
 class SwiftDataStoreComponent(actor: Actor)
   extends Component(actor) {
   var dirty = false
+  var init = true
   var rootBlock: Block = null
 
   bind(classOf[Commit], commit)
@@ -50,6 +51,15 @@ class SwiftDataStoreComponent(actor: Actor)
       rf(null)
       return
     }
+    actor(updateRootBlock) {
+      rsp => {
+        dirty = false
+        rootBlock(Clean())(rf)
+      }
+    }
+  }
+
+  private def updateRootBlock = {
     val chain = new Chain
     chain.op(systemServices, LogInfo(), "tuple")
     chain.op(rootBlock, Value(), "rootMap")
@@ -62,12 +72,7 @@ class SwiftDataStoreComponent(actor: Actor)
       PutString(null, "logFileTimestamp", logFileTimestamp)
     })
     chain.op(systemServices, WriteRootBlock(rootBlock))
-    chain.op(
-      Unit => {
-        dirty = false
-        rootBlock
-      }, Clean())
-    actor(chain)(rf)
+    chain
   }
 
   private def abort(msg: AnyRef, rf: Any => Unit) {
@@ -84,12 +89,44 @@ class SwiftDataStoreComponent(actor: Actor)
   }
 
   private def dbRoot(msg: AnyRef, rf: Any => Unit) {
-    if (rootBlock != null) rf(rootBlock)
-    else systemServices(ReadRootBlock()) {
+    if (rootBlock != null) {
+      rf(rootBlock)
+      return
+    }
+    val chain = new Chain
+    chain.op(actor, ReadRootBlock(), "rootBlock")
+    chain.op(Unit => chain("rootBlock"), Value(), "rootMap")
+    chain.op(Unit => chain("rootMap"), GetValue2("logFileTimestamp"), "logFileTimestamp")
+    chain.op(Unit => chain("rootMap"), GetValue2("logFilePosition"), "logFilePosition")
+    actor(chain) {
       rsp => {
-        rootBlock = rsp.asInstanceOf[Block]
-        rf(rootBlock)
+        rootBlock = chain.results("rootBlock").asInstanceOf[Block]
+        val rootMap = chain.results("rootMap").asInstanceOf[IncDes]
+        val logFileTimestamp = chain.results("logFileTimestamp").asInstanceOf[String]
+        val logFilePosition = chain.results("logFilePosition").asInstanceOf[Long]
+        if (!init) recover(rootMap, logFileTimestamp, logFilePosition, rf)
+        else if (logFilePosition == -1) initialize(rootMap, rf)
+        else restore(rootMap, rf)
       }
+    }
+  }
+
+  private def initialize(rootMap: IncDes, rf: Any => Unit) {
+    actor(updateRootBlock) {
+      rsp => rf(rootBlock)
+    }
+  }
+
+  private def restore(rootMap: IncDes, rf: Any => Unit) {
+    //todo
+    rf(rootBlock)
+  }
+
+  private def recover(rootMap: IncDes, logFileTimestamp: String, logFilePosition: Long, rf: Any => Unit) {
+    val chain = new Chain
+    //todo
+    actor(chain) {
+      rsp => rf(rootBlock)
     }
   }
 }
