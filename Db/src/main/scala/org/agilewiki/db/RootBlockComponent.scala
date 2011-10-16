@@ -91,7 +91,6 @@ class RootBlockComponent(actor: Actor)
   }
 
   private def _readRootBlock(offset: Long)(rf: Any => Unit) {
-    val headerBytes: Array[Byte] = null
     systemServices(ReadBytesOrNull(offset, HEADER_LENGTH)) {
       rsp1 => {
         if (rsp1 == null) {

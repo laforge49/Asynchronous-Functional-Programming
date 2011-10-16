@@ -53,6 +53,10 @@ case class LogTransaction(timestamp: Long, bytes: Array[Byte])
 
 case class LogInfo()
 
+case class DbLogInfo()
+
+case class SetDbLogInfo(transactionContext: UpdateContext, logFileTimestamp: String, logFilePosition: Long)
+
 case class ReadBytes(offset: Long, length: Int)
 
 case class ReadBytesOrNull(offset: Long, length: Int)

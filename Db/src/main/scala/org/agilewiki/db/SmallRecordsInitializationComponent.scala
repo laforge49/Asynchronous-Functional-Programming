@@ -40,13 +40,15 @@ class SmallRecordsInitializationComponent(actor: Actor)
   bind(classOf[Records], records)
   bind(classOf[GetRecord], getRecord)
   bind(classOf[AssignRecord], assignRecord)
-  bindSafe(classOf[RecordsPathname], new SafeConstant("$/"))
+  bindSafe(classOf[RecordsPathname], new SafeConstant(recordsPathname))
+
+  protected def recordsPathname = "$/"
 
   override def open {
     actor.requiredService(classOf[DbRoot])
   }
 
-  private def initDb(msg: AnyRef, rf: Any => Unit) {
+  protected def initDb(msg: AnyRef, rf: Any => Unit) {
     val rootBlock = msg.asInstanceOf[InitDb].rootBlock
     val records = IncDesStringRecordMap(null, systemServices)
     rootBlock(Set(null, records)) {
@@ -54,7 +56,7 @@ class SmallRecordsInitializationComponent(actor: Actor)
     }
   }
 
-  private def records(msg: AnyRef, rf: Any => Unit) {
+  protected def records(msg: AnyRef, rf: Any => Unit) {
     val chain = new Chain
     chain.op(actor, DbRoot(), "root")
     chain.op(Unit => chain("root"), Value())
