@@ -112,23 +112,6 @@ class SmallDataStoreRecoveryComponent(actor: Actor)
   }
 }
 
-object JnlsSafe extends Safe {
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)
-                   (implicit sender: ActiveActor) {
-    val nvPair = msg.asInstanceOf[KVPair[Long, Block]]
-    val timestamp = nvPair.key
-    val block = nvPair.value
-    val mailbox = target.mailbox
-    val updateContext = new UpdateContext
-    updateContext.timestamp = timestamp
-    block(Process(updateContext)) {
-      rsp => {
-        rf(true)
-      }
-    }
-  }
-}
-
 object JnlFilesSafe extends Safe {
   override def func(target: Actor, msg: AnyRef, rf: Any => Unit)
                    (implicit sender: ActiveActor) {
