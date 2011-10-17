@@ -45,6 +45,7 @@ class SwiftDataStoreComponent(actor: Actor)
   var rootBlock: Block = null
   var logDirPathname: String = null
   var commitsPerWrite = 1
+  var commitCounter = 1
 
   bind(classOf[Commit], commit)
   bind(classOf[Abort], abort)
@@ -55,6 +56,7 @@ class SwiftDataStoreComponent(actor: Actor)
     super.open
     logDirPathname = GetProperty.required("logDirPathname")
     commitsPerWrite = GetProperty.int("commitsPerWrite", 1)
+    commitCounter = commitsPerWrite
   }
 
   private def commit(msg: AnyRef, rf: Any => Unit) {
@@ -62,6 +64,13 @@ class SwiftDataStoreComponent(actor: Actor)
       rf(null)
       return
     }
+    if (commitCounter < commitsPerWrite) {
+      commitCounter += 1
+      dirty = false
+      rf(null)
+      return
+    }
+    commitCounter = 1
     val chain = new Chain
     chain.op(actor, updateRootBlock)
     chain.op(actor, WriteRootBlock(rootBlock))
