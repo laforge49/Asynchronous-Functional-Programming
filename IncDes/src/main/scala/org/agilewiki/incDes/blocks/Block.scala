@@ -84,23 +84,19 @@ class Block extends IncDesIncDes {
 
   override def changed(transactionContext: TransactionContext, lenDiff: Int, what: IncDes, rf: Any => Unit) {
     data = null
-    rf(null)
+    if (transactionContext == null) {
+      rf(null)
+      return
+    }
+    dirty = true
+    systemServices(DirtyBlock(this))(rf)
   }
 
   override def writable(transactionContext: TransactionContext)(rf: Any => Unit) {
     if (transactionContext != null && transactionContext.isInstanceOf[QueryContext])
       throw new IllegalStateException("QueryContext does not support writable")
     if (readOnly) throw new IllegalStateException("Block is read-only")
-    if (transactionContext == null) {
-      rf(null)
-      return
-    }
-    if (dirty) {
-      rf(null)
-      return
-    }
-    dirty = true
-    systemServices(DirtyBlock(this))(rf)
+    rf(null)
   }
 
   private def isQuery(msg: AnyRef, rf: Any => Unit) {

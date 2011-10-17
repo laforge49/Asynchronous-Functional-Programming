@@ -44,6 +44,7 @@ class SwiftDataStoreComponent(actor: Actor)
   var init = true
   var rootBlock: Block = null
   var logDirPathname: String = null
+  var commitsPerWrite = 1
 
   bind(classOf[Commit], commit)
   bind(classOf[Abort], abort)
@@ -53,6 +54,7 @@ class SwiftDataStoreComponent(actor: Actor)
   override def open {
     super.open
     logDirPathname = GetProperty.required("logDirPathname")
+    commitsPerWrite = GetProperty.int("commitsPerWrite", 1)
   }
 
   private def commit(msg: AnyRef, rf: Any => Unit) {
