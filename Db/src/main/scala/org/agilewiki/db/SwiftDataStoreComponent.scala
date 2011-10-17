@@ -55,7 +55,7 @@ class SwiftDataStoreComponent(actor: Actor)
   override def open {
     super.open
     logDirPathname = GetProperty.required("logDirPathname")
-    commitsPerWrite = GetProperty.int("commitsPerWrite", 1)
+    commitsPerWrite = GetProperty.int("commitsPerWrite", 100)
     commitCounter = commitsPerWrite
   }
 
