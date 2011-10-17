@@ -53,7 +53,6 @@ class SmallDataStoreRecoveryComponent(actor: Actor)
       }
     }
   })
-  bindSafe(classOf[UpdateTransaction], new Update(process))
   bind(classOf[DbRoot], dbRoot)
   bind(classOf[DirtyBlock], dirtyBlock)
 
@@ -111,22 +110,18 @@ class SmallDataStoreRecoveryComponent(actor: Actor)
     dirty = true
     rf(null)
   }
-
-  private def process(msg: AnyRef, rf: Any => Unit) {
-    val req = msg.asInstanceOf[UpdateTransaction]
-    val je = req.block
-    val ts = req.timestamp
-    val tc = mailbox.transactionContext.asInstanceOf[UpdateContext]
-    tc.timestamp = ts
-    je(Process(tc))(rf)
-  }
 }
 
 object JnlsSafe extends Safe {
   override def func(target: Actor, msg: AnyRef, rf: Any => Unit)
                    (implicit sender: ActiveActor) {
     val nvPair = msg.asInstanceOf[KVPair[Long, Block]]
-    target.systemServices(new UpdateTransaction(nvPair.key, nvPair.value)) {
+    val timestamp = nvPair.key
+    val block = nvPair.value
+    val mailbox = target.mailbox
+    val updateContext = new UpdateContext
+    updateContext.timestamp = timestamp
+    block(Process(updateContext)) {
       rsp => {
         rf(true)
       }
