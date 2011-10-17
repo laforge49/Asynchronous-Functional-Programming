@@ -90,7 +90,10 @@ class SwiftLockTest extends SpecificationWithJUnit {
         actorId = ActorId("db"))
       val chain = new Chain
       chain.op(systemServices, Register(db))
-      chain.op(db, Counter(db).get, "oldCounterValue")
+      val (b0, t0) = Counter(db).buildAdd(-1)
+      chain.op(db, b0)
+      chain.op(db, t0)
+      chain.op(db, Counter(db).get, "resetCounterValue")
       val (b1, t1) = Counter(db).buildAdd(1)
       val (b2, t2) = Counter(db).buildAdd(1)
       chain.op(db, b1)

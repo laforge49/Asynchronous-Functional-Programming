@@ -134,12 +134,14 @@ class SwiftDataStoreComponent(actor: Actor)
   }
 
   private def initialize(rootMap: IncDes, rf: Any => Unit) {
+    init = false
     actor(updateRootBlock) {
       rsp => rf(rootBlock)
     }
   }
 
   private def restore(rootMap: IncDes, rf: Any => Unit) {
+    println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     //todo
     rf(rootBlock)
   }
