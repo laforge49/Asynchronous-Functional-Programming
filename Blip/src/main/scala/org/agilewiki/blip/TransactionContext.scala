@@ -24,10 +24,10 @@
 package org.agilewiki
 package blip
 
-class TransactionContext(transactionProcerssor: Actor)
+class TransactionContext
 
-class QueryContext(transactionProcerssor: Actor) extends TransactionContext(transactionProcerssor)
+class QueryContext extends TransactionContext
 
-class UpdateContext(transactionProcerssor: Actor) extends TransactionContext(transactionProcerssor) {
+class UpdateContext extends TransactionContext {
   var timestamp = 0L
 }

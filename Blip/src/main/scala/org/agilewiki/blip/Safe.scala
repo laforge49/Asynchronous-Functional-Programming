@@ -173,7 +173,7 @@ class Query(messageFunction: (AnyRef, Any => Unit) => Unit)
   override def maxCompatibleLevel = 5
 
   override def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq) {
-    processTransaction(mailbox, mailboxReq, new QueryContext(mailbox.currentRequestMessage.target))
+    processTransaction(mailbox, mailboxReq, new QueryContext)
   }
 }
 
@@ -184,6 +184,6 @@ class Update(messageFunction: (AnyRef, Any => Unit) => Unit)
   override def maxCompatibleLevel = 0
 
   override def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq) {
-    processTransaction(mailbox, mailboxReq, new UpdateContext(mailbox.currentRequestMessage.target))
+    processTransaction(mailbox, mailboxReq, new UpdateContext)
   }
 }
