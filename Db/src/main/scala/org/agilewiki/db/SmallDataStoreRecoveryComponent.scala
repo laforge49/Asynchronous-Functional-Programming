@@ -142,7 +142,9 @@ object JnlsSafe extends Safe {
                    (implicit sender: ActiveActor) {
     val nvPair = msg.asInstanceOf[KVPair[Long, Block]]
     target.systemServices(new UpdateTransaction(nvPair.key, nvPair.value)) {
-      rsp => rf(true)
+      rsp => {
+        rf(true)
+      }
     }
   }
 }

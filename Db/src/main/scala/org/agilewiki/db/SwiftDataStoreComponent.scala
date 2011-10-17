@@ -27,6 +27,8 @@ package db
 import blip._
 import incDes._
 import blocks._
+import log._
+import seq._
 import services._
 
 class SwiftDataStoreComponentFactory extends ComponentFactory {
@@ -58,7 +60,10 @@ class SwiftDataStoreComponent(actor: Actor)
       rf(null)
       return
     }
-    actor(updateRootBlock) {
+    val chain = new Chain
+    chain.op(actor, updateRootBlock)
+    chain.op(actor, WriteRootBlock(rootBlock))
+    actor(chain) {
       rsp => {
         dirty = false
         rootBlock(Clean())(rf)
@@ -78,7 +83,6 @@ class SwiftDataStoreComponent(actor: Actor)
       val (logFileTimestamp, logFilePosition) = chain("tuple").asInstanceOf[(String, Long)]
       PutString(null, "logFileTimestamp", logFileTimestamp)
     })
-    chain.op(systemServices, WriteRootBlock(rootBlock))
     chain
   }
 
@@ -111,9 +115,9 @@ class SwiftDataStoreComponent(actor: Actor)
         val rootMap = chain.results("rootMap").asInstanceOf[IncDes]
         val logFileTimestamp = chain.results("logFileTimestamp").asInstanceOf[String]
         val logFilePosition = chain.results("logFilePosition").asInstanceOf[Long]
-        if (!init) recover(rootMap, logFileTimestamp, logFilePosition, rf)
+        if (!init) restore(rootMap, rf)
         else if (logFilePosition == -1) initialize(rootMap, rf)
-        else restore(rootMap, rf)
+        else recover(rootMap, logFileTimestamp, logFilePosition, rf)
       }
     }
   }
@@ -133,15 +137,23 @@ class SwiftDataStoreComponent(actor: Actor)
     val dir = new java.io.File(logDirPathname)
     val fileName = dir.getCanonicalPath + java.io.File.separator + logFileTimestamp + ".jnl"
     val logFile = new java.io.File(fileName)
-    if (!logFile.exists) throw new IllegalStateException("unable to open "+fileName)
-    if(logFile.length == logFilePosition) {
+    if (!logFile.exists) throw new IllegalStateException("no such log file: " + fileName)
+    val logFileLength = logFile.length
+    if(logFileLength == logFilePosition) {
       initialize(rootMap, rf)
       return
     }
-    val chain = new Chain
-    //todo
-    actor(chain) {
-      rsp => rf(rootBlock)
+    if (logFileLength < logFilePosition) throw new IllegalStateException("position is beyond eof: "+fileName)
+    val inputStream = new java.io.FileInputStream(logFile)
+    var rem = logFilePosition
+    while (rem > 0) {
+      rem -= inputStream.skip(rem)
+    }
+    val reader = new java.io.DataInputStream(inputStream)
+    val seq = new TransactionsSeq(reader, mailbox)
+    seq.setSystemServices(systemServices)
+    seq(LoopSafe(JnlsSafe)) {
+      rsp => initialize(rootMap, rf)
     }
   }
 }
