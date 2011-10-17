@@ -27,6 +27,7 @@ package db
 import blip._
 import incDes._
 import blocks._
+import services._
 
 class SwiftDataStoreComponentFactory extends ComponentFactory {
   addDependency(classOf[TransactionProcessorComponentFactory])
@@ -40,11 +41,17 @@ class SwiftDataStoreComponent(actor: Actor)
   var dirty = false
   var init = true
   var rootBlock: Block = null
+  var logDirPathname: String = null
 
   bind(classOf[Commit], commit)
   bind(classOf[Abort], abort)
   bind(classOf[DirtyBlock], dirtyBlock)
   bind(classOf[DbRoot], dbRoot)
+
+  override def open {
+    super.open
+    logDirPathname = GetProperty.required("logDirPathname")
+  }
 
   private def commit(msg: AnyRef, rf: Any => Unit) {
     if (!dirty) {
@@ -123,6 +130,14 @@ class SwiftDataStoreComponent(actor: Actor)
   }
 
   private def recover(rootMap: IncDes, logFileTimestamp: String, logFilePosition: Long, rf: Any => Unit) {
+    val dir = new java.io.File(logDirPathname)
+    val fileName = dir.getCanonicalPath + java.io.File.separator + logFileTimestamp + ".jnl"
+    val logFile = new java.io.File(fileName)
+    if (!logFile.exists) throw new IllegalStateException("unable to open "+fileName)
+    if(logFile.length == logFilePosition) {
+      initialize(rootMap, rf)
+      return
+    }
     val chain = new Chain
     //todo
     actor(chain) {
