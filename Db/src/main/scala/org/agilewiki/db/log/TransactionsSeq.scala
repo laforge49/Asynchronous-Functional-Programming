@@ -30,10 +30,9 @@ import seq._
 import incDes._
 import blocks._
 
-class TransactionsSeq(pathname: String, jeMailbox: Mailbox)
+class TransactionsSeq(reader: java.io.DataInputStream, jeMailbox: Mailbox)
   extends Sequence[Long, Block] {
   private var kvPair: KVPair[Long, Block] = _
-  private var reader: java.io.DataInputStream = _
 
   setMailbox(new Mailbox)
 
@@ -64,13 +63,8 @@ class TransactionsSeq(pathname: String, jeMailbox: Mailbox)
     kvPair = new KVPair(timestamp, block)
   }
 
-  def init {
-    reader = new java.io.DataInputStream(new java.io.FileInputStream(pathname))
-  }
-
   override def first(msg: AnyRef, rf: Any => Unit) {
     if (kvPair != null) throw new IllegalStateException
-    init
     read
     rf(kvPair)
   }
@@ -79,7 +73,6 @@ class TransactionsSeq(pathname: String, jeMailbox: Mailbox)
     val key = msg.asInstanceOf[Current[Long]].key
     if (kvPair == null) {
       if (key != 0L) throw new IllegalStateException
-      init
       read
     } else if (kvPair.key != key) throw new IllegalStateException
     rf(kvPair)
@@ -89,7 +82,6 @@ class TransactionsSeq(pathname: String, jeMailbox: Mailbox)
     val key = msg.asInstanceOf[Next[Long]].key
     if (kvPair == null) {
       if (key != 0L) throw new IllegalStateException
-      init
     } else if (kvPair.key != key) throw new IllegalStateException
     read
     rf(kvPair)
