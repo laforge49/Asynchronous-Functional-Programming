@@ -2,7 +2,7 @@ package org.agilewiki
 package db
 package transactions
 package swift
-package swiftRecords
+package swiftLock
 
 import blip._
 import services._

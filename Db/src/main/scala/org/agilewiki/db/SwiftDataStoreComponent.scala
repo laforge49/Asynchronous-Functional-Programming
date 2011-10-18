@@ -153,7 +153,8 @@ class SwiftDataStoreComponent(actor: Actor)
   }
 
   private def restore(rootMap: IncDes, rf: Any => Unit) {
-    updatesSeq(LoopSafe(JnlsSafe)) {
+    if (updates.isEmpty) rf(rootBlock)
+    else updatesSeq(LoopSafe(JnlsSafe)) {
       rsp => initialize(rootMap, rf)
     }
   }
