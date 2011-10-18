@@ -46,6 +46,7 @@ class SwiftDataStoreComponent(actor: Actor)
   var logDirPathname: String = null
   var commitsPerWrite = 1
   var commitCounter = 1
+  var updates = new java.util.TreeMap[Long, Block]
 
   bind(classOf[Commit], commit)
   bind(classOf[Abort], abort)
@@ -65,11 +66,16 @@ class SwiftDataStoreComponent(actor: Actor)
       return
     }
     if (commitCounter < commitsPerWrite) {
+      val req = msg.asInstanceOf[Commit]
+      val timestamp = req.timestamp
+      val update = req.update
+      updates.put(timestamp, update)
       commitCounter += 1
       dirty = false
       rf(null)
       return
     }
+    updates.clear()
     commitCounter = 1
     val chain = new Chain
     chain.op(actor, updateRootBlock)

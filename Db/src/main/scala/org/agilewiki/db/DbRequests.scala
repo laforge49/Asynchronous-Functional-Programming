@@ -41,7 +41,7 @@ class UpdateTransaction(_timestamp: Long, block: Block)
   def timestamp = _timestamp
 }
 
-case class Commit(update: Block)
+case class Commit(timestamp: Long, update: Block)
 
 case class Abort(exception: Exception)
 
