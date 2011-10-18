@@ -47,6 +47,12 @@ class SwiftDataStoreComponent(actor: Actor)
   var commitsPerWrite = 1
   var commitCounter = 1
   var updates = new java.util.TreeMap[Long, Block]
+  lazy val updatesSeq = {
+    val seq = new NavMapSeq(updates)
+    seq.setMailbox(mailbox)
+    seq.setSystemServices(systemServices)
+    seq
+  }
 
   bind(classOf[Commit], commit)
   bind(classOf[Abort], abort)
@@ -147,9 +153,9 @@ class SwiftDataStoreComponent(actor: Actor)
   }
 
   private def restore(rootMap: IncDes, rf: Any => Unit) {
-    println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    //todo
-    rf(rootBlock)
+    updatesSeq(LoopSafe(JnlsSafe)) {
+      rsp => initialize(rootMap, rf)
+    }
   }
 
   private def recover(rootMap: IncDes, logFileTimestamp: String, logFilePosition: Long, rf: Any => Unit) {
