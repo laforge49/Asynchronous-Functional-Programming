@@ -18,7 +18,7 @@ class Driver extends Actor {
   bind(classOf[DoIt], doit)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
-    val range = new Range(0, 100000)
+    val range = new Range(0, 1000)
     range.setMailbox(mailbox)
     range.setSystemServices(systemServices)
     range(LoopSafe(Looper()))(rf)
