@@ -171,10 +171,8 @@ class SwiftDataStoreComponent(actor: Actor)
     }
     if (logFileLength < logFilePosition) throw new IllegalStateException("position is beyond eof: "+fileName)
     val inputStream = new java.io.FileInputStream(logFile)
-    var rem = logFilePosition
-    while (rem > 0) {
-      rem -= inputStream.skip(rem)
-    }
+    val fileChannel = inputStream.getChannel
+    fileChannel.position(logFilePosition)
     val reader = new java.io.DataInputStream(inputStream)
     val seq = new TransactionsSeq(reader, mailbox)
     seq.setSystemServices(systemServices)
