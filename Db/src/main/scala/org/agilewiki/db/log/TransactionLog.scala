@@ -27,6 +27,7 @@ package log
 
 import blip._
 import services._
+import java.nio.channels._
 
 class TransactionLogComponentFactory extends ComponentFactory {
   override def instantiate(actor: Actor) = new TransactionLogComponent(actor)
@@ -56,13 +57,14 @@ class TransactionLog
   private val logTS = (new org.joda.time.DateTime(org.joda.time.DateTimeZone.UTC)).
     toString("yyyy-MM-dd_HH-mm-ss_SSS")
   private var writer: java.io.DataOutputStream = null
+  private var fileChannel: FileChannel = null
 
   setMailbox(new Mailbox)
   bind(classOf[LogTransaction], logTransaction)
   bind(classOf[LogInfo], logInfo)
 
   private def logInfo(msg: AnyRef, rf: Any => Unit) {
-    val position = if (logFile == null) 0L else logFile.length
+    val position = if (logFile == null) 0L else fileChannel.size
     rf((logTS, position))
   }
 
@@ -75,6 +77,7 @@ class TransactionLog
     writer.writeInt(bytes.length)
     writer.write(bytes)
     writer.flush
+    fileChannel.force(false)
     rf(null)
   }
 
@@ -84,7 +87,9 @@ class TransactionLog
     if (!dir.exists) dir.mkdirs
     val fileName = dir.getCanonicalPath + java.io.File.separator + logTS + ".jnl"
     logFile = new java.io.File(fileName)
-    writer = new java.io.DataOutputStream(new java.io.FileOutputStream(logFile))
+    val fileOutputStream = new java.io.FileOutputStream(logFile)
+    fileChannel = fileOutputStream.getChannel
+    writer = new java.io.DataOutputStream(fileOutputStream)
   }
 
   override def close {
