@@ -2,7 +2,7 @@ package org.agilewiki
 package db
 package transactions
 package swift
-package swiftTimings
+package noFlushSwiftTimings
 
 import blip._
 import seq._
@@ -38,18 +38,19 @@ case class Looper() extends Safe {
   }
 }
 
-class SwiftTimingsTest extends SpecificationWithJUnit {
-  "SwiftTimingsTest" should {
+class NoFlushSwiftTimingsTest extends SpecificationWithJUnit {
+  "NoFlushSwiftTimingsTest" should {
     "time swift" in {
       val systemServices = SystemServices(new ServicesRootComponentFactory)
-      val dbName = "swiftTimings.db"
-      val logDirPathname = "swiftTimings"
+      val dbName = "noFlushSwiftTimings.db"
+      val logDirPathname = "noFlushSwiftTimings"
       val file = new java.io.File(dbName)
       file.delete
       EmptyLogDirectory(logDirPathname)
       val properties = new Properties
       properties.put("dbPathname", dbName)
       properties.put("logDirPathname", logDirPathname)
+      properties.put("flushLog", "false")
       val db = Subsystem(
         systemServices,
         new SwiftComponentFactory,

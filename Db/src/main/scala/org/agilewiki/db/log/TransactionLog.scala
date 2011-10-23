@@ -36,12 +36,14 @@ class TransactionLogComponentFactory extends ComponentFactory {
 class TransactionLogComponent(actor: Actor)
   extends Component(actor) {
   private var transactionLog = new TransactionLog
+
   bindSafe(classOf[LogTransaction], new SafeForward(transactionLog))
   bindSafe(classOf[LogInfo], new SafeForward(transactionLog))
 
   override def open {
     super.open
     transactionLog.logDirPathname = GetProperty.required("logDirPathname")
+    transactionLog.flushLog = GetProperty.boolean("flushLog", true)
   }
 
   override def close {
@@ -53,6 +55,7 @@ class TransactionLogComponent(actor: Actor)
 class TransactionLog
   extends Actor {
   var logDirPathname: String = null
+  var flushLog = true
   var logFile: java.io.File = null
   private val logTS = (new org.joda.time.DateTime(org.joda.time.DateTimeZone.UTC)).
     toString("yyyy-MM-dd_HH-mm-ss_SSS")
@@ -76,8 +79,10 @@ class TransactionLog
     writer.writeLong(timestamp)
     writer.writeInt(bytes.length)
     writer.write(bytes)
-    writer.flush
-    fileChannel.force(false)
+    if (flushLog) {
+      writer.flush
+      fileChannel.force(false)
+    }
     rf(null)
   }
 

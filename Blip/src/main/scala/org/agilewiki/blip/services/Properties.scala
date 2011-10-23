@@ -68,13 +68,19 @@ object GetProperty {
     p
   }
 
-  def int(name: String, default: Int = 0)(implicit activeActor: ActiveActor): Int = {
+  def boolean(name: String, default: Boolean = false)(implicit activeActor: ActiveActor) = {
+    val p = apply(name)(activeActor)
+    if (p != null) p.toBoolean
+    else default
+  }
+
+  def int(name: String, default: Int = 0)(implicit activeActor: ActiveActor) = {
     val p = apply(name)(activeActor)
     if (p != null) p.toInt
     else default
   }
 
-  def string(name: String, default: String = "")(implicit activeActor: ActiveActor): String = {
+  def string(name: String, default: String = "")(implicit activeActor: ActiveActor) = {
     val p = apply(name)(activeActor)
     if (p != null) p
     else default
