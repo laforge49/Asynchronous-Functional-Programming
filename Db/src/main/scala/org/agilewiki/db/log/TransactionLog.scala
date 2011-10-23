@@ -44,6 +44,7 @@ class TransactionLogComponent(actor: Actor)
     super.open
     transactionLog.logDirPathname = GetProperty.required("logDirPathname")
     transactionLog.flushLog = GetProperty.boolean("flushLog", true)
+    transactionLog.blockSize = GetProperty.int("logBlockSize", 8 * 1024)
   }
 
   override def close {
@@ -56,6 +57,7 @@ class TransactionLog
   extends Actor {
   var logDirPathname: String = null
   var flushLog = true
+  var blockSize = 8 * 1024
   var logFile: java.io.File = null
   private val logTS = (new org.joda.time.DateTime(org.joda.time.DateTimeZone.UTC)).
     toString("yyyy-MM-dd_HH-mm-ss_SSS")
@@ -94,7 +96,8 @@ class TransactionLog
     logFile = new java.io.File(fileName)
     val fileOutputStream = new java.io.FileOutputStream(logFile)
     fileChannel = fileOutputStream.getChannel
-    writer = new java.io.DataOutputStream(fileOutputStream)
+    val bos = new java.io.BufferedOutputStream(fileOutputStream, blockSize)
+    writer = new java.io.DataOutputStream(bos)
   }
 
   override def close {

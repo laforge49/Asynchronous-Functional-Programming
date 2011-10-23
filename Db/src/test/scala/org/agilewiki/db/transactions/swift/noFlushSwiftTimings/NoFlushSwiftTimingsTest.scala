@@ -18,7 +18,7 @@ class Driver extends Actor {
   bind(classOf[DoIt], doit)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
-    val range = new Range(0, 100)
+    val range = new Range(0, 100000)
     range.setMailbox(mailbox)
     range.setSystemServices(systemServices)
     range(LoopSafe(Looper()))(rf)
@@ -51,6 +51,7 @@ class NoFlushSwiftTimingsTest extends SpecificationWithJUnit {
       properties.put("dbPathname", dbName)
       properties.put("logDirPathname", logDirPathname)
       properties.put("flushLog", "false")
+      properties.put("logBlockSize", "" + (32 * 1024))
       val db = Subsystem(
         systemServices,
         new SwiftComponentFactory,
