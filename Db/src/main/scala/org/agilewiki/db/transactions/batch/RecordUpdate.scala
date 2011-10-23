@@ -32,14 +32,17 @@ import blocks._
 
 object RecordUpdate {
   def apply(batch: IncDes, recordKey: String, pathname: String, value: IncDes) = {
+    val chain = new Chain
     var pn = pathname
     if (pn.startsWith("/")) pn = pn.substring(1)
+    val i = pn.lastIndexOf("/")
+    if (i == -1) chain.op(batch.systemServices, RecordExists(batch.systemServices, batch, recordKey, ""))
+    else chain.op(batch.systemServices, RecordExists(batch.systemServices, batch, recordKey, pn.substring(0, i)))
     val vidid = IncDesIncDes(null)
     val jef = new RecordUpdateFactory
     jef.configure(batch.systemServices)
     val je = jef.newActor(null).asInstanceOf[IncDes]
     je.setSystemServices(batch.systemServices)
-    val chain = new Chain
     chain.op(je, PutString(null, "recordKey", recordKey))
     chain.op(je, PutString(null, "pathname", pn))
     chain.op(je, Put[String, IncDesIncDes, IncDes](null, "value", vidid))

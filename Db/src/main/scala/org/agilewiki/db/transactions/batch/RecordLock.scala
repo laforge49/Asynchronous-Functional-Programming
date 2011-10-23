@@ -29,7 +29,6 @@ package batch
 import blip._
 import incDes._
 import blocks._
-import records._
 
 object RecordLock {
   def apply(batch: IncDes, recordKey: String) = {
