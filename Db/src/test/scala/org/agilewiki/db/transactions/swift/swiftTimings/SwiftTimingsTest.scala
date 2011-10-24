@@ -50,6 +50,7 @@ class SwiftTimingsTest extends SpecificationWithJUnit {
       val properties = new Properties
       properties.put("dbPathname", dbName)
       properties.put("logDirPathname", logDirPathname)
+      properties.put("commitsPerWrite", "10")
       val db = Subsystem(
         systemServices,
         new SwiftComponentFactory,

@@ -46,13 +46,6 @@ class SwiftDataStoreComponent(actor: Actor)
   var logDirPathname: String = null
   var commitsPerWrite = 1
   var commitCounter = 1
-  var updates = new java.util.TreeMap[Long, Block]
-  lazy val updatesSeq = {
-    val seq = new NavMapSeq(updates)
-    seq.setMailbox(mailbox)
-    seq.setSystemServices(systemServices)
-    seq
-  }
 
   bind(classOf[Commit], commit)
   bind(classOf[Abort], abort)
@@ -74,14 +67,11 @@ class SwiftDataStoreComponent(actor: Actor)
     if (commitCounter < commitsPerWrite) {
       val req = msg.asInstanceOf[Commit]
       val timestamp = req.timestamp
-      val update = req.update
-      updates.put(timestamp, update)
       commitCounter += 1
       dirty = false
       rf(null)
       return
     }
-    updates.clear()
     commitCounter = 1
     val chain = new Chain
     chain.op(actor, updateRootBlock)
@@ -111,8 +101,8 @@ class SwiftDataStoreComponent(actor: Actor)
 
   private def abort(msg: AnyRef, rf: Any => Unit) {
     if (dirty) {
-      rootBlock = null
-      dirty = false
+      actor.close
+      throw new Error("restart required", msg.asInstanceOf[Abort].exception)
     }
     throw msg.asInstanceOf[Abort].exception
   }
@@ -138,7 +128,7 @@ class SwiftDataStoreComponent(actor: Actor)
         val rootMap = chain.results("rootMap").asInstanceOf[IncDes]
         val logFileTimestamp = chain.results("logFileTimestamp").asInstanceOf[String]
         val logFilePosition = chain.results("logFilePosition").asInstanceOf[Long]
-        if (!init) restore(rootMap, rf)
+        if (!init) rf(rootBlock)
         else if (logFilePosition == -1) initialize(rootMap, rf)
         else recover(rootMap, logFileTimestamp, logFilePosition, rf)
       }
@@ -149,13 +139,6 @@ class SwiftDataStoreComponent(actor: Actor)
     init = false
     actor(updateRootBlock) {
       rsp => rf(rootBlock)
-    }
-  }
-
-  private def restore(rootMap: IncDes, rf: Any => Unit) {
-    if (updates.isEmpty) rf(rootBlock)
-    else updatesSeq(LoopSafe(JnlsSafe)) {
-      rsp => initialize(rootMap, rf)
     }
   }
 
