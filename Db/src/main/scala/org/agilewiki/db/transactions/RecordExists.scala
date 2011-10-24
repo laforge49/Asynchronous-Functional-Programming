@@ -41,9 +41,11 @@ object RecordExists {
     val je = jef.newActor(null).asInstanceOf[IncDes]
     je.setSystemServices(db)
     val chain = new Chain
-    if (batch != null) chain.op(db, Unit => RecordLock(batch, recordKey))
     chain.op(je, Set(null, pn))
-    chain.op(db, TransactionRequest(je))
+    chain.op(db, TransactionRequest(je), "tuple")
+    chain.op(db, Unit => LeftReq(chain("tuple").asInstanceOf[(Any, Any)]), "lockTimestamp")
+    chain.op(batch, Unit => ValidateTimestamp(recordKey, chain("lockTimestamp").asInstanceOf[Long]))
+    chain.op(db, Unit => RightReq(chain("tuple").asInstanceOf[(Any, Any)]))
     chain
   }
 }
@@ -64,6 +66,13 @@ class RecordExistsComponent(actor: Actor)
   private def process(msg: AnyRef, rf: Any => Unit) {
     val chain = new Chain
     chain.op(actor, Value(), "pathname")
+    chain.op(systemServices, Unit => {
+      val pathname = chain("pathname").asInstanceOf[String]
+      val i = pathname.indexOf("/")
+      val recordKey = pathname.substring(0, i)
+      GetRecord(recordKey)
+    }, "record")
+    chain.op(Unit => chain("record"), GetTimestamp(), "timestamp")
     chain.op(systemServices, RecordsPathname(), "recordsPathname")
     chain.op(systemServices, DbRoot(), "dbRoot")
     chain.op(
@@ -72,11 +81,12 @@ class RecordExistsComponent(actor: Actor)
         val rp = chain("recordsPathname").asInstanceOf[String]
         val p = chain("pathname").asInstanceOf[String]
         Resolve(rp + p)
-      }, "tuple")
+      })
     actor(chain) {
       rsp => {
         val (value, key) = rsp.asInstanceOf[(IncDes, String)]
-        rf(value != null)
+        val timestamp = chain("timestamp").asInstanceOf[Long]
+        rf((timestamp, value != null))
       }
     }
   }

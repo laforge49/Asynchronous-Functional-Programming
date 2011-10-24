@@ -43,6 +43,9 @@ class Actor
   override implicit def activeActor: ActiveActor = _activeActor
 
   bind(classOf[Chain], eval)
+  bind(classOf[SelfReq], self)
+  bind(classOf[LeftReq], left)
+  bind(classOf[RightReq], right)
 
   lazy val _open = {
     if (!components.isEmpty) {
@@ -236,5 +239,20 @@ class Actor
       }
     }
     eval(chain, pos + 1, last)(rf)
+  }
+
+  def self(msg: AnyRef, rf: Any => Unit) {
+    val value = msg.asInstanceOf[SelfReq].value
+    rf(value)
+  }
+
+  def left(msg: AnyRef, rf: Any => Unit) {
+    val (l, r) = msg.asInstanceOf[LeftReq].tuple
+    rf(l)
+  }
+
+  def right(msg: AnyRef, rf: Any => Unit) {
+    val (l, r) = msg.asInstanceOf[RightReq].tuple
+    rf(r)
   }
 }
