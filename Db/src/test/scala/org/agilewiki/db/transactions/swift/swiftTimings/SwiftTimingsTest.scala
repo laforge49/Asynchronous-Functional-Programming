@@ -18,7 +18,7 @@ class Driver extends Actor {
   bind(classOf[DoIt], doit)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
-    val range = new Range(0, 1000)
+    val range = new Range(0, 10)
     range.setMailbox(mailbox)
     range.setSystemServices(systemServices)
     range(LoopSafe(Looper()))(rf)
@@ -50,7 +50,7 @@ class SwiftTimingsTest extends SpecificationWithJUnit {
       val properties = new Properties
       properties.put("dbPathname", dbName)
       properties.put("logDirPathname", logDirPathname)
-      properties.put("commitsPerWrite", "10")
+      properties.put("commitsPerWrite", "1000")
       val db = Subsystem(
         systemServices,
         new SwiftComponentFactory,
