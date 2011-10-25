@@ -40,6 +40,7 @@ class SmallRecordsInitializationComponent(actor: Actor)
   bind(classOf[Records], records)
   bind(classOf[GetRecord], getRecord)
   bind(classOf[AssignRecord], assignRecord)
+  bind(classOf[MakeRecord], makeRecord)
   bindSafe(classOf[RecordsPathname], new SafeConstant(recordsPathname))
 
   protected def recordsPathname = "$/"
@@ -76,6 +77,21 @@ class SmallRecordsInitializationComponent(actor: Actor)
     actor(chain)(rf)
   }
 
+  private def makeRecord(msg: AnyRef, rf: Any => Unit) {
+    val req = msg.asInstanceOf[MakeRecord]
+    val tc = req.transactionContext
+    val recordKey = req.recordKey
+    getRecord(GetRecord(recordKey), {rsp1 => {
+      if (rsp1 != null) rf(rsp1)
+      else {
+        val record = Record(null)
+        assignRecord(AssignRecord(tc, recordKey, record), {rsp2 => {
+          rf(record)
+        }})
+      }
+    }})
+  }
+
   private def assignRecord(msg: AnyRef, rf: Any => Unit) {
     val req = msg.asInstanceOf[AssignRecord]
     val tc = req.transactionContext
@@ -85,7 +101,8 @@ class SmallRecordsInitializationComponent(actor: Actor)
     val chain = new Chain
     chain.op(actor, Records(), "records")
     chain.op(Unit => {
-      chain("records")}, Assign(tc, recordKey, record))
+      chain("records")
+    }, Assign(tc, recordKey, record))
     actor(chain) {
       rsp1 => {
         if (record == null) rf(rsp1)

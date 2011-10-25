@@ -36,14 +36,20 @@ object RecordUpdate {
     var pn = pathname
     if (pn.startsWith("/")) pn = pn.substring(1)
     val i = pn.lastIndexOf("/")
-    if (i == -1) chain.op(batch.systemServices, RecordExists(batch.systemServices, batch, recordKey, ""))
-    else chain.op(batch.systemServices, RecordExists(batch.systemServices, batch, recordKey, pn.substring(0, i)))
+    if (i != -1) chain.op(
+      batch.systemServices,
+      RecordExists(batch.systemServices, batch, recordKey, pn.substring(0, i)),
+      "exists")
     val vidid = IncDesIncDes(null)
     val jef = new RecordUpdateFactory
     jef.configure(batch.systemServices)
     val je = jef.newActor(null).asInstanceOf[IncDes]
     je.setSystemServices(batch.systemServices)
-    chain.op(je, PutString(null, "recordKey", recordKey))
+    chain.op(Unit => {
+      val exists = chain("exists").asInstanceOf[Boolean]
+      if (i != -1 && !exists) throw new IllegalStateException("does not exist " + recordKey + " " + pathname)
+      je
+    }, PutString(null, "recordKey", recordKey))
     chain.op(je, PutString(null, "pathname", pn))
     chain.op(je, Put[String, IncDesIncDes, IncDes](null, "value", vidid))
     chain.op(value, Copy(null), "copy")
@@ -71,7 +77,7 @@ class RecordUpdateComponent(actor: Actor)
     val ts = tc.timestamp
     var key = ""
     chain.op(actor, GetValue2("recordKey"), "recordKey")
-    chain.op(systemServices, Unit => GetRecord(chain("recordKey").asInstanceOf[String]), "record")
+    chain.op(systemServices, Unit => MakeRecord(tc, chain("recordKey").asInstanceOf[String]), "record")
     chain.op(actor, GetValue2("pathname"), "pathname")
     chain.op(actor, GetValue("value"), "value")
     chain.op(Unit => chain("value"), Copy(null), "copy")

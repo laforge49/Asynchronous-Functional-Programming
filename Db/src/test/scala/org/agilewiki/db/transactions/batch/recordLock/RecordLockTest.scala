@@ -15,7 +15,6 @@ case class Counter(db: Actor) {
     val counter = IncDesInt(null)
     val batch = Batch(db)
     val chain = new Chain
-    chain.op(db, NewRecord(batch, "r1"))
     chain.op(db, RecordUpdate(batch, "r1", "$", counter))
     chain.op(db, TransactionRequest(batch))
     chain

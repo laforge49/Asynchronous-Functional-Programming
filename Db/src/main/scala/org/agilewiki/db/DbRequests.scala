@@ -81,6 +81,8 @@ case class GetRecord(recordKey: String)
 
 case class AssignRecord(transactionContext: UpdateContext, recordKey: String, record: Record)
 
+case class MakeRecord(transactionContext: UpdateContext, recordKey: String)
+
 case class BatchItem(batchItem: IncDes)
 
 case class ValidateTimestamp(recordKey: String, timestamp: Long)
