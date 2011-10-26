@@ -21,7 +21,7 @@ class ThreadMsgTest extends SpecificationWithJUnit {
     "time msg passing" in {
       val e = new Echo
       e.start
-      var c = 1000
+      var c = 1000 //make this number bigger for a real test
       while (c > 0) {
         c -= 1
         e.q.put(this)
