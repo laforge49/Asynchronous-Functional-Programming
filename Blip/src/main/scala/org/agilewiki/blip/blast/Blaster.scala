@@ -5,9 +5,10 @@ import atomic.AtomicReference
 
 trait Blaster extends Runnable with Callable[Blaster] {
   private val lbq = new LinkedBlockingQueue[Any]
-  private val abr = new AtomicReference[Blaster]
+  protected val abr = new AtomicReference[Blaster]
   private var s = new Semaphore(1)
   private var depth = 0
+  private var active = true
 
   case class Death()
 
@@ -22,11 +23,17 @@ trait Blaster extends Runnable with Callable[Blaster] {
       }
       depth = 0
       try {
-        if (msg.isInstanceOf[Death]) return
+        if (msg.isInstanceOf[Death]) {
+          active = false
+          return
+        }
         dispatch(msg)
         while (lbq.size() > 0) {
           msg = lbq.take
-          if (msg.isInstanceOf[Death]) return
+          if (msg.isInstanceOf[Death]) {
+            active = false
+            return
+          }
           dispatch(msg)
         }
       } finally {
@@ -38,10 +45,11 @@ trait Blaster extends Runnable with Callable[Blaster] {
   def close {lbq.put(Death())}
 
   final def sendTo(target: Blaster, msg: Any) {
-    target.send(msg, this)
+    target.send(msg, abr.get)
   }
 
   private[blast] final def send(msg: Any, sender: Blaster) {
+    if (!active) return
     if (sender == abr.get) {
       if (this == sender) dispatch(msg)
       else if (depth > maxDepth) lbq.put(msg)
@@ -66,7 +74,7 @@ trait Blaster extends Runnable with Callable[Blaster] {
     }
   }
 
-  protected def maxDepth = 100 //limit recursion
+  protected def maxDepth = 200 //limit recursion
 
   protected def forceAsync = false //Return true when doing I/O.
 

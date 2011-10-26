@@ -10,7 +10,7 @@ class Echo extends Thread with Blaster {
 
 class BlasterTest extends SpecificationWithJUnit with Blaster {
   val e = new Echo
-  var c = 1000 //make this number bigger for a real test
+  var c = 10000000 //make this number bigger for a real test
   e.start
 
   override protected def dispatch(msg: Any) {
@@ -25,7 +25,9 @@ class BlasterTest extends SpecificationWithJUnit with Blaster {
 
   "BlasterTest" should {
     "time msg passing" in {
+      abr.set(this)
       sendTo(e, this)
+      abr.set(null)
       run
     }
   }
