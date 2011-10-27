@@ -6,7 +6,7 @@ import atomic.AtomicReference
 trait Blaster extends Runnable with Callable[Blaster] {
   private val lbq = new LinkedBlockingQueue[Any]
   protected val abr = new AtomicReference[Blaster]
-  private var s = new Semaphore(1)
+  private val s = new Semaphore(1)
   private var depth = 0
   private var active = true
 

@@ -1,13 +1,14 @@
-package org.agilewiki.blip.threads.threadMsg
+package org.agilewiki.blip
+package threads.threadMsg
 
 import org.specs.SpecificationWithJUnit
 
 class Echo extends Thread {
-  val q = new java.util.concurrent.LinkedBlockingQueue[AnyRef]
+  val q = new ConcurrentLinkedBlockingQueue[AnyRef]
 
   override def run {
     while(true) {
-      val m = q.take()
+      val m = q.take
       if (!m.isInstanceOf[ThreadMsgTest]) return
       val t = m.asInstanceOf[ThreadMsgTest]
       t.q.put(this)
@@ -16,7 +17,7 @@ class Echo extends Thread {
 }
 
 class ThreadMsgTest extends SpecificationWithJUnit {
-  val q = new java.util.concurrent.LinkedBlockingQueue[AnyRef]
+  val q = new ConcurrentLinkedBlockingQueue[AnyRef]
   "ThreadMsgTest" should {
     "time msg passing" in {
       val e = new Echo
