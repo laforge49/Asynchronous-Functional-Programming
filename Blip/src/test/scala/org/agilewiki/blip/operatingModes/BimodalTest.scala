@@ -30,8 +30,8 @@ class B extends Actor {
 class BimodalTest extends SpecificationWithJUnit {
   "Bimodal" should {
     "print differently" in {
-      val mb1 = new Mailbox
-      val mb2 = new Mailbox
+      val mb1 = new ReactorMailbox
+      val mb2 = new ReactorMailbox
       val b = new B
       b.setMailbox(mb1)
       println("synchronous test")

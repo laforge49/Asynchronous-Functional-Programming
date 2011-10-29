@@ -37,7 +37,7 @@ class SomeComponentFactory
 case class DoIt()
 
 class Driver extends Actor {
-  setMailbox(new Mailbox)
+  setMailbox(new ReactorMailbox)
   bind(classOf[DoIt], doit)
 
   def doit(msg: AnyRef, rf: Any => Unit) {

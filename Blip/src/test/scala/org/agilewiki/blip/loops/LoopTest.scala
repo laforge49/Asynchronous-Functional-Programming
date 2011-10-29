@@ -37,7 +37,7 @@ class L(a: Actor) extends Actor {
 class LoopTest extends SpecificationWithJUnit {
   "LoopTest" should {
     "print 1, 2, 3 twice" in {
-      val mb = new Mailbox
+      val mb = new ReactorMailbox
       val p = new P
       p.setMailbox(mb)
       println("synchronous test")
@@ -46,7 +46,7 @@ class LoopTest extends SpecificationWithJUnit {
       Future(sl, Loop(3))
       println("asynchronous test")
       val al = new L(p)
-      al.setMailbox(new Mailbox)
+      al.setMailbox(new ReactorMailbox)
       Future(al, Loop(3))
     }
   }

@@ -30,10 +30,11 @@ object SystemServices {
   def apply(rootComponentFactory: ComponentFactory,
             factoryId: FactoryId = new FactoryId("System"),
             properties: Properties = null,
-            actorClass: Class[_ <: Actor] = classOf[Actor]) = {
+            actorClass: Class[_ <: Actor] = classOf[Actor],
+            newMailbox: Mailbox = new ReactorMailbox) = {
     val systemServicesFactory = new CompositeFactory(factoryId, rootComponentFactory, actorClass)
     SetProperties(systemServicesFactory, properties)
-    val systemServices = systemServicesFactory.newActor(new Mailbox)
+    val systemServices = systemServicesFactory.newActor(newMailbox)
     systemServices.setSystemServices(systemServices)
     systemServices._open
     systemServices

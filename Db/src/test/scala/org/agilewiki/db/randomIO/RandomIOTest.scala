@@ -34,7 +34,7 @@ class RandomIOTest extends SpecificationWithJUnit {
       properties.put("dbPathname", dbName)
       val systemServices = SystemServices(new RandomIOComponentFactory, properties = properties)
       val driver = new Driver
-      driver.setMailbox(new Mailbox)
+      driver.setMailbox(new ReactorMailbox)
       driver.setSystemServices(systemServices)
       val bytes = Future(driver, DoIt()).asInstanceOf[Array[Byte]]
       bytes.length must be equalTo(5000)

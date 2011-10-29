@@ -24,16 +24,12 @@
 package org.agilewiki
 package blip
 
-import scala.actors.Reactor
 import java.util.ArrayList
 
-class Mailbox
-  extends Reactor[ArrayList[MailboxMsg]]
-  with MsgCtrl {
+trait Mailbox
+  extends MsgCtrl {
 
-  def isMailboxEmpty = mailboxSize == 0
-
-  override def scheduler = super.scheduler
+  def isMailboxEmpty: Boolean
 
   var curMsg: MailboxMsg = null
 
@@ -70,32 +66,6 @@ class Mailbox
     }
   }
 
-  override def act {
-    loop{
-      react{
-        case blkmsg: ArrayList[MailboxMsg] => {
-          val it = blkmsg.iterator
-          while (it.hasNext) {
-            curMsg = it.next
-            curMsg match {
-              case msg: MailboxReq => msg.binding.process(this, msg)
-              case msg: MailboxRsp => rsp(msg)
-            }
-          }
-          if (isMailboxEmpty && !pending.isEmpty) {
-            val it = pending.keySet.iterator
-            while (it.hasNext) {
-              val ctrl = it.next
-              val blkmsg = pending.get(ctrl)
-              ctrl._send(blkmsg)
-            }
-            pending.clear
-          }
-        }
-      }
-    }
-  }
-
   def rsp(msg: MailboxRsp) {
     exceptionFunction = msg.senderExceptionFunction
     transactionContext = msg.transactionContext
@@ -127,10 +97,4 @@ class Mailbox
       req.transactionContext)
     addPending(sender, rsp)
   }
-
-  override def _send(blkmsg: ArrayList[MailboxMsg]) {
-    this ! blkmsg
-  }
-
-  start
 }

@@ -55,7 +55,7 @@ class CompositeTest extends SpecificationWithJUnit {
   "SimpleActor" should {
     "double" in {
       val doubleFactory = new DoubleFactory
-      val double = doubleFactory.newActor(new Mailbox)
+      val double = doubleFactory.newActor(new ReactorMailbox)
       Future(double, Set(21))
       Future(double, Times2())
       println(Future(double, Get()))

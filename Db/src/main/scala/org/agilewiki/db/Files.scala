@@ -28,7 +28,7 @@ import blip._
 import seq._
 
 class Files extends Actor {
-  setMailbox(new Mailbox)
+  setMailbox(new ReactorMailbox)
   bind(classOf[FilesSeq], filesSeq)
 
   private def filesSeq(msg: AnyRef, rf: Any => Unit) {

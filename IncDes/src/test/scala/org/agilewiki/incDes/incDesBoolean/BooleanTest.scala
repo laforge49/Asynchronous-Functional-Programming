@@ -65,7 +65,7 @@ case class DoIt()
 
 class Driver extends Actor {
   bind(classOf[DoIt], doit)
-  setMailbox(new Mailbox)
+  setMailbox(new ReactorMailbox)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
     systemServices(Instantiate(INC_DES_BOOLEAN_FACTORY_ID, null)) {

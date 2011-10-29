@@ -18,7 +18,7 @@ class Worker
 object Pause {
   def apply(rf: Any => Unit)(implicit srcActor: ActiveActor) {
     val worker = new Worker
-    worker.setMailbox(new Mailbox)
+    worker.setMailbox(new ReactorMailbox)
     worker(Pause())(rf)
   }
 }
@@ -63,7 +63,7 @@ class Driver
 
   lazy val simpleTransactionProcessor = {
     val stp = new SimpleTransactionProcessor
-    stp.setMailbox(new Mailbox)
+    stp.setMailbox(new ReactorMailbox)
     stp
   }
 
@@ -112,7 +112,7 @@ class TransactionTest extends SpecificationWithJUnit {
   "TransactionTest" should {
     "process transactions" in {
       val driver = new Driver
-      driver.setMailbox(new Mailbox)
+      driver.setMailbox(new ReactorMailbox)
       Future(driver, Doit())
     }
   }

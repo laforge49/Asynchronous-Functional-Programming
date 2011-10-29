@@ -56,7 +56,7 @@ class ComponentFactoryClassesTest extends SpecificationWithJUnit {
   "ComponentFactoryClassesTest" should {
     "print component factory classes" in {
       val doubleFactory = new DoubleFactory
-      val double = doubleFactory.newActor(new Mailbox)
+      val double = doubleFactory.newActor(new ReactorMailbox)
       val componentFactoryClasses = double.componentFactoryClasses
       Future(componentFactoryClasses,
         Loop((key: Class[_ <: ComponentFactory], value: Class[_ <: ComponentFactory]) => println(value)))

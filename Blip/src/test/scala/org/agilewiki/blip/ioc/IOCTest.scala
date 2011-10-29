@@ -17,7 +17,7 @@ class SayingsFactory extends ComponentFactory {
 case class SaySomething()
 
 class SayIt extends Actor {
-  setMailbox(new Mailbox)
+  setMailbox(new ReactorMailbox)
   bind(classOf[SaySomething], saySomething)
   def saySomething(msg: AnyRef, rf: Any => Unit) {
     systemServices(Today())(rf)

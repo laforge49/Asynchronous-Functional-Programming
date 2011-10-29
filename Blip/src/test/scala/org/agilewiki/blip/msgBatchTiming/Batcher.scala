@@ -26,7 +26,7 @@ package blip
 package msgBatchTiming
 
 class Batcher(next: Actor, count: Int) extends Actor {
-  setMailbox(new Mailbox)
+  setMailbox(new ReactorMailbox)
   bind(classOf[TimingReq], timing)
   def timing(msg: AnyRef, rf: Any => Unit) {
     var i = count

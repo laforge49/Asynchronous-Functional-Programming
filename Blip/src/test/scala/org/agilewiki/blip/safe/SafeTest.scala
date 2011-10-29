@@ -11,7 +11,7 @@ case class AMsg()
 
 class Driver extends Actor {
   bind(classOf[AMsg], aMsgFunc)
-  setMailbox(new Mailbox)
+  setMailbox(new ReactorMailbox)
 
   private def aMsgFunc(msg: AnyRef, rf: Any => Unit) {
     val safeActor = new SafeActor
@@ -33,7 +33,7 @@ case class SafePrintEven(safeActor: SafeActor)
 
 class SafeActor extends Actor {
   bind(classOf[Print], printFunc)
-  setMailbox(new Mailbox)
+  setMailbox(new ReactorMailbox)
 
   private def printFunc(msg: AnyRef, rf: Any => Unit) {
     println(msg.asInstanceOf[Print].value)

@@ -25,7 +25,7 @@ case class AsyncRspEx()
 case class SyncRspEx()
 
 class D extends Actor {
-  setMailbox(new Mailbox)
+  setMailbox(new ReactorMailbox)
   bind(classOf[AsyncServerEx],{(msg, rf) =>
     exceptionHandler(msg, rf, asyncServerEx){ex =>
       println("D got exception "+ex.toString)
@@ -34,7 +34,7 @@ class D extends Actor {
   })
   def asyncServerEx(msg: AnyRef, rf: Any => Unit) {
     val s = new S
-    s.setMailbox(new Mailbox)
+    s.setMailbox(new ReactorMailbox)
     s(SE())(rsp => rf)
   }
 
@@ -58,7 +58,7 @@ class D extends Actor {
   })
   def asyncRspEx(msg: AnyRef, rf: Any => Unit) {
     val s = new S
-    s.setMailbox(new Mailbox)
+    s.setMailbox(new ReactorMailbox)
     s(SNE()){rsp => throw new IllegalAccessException}
   }
 

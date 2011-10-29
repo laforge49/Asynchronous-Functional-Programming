@@ -26,7 +26,7 @@ package blip
 package msgBatchTiming
 
 class Driver(next: Array[Batcher]) extends Actor {
-  setMailbox(new Mailbox)
+  setMailbox(new ReactorMailbox)
   bind(classOf[TimingReq], timing)
   def timing(msg: AnyRef, rf: Any => Unit) {
     val count = next.length

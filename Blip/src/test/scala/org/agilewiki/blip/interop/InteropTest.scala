@@ -34,7 +34,7 @@ case class T4()
 class SimpleReactor extends Reactor[Any] {
   val interop = new Interop(this)
   val simpleActor = new SimpleActor
-  simpleActor.setMailbox(new Mailbox)
+  simpleActor.setMailbox(new ReactorMailbox)
 
   start
 

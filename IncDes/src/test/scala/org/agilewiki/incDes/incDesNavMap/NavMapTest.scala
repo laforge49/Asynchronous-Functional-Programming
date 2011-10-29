@@ -34,67 +34,67 @@ class NavMapTest extends SpecificationWithJUnit {
     "Serialize/deserialize" in {
       val systemServices = SystemServices(new IncDesComponentFactory)
 
-      val booll0 = IncDesIntBooleanMap(new Mailbox, systemServices)
+      val booll0 = IncDesIntBooleanMap(new ReactorMailbox, systemServices)
       val bool0 = booll0.newValue
       Future(booll0, Put[Int, IncDesBoolean, Boolean](null, 2, bool0))
       Future(booll0, Length()) must be equalTo (9)
       val boolb0 = Future(booll0, Bytes()).asInstanceOf[Array[Byte]]
 
-      val booll1 = IncDesIntBooleanMap(new Mailbox, systemServices)
+      val booll1 = IncDesIntBooleanMap(new ReactorMailbox, systemServices)
       booll1.load(boolb0)
       Future(booll1, Length()) must be equalTo (9)
       val bool1 = Future(booll1, Get(2))
       bool1.isInstanceOf[IncDesBoolean] must beTrue
 
-      val bytesl0 = IncDesLongBytesMap(new Mailbox, systemServices)
+      val bytesl0 = IncDesLongBytesMap(new ReactorMailbox, systemServices)
       val bytes0 = IncDesBytes(null)
       Future(bytesl0, Put[Long, IncDesBytes, Array[Byte]](null, 42L, bytes0))
       Future(bytesl0, Length()) must be equalTo (16)
       val bytesb0 = Future(bytesl0, Bytes()).asInstanceOf[Array[Byte]]
 
-      val bytesl1 = IncDesLongBytesMap(new Mailbox, systemServices)
+      val bytesl1 = IncDesLongBytesMap(new ReactorMailbox, systemServices)
       bytesl1.load(bytesb0)
       Future(bytesl1, Length()) must be equalTo (16)
       val bytes1 = Future(bytesl1, Get(42L))
       bytes1.isInstanceOf[IncDesBytes] must beTrue
 
-      val intl0 = IncDesStringIntMap(new Mailbox, systemServices)
+      val intl0 = IncDesStringIntMap(new ReactorMailbox, systemServices)
       val int0 = intl0.newValue
       Future(intl0, Put[String, IncDesInt, Int](null, "j", int0))
       Future(intl0, Length()) must be equalTo (14)
       val intb0 = Future(intl0, Bytes()).asInstanceOf[Array[Byte]]
 
-      val intl1 = IncDesStringIntMap(new Mailbox, systemServices)
+      val intl1 = IncDesStringIntMap(new ReactorMailbox, systemServices)
       intl1.load(intb0)
       Future(intl1, Length()) must be equalTo (14)
       val int1 = Future(intl1, Get("j"))
       int1.isInstanceOf[IncDesInt] must beTrue
 
-      val longl0 = IncDesIntLongMap(new Mailbox, systemServices)
+      val longl0 = IncDesIntLongMap(new ReactorMailbox, systemServices)
       val long0 = IncDesLong(null)
       Future(longl0, Put[Int, IncDesLong, Long](null, 9, long0))
       Future(longl0, Length()) must be equalTo (16)
       val longb0 = Future(longl0, Bytes()).asInstanceOf[Array[Byte]]
 
-      val longl1 = IncDesIntLongMap(new Mailbox, systemServices)
+      val longl1 = IncDesIntLongMap(new ReactorMailbox, systemServices)
       longl1.load(longb0)
       Future(longl1, Length()) must be equalTo (16)
       val long1 = Future(longl1, Get(9))
       long1.isInstanceOf[IncDesLong] must beTrue
 
-      val strl0 = IncDesLongStringMap(new Mailbox, systemServices)
+      val strl0 = IncDesLongStringMap(new ReactorMailbox, systemServices)
       val str0 = strl0.newValue
       Future(strl0, Put[Long, IncDesString, String](null, -2L, str0))
       Future(strl0, Length()) must be equalTo (16)
       val strb0 = Future(strl0, Bytes()).asInstanceOf[Array[Byte]]
 
-      val strl1 = IncDesLongStringMap(new Mailbox, systemServices)
+      val strl1 = IncDesLongStringMap(new ReactorMailbox, systemServices)
       strl1.load(strb0)
       Future(strl1, Length()) must be equalTo (16)
       val str1 = Future(strl1, Get(-2L ))
       str1.isInstanceOf[IncDesString] must beTrue
 
-      val incdesl0 = IncDesStringIncDesMap(new Mailbox, systemServices)
+      val incdesl0 = IncDesStringIncDesMap(new ReactorMailbox, systemServices)
       val incdes0 = IncDesIncDes(null)
       Future(incdesl0, ContainsKey("x")) must be equalTo(false)
       Future(incdesl0, Size()) must be equalTo (0)
@@ -103,7 +103,7 @@ class NavMapTest extends SpecificationWithJUnit {
       Future(incdesl0, Size()) must be equalTo (1)
       val incdesb0 = Future(incdesl0, Bytes()).asInstanceOf[Array[Byte]]
 
-      val incdesl1 = IncDesStringIncDesMap(new Mailbox, systemServices)
+      val incdesl1 = IncDesStringIncDesMap(new ReactorMailbox, systemServices)
       incdesl1.load(incdesb0)
       Future(incdesl1, ContainsKey("x")) must be equalTo(true)
       Future(incdesl1, Length()) must be equalTo (14)

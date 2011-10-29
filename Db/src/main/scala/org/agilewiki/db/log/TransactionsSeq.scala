@@ -34,7 +34,7 @@ class TransactionsSeq(reader: java.io.DataInputStream, jeMailbox: Mailbox)
   extends Sequence[Long, Block] {
   private var kvPair: KVPair[Long, Block] = _
 
-  setMailbox(new Mailbox)
+  setMailbox(new ReactorMailbox)
 
   private def read {
     var timestamp = 0L

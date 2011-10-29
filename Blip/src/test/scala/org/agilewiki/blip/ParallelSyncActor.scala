@@ -28,7 +28,7 @@ class ParallelSyncActor(count: Int) extends Actor {
   bind(classOf[TimingReq], timing)
   def timing(msg: AnyRef, rf: Any => Unit) {
     var i = 4
-    var m1 = new Mailbox
+    var m1 = new ReactorMailbox
     var a1 = new TimingActor(null)
     a1.setMailbox(m1)
     var a2 = new RepeatingActor(a1, count)
@@ -37,7 +37,7 @@ class ParallelSyncActor(count: Int) extends Actor {
       i -= 1
       if (i == 0) rf(msg)
     }
-    m1 = new Mailbox
+    m1 = new ReactorMailbox
     a1 = new TimingActor(null)
     a1.setMailbox(m1)
     a2 = new RepeatingActor(a1, count)
@@ -46,7 +46,7 @@ class ParallelSyncActor(count: Int) extends Actor {
       i -= 1
       if (i == 0) rf(msg)
     }
-    m1 = new Mailbox
+    m1 = new ReactorMailbox
     a1 = new TimingActor(null)
     a1.setMailbox(m1)
     a2 = new RepeatingActor(a1, count)
@@ -55,7 +55,7 @@ class ParallelSyncActor(count: Int) extends Actor {
       i -= 1
       if (i == 0) rf(msg)
     }
-    m1 = new Mailbox
+    m1 = new ReactorMailbox
     a1 = new TimingActor(null)
     a1.setMailbox(m1)
     a2 = new RepeatingActor(a1, count)

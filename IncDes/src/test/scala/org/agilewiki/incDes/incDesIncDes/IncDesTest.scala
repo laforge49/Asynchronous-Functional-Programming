@@ -48,7 +48,7 @@ class IncDesTest extends SpecificationWithJUnit {
       Future(Future(j1, Value()).asInstanceOf[Actor], Value()) must be equalTo ("!")
       var bs = Future(j1, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j2 = IncDesIncDes(new Mailbox)
+      val j2 = IncDesIncDes(new ReactorMailbox)
       j2.setSystemServices(systemServices)
       j2.load(bs)
       Future(j2, Length()) must be equalTo (20)
@@ -66,7 +66,7 @@ class IncDesTest extends SpecificationWithJUnit {
       j4.load(bs)
       bs = Future(j4, Bytes()).asInstanceOf[Array[Byte]]
 
-      val j5 = IncDesIncDes(new Mailbox)
+      val j5 = IncDesIncDes(new ReactorMailbox)
       j5.setSystemServices(systemServices)
       j5.load(bs)
       Future(Future(j5, Value()).asInstanceOf[Actor], Value()) must be equalTo (42)
@@ -82,10 +82,10 @@ case class DoIt()
 
 class Driver extends Actor {
   bind(classOf[DoIt], doit)
-  setMailbox(new Mailbox)
+  setMailbox(new ReactorMailbox)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
-    systemServices(Instantiate(INC_DES_INCDES_FACTORY_ID, new Mailbox)) {
+    systemServices(Instantiate(INC_DES_INCDES_FACTORY_ID, new ReactorMailbox)) {
       rsp => {
         val j6 = rsp.asInstanceOf[Actor]
         systemServices(Instantiate(INC_DES_LONG_FACTORY_ID, null)) {
@@ -95,7 +95,7 @@ class Driver extends Actor {
               rsp1 => {
                 s6(Set(null, 123456789987654321L)) {
                   rsp2 => {
-                    j6(Copy(new Mailbox)) {
+                    j6(Copy(new ReactorMailbox)) {
                       rsp3 => {
                         val j7 = rsp3.asInstanceOf[Actor]
                         j7(Value())(rf)

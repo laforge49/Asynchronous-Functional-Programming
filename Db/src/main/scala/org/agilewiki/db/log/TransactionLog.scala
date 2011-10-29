@@ -64,7 +64,7 @@ class TransactionLog
   private var writer: java.io.DataOutputStream = null
   private var fileChannel: FileChannel = null
 
-  setMailbox(new Mailbox)
+  setMailbox(new ReactorMailbox)
   bind(classOf[LogTransaction], logTransaction)
   bind(classOf[LogInfo], logInfo)
 

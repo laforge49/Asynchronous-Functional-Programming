@@ -9,7 +9,7 @@ case class DoIt()
 
 class ShortFileLoader extends Actor {
   bind(classOf[DoIt], doit)
-  setMailbox(new Mailbox)
+  setMailbox(new ReactorMailbox)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
     val cwd = new File(".")

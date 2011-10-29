@@ -71,7 +71,7 @@ class RandomIO extends Actor {
   var file: java.io.File = null
   var randomAccessFile: java.io.RandomAccessFile = null
 
-  setMailbox(new Mailbox)
+  setMailbox(new ReactorMailbox)
   bind(classOf[ReadBytes], read)
   bind(classOf[WriteBytes], write)
 

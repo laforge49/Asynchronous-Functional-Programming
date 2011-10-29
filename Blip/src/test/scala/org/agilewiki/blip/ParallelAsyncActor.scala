@@ -29,33 +29,33 @@ class ParallelAsyncActor(count: Int) extends Actor {
   def timing(msg: AnyRef, rf: Any => Unit) {
     var i = 4
     var a1 = new TimingActor(null)
-    a1.setMailbox(new Mailbox)
+    a1.setMailbox(new ReactorMailbox)
     var a2 = new RepeatingActor(a1, count)
-    a2.setMailbox(new Mailbox)
+    a2.setMailbox(new ReactorMailbox)
     a2(msg){ r =>
       i -= 1
       if (i == 0) rf(msg)
     }
     a1 = new TimingActor(null)
-    a1.setMailbox(new Mailbox)
+    a1.setMailbox(new ReactorMailbox)
     a2 = new RepeatingActor(a1, count)
-    a2.setMailbox(new Mailbox)
+    a2.setMailbox(new ReactorMailbox)
     a2(msg){ r =>
       i -= 1
       if (i == 0) rf(msg)
     }
     a1 = new TimingActor(null)
-    a1.setMailbox(new Mailbox)
+    a1.setMailbox(new ReactorMailbox)
     a2 = new RepeatingActor(a1, count)
-    a2.setMailbox(new Mailbox)
+    a2.setMailbox(new ReactorMailbox)
     a2(msg){ r =>
       i -= 1
       if (i == 0) rf(msg)
     }
     a1 = new TimingActor(null)
-    a1.setMailbox(new Mailbox)
+    a1.setMailbox(new ReactorMailbox)
     a2 = new RepeatingActor(a1, count)
-    a2.setMailbox(new Mailbox)
+    a2.setMailbox(new ReactorMailbox)
     a2(msg){ r =>
       i -= 1
       if (i == 0) rf(msg)

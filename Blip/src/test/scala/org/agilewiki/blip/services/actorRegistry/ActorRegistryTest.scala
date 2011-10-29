@@ -42,7 +42,7 @@ case class DoIt2()
 class Driver extends Actor {
   bind(classOf[DoIt1], doit1)
   bind(classOf[DoIt2], doit2)
-  setMailbox(new Mailbox)
+  setMailbox(new ReactorMailbox)
 
   def doit1(msg: AnyRef, rf: Any => Unit) {
     systemServices(Instantiate(FactoryId("greeter"), null)) {
