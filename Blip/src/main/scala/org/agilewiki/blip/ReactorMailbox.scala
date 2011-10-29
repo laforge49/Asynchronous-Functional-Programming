@@ -36,25 +36,7 @@ class ReactorMailbox
   override def act {
     loop {
       react {
-        case blkmsg: ArrayList[MailboxMsg] => {
-          val it = blkmsg.iterator
-          while (it.hasNext) {
-            curMsg = it.next
-            curMsg match {
-              case msg: MailboxReq => msg.binding.process(this, msg)
-              case msg: MailboxRsp => rsp(msg)
-            }
-          }
-          if (isMailboxEmpty && !pending.isEmpty) {
-            val it = pending.keySet.iterator
-            while (it.hasNext) {
-              val ctrl = it.next
-              val blkmsg = pending.get(ctrl)
-              ctrl._send(blkmsg)
-            }
-            pending.clear
-          }
-        }
+        case blkmsg: ArrayList[MailboxMsg] => receive(blkmsg)
       }
     }
   }

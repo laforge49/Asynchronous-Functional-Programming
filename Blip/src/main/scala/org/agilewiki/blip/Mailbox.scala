@@ -29,6 +29,26 @@ import java.util.ArrayList
 trait Mailbox
   extends MsgCtrl {
 
+  protected def receive(blkmsg: ArrayList[MailboxMsg]) {
+    val it = blkmsg.iterator
+    while (it.hasNext) {
+      curMsg = it.next
+      curMsg match {
+        case msg: MailboxReq => msg.binding.process(this, msg)
+        case msg: MailboxRsp => rsp(msg)
+      }
+    }
+    if (isMailboxEmpty && !pending.isEmpty) {
+      val it = pending.keySet.iterator
+      while (it.hasNext) {
+        val ctrl = it.next
+        val blkmsg = pending.get(ctrl)
+        ctrl._send(blkmsg)
+      }
+      pending.clear
+    }
+  }
+
   def isMailboxEmpty: Boolean
 
   var curMsg: MailboxMsg = null
