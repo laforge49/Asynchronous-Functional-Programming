@@ -53,13 +53,6 @@ class ChainFactory(chainFunction: (AnyRef, Chain) => Unit)
 
 abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Safe {
 
-  override def func(target: Actor, msg: AnyRef, responseFunction: Any => Unit)(implicit srcActor: ActiveActor) {
-    val srcMailbox = srcActor.actor.mailbox
-    if (srcMailbox == null) throw new UnsupportedOperationException("source actor has no mailbox")
-    if (target.mailbox == null) throw new UnsupportedOperationException("target actor has no mailbox")
-    asyncSendReq(srcMailbox, target, msg, responseFunction)
-  }
-
   def reqFunction = messageFunction
 
   def process(mailbox: Mailbox, mailboxReq: MailboxReq) {
@@ -72,24 +65,6 @@ abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Saf
         mailbox.reply(ex)
       }
     }
-  }
-
-  def asyncSendReq(srcMailbox: Mailbox,
-                   targetActor: Actor,
-                   content: AnyRef,
-                   responseFunction: Any => Unit) {
-    val oldReq = srcMailbox.currentRequestMessage
-    val sender = oldReq.target
-    val req = new MailboxReq(
-      targetActor,
-      responseFunction,
-      oldReq,
-      content,
-      this,
-      sender,
-      srcMailbox.exceptionFunction,
-      srcMailbox.transactionContext)
-    srcMailbox.addPending(targetActor, req)
   }
 }
 
@@ -113,7 +88,7 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
     if (target.mailbox == null || target.mailbox == srcMailbox) {
       if (responseFunction == null) messageFunction(msg, AnyRef => {})
       else messageFunction(msg, responseFunction)
-    } else asyncSendReq(srcMailbox, target, msg, responseFunction)
+    } else srcMailbox.asyncSendReq(this, target, msg, responseFunction)
   }
 }
 
@@ -133,7 +108,7 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
     if (srcMailbox == null || target.mailbox == null) throw new UnsupportedOperationException(
       "Transactions require that both the requesting and target actors have mailboxes."
     )
-    asyncSendReq(srcMailbox, target, msg, responseFunction)
+    srcMailbox.asyncSendReq(this, target, msg, responseFunction)
   }
 
   override def process(mailbox: Mailbox, mailboxReq: MailboxReq) {

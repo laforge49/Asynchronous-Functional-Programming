@@ -61,7 +61,7 @@ trait Blaster extends Runnable with Callable[Blaster] {
           depth -= 1
         }
       }
-    } else if (!abr.compareAndSet(null, sender)) lbq.put(msg)
+    } else if (forceAsync || !abr.compareAndSet(null, sender)) lbq.put(msg)
     else {
       s.acquire
       depth = 0

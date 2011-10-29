@@ -70,6 +70,24 @@ trait Mailbox
     reply(ex)
   }
 
+  def asyncSendReq(bound: Bound,
+                   targetActor: Actor,
+                   content: AnyRef,
+                   responseFunction: Any => Unit) {
+    val oldReq = currentRequestMessage
+    val sender = oldReq.target
+    val req = new MailboxReq(
+      targetActor,
+      responseFunction,
+      oldReq,
+      content,
+      bound,
+      sender,
+      exceptionFunction,
+      transactionContext)
+    addPending(targetActor, req)
+  }
+
   val pending = new java.util.HashMap[MsgCtrl, ArrayList[MailboxMsg]]
 
   def addPending(target: MsgSrc, msg: MailboxMsg) {
