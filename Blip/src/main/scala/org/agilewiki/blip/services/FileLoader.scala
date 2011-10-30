@@ -29,7 +29,7 @@ import java.io.{DataInputStream, FileInputStream}
 
 class FileLoader
   extends Actor {
-  setMailbox(new ReactorMailbox)
+  setMailbox(new AsyncReactorMailbox)
   bind(classOf[LoadFile], loadFile)
 
   def loadFile(msg: AnyRef, rf: Any => Unit) {

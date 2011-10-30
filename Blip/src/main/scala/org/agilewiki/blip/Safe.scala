@@ -88,7 +88,7 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
     if (target.mailbox == null || target.mailbox == srcMailbox) {
       if (responseFunction == null) messageFunction(msg, AnyRef => {})
       else messageFunction(msg, responseFunction)
-    } else srcMailbox.asyncSendReq(this, target, msg, responseFunction)
+    } else srcMailbox.sendReq(this, target, msg, responseFunction, srcMailbox, messageFunction)
   }
 }
 

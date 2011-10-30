@@ -29,10 +29,14 @@ import java.util.ArrayList
 trait Mailbox
   extends MsgCtrl {
 
+  def control = this
+
   def sendReq(bound: Bound,
                    targetActor: Actor,
                    content: AnyRef,
-                   responseFunction: Any => Unit) {
+                   responseFunction: Any => Unit,
+                   srcMailbox: Mailbox,
+                   messageFunction: (AnyRef, Any => Unit) => Unit) {
     asyncSendReq(bound, targetActor, content, responseFunction)
   }
 

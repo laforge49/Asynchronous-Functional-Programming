@@ -27,11 +27,10 @@ package blip
 import scala.actors.Reactor
 import java.util.ArrayList
 
-class ReactorMailbox
-  extends Reactor[ArrayList[MailboxMsg]]
-  with Mailbox {
+abstract class BaseReactorMailbox
+  extends Reactor[ArrayList[MailboxMsg]] {
 
-  override def isMailboxEmpty = mailboxSize == 0
+  def isMailboxEmpty = mailboxSize == 0
 
   override def act {
     loop {
@@ -41,9 +40,15 @@ class ReactorMailbox
     }
   }
 
-  override def _send(blkmsg: ArrayList[MailboxMsg]) {
+  def _send(blkmsg: ArrayList[MailboxMsg]) {
     this ! blkmsg
   }
 
+  protected def receive(blkmsg: ArrayList[MailboxMsg])
+
   start
 }
+
+class AsyncReactorMailbox extends BaseReactorMailbox with Mailbox
+
+class ReactorMailbox extends BaseReactorMailbox with SyncMailbox

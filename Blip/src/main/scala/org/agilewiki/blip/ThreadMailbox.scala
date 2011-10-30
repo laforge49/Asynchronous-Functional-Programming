@@ -26,20 +26,25 @@ package blip
 
 import java.util.ArrayList
 
-class ThreadMailbox
-  extends Thread
-  with Mailbox {
+abstract class BaseThreadMailbox
+  extends Thread {
   private val queue = new ConcurrentLinkedBlockingQueue[ArrayList[MailboxMsg]]
 
-  override def isMailboxEmpty = queue.size() == 0
+  def isMailboxEmpty = queue.size() == 0
 
   override def run {
     while (true) receive(queue.take)
- }
+  }
 
-  override def _send(blkmsg: ArrayList[MailboxMsg]) {
+  def _send(blkmsg: ArrayList[MailboxMsg]) {
     queue.put(blkmsg)
   }
 
+  protected def receive(blkmsg: ArrayList[MailboxMsg])
+
   start
 }
+
+class AsyncThreadMailbox extends BaseThreadMailbox with Mailbox
+
+class ThreadMailbox extends BaseThreadMailbox with SyncMailbox
