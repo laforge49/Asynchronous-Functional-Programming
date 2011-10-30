@@ -63,10 +63,7 @@ trait SyncMailbox extends Mailbox {
     if (controllingMailbox == atomicControl.get) {
       if (this == controllingMailbox) dispatch(content, responseFunction, messageFunction)
       else {
-        try {
-          dispatch(content, responseFunction, messageFunction)
-        } finally {
-        }
+        dispatch(content, responseFunction, messageFunction)
       }
     } else if (!atomicControl.compareAndSet(null, controllingMailbox))
       asyncSendReq(bound, targetActor, content, responseFunction)
