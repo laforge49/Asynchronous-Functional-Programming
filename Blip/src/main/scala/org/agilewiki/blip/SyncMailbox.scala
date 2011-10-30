@@ -60,13 +60,10 @@ trait SyncMailbox extends Mailbox {
                        srcMailbox: Mailbox,
                        messageFunction: (AnyRef, Any => Unit) => Unit) {
     val controllingMailbox = srcMailbox.control
-    if (controllingMailbox == atomicControl.get) {
-      if (this == controllingMailbox) dispatch(content, responseFunction, messageFunction)
-      else {
-        dispatch(content, responseFunction, messageFunction)
-      }
+    if (controllingMailbox == control) {
+      dispatch(content, responseFunction, messageFunction)
     } else if (!atomicControl.compareAndSet(null, controllingMailbox))
-      asyncSendReq(bound, targetActor, content, responseFunction)
+      srcMailbox.asyncSendReq(bound, targetActor, content, responseFunction)
     else {
       idle.acquire
       try {
