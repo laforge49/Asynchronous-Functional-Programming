@@ -47,6 +47,7 @@ final class MailboxReq(dst: Actor,
                        tc: TransactionContext)
   extends MailboxMsg(rf, oldReq, srcEF, tc) {
   var active = true
+  var fastSend = false
 
   def sender = src
 

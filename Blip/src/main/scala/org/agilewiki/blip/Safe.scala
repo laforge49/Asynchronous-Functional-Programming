@@ -66,6 +66,24 @@ abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Saf
       }
     }
   }
+
+  def asyncSendReq(srcMailbox: Mailbox,
+                   targetActor: Actor,
+                   content: AnyRef,
+                   responseFunction: Any => Unit) {
+    val oldReq = srcMailbox.currentRequestMessage
+    val sender = oldReq.target
+    val req = new MailboxReq(
+      targetActor,
+      responseFunction,
+      oldReq,
+      content,
+      this,
+      sender,
+      srcMailbox.exceptionFunction,
+      srcMailbox.transactionContext)
+    targetActor.mailbox.sendReq(targetActor, req, srcMailbox)
+  }
 }
 
 class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
@@ -85,10 +103,11 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
         "An immutable actor can only send to another immutable actor."
       )
     }
-    if (target.mailbox == null || target.mailbox == srcMailbox) {
+    val targetMailbox = target.mailbox
+    if (targetMailbox == null || targetMailbox == srcMailbox) {
       if (responseFunction == null) messageFunction(msg, AnyRef => {})
       else messageFunction(msg, responseFunction)
-    } else srcMailbox.sendReq(this, target, msg, responseFunction, srcMailbox, messageFunction)
+    } else asyncSendReq(srcMailbox, target, msg, responseFunction)
   }
 }
 
@@ -105,10 +124,11 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
       if (srcActor == null) null
       else srcActor.actor.mailbox
     }
-    if (srcMailbox == null || target.mailbox == null) throw new UnsupportedOperationException(
+    val targetMailbox = target.mailbox
+    if (srcMailbox == null || targetMailbox == null) throw new UnsupportedOperationException(
       "Transactions require that both the requesting and target actors have mailboxes."
     )
-    srcMailbox.asyncSendReq(this, target, msg, responseFunction)
+    asyncSendReq(srcMailbox, target, msg, responseFunction)
   }
 
   override def process(mailbox: Mailbox, mailboxReq: MailboxReq) {

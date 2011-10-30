@@ -29,8 +29,8 @@ import java.util.concurrent.atomic.AtomicReference
 import java.util.concurrent.Semaphore
 
 trait SyncMailbox extends Mailbox {
-  private val atomicControl = new AtomicReference[Mailbox]
-  private val idle = new Semaphore(1)
+  val atomicControl = new AtomicReference[Mailbox]
+  val idle = new Semaphore(1)
 
   override def control = atomicControl.get
 
@@ -46,32 +46,35 @@ trait SyncMailbox extends Mailbox {
     }
   }
 
-  private def dispatch(content: AnyRef,
-                       responseFunction: Any => Unit,
-                       messageFunction: (AnyRef, Any => Unit) => Unit) {
-    if (responseFunction == null) messageFunction(content, AnyRef => {})
-    else messageFunction(content, responseFunction)
-  }
-
-  override def sendReq(bound: Bound,
-                       targetActor: Actor,
-                       content: AnyRef,
-                       responseFunction: Any => Unit,
-                       srcMailbox: Mailbox,
-                       messageFunction: (AnyRef, Any => Unit) => Unit) {
+  override def sendReq(targetActor: Actor,
+              req: MailboxReq,
+              srcMailbox: Mailbox) {
     val controllingMailbox = srcMailbox.control
     if (controllingMailbox == control) {
-      dispatch(content, responseFunction, messageFunction)
+      curMsg = req
+      req.fastSend = true
+      req.binding.process(this, req)
     } else if (!atomicControl.compareAndSet(null, controllingMailbox))
-      srcMailbox.asyncSendReq(bound, targetActor, content, responseFunction)
+      srcMailbox.addPending(targetActor, req)
     else {
       idle.acquire
       try {
-        dispatch(content, responseFunction, messageFunction)
+        curMsg = req
+        req.fastSend = true
+        req.binding.process(this, req)
       } finally {
         atomicControl.set(null)
         idle.release
       }
     }
+  }
+
+  override protected def sendReply(sender: MsgSrc,
+                                   rspMsg: MailboxRsp,
+                                   senderMailbox: Mailbox) {
+    if (currentRequestMessage.fastSend) {
+      senderMailbox.curMsg = rspMsg
+      senderMailbox.rsp(rspMsg)
+    } else super.sendReply(sender, rspMsg, senderMailbox)
   }
 }
