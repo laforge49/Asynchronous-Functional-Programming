@@ -29,6 +29,31 @@ import java.util.ArrayList
 trait Mailbox
   extends MsgCtrl {
 
+  def sendReq(bound: Bound,
+                   targetActor: Actor,
+                   content: AnyRef,
+                   responseFunction: Any => Unit) {
+    asyncSendReq(bound, targetActor, content, responseFunction)
+  }
+
+  def asyncSendReq(bound: Bound,
+              targetActor: Actor,
+              content: AnyRef,
+              responseFunction: Any => Unit) {
+    val oldReq = currentRequestMessage
+    val sender = oldReq.target
+    val req = new MailboxReq(
+      targetActor,
+      responseFunction,
+      oldReq,
+      content,
+      bound,
+      sender,
+      exceptionFunction,
+      transactionContext)
+    addPending(targetActor, req)
+  }
+
   protected def receive(blkmsg: ArrayList[MailboxMsg]) {
     val it = blkmsg.iterator
     while (it.hasNext) {
@@ -68,24 +93,6 @@ trait Mailbox
 
   def reqExceptionFunction(ex: Exception) {
     reply(ex)
-  }
-
-  def asyncSendReq(bound: Bound,
-                   targetActor: Actor,
-                   content: AnyRef,
-                   responseFunction: Any => Unit) {
-    val oldReq = currentRequestMessage
-    val sender = oldReq.target
-    val req = new MailboxReq(
-      targetActor,
-      responseFunction,
-      oldReq,
-      content,
-      bound,
-      sender,
-      exceptionFunction,
-      transactionContext)
-    addPending(targetActor, req)
   }
 
   val pending = new java.util.HashMap[MsgCtrl, ArrayList[MailboxMsg]]
