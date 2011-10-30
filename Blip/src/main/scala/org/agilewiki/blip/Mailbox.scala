@@ -31,31 +31,10 @@ trait Mailbox
 
   def control = this
 
-  def sendReq(bound: Bound,
-                   targetActor: Actor,
-                   content: AnyRef,
-                   responseFunction: Any => Unit,
-                   srcMailbox: Mailbox,
-                   messageFunction: (AnyRef, Any => Unit) => Unit) {
-    asyncSendReq(bound, targetActor, content, responseFunction)
-  }
-
-  def asyncSendReq(bound: Bound,
-              targetActor: Actor,
-              content: AnyRef,
-              responseFunction: Any => Unit) {
-    val oldReq = currentRequestMessage
-    val sender = oldReq.target
-    val req = new MailboxReq(
-      targetActor,
-      responseFunction,
-      oldReq,
-      content,
-      bound,
-      sender,
-      exceptionFunction,
-      transactionContext)
-    addPending(targetActor, req)
+  def sendReq(targetActor: Actor,
+              req: MailboxReq,
+              srcMailbox: Mailbox) {
+    srcMailbox.addPending(targetActor, req)
   }
 
   protected def receive(blkmsg: ArrayList[MailboxMsg]) {
@@ -144,6 +123,16 @@ trait Mailbox
       content,
       req.senderExceptionFunction,
       req.transactionContext)
+    if (sender.isInstanceOf[Actor]) {
+      val senderActor = sender.asInstanceOf[Actor]
+      val senderMailbox = senderActor.mailbox
+      sendReply(sender, rsp, senderMailbox)
+    } else {
+      addPending(sender, rsp)
+    }
+  }
+
+  protected def sendReply(sender: MsgSrc, rsp: MailboxRsp, senderMailbox: Mailbox) {
     addPending(sender, rsp)
   }
 }
