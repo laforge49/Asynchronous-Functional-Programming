@@ -10,9 +10,7 @@ import annotation.tailrec
 class ConcurrentLinkedBlockingQueue[E]
   extends ConcurrentLinkedQueue[E] {
   private val ab = new atomic.AtomicBoolean //when true, take is requesting a permit
-  private val s = new Semaphore(1) //to wake up a pending take
-
-  s.drainPermits //start with no permits
+  private val s = new Semaphore(0) //to wake up a pending take
 
   def put(e: E) {
     offer(e)
