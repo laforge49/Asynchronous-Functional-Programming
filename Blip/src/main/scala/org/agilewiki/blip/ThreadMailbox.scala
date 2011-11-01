@@ -28,7 +28,7 @@ import java.util.ArrayList
 
 abstract class BaseThreadMailbox
   extends Thread {
-  private val queue = new ConcurrentLinkedBlockingQueue[ArrayList[MailboxMsg]]
+  protected val queue = new ConcurrentLinkedBlockingQueue[ArrayList[MailboxMsg]]
 
   def isMailboxEmpty = queue.size() == 0
 
@@ -47,4 +47,19 @@ abstract class BaseThreadMailbox
 
 class AsyncThreadMailbox extends BaseThreadMailbox with Mailbox
 
-class ThreadMailbox extends BaseThreadMailbox with SyncMailbox
+class ThreadMailbox extends BaseThreadMailbox with SyncMailbox {
+
+  override protected def _receive(blkmsg: ArrayList[MailboxMsg]) {
+    var bm = blkmsg
+    while (bm != null) {
+      super._receive(bm)
+      bm = queue.poll()
+    }
+  }
+
+  override protected def _sendReq(req: MailboxReq) {
+    super._sendReq(req)
+    val blkmsg = queue.poll()
+    if (blkmsg != null) _receive(blkmsg)
+  }
+}

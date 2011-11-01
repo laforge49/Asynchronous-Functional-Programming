@@ -38,7 +38,11 @@ trait Mailbox
   }
 
   protected def receive(blkmsg: ArrayList[MailboxMsg]) {
-    val it = blkmsg.iterator
+    _receive(blkmsg)
+  }
+
+  protected def _receive(blkmsg: ArrayList[MailboxMsg]) {
+  val it = blkmsg.iterator
     while (it.hasNext) {
       curMsg = it.next
       curMsg match {

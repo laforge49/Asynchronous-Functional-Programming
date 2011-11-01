@@ -31,7 +31,7 @@ object SystemServices {
             factoryId: FactoryId = new FactoryId("System"),
             properties: Properties = null,
             actorClass: Class[_ <: Actor] = classOf[Actor],
-            newMailbox: Mailbox = new ReactorMailbox) = {
+            newMailbox: Mailbox = new ThreadMailbox) = {
     val systemServicesFactory = new CompositeFactory(factoryId, rootComponentFactory, actorClass)
     SetProperties(systemServicesFactory, properties)
     val systemServices = systemServicesFactory.newActor(newMailbox)

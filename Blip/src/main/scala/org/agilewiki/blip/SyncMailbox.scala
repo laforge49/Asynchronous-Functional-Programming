@@ -40,7 +40,7 @@ trait SyncMailbox extends Mailbox {
       idle.release
     }
     try {
-      super.receive(blkmsg)
+      _receive(blkmsg)
     } finally {
       atomicControl.set(null)
     }
@@ -51,22 +51,24 @@ trait SyncMailbox extends Mailbox {
               srcMailbox: Mailbox) {
     val controllingMailbox = srcMailbox.control
     if (controllingMailbox == control) {
-      curMsg = req
-      req.fastSend = true
-      req.binding.process(this, req)
+      _sendReq(req)
     } else if (!atomicControl.compareAndSet(null, controllingMailbox))
       srcMailbox.addPending(targetActor, req)
     else {
       idle.acquire
       try {
-        curMsg = req
-        req.fastSend = true
-        req.binding.process(this, req)
+        _sendReq(req)
       } finally {
         atomicControl.set(null)
         idle.release
       }
     }
+  }
+
+  protected def _sendReq(req: MailboxReq) {
+    curMsg = req
+    req.fastSend = true
+    req.binding.process(this, req)
   }
 
   override protected def sendReply(sender: MsgSrc,
