@@ -41,6 +41,7 @@ trait SyncMailbox extends Mailbox {
     }
     try {
       _receive(blkmsg)
+      flushPendingMsgs
     } finally {
       atomicControl.set(null)
     }

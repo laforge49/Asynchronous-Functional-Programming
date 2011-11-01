@@ -60,6 +60,9 @@ class ThreadMailbox extends BaseThreadMailbox with SyncMailbox {
   override protected def _sendReq(req: MailboxReq) {
     super._sendReq(req)
     val blkmsg = queue.poll()
-    if (blkmsg != null) _receive(blkmsg)
+    if (blkmsg != null) {
+      _receive(blkmsg)
+      flushPendingMsgs
+    }
   }
 }

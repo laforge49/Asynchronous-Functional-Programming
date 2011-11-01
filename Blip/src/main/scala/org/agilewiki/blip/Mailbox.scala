@@ -39,17 +39,10 @@ trait Mailbox
 
   protected def receive(blkmsg: ArrayList[MailboxMsg]) {
     _receive(blkmsg)
+    flushPendingMsgs
   }
 
-  protected def _receive(blkmsg: ArrayList[MailboxMsg]) {
-  val it = blkmsg.iterator
-    while (it.hasNext) {
-      curMsg = it.next
-      curMsg match {
-        case msg: MailboxReq => msg.binding.process(this, msg)
-        case msg: MailboxRsp => rsp(msg)
-      }
-    }
+  protected def flushPendingMsgs {
     if (isMailboxEmpty && !pending.isEmpty) {
       val it = pending.keySet.iterator
       while (it.hasNext) {
@@ -58,6 +51,17 @@ trait Mailbox
         ctrl._send(blkmsg)
       }
       pending.clear
+    }
+  }
+
+  protected def _receive(blkmsg: ArrayList[MailboxMsg]) {
+    val it = blkmsg.iterator
+    while (it.hasNext) {
+      curMsg = it.next
+      curMsg match {
+        case msg: MailboxReq => msg.binding.process(this, msg)
+        case msg: MailboxRsp => rsp(msg)
+      }
     }
   }
 
