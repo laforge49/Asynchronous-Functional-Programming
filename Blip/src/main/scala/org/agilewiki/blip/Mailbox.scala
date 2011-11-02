@@ -70,8 +70,6 @@ trait Mailbox
 
   def isMailboxEmpty: Boolean
 
-  def currentMessage = curMsg
-
   def currentRequestMessage = {
     if (curMsg.isInstanceOf[MailboxReq])
       curMsg.asInstanceOf[MailboxReq]

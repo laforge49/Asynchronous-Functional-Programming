@@ -76,7 +76,6 @@ trait SyncMailbox extends Mailbox {
                                    rspMsg: MailboxRsp,
                                    senderMailbox: Mailbox) {
     if (currentRequestMessage.fastSend) {
-      senderMailbox.curMsg = rspMsg
       senderMailbox.rsp(rspMsg)
     } else super.sendReply(sender, rspMsg, senderMailbox)
   }
