@@ -28,6 +28,9 @@ import java.util.ArrayList
 
 trait Mailbox
   extends MsgCtrl {
+  var curMsg: MailboxMsg = null
+  var exceptionFunction: Exception => Unit = null
+  var transactionContext: TransactionContext = null
 
   def control = this
 
@@ -67,8 +70,6 @@ trait Mailbox
 
   def isMailboxEmpty: Boolean
 
-  var curMsg: MailboxMsg = null
-
   def currentMessage = curMsg
 
   def currentRequestMessage = {
@@ -77,10 +78,6 @@ trait Mailbox
     else
       curMsg.asInstanceOf[MailboxRsp].oldRequest
   }
-
-  var exceptionFunction: Exception => Unit = null
-
-  var transactionContext: TransactionContext = null
 
   def reqExceptionFunction(ex: Exception) {
     reply(ex)
@@ -103,19 +100,7 @@ trait Mailbox
   }
 
   def rsp(msg: MailboxRsp) {
-    exceptionFunction = msg.senderExceptionFunction
-    transactionContext = msg.transactionContext
-    if (msg.rsp.isInstanceOf[Exception]) {
-      exceptionFunction(msg.rsp.asInstanceOf[Exception])
-    } else {
-      try {
-        msg.responseFunction(msg.rsp)
-      } catch {
-        case ex: Exception => {
-          exceptionFunction(ex)
-        }
-      }
-    }
+    msg.responseFunction(msg.rsp)
   }
 
   def reply(content: Any) {
@@ -128,9 +113,7 @@ trait Mailbox
     val rsp = new MailboxRsp(
       req.responseFunction,
       req.oldRequest,
-      content,
-      req.senderExceptionFunction,
-      req.transactionContext)
+      content)
     if (sender.isInstanceOf[Actor]) {
       val senderActor = sender.asInstanceOf[Actor]
       val senderMailbox = senderActor.mailbox

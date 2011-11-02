@@ -79,29 +79,55 @@ abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Saf
       oldReq,
       content,
       this,
-      sender,
-      srcMailbox.exceptionFunction,
-      srcMailbox.transactionContext)
+      sender)
     targetActor.mailbox.sendReq(targetActor, req, srcMailbox)
   }
 }
 
 class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
   extends Bound(messageFunction) {
-  override def func(target: Actor, msg: AnyRef, responseFunction: Any => Unit)
+  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)
                    (implicit srcActor: ActiveActor) {
+    var oldCurMsg: MailboxMsg = null
+    var oldExceptionFunction: Exception => Unit = null
+    var oldTransactionContext: TransactionContext = null
     val srcMailbox = {
       if (srcActor == null) null
-      else srcActor.actor.mailbox
+      else {
+        srcActor.actor.mailbox
+      }
     }
-    if (srcMailbox == null && target.mailbox != null) {
-      println("srcActor = " + srcActor)
-      println("srcMailbox = " + srcMailbox)
-      println("target = " + target)
-      println("targetMailbox = " + target.mailbox)
-      throw new UnsupportedOperationException(
-        "An immutable actor can only send to another immutable actor."
-      )
+    if (srcMailbox == null) {
+      if (target.mailbox != null) {
+        println("srcActor = " + srcActor)
+        println("srcMailbox = " + srcMailbox)
+        println("target = " + target)
+        println("targetMailbox = " + target.mailbox)
+        throw new UnsupportedOperationException(
+          "An immutable actor can only send to another immutable actor."
+        )
+      }
+    } else {
+      oldCurMsg = srcMailbox.curMsg
+      oldExceptionFunction = srcMailbox.exceptionFunction
+      oldTransactionContext = srcMailbox.transactionContext
+    }
+    val responseFunction: Any => Unit = {
+      rsp => {
+        if (srcMailbox != null) {
+          srcMailbox.curMsg = oldCurMsg
+          srcMailbox.exceptionFunction = oldExceptionFunction
+          srcMailbox.transactionContext = oldTransactionContext
+        }
+        rsp match {
+          case rsp: Exception => srcMailbox.exceptionFunction(rsp)
+          case rsp => try {
+            rf(rsp)
+          } catch {
+            case ex: Exception => srcMailbox.exceptionFunction(ex)
+          }
+        }
+      }
     }
     val targetMailbox = target.mailbox
     if (targetMailbox == null || targetMailbox == srcMailbox) {
@@ -117,9 +143,9 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
 
   def maxCompatibleLevel: Int
 
-  override def func(target: Actor, msg: AnyRef, responseFunction: Any => Unit)
+  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)
                    (implicit srcActor: ActiveActor) {
-    if (responseFunction == null) throw new IllegalArgumentException("transaction requests require a response function")
+    if (rf == null) throw new IllegalArgumentException("transaction requests require a response function")
     val srcMailbox = {
       if (srcActor == null) null
       else srcActor.actor.mailbox
@@ -128,6 +154,24 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
     if (srcMailbox == null || targetMailbox == null) throw new UnsupportedOperationException(
       "Transactions require that both the requesting and target actors have mailboxes."
     )
+    val oldCurMsg = srcMailbox.curMsg
+    val oldExceptionFunction = srcMailbox.exceptionFunction
+    val oldTransactionContext = srcMailbox.transactionContext
+    val responseFunction: Any => Unit = {
+      rsp => {
+          srcMailbox.curMsg = oldCurMsg
+          srcMailbox.exceptionFunction = oldExceptionFunction
+          srcMailbox.transactionContext = oldTransactionContext
+        rsp match {
+          case rsp: Exception => srcMailbox.exceptionFunction(rsp)
+          case rsp => try {
+            rf(rsp)
+          } catch {
+            case ex: Exception => srcMailbox.exceptionFunction(ex)
+          }
+        }
+      }
+    }
     asyncSendReq(srcMailbox, target, msg, responseFunction)
   }
 

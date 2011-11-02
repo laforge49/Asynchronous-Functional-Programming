@@ -44,7 +44,7 @@ class Future
       boundFunction.reqFunction(msg, synchronousResponse)
     } else {
       val bound = safe.asInstanceOf[Bound]
-      val req = new MailboxReq(dst, Unit => {}, null, msg, bound, this, null, null)
+      val req = new MailboxReq(dst, Unit => {}, null, msg, bound, this)
       val blkmsg = new ArrayList[MailboxMsg]
       blkmsg.add(req)
       dst.ctrl._send(blkmsg)

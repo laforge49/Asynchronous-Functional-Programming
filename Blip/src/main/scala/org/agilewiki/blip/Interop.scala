@@ -32,7 +32,7 @@ class Interop[T >: AnyRef](reactor: Reactor[T])
 
   override def ctrl = this
 
-  def afpSend(dst: Actor, msg: AnyRef, exceptionHandler: PartialFunction[Exception, Unit])(rf: Any => Unit) {
+  def afpSend(dst: Actor, msg: AnyRef)(rf: Any => Unit) {
     val safe = dst.messageFunctions.get(msg.getClass)
     if (!safe.isInstanceOf[Bound]) throw
       new IllegalArgumentException(msg.getClass.getName + "can not be sent asynchronously to " + dst)
@@ -43,9 +43,7 @@ class Interop[T >: AnyRef](reactor: Reactor[T])
       boundFunction.reqFunction(msg, rf)
     } else {
       val bound = safe.asInstanceOf[Bound]
-      val req = new MailboxReq(dst, rf, null, msg, bound, this, {
-        ex: Exception => exceptionHandler(ex)
-      }, null)
+      val req = new MailboxReq(dst, rf, null, msg, bound, this)
       val blkmsg = new java.util.ArrayList[MailboxMsg]
       blkmsg.add(req)
       dst.ctrl._send(blkmsg)
@@ -63,7 +61,7 @@ class Interop[T >: AnyRef](reactor: Reactor[T])
 
   def afpResponse(mailboxRsp: MailboxRsp) {
     mailboxRsp.rsp match {
-      case rsp: Exception => mailboxRsp.senderExceptionFunction(rsp)
+      case rsp: Exception => mailboxRsp.oldRequest.sender.asInstanceOf[Reactor[Any]] ! new Exception(rsp)
       case rsp => mailboxRsp.responseFunction(rsp)
     }
   }
