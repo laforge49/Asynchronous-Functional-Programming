@@ -27,6 +27,7 @@ package blip
 import java.util.ArrayList
 import annotation.tailrec
 import java.util.concurrent.{ConcurrentLinkedQueue, Semaphore, ThreadFactory}
+import java.util.concurrent.atomic.AtomicBoolean
 
 class MailboxFactory(threadManager: ThreadManager = new MailboxThreadManager) {
 
@@ -47,6 +48,7 @@ class MailboxFactory(threadManager: ThreadManager = new MailboxThreadManager) {
 
 abstract class MailboxBase(mailboxFactory: MailboxFactory) extends Runnable {
   protected val queue = new ConcurrentLinkedBlockingQueue[ArrayList[MailboxMsg]]
+  private val running = new AtomicBoolean
 
   def asyncMailbox = mailboxFactory.asyncMailbox
 
@@ -56,12 +58,15 @@ abstract class MailboxBase(mailboxFactory: MailboxFactory) extends Runnable {
 
   def _send(blkmsg: ArrayList[MailboxMsg]) {
     queue.put(blkmsg)
-    mailboxFactory.process(this)
+    if (running.compareAndSet(false, true)) mailboxFactory.process(this)
   }
 
   @tailrec final override def run {
     var msgblk = queue.poll
-    if (msgblk == null) return
+    if (msgblk == null) {
+      running.set(false)
+      if (queue.peek == null || !running.compareAndSet(false, true)) return
+    }
     receive(msgblk)
     run
   }
