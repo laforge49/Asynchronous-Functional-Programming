@@ -24,42 +24,9 @@
 package org.agilewiki
 package blip
 
-import scala.actors.Reactor
+import java.util.concurrent.{ConcurrentLinkedQueue, Semaphore, ThreadFactory}
 
-class Interop[T >: AnyRef](reactor: Reactor[T])
-  extends MsgSrc
-  with MsgCtrl {
-
-  override def ctrl = this
-
-  def afpSend(dst: Actor, msg: AnyRef)(rf: Any => Unit) {
-    val safe = dst.messageFunctions.get(msg.getClass)
-    if (!safe.isInstanceOf[Bound]) throw
-      new IllegalArgumentException(msg.getClass.getName + "can not be sent asynchronously to " + dst)
-    dst._open
-    val mailbox = dst.mailbox
-    if (mailbox == null) {
-      val boundFunction = safe.asInstanceOf[BoundFunction]
-      boundFunction.reqFunction(msg, rf) //todo very weak
-    } else {
-      val bound = safe.asInstanceOf[Bound]
-      val req = new MailboxReq(dst, rf, null, msg, bound, this)
-      val blkmsg = new java.util.ArrayList[MailboxMsg]
-      blkmsg.add(req)
-      dst.ctrl._send(blkmsg)
-    }
-  }
-
-  override def _send(blkmsg: java.util.ArrayList[MailboxMsg]) {
-    var i = 0
-    while (i < blkmsg.size) {
-      val mailboxRsp = blkmsg.get(i).asInstanceOf[MailboxRsp]
-      i += 1
-      reactor ! mailboxRsp
-    }
-  }
-
-  def afpResponse(mailboxRsp: MailboxRsp) {
-    mailboxRsp.responseFunction(mailboxRsp.rsp)
-  }
+trait ThreadManager {
+  def process(task: Runnable)
+  def close
 }

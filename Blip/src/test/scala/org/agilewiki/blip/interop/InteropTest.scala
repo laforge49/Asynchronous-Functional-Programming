@@ -55,10 +55,11 @@ class SimpleReactor extends Reactor[Any] {
         }
         case req: T4 => {
           interop.afpSend(simpleActor, Ex()) {
-            rsp => println("Can't get here")
+            rsp => {
+              println(rsp.asInstanceOf[Exception].getClass.getName)
+            }
           }
         }
-        case req: Exception => println(req.getCause.getClass.getName)
       }
     }
   }

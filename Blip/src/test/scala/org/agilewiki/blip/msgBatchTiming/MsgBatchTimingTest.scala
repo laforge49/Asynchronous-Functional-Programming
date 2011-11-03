@@ -30,8 +30,8 @@ import org.specs.SpecificationWithJUnit
 class MsgBatchTimingTest extends SpecificationWithJUnit {
   "MsgBatchTimingTest" should {
     "asynchronous timing" in {
-      val e = 10000//0
-      val b = 10
+      val e = 10//000//0
+      val b = 1//0
       val batchers = new Array[Batcher](b)
       var i = 0
       while(i < b) {
@@ -45,7 +45,7 @@ class MsgBatchTimingTest extends SpecificationWithJUnit {
       val t0 = System.currentTimeMillis
       Future(driver, TimingReq())
       val t1 = System.currentTimeMillis
-      println("async msgs per sec = "+(2L * (e + 1L) * b * 1000L / (t1 - t0)))
+      if (t1 != t0) println("async msgs per sec = "+(2L * (e + 1L) * b * 1000L / (t1 - t0)))
     }
   }
 }

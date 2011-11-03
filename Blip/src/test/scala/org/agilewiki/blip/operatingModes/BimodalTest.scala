@@ -7,8 +7,8 @@ case class AMessage()
 
 class A(sub: Actor) extends Actor {
   bind(classOf[AMessage], afunc)
-  def afunc(msg: AnyRef, rf: Any => Unit)
-  {
+
+  def afunc(msg: AnyRef, rf: Any => Unit) {
     println("start afunc")
     sub(msg) {
       rsp =>
@@ -21,8 +21,8 @@ class A(sub: Actor) extends Actor {
 
 class B extends Actor {
   bind(classOf[AMessage], bfunc)
-  def bfunc(msg: AnyRef, rf: Any => Unit)
-  {
+
+  def bfunc(msg: AnyRef, rf: Any => Unit) {
     rf("ta ta")
   }
 }
@@ -30,18 +30,23 @@ class B extends Actor {
 class BimodalTest extends SpecificationWithJUnit {
   "Bimodal" should {
     "print differently" in {
-      val mb1 = new ReactorMailbox
-      val mb2 = new ReactorMailbox
-      val b = new B
-      b.setMailbox(mb1)
-      println("synchronous test")
-      val sa = new A(b)
-      sa.setMailbox(mb1)
-      Future(sa, AMessage())
-      println("asynchronous test")
-      val aa = new A(b)
-      aa.setMailbox(mb2)
-      Future(aa, AMessage())
+      val mailboxFactory = new MailboxFactory
+      try {
+        val mb1 = mailboxFactory.asyncMailbox
+        val mb2 = mailboxFactory.asyncMailbox
+        val b = new B
+        b.setMailbox(mb1)
+        println("synchronous test")
+        val sa = new A(b)
+        sa.setMailbox(mb1)
+        Future(sa, AMessage())
+        println("asynchronous test")
+        val aa = new A(b)
+        aa.setMailbox(mb2)
+        Future(aa, AMessage())
+      } finally {
+        mailboxFactory.close
+      }
     }
   }
 }

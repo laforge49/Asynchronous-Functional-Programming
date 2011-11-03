@@ -38,7 +38,7 @@ class ThreadTimingTest extends SpecificationWithJUnit {
       println(Future(a, TimingReq("asynchronous hello world")))
     }
     "synchronous timing" in {
-      val c = 1000000 //00
+      val c = 10//00000 //00
       val m = new ThreadMailbox
       val a1 = new TimingActor(null)
       a1.setMailbox(m)
@@ -48,10 +48,10 @@ class ThreadTimingTest extends SpecificationWithJUnit {
       val t0 = System.currentTimeMillis
       Future(a, TimingReq("hello world"))
       val t1 = System.currentTimeMillis
-      println("sync msgs per sec = " + (c * 2L * 1000L / (t1 - t0)))
+      if (t1 != t0) println("sync msgs per sec = " + (c * 2L * 1000L / (t1 - t0)))
     }
     "quad-synchronous timing" in {
-      val c = 1000000 //00
+      val c = 10//00000 //00
       val m = new ThreadMailbox
       val a = new ThreadParallelSyncActor(c)
       a.setMailbox(m)
@@ -59,10 +59,10 @@ class ThreadTimingTest extends SpecificationWithJUnit {
       val t0 = System.currentTimeMillis
       Future(a, TimingReq("hello world"))
       val t1 = System.currentTimeMillis
-      println("quad sync msgs per sec = " + (c * 4L * 2L * 1000L / (t1 - t0)))
+      if (t1 != t0) println("quad sync msgs per sec = " + (c * 4L * 2L * 1000L / (t1 - t0)))
     }
     "asynchronous timing" in {
-      val c = 100000
+      val c = 10//0000
       val m = new ThreadMailbox
       val a = new ThreadParallelAsyncActor(c)
       a.setMailbox(m)
@@ -70,7 +70,7 @@ class ThreadTimingTest extends SpecificationWithJUnit {
       val t0 = System.currentTimeMillis
       Future(a, TimingReq("hello world"))
       val t1 = System.currentTimeMillis
-      println("async msgs per sec = " + (c * 4L * 2L * 1000L / (t1 - t0)))
+      if (t1 != t0) println("async msgs per sec = " + (c * 4L * 2L * 1000L / (t1 - t0)))
     }
   }
 }
