@@ -86,6 +86,7 @@ abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Saf
 
 class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
   extends Bound(messageFunction) {
+
   override def func(target: Actor, msg: AnyRef, rf: Any => Unit)
                    (implicit srcActor: ActiveActor) {
     var oldCurMsg: MailboxMsg = null

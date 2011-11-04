@@ -48,8 +48,8 @@ trait SyncMailbox extends Mailbox {
   }
 
   override def sendReq(targetActor: Actor,
-              req: MailboxReq,
-              srcMailbox: Mailbox) {
+                       req: MailboxReq,
+                       srcMailbox: Mailbox) {
     val controllingMailbox = srcMailbox.control
     if (controllingMailbox == control) {
       _sendReq(req)

@@ -23,6 +23,7 @@ class B extends Actor {
   bind(classOf[AMessage], bfunc)
 
   def bfunc(msg: AnyRef, rf: Any => Unit) {
+    println("processing request")
     rf("ta ta")
   }
 }
@@ -34,16 +35,25 @@ class BimodalTest extends SpecificationWithJUnit {
       try {
         val mb1 = mailboxFactory.asyncMailbox
         val mb2 = mailboxFactory.asyncMailbox
-        val b = new B
-        b.setMailbox(mb1)
-        println("synchronous test")
-        val sa = new A(b)
-        sa.setMailbox(mb1)
-        Future(sa, AMessage())
-        println("asynchronous test")
-        val aa = new A(b)
-        aa.setMailbox(mb2)
-        Future(aa, AMessage())
+        println("test 1 --synchronous")
+        val b1 = new B
+        b1.setMailbox(mb1)
+        val a1 = new A(b1)
+        a1.setMailbox(mb1)
+        Future(a1, AMessage())
+        println("test 2 --asynchronous")
+        val b2 = new B
+        b2.setMailbox(mb1)
+        val a2 = new A(b2)
+        a2.setMailbox(mb2)
+        Future(a2, AMessage())
+        val mb3 = mailboxFactory.syncMailbox
+        println("test 3 --synchronous")
+        val b3 = new B
+        b3.setMailbox(mb3)
+        val a3 = new A(b3)
+        a3.setMailbox(mb1)
+        Future(a3, AMessage())
       } finally {
         mailboxFactory.close
       }
