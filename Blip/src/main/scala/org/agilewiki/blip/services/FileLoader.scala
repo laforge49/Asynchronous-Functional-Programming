@@ -27,8 +27,8 @@ package services
 
 import java.io.{DataInputStream, FileInputStream}
 
-class FileLoader
-  extends Actor {
+class FileLoader(mailboxFactory: MailboxFactory)
+  extends AsyncActor(mailboxFactory) {
   setMailbox(new AsyncReactorMailbox)
   bind(classOf[LoadFile], loadFile)
 
@@ -45,7 +45,7 @@ class FileLoader
 
 class FileLoaderComponent(actor: Actor)
   extends Component(actor) {
-  bindSafe(classOf[LoadFile], new SafeForward(new FileLoader))
+  bindSafe(classOf[LoadFile], new SafeForward(new FileLoader(actor.mailboxFactory)))
 }
 
 class FileLoaderComponentFactory extends ComponentFactory {
