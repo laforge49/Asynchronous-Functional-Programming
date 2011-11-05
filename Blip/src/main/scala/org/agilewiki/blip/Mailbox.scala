@@ -40,7 +40,7 @@ trait Mailbox
     srcMailbox.addPending(targetActor, req)
   }
 
-  protected def receive(blkmsg: ArrayList[MailboxMsg]) {
+  def receive(blkmsg: ArrayList[MailboxMsg]) {
     _receive(blkmsg)
     flushPendingMsgs
   }

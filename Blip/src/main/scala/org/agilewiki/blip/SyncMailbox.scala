@@ -34,7 +34,7 @@ trait SyncMailbox extends Mailbox {
 
   override def control = atomicControl.get
 
-  override protected def receive(blkmsg: ArrayList[MailboxMsg]) {
+  override def receive(blkmsg: ArrayList[MailboxMsg]) {
     while (!atomicControl.compareAndSet(null, this)) {
       idle.acquire
       idle.release

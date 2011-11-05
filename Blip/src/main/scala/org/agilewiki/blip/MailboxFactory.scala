@@ -25,17 +25,19 @@ package org.agilewiki
 package blip
 
 import java.util.ArrayList
-import annotation.tailrec
 import java.util.concurrent.Semaphore
-import java.util.concurrent.atomic.{AtomicReference, AtomicBoolean}
+import java.util.concurrent.atomic.AtomicReference
 
-class MailboxFactory(threadManager: ThreadManager = new MailboxThreadManager) {
+class MailboxFactory(_threadManager: ThreadManager = new MailboxThreadManager)
+  extends ThreadManager {
 
-  def process(task: Runnable) {
+  def threadManager = _threadManager
+
+  override def process(task: Runnable) {
     threadManager.process(task)
   }
 
-  def close {threadManager.close}
+  override def close {threadManager.close}
 
   def asyncMailbox = {
     new AsyncMailbox(this)
@@ -47,29 +49,20 @@ class MailboxFactory(threadManager: ThreadManager = new MailboxThreadManager) {
 }
 
 class AsyncMailbox(mailboxFactory: MailboxFactory)
-  extends Mailbox with Runnable {
-  protected val queue = new ConcurrentLinkedBlockingQueue[ArrayList[MailboxMsg]]
-  private val running = new AtomicBoolean
+  extends Mailbox with MessagerDispatch[ArrayList[MailboxMsg]] {
+
+  val messenger = new Messenger(this, mailboxFactory.threadManager)
 
   def asyncMailbox = mailboxFactory.asyncMailbox
 
   def syncMailbox = mailboxFactory.syncMailbox
 
-  def isMailboxEmpty = queue.size() == 0
+  override def isMailboxEmpty = messenger.isEmpty
 
-  def _send(blkmsg: ArrayList[MailboxMsg]) {
-    queue.put(blkmsg)
-    if (running.compareAndSet(false, true)) mailboxFactory.process(this)
-  }
+  def poll = messenger.poll
 
-  @tailrec final override def run {
-    var msgblk = queue.poll
-    if (msgblk == null) {
-      running.set(false)
-      if (queue.peek == null || !running.compareAndSet(false, true)) return
-    }
-    receive(msgblk)
-    run
+  override def _send(blkmsg: ArrayList[MailboxMsg]) {
+    messenger.put(blkmsg)
   }
 }
 
@@ -80,7 +73,7 @@ class SyncMailboxBase(mailboxFactory: MailboxFactory)
 
   override def control = atomicControl.get
 
-  override protected def receive(blkmsg: ArrayList[MailboxMsg]) {
+  override def receive(blkmsg: ArrayList[MailboxMsg]) {
     while (!atomicControl.compareAndSet(null, this)) {
       idle.acquire
       idle.release
@@ -116,7 +109,7 @@ class SyncMailboxBase(mailboxFactory: MailboxFactory)
     var bm = blkmsg
     while (bm != null) {
       super._receive(bm)
-      bm = queue.poll()
+      bm = poll
     }
   }
 
@@ -124,7 +117,7 @@ class SyncMailboxBase(mailboxFactory: MailboxFactory)
     curMsg = req
     req.fastSend = true
     req.binding.process(this, req)
-    val blkmsg = queue.poll()
+    val blkmsg = poll
     if (blkmsg != null) {
       _receive(blkmsg)
       flushPendingMsgs

@@ -24,7 +24,35 @@
 package org.agilewiki
 package blip
 
-trait ThreadManager {
-  def process(task: Runnable)
-  def close
+import java.util.concurrent.atomic.AtomicBoolean
+import annotation.tailrec
+
+trait MessagerDispatch[T] {
+  def receive(message: T)
+}
+
+class Messenger[T](dispatcher: MessagerDispatch[T], threadManager: ThreadManager)
+  extends Runnable {
+
+  protected val queue = new ConcurrentLinkedBlockingQueue[T]
+  private val running = new AtomicBoolean
+
+  def isEmpty = queue.size() == 0
+
+  def put(message: T) {
+    queue.put(message)
+    if (running.compareAndSet(false, true)) threadManager.process(this)
+  }
+
+  def poll = queue.poll
+
+  @tailrec final override def run {
+    var message = queue.poll
+    if (message == null) {
+      running.set(false)
+      if (queue.peek == null || !running.compareAndSet(false, true)) return
+    }
+    dispatcher.receive(message)
+    run
+  }
 }
