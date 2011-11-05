@@ -46,7 +46,9 @@ class Messenger[T](dispatcher: MessengerDispatch[T], threadManager: ThreadManage
    */
   def put(message: T) {
     queue.put(message)
-    if (running.compareAndSet(false, true)) threadManager.process(this)
+    if (running.compareAndSet(false, true)) {
+      threadManager.process(this)
+    }
   }
 
   /**

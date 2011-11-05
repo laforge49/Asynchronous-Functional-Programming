@@ -5,8 +5,8 @@ import org.specs.SpecificationWithJUnit
 
 case class Pause()
 
-class Worker
-  extends Actor {
+class Worker(mailboxFactory: MailboxFactory)
+  extends AsyncActor(mailboxFactory) {
   bind(classOf[Pause], pause)
 
   def pause(msg: AnyRef, rf: Any => Unit) {
@@ -16,9 +16,10 @@ class Worker
 }
 
 object Pause {
-  def apply(rf: Any => Unit)(implicit srcActor: ActiveActor) {
-    val worker = new Worker
-    worker.setMailbox(new ReactorMailbox)
+  def apply(mailboxFactory: MailboxFactory)
+           (rf: Any => Unit)
+           (implicit srcActor: ActiveActor) {
+    val worker = new Worker(mailboxFactory)
     worker(Pause())(rf)
   }
 }
@@ -27,15 +28,15 @@ case class SimpleQuery(name: String)
 
 case class SimpleUpdate(name: String)
 
-class SimpleTransactionProcessor
-  extends Actor {
+class SimpleTransactionProcessor(mailboxFactory: MailboxFactory)
+  extends AsyncActor(mailboxFactory) {
   bindSafe(classOf[SimpleQuery], new Query(query))
   bindSafe(classOf[SimpleUpdate], new Update(update))
 
   def query(msg: AnyRef, rf: Any => Unit) {
     val name = msg.asInstanceOf[SimpleQuery].name
     println("start query " + name)
-    Pause{
+    Pause(mailboxFactory) {
       rsp => {
         println("  end query " + name)
         rf(null)
@@ -46,7 +47,7 @@ class SimpleTransactionProcessor
   def update(msg: AnyRef, rf: Any => Unit) {
     val name = msg.asInstanceOf[SimpleUpdate].name
     println("start update " + name)
-    Pause{
+    Pause(mailboxFactory) {
       rsp => {
         println("  end update " + name)
         rf(null)
@@ -57,13 +58,12 @@ class SimpleTransactionProcessor
 
 case class Doit()
 
-class Driver
-  extends Actor {
+class Driver(mailboxFactory: MailboxFactory)
+  extends AsyncActor(mailboxFactory) {
   bind(classOf[Doit], doit)
 
   lazy val simpleTransactionProcessor = {
-    val stp = new SimpleTransactionProcessor
-    stp.setMailbox(new ReactorMailbox)
+    val stp = new SimpleTransactionProcessor(mailboxFactory)
     stp
   }
 
@@ -111,9 +111,13 @@ class Driver
 class TransactionTest extends SpecificationWithJUnit {
   "TransactionTest" should {
     "process transactions" in {
-      val driver = new Driver
-      driver.setMailbox(new ReactorMailbox)
-      Future(driver, Doit())
+      val mailboxFactory = new MailboxFactory
+      try {
+        val driver = new Driver(mailboxFactory)
+        Future(driver, Doit())
+      } finally {
+        mailboxFactory.close
+      }
     }
   }
 }

@@ -11,7 +11,6 @@ case class AMsg()
 
 class Driver(mailboxFactory: MailboxFactory) extends AsyncActor(mailboxFactory) {
   bind(classOf[AMsg], aMsgFunc)
-  setMailbox(new ReactorMailbox)
 
   private def aMsgFunc(msg: AnyRef, rf: Any => Unit) {
     val safeActor = new SafeActor(mailboxFactory)
@@ -33,7 +32,6 @@ case class SafePrintEven(safeActor: SafeActor)
 
 class SafeActor(mailboxFactory: MailboxFactory) extends AsyncActor(mailboxFactory) {
   bind(classOf[Print], printFunc)
-  setMailbox(new ReactorMailbox)
 
   private def printFunc(msg: AnyRef, rf: Any => Unit) {
     println(msg.asInstanceOf[Print].value)
@@ -49,7 +47,6 @@ class SafeTest extends SpecificationWithJUnit {
       val mailboxFactory = new MailboxFactory
       try {
         val driver = new Driver(mailboxFactory)
-        driver.setMailbox(mailboxFactory.asyncMailbox)
         Future(driver, AMsg())
       } finally {
         mailboxFactory.close
