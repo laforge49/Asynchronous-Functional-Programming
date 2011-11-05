@@ -33,7 +33,6 @@ case class AsyncRspEx()
 case class SyncRspEx()
 
 class D extends Actor {
-  setMailbox(new ReactorMailbox)
   bind(classOf[AsyncServerEx], {
     (msg, rf) =>
       exceptionHandler(msg, rf, asyncServerEx) {
