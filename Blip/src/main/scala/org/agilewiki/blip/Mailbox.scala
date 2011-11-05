@@ -32,6 +32,10 @@ trait Mailbox
   var exceptionFunction: Exception => Unit = null
   var transactionContext: TransactionContext = null
 
+  def mailboxFactory: MailboxFactory = {
+    throw new UnsupportedOperationException
+  }
+
   def control = this
 
   def sendReq(targetActor: Actor,

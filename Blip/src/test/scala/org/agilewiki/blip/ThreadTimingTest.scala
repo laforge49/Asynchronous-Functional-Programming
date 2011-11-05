@@ -33,44 +33,64 @@ class ThreadTimingTest extends SpecificationWithJUnit {
       println(Future(a, TimingReq("synchronous hello world")))
     }
     "asynchronous hello world" in {
-      val a = new TimingActor(null)
-      a.setMailbox(new ThreadMailbox)
-      println(Future(a, TimingReq("asynchronous hello world")))
+      val mailboxFactory = new MailboxFactory
+      try {
+        val a = new TimingActor(null)
+        a.setMailbox(mailboxFactory.syncMailbox)
+        println(Future(a, TimingReq("asynchronous hello world")))
+      } finally {
+        mailboxFactory.close
+      }
     }
     "synchronous timing" in {
-      val c = 10//00000 //00
-      val m = new ThreadMailbox
-      val a1 = new TimingActor(null)
-      a1.setMailbox(m)
-      val a = new RepeatingActor(a1, c)
-      a.setMailbox(m)
-      Future(a, TimingReq("hello world"))
-      val t0 = System.currentTimeMillis
-      Future(a, TimingReq("hello world"))
-      val t1 = System.currentTimeMillis
-      if (t1 != t0) println("sync msgs per sec = " + (c * 2L * 1000L / (t1 - t0)))
+      val c = 10 //00000 //00
+      val mailboxFactory = new MailboxFactory
+      try {
+        val m = mailboxFactory.syncMailbox
+        val a1 = new TimingActor(null)
+        a1.setMailbox(m)
+        val a = new RepeatingActor(a1, c)
+        a.setMailbox(m)
+        Future(a, TimingReq("hello world"))
+        val t0 = System.currentTimeMillis
+        Future(a, TimingReq("hello world"))
+        val t1 = System.currentTimeMillis
+        if (t1 != t0) println("sync msgs per sec = " + (c * 2L * 1000L / (t1 - t0)))
+      } finally {
+        mailboxFactory.close
+      }
     }
     "quad-synchronous timing" in {
-      val c = 10//00000 //00
-      val m = new ThreadMailbox
-      val a = new ThreadParallelSyncActor(c)
-      a.setMailbox(m)
-      Future(a, TimingReq("hello world"))
-      val t0 = System.currentTimeMillis
-      Future(a, TimingReq("hello world"))
-      val t1 = System.currentTimeMillis
-      if (t1 != t0) println("quad sync msgs per sec = " + (c * 4L * 2L * 1000L / (t1 - t0)))
+      val c = 10 //00000 //00
+      val mailboxFactory = new MailboxFactory
+      try {
+        val m = mailboxFactory.syncMailbox
+        val a = new ThreadParallelSyncActor(c)
+        a.setMailbox(m)
+        Future(a, TimingReq("hello world"))
+        val t0 = System.currentTimeMillis
+        Future(a, TimingReq("hello world"))
+        val t1 = System.currentTimeMillis
+        if (t1 != t0) println("quad sync msgs per sec = " + (c * 4L * 2L * 1000L / (t1 - t0)))
+      } finally {
+        mailboxFactory.close
+      }
     }
     "asynchronous timing" in {
-      val c = 10//0000
-      val m = new ThreadMailbox
-      val a = new ThreadParallelAsyncActor(c)
-      a.setMailbox(m)
-      Future(a, TimingReq("hello world"))
-      val t0 = System.currentTimeMillis
-      Future(a, TimingReq("hello world"))
-      val t1 = System.currentTimeMillis
-      if (t1 != t0) println("async msgs per sec = " + (c * 4L * 2L * 1000L / (t1 - t0)))
+      val c = 10 //0000
+      val mailboxFactory = new MailboxFactory
+      try {
+        val m = mailboxFactory.syncMailbox
+        val a = new ThreadParallelAsyncActor(c)
+        a.setMailbox(m)
+        Future(a, TimingReq("hello world"))
+        val t0 = System.currentTimeMillis
+        Future(a, TimingReq("hello world"))
+        val t1 = System.currentTimeMillis
+        if (t1 != t0) println("async msgs per sec = " + (c * 4L * 2L * 1000L / (t1 - t0)))
+      } finally {
+        mailboxFactory.close
+      }
     }
   }
 }

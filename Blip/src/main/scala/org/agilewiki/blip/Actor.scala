@@ -255,4 +255,8 @@ class Actor
     val (l, r) = msg.asInstanceOf[RightReq].tuple
     rf(r)
   }
+
+  def newAsyncMailbox = mailbox.mailboxFactory.asyncMailbox
+
+  def newSyncMailbox = mailbox.mailboxFactory.syncMailbox
 }

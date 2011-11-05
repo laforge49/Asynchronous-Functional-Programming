@@ -60,8 +60,10 @@ class MailboxFactory(_threadManager: ThreadManager = new MessengerThreadManager)
   }
 }
 
-class AsyncMailbox(mailboxFactory: MailboxFactory)
+class AsyncMailbox(_mailboxFactory: MailboxFactory)
   extends Mailbox with MessengerDispatch[ArrayList[MailboxMsg]] {
+
+  override def mailboxFactory = _mailboxFactory
 
   val messenger = new Messenger(this, mailboxFactory.threadManager)
 

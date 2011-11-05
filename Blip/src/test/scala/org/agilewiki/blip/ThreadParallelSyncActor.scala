@@ -29,7 +29,7 @@ class ThreadParallelSyncActor(count: Int) extends Actor {
 
   def timing(msg: AnyRef, rf: Any => Unit) {
     var i = 4
-    var m1 = new ThreadMailbox
+    var m1 = newSyncMailbox
     var a1 = new TimingActor(null)
     a1.setMailbox(m1)
     var a2 = new RepeatingActor(a1, count)
@@ -39,7 +39,7 @@ class ThreadParallelSyncActor(count: Int) extends Actor {
         i -= 1
         if (i == 0) rf(msg)
     }
-    m1 = new ThreadMailbox
+    m1 = newSyncMailbox
     a1 = new TimingActor(null)
     a1.setMailbox(m1)
     a2 = new RepeatingActor(a1, count)
@@ -49,7 +49,7 @@ class ThreadParallelSyncActor(count: Int) extends Actor {
         i -= 1
         if (i == 0) rf(msg)
     }
-    m1 = new ThreadMailbox
+    m1 = newSyncMailbox
     a1 = new TimingActor(null)
     a1.setMailbox(m1)
     a2 = new RepeatingActor(a1, count)
@@ -59,7 +59,7 @@ class ThreadParallelSyncActor(count: Int) extends Actor {
         i -= 1
         if (i == 0) rf(msg)
     }
-    m1 = new ThreadMailbox
+    m1 = newSyncMailbox
     a1 = new TimingActor(null)
     a1.setMailbox(m1)
     a2 = new RepeatingActor(a1, count)
