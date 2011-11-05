@@ -62,7 +62,7 @@ class Messenger[T](dispatcher: MessengerDispatch[T], threadManager: ThreadManage
   @tailrec final override def run {
     var message = queue.poll
     if (message == null) {
-      flushPendingMsgs
+      dispatcher.flushPendingMsgs
       running.set(false)
       if (queue.peek == null || !running.compareAndSet(false, true)) return
     }
@@ -74,14 +74,10 @@ class Messenger[T](dispatcher: MessengerDispatch[T], threadManager: ThreadManage
    * The processMessage method is used to process an incoming message.
    */
   protected def processMessage(message: T) {
-    dispatcher.processMessage(message)
-  }
-
-  /**
-   * The flushPendingMsgs is called when there are no pending incoming messages to process.
-   * This method is used when outgoing messages are buffered.
-   */
-  protected def flushPendingMsgs {
-    dispatcher.flushPendingMsgs
+    var msg = message
+    while (msg != null) {
+      dispatcher.processMessage(msg)
+      msg = poll
+    }
   }
 }
