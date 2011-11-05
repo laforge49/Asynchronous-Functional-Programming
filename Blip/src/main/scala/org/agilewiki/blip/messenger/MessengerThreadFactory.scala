@@ -21,15 +21,14 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki
-package blip
+package org.agilewiki.blip.messenger
 
 import java.util.concurrent.ThreadFactory
 
 /**
- * The MailboxThreadFactory is used to create threads.
+ * The MessengerThreadFactory is used to create threads.
  */
-class MailboxThreadFactory extends ThreadFactory {
+class MessengerThreadFactory extends ThreadFactory {
   /**
    * The newThread method returns a newly created Thread.
    */

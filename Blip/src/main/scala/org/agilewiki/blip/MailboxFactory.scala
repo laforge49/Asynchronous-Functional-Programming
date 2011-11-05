@@ -27,12 +27,13 @@ package blip
 import java.util.ArrayList
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicReference
+import messenger._
 
 /**
  * MailboxFactory is used to create asyncMailbox and syncMailbox objects.
  * It also provides the ThreadManager used by these objects.
  */
-class MailboxFactory(_threadManager: ThreadManager = new MailboxThreadManager) {
+class MailboxFactory(_threadManager: ThreadManager = new MessengerThreadManager) {
 
   /**
    * Returns the ThreadManager used by the async and sync mailbox objects.

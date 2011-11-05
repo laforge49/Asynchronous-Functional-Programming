@@ -21,17 +21,16 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki
-package blip
+package org.agilewiki.blip.messenger
 
 import java.util.concurrent.{ConcurrentLinkedQueue, Semaphore, ThreadFactory}
 
 /**
- * The MailboxThreadManager starts a number of threads (12 by default)
+ * The MessengerThreadManager starts a number of threads (12 by default)
  * for processing Runnable tasks.
  */
-class MailboxThreadManager(threadCount: Int = 12,
-                           threadFactory: ThreadFactory = new MailboxThreadFactory)
+class MessengerThreadManager(threadCount: Int = 12,
+                           threadFactory: ThreadFactory = new MessengerThreadFactory)
   extends ThreadManager with Runnable {
 
   val semaphore = new Semaphore(0)

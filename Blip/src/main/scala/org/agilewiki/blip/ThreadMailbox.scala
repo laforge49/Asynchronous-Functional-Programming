@@ -25,6 +25,7 @@ package org.agilewiki
 package blip
 
 import java.util.ArrayList
+import messenger.ConcurrentLinkedBlockingQueue
 
 abstract class BaseThreadMailbox
   extends Thread {

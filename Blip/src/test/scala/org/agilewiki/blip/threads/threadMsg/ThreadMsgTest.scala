@@ -2,6 +2,7 @@ package org.agilewiki.blip
 package threads.threadMsg
 
 import org.specs.SpecificationWithJUnit
+import messenger.ConcurrentLinkedBlockingQueue
 
 class Echo extends Thread {
   val q = new ConcurrentLinkedBlockingQueue[AnyRef]

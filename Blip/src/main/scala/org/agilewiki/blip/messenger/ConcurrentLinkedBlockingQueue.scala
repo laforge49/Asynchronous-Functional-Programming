@@ -1,4 +1,4 @@
-package org.agilewiki.blip
+package org.agilewiki.blip.messenger
 
 import java.util.concurrent._
 import annotation.tailrec
@@ -28,7 +28,8 @@ class ConcurrentLinkedBlockingQueue[E]
     //the queue may now be empty, so request a permit
     ab.set(true)
     rv = poll
-    if (rv != null) { //the queue was not empty
+    if (rv != null) {
+      //the queue was not empty
       if (!ab.compareAndSet(true, false)) s.drainPermits //clear the permit that we didn't need
       return rv
     }
