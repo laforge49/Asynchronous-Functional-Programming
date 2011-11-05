@@ -24,6 +24,7 @@
 package org.agilewiki.blip.messenger
 
 import java.util.concurrent.{ConcurrentLinkedQueue, Semaphore, ThreadFactory}
+import annotation.tailrec
 
 /**
  * The MessengerThreadManager starts a number of threads (12 by default)
@@ -55,7 +56,7 @@ class MessengerThreadManager(threadCount: Int = 12,
    * This method wakes up a thread when there is a task to be processed
    * and stops idle threads after the close method has been called.
    */
-  override def run() {
+  @tailrec final override def run {
     semaphore.acquire
     if (closing) return
     val task = tasks.poll
@@ -64,6 +65,7 @@ class MessengerThreadManager(threadCount: Int = 12,
     } catch {
       case t: Throwable => t.printStackTrace()
     }
+    run
   }
 
   /**
