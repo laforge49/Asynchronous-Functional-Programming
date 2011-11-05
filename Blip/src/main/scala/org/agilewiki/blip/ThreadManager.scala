@@ -24,7 +24,17 @@
 package org.agilewiki
 package blip
 
+/**
+ * A ThreadManager is used to process a collection of Runnable tasks.
+ */
 trait ThreadManager {
+  /**
+   * Begin running a task.
+   */
   def process(task: Runnable)
+
+  /**
+   * Stop all the threads as they complete their tasks.
+   */
   def close
 }

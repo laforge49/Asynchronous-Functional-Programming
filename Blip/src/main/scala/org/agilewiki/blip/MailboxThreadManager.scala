@@ -26,15 +26,23 @@ package blip
 
 import java.util.concurrent.{ConcurrentLinkedQueue, Semaphore, ThreadFactory}
 
+/**
+ * The MailboxThreadManager starts a number of threads (12 by default)
+ * for processing Runnable tasks.
+ */
 class MailboxThreadManager(threadCount: Int = 12,
                            threadFactory: ThreadFactory = new MailboxThreadFactory)
   extends ThreadManager with Runnable {
+
   val semaphore = new Semaphore(0)
   val tasks = new ConcurrentLinkedQueue[Runnable]
   var closing = false
 
   init
 
+  /**
+   * The init method is called in the constructor and is used to start threadCount threads.
+   */
   private def init {
     var c = 0
     while (c < threadCount) {
@@ -43,6 +51,11 @@ class MailboxThreadManager(threadCount: Int = 12,
     }
   }
 
+  /**
+   * The run method is used by all the threads.
+   * This method wakes up a thread when there is a task to be processed
+   * and stops idle threads after the close method has been called.
+   */
   override def run() {
     semaphore.acquire
     if (closing) return
@@ -54,11 +67,21 @@ class MailboxThreadManager(threadCount: Int = 12,
     }
   }
 
+  /**
+   * The process method is used to request the processing of a Runnable task.
+   * This method adds the task to a concurrent queue of tasks to be processed
+   * and then wakes up a task.
+   */
   override def process(task: Runnable) {
     tasks.add(task)
     semaphore.release
   }
 
+  /**
+   * The close method is used to stop all the threads as they become idle.
+   * This method sets a flag to indicate that the threads should stop
+   * and then wakes up all the threads.
+   */
   def close {
     closing = true
     var c = 0

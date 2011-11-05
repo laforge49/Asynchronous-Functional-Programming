@@ -27,25 +27,49 @@ package blip
 import java.util.concurrent.atomic.AtomicBoolean
 import annotation.tailrec
 
+/**
+ * A MessangerDispatch object receives and processes messages.
+ */
 trait MessagerDispatch[T] {
+  /**
+   * The receive method processed the received message.
+   */
   def receive(message: T)
 }
 
+/**
+ * A Messenger receives messages, queues them, and then processes them on another thread.
+ */
 class Messenger[T](dispatcher: MessagerDispatch[T], threadManager: ThreadManager)
   extends Runnable {
 
-  protected val queue = new ConcurrentLinkedBlockingQueue[T]
+  private val queue = new ConcurrentLinkedBlockingQueue[T]
   private val running = new AtomicBoolean
 
+  /**
+   * The isEmpty method returns true when there are no messages to be processed,
+   * though the results may not always be correct due to concurrency issues.
+   */
   def isEmpty = queue.size() == 0
 
+  /**
+   * The put method adds a message to the queue of messages to be processed.
+   */
   def put(message: T) {
     queue.put(message)
     if (running.compareAndSet(false, true)) threadManager.process(this)
   }
 
+  /**
+   * The poll method removes a message from the queue of messages to be processed and
+   * returns it. But if the queue is empty, null is returned.
+   */
   def poll = queue.poll
 
+  /**
+   * The run method is used to process the messages in the message queue.
+   * Each message is in turn processed using the MessageDispatcher.
+   */
   @tailrec final override def run {
     var message = queue.poll
     if (message == null) {

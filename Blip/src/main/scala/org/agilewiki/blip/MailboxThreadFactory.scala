@@ -26,6 +26,12 @@ package blip
 
 import java.util.concurrent.ThreadFactory
 
+/**
+ * The MailboxThreadFactory is used to create threads.
+ */
 class MailboxThreadFactory extends ThreadFactory {
+  /**
+   * The newThread method returns a newly created Thread.
+   */
   def newThread(runnable: Runnable) = new Thread(runnable)
 }
