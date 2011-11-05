@@ -29,7 +29,7 @@ import annotation.tailrec
 /**
  * A Messenger receives messages, queues them, and then processes them on another thread.
  */
-class Messenger[T](dispatcher: MessagerDispatch[T], threadManager: ThreadManager)
+class Messenger[T](dispatcher: MessengerDispatch[T], threadManager: ThreadManager)
   extends Runnable {
 
   private val queue = new ConcurrentLinkedBlockingQueue[T]

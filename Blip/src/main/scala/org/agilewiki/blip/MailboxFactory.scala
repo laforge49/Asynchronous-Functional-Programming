@@ -61,7 +61,7 @@ class MailboxFactory(_threadManager: ThreadManager = new MessengerThreadManager)
 }
 
 class AsyncMailbox(mailboxFactory: MailboxFactory)
-  extends Mailbox with MessagerDispatch[ArrayList[MailboxMsg]] {
+  extends Mailbox with MessengerDispatch[ArrayList[MailboxMsg]] {
 
   val messenger = new Messenger(this, mailboxFactory.threadManager)
 

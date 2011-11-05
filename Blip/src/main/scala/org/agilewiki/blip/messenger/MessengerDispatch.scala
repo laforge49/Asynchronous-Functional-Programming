@@ -26,7 +26,7 @@ package org.agilewiki.blip.messenger
 /**
  * A MessangerDispatch object receives and processes messages.
  */
-trait MessagerDispatch[T] {
+trait MessengerDispatch[T] {
   /**
    * The receive method processed the received message.
    */
