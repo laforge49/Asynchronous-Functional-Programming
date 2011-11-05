@@ -27,16 +27,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 import annotation.tailrec
 
 /**
- * A MessangerDispatch object receives and processes messages.
- */
-trait MessagerDispatch[T] {
-  /**
-   * The receive method processed the received message.
-   */
-  def receive(message: T)
-}
-
-/**
  * A Messenger receives messages, queues them, and then processes them on another thread.
  */
 class Messenger[T](dispatcher: MessagerDispatch[T], threadManager: ThreadManager)
