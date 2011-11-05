@@ -9,12 +9,12 @@ case class PrintEven(value: Int)
 
 case class AMsg()
 
-class Driver extends Actor {
+class Driver(mailboxFactory: MailboxFactory) extends AsyncActor(mailboxFactory) {
   bind(classOf[AMsg], aMsgFunc)
   setMailbox(new ReactorMailbox)
 
   private def aMsgFunc(msg: AnyRef, rf: Any => Unit) {
-    val safeActor = new SafeActor
+    val safeActor = new SafeActor(mailboxFactory)
     safeActor(PrintEven(1)){rsp =>
       safeActor(PrintEven(2)){rsp => rf(null)}
     }
@@ -31,7 +31,7 @@ case class SafePrintEven(safeActor: SafeActor)
   }
 }
 
-class SafeActor extends Actor {
+class SafeActor(mailboxFactory: MailboxFactory) extends AsyncActor(mailboxFactory) {
   bind(classOf[Print], printFunc)
   setMailbox(new ReactorMailbox)
 
@@ -46,8 +46,14 @@ class SafeActor extends Actor {
 class SafeTest extends SpecificationWithJUnit {
   "SafeTest" should {
     "print even numbers" in {
-      val driver = new Driver
-      Future(driver, AMsg())
+      val mailboxFactory = new MailboxFactory
+      try {
+        val driver = new Driver(mailboxFactory)
+        driver.setMailbox(mailboxFactory.asyncMailbox)
+        Future(driver, AMsg())
+      } finally {
+        mailboxFactory.close
+      }
     }
   }
 }
