@@ -34,14 +34,24 @@ abstract class BaseThreadMailbox
   def isMailboxEmpty = queue.size() == 0
 
   override def run {
-    while (true) receive(queue.take)
+    while (true) {
+      processMessage(queue.take)
+      var msg = queue.poll
+      while (msg != null) {
+        processMessage(msg)
+        msg = queue.poll
+      }
+      flushPendingMsgs
+    }
   }
 
   def _send(blkmsg: ArrayList[MailboxMsg]) {
     queue.put(blkmsg)
   }
 
-  protected def receive(blkmsg: ArrayList[MailboxMsg])
+  protected def processMessage(blkmsg: ArrayList[MailboxMsg])
+
+  protected def flushPendingMsgs
 
   start
 }

@@ -35,7 +35,10 @@ abstract class BaseReactorMailbox
   override def act {
     loop {
       react {
-        case blkmsg: ArrayList[MailboxMsg] => receive(blkmsg)
+        case blkmsg: ArrayList[MailboxMsg] => {
+          processMessage(blkmsg)
+          flushPendingMsgs
+        }
       }
     }
   }
@@ -44,7 +47,9 @@ abstract class BaseReactorMailbox
     this ! blkmsg
   }
 
-  protected def receive(blkmsg: ArrayList[MailboxMsg])
+  protected def processMessage(blkmsg: ArrayList[MailboxMsg])
+
+  protected def flushPendingMsgs
 
   start
 }

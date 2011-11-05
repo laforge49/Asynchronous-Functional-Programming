@@ -40,12 +40,11 @@ trait Mailbox
     srcMailbox.addPending(targetActor, req)
   }
 
-  def receive(blkmsg: ArrayList[MailboxMsg]) {
+  def processMessage(blkmsg: ArrayList[MailboxMsg]) {
     _receive(blkmsg)
-    flushPendingMsgs
   }
 
-  protected def flushPendingMsgs {
+  def flushPendingMsgs {
     if (isMailboxEmpty && !pending.isEmpty) {
       val it = pending.keySet.iterator
       while (it.hasNext) {
