@@ -28,21 +28,32 @@ import java.util.ArrayList
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicReference
 
-class MailboxFactory(_threadManager: ThreadManager = new MailboxThreadManager)
-  extends ThreadManager {
+/**
+ * MailboxFactory is used to create asyncMailbox and syncMailbox objects.
+ * It also provides the ThreadManager used by these objects.
+ */
+class MailboxFactory(_threadManager: ThreadManager = new MailboxThreadManager) {
 
+  /**
+   * Returns the ThreadManager used by the async and sync mailbox objects.
+   */
   def threadManager = _threadManager
 
-  override def process(task: Runnable) {
-    threadManager.process(task)
-  }
+  /**
+   * Stops all the threads of the ThreadManager as they become idle.
+   */
+  def close {threadManager.close}
 
-  override def close {threadManager.close}
-
+  /**
+   * Creates an asynchronous mailbox.
+   */
   def asyncMailbox = {
     new AsyncMailbox(this)
   }
 
+  /**
+   * Creates a synchronous mailbox.
+   */
   def syncMailbox = {
     new SyncMailboxBase(this)
   }
