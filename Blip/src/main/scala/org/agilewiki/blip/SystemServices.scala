@@ -26,15 +26,21 @@ package blip
 
 import services._
 
+class SystemServicesActor extends Actor {
+  override def close {
+    super.close
+    mailbox.mailboxFactory.close
+  }
+}
+
 object SystemServices {
   def apply(rootComponentFactory: ComponentFactory,
             factoryId: FactoryId = new FactoryId("System"),
-            properties: Properties = null,
-            actorClass: Class[_ <: Actor] = classOf[Actor],
-            newMailbox: Mailbox = new ThreadMailbox) = {
-    val systemServicesFactory = new CompositeFactory(factoryId, rootComponentFactory, actorClass)
+            properties: Properties = null) = {
+    val systemServicesFactory = new CompositeFactory(factoryId, rootComponentFactory, classOf[SystemServicesActor])
     SetProperties(systemServicesFactory, properties)
-    val systemServices = systemServicesFactory.newActor(newMailbox)
+    val mailboxFactory = new MailboxFactory
+    val systemServices = systemServicesFactory.newActor(mailboxFactory.syncMailbox)
     systemServices.setSystemServices(systemServices)
     systemServices._open
     systemServices
