@@ -29,7 +29,7 @@ package dbSeq
 import blip._
 import incDes._
 
-class RecordStringSeq[V](db: Actor, key: String, _pathname: String)
+class RecordStringSeq[V](db: SystemServices, key: String, _pathname: String)
   extends DbStringSeq[V](db, "") {
 
   override protected def pathname(msg: AnyRef, rf: Any => Unit) = {
@@ -44,7 +44,7 @@ class RecordStringSeq[V](db: Actor, key: String, _pathname: String)
   }
 }
 
-class RecordLongSeq[V](db: Actor, key: String, _pathname: String)
+class RecordLongSeq[V](db: SystemServices, key: String, _pathname: String)
   extends DbLongSeq[V](db, "") {
 
   override protected def pathname(msg: AnyRef, rf: Any => Unit) = {
@@ -59,7 +59,7 @@ class RecordLongSeq[V](db: Actor, key: String, _pathname: String)
   }
 }
 
-class RecordIntSeq[V](db: Actor, key: String, _pathname: String)
+class RecordIntSeq[V](db: SystemServices, key: String, _pathname: String)
   extends DbIntSeq[V](db, "") {
 
   override protected def pathname(msg: AnyRef, rf: Any => Unit) = {

@@ -31,7 +31,7 @@ class IncDesKeyedCollectionFactory[K](id: FactoryId, keyId: FactoryId, valueId: 
   extends IncDesValueCollectionFactory(id, valueId) {
   var keyFactory: IncDesKeyFactory[K] = null
 
-  override def configure(systemServices: Actor, factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {
+  override def configure(systemServices: SystemServices, factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {
     super.configure(systemServices, factoryRegistryComponentFactory)
     keyFactory = factoryRegistryComponentFactory.getFactory(keyId).asInstanceOf[IncDesKeyFactory[K]]
   }

@@ -24,6 +24,12 @@
 package org.agilewiki
 package blip
 
-class AsyncActor(mailboxFactory: MailboxFactory) extends Actor {
-  setMailbox(mailboxFactory.asyncMailbox)
+class AsyncActor extends Actor {
+  override def open {
+    if (systemServices == null) {
+      println("AsyncActor has no system services: class = "+this.getClass.getName)
+    }
+    super.open
+    setMailbox(systemServices.newAsyncMailbox)
+  }
 }

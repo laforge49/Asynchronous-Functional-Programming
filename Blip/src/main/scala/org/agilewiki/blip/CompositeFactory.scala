@@ -28,7 +28,7 @@ class CompositeFactory(factoryId: FactoryId,
                        rootComponentFactory: ComponentFactory,
                        actorClass: Class[_ <: Actor] = classOf[Actor])
   extends Factory(factoryId) {
-  include(rootComponentFactory)
+  if (rootComponentFactory != null) include(rootComponentFactory)
 
   override protected def instantiate = actorClass.newInstance
 }

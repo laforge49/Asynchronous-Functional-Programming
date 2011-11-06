@@ -30,7 +30,7 @@ import blip._
 import incDes._
 import records._
 
-class RecordsSeq(db: Actor)
+class RecordsSeq(db: SystemServices)
   extends DbStringSeq[Record](db, "") {
 
   override protected def pathname(msg: AnyRef, rf: Any => Unit) = {

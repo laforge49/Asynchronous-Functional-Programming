@@ -30,7 +30,7 @@ import incDes._
 import blocks._
 
 object SetRequest {
-  def apply(db: Actor, pathname: String, value: IncDes) = {
+  def apply(db: SystemServices, pathname: String, value: IncDes) = {
     var pn = pathname
     if (pn.startsWith("/")) pn = pn.substring(1)
     val pnid = IncDesString(null)

@@ -27,9 +27,8 @@ package services
 
 import java.io.{DataInputStream, FileInputStream}
 
-class FileLoader(mailboxFactory: MailboxFactory)
-  extends AsyncActor(mailboxFactory) {
-  setMailbox(new AsyncReactorMailbox)
+class FileLoader
+  extends AsyncActor {
   bind(classOf[LoadFile], loadFile)
 
   def loadFile(msg: AnyRef, rf: Any => Unit) {
@@ -45,7 +44,13 @@ class FileLoader(mailboxFactory: MailboxFactory)
 
 class FileLoaderComponent(actor: Actor)
   extends Component(actor) {
-  bindSafe(classOf[LoadFile], new SafeForward(new FileLoader(actor.mailboxFactory)))
+  val fileLoader = new FileLoader
+  bindSafe(classOf[LoadFile], new SafeForward(fileLoader))
+
+  override def open {
+    super.open
+    fileLoader.setSystemServices(systemServices)
+  }
 }
 
 class FileLoaderComponentFactory extends ComponentFactory {

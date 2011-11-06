@@ -25,8 +25,5 @@ package org.agilewiki
 package blip
 
 trait SystemServicesGetter {
-
-
-
-  def systemServices: Actor
+  def systemServices: SystemServices
 }

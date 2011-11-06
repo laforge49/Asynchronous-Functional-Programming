@@ -35,13 +35,15 @@ class TransactionLogComponentFactory extends ComponentFactory {
 
 class TransactionLogComponent(actor: Actor)
   extends Component(actor) {
-  private var transactionLog = new TransactionLog
+  private var transactionLog: TransactionLog = null
 
+  transactionLog = new TransactionLog
   bindSafe(classOf[LogTransaction], new SafeForward(transactionLog))
   bindSafe(classOf[LogInfo], new SafeForward(transactionLog))
 
   override def open {
     super.open
+    transactionLog.setSystemServices(systemServices)
     transactionLog.logDirPathname = GetProperty.required("logDirPathname")
     transactionLog.flushLog = GetProperty.boolean("flushLog", true)
     transactionLog.blockSize = GetProperty.int("logBlockSize", 8 * 1024)
@@ -53,8 +55,7 @@ class TransactionLogComponent(actor: Actor)
   }
 }
 
-class TransactionLog
-  extends Actor {
+class TransactionLog extends AsyncActor {
   var logDirPathname: String = null
   var flushLog = true
   var blockSize = 8 * 1024
@@ -64,7 +65,6 @@ class TransactionLog
   private var writer: java.io.DataOutputStream = null
   private var fileChannel: FileChannel = null
 
-  setMailbox(new AsyncReactorMailbox)
   bind(classOf[LogTransaction], logTransaction)
   bind(classOf[LogInfo], logInfo)
 

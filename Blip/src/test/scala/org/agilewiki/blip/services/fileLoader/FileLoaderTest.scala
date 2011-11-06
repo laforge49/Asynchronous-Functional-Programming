@@ -7,9 +7,8 @@ import java.io.{BufferedReader, InputStreamReader, ByteArrayInputStream, File}
 
 case class DoIt()
 
-class ShortFileLoader extends Actor {
+class ShortFileLoader extends AsyncActor {
   bind(classOf[DoIt], doit)
-  setMailbox(new ReactorMailbox)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
     val cwd = new File(".")
@@ -24,14 +23,18 @@ class FileLoaderTest extends SpecificationWithJUnit {
   "FileLoaderTest" should {
     "load" in {
       val systemServices = SystemServices(new FileLoaderComponentFactory)
-      val shortFileLoader = new ShortFileLoader
-      shortFileLoader.setSystemServices(systemServices)
-      val bytes = Future(shortFileLoader, DoIt()).asInstanceOf[Array[Byte]]
-      val bais = new ByteArrayInputStream(bytes)
-      val isr = new InputStreamReader(bais)
-      val br = new BufferedReader(isr)
-      val line = br.readLine
-      println(line)
+      try {
+        val shortFileLoader = new ShortFileLoader
+        shortFileLoader.setSystemServices(systemServices)
+        val bytes = Future(shortFileLoader, DoIt()).asInstanceOf[Array[Byte]]
+        val bais = new ByteArrayInputStream(bytes)
+        val isr = new InputStreamReader(bais)
+        val br = new BufferedReader(isr)
+        val line = br.readLine
+        println(line)
+      } finally {
+        systemServices.close
+      }
     }
   }
 }

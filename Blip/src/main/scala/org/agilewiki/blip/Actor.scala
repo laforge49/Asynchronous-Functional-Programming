@@ -56,9 +56,9 @@ class Actor
         i += 1
       }
     }
+    open
     opened = true
     true
-    open
   }
 
   def open {}
@@ -100,17 +100,14 @@ class Actor
 
   override def factory = _factory
 
-  protected var _systemServices: Actor = null
+  protected var _systemServices: SystemServices = null
 
-  def setSystemServices(systemServices: Actor) {
+  def setSystemServices(systemServices: SystemServices) {
     if (opened) throw new IllegalStateException
     _systemServices = systemServices
   }
 
-  override def systemServices: Actor = _systemServices
-
-  //one-way messages, untested
-  //def !(msg: AnyRef)(implicit srcActor: ActiveActor) {apply(msg)(null)(srcActor)}
+  override def systemServices: SystemServices = _systemServices
 
   def apply(msg: AnyRef)
            (responseFunction: Any => Unit)
@@ -119,7 +116,10 @@ class Actor
     val safe = messageFunctions.get(msg.getClass)
     if (safe != null) safe.func(this, msg, responseFunction)(srcActor)
     else if (superior != null) superior(msg)(responseFunction)(srcActor)
-    else throw new IllegalArgumentException("Unknown type of message: " + msg.getClass.getName)
+    else {
+      System.err.println("actor = "+this.getClass.getName)
+      throw new IllegalArgumentException("Unknown type of message: " + msg.getClass.getName)
+    }
   }
 
   lazy val messageClasses = {

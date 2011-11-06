@@ -50,7 +50,7 @@ class SafeInstantiate(factoryRegistryComponentFactory: FactoryRegistryComponentF
     if (factory != null) {
       val mailbox = msg.asInstanceOf[Instantiate].mailbox
       val actor = factory.newActor(mailbox)
-      actor.setSystemServices(target)
+      actor.setSystemServices(target.systemServices)
       rf(actor)
       return
     }
@@ -76,7 +76,7 @@ class FactoryRegistryComponent(actor: Actor)
     val it = factories.keySet.iterator
     while (it.hasNext) {
       val factory = factories.get(it.next)
-      factory.configure(actor, cf)
+      factory.configure(actor.systemServices, cf)
     }
   }
 }

@@ -31,7 +31,7 @@ class IncDesIntSetFactory(id: FactoryId)
   extends IncDesNavSetFactory[Int](id, INC_DES_INT_FACTORY_ID)
 
 object IncDesIntSet {
-  def apply(mailbox: Mailbox, systemServices: Actor) = {
+  def apply(mailbox: Mailbox, systemServices: SystemServices) = {
     val f = new IncDesIntSetFactory(INC_DES_INT_SET_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavSet[Int]]
@@ -44,7 +44,7 @@ class IncDesLongSetFactory(id: FactoryId)
   extends IncDesNavSetFactory[Long](id, INC_DES_LONG_FACTORY_ID)
 
 object IncDesLongSet {
-  def apply(mailbox: Mailbox, systemServices: Actor) = {
+  def apply(mailbox: Mailbox, systemServices: SystemServices) = {
     val f = new IncDesLongSetFactory(INC_DES_LONG_SET_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavSet[Long]]
@@ -57,7 +57,7 @@ class IncDesStringSetFactory(id: FactoryId)
   extends IncDesNavSetFactory[String](id, INC_DES_STRING_FACTORY_ID)
 
 object IncDesStringSet {
-  def apply(mailbox: Mailbox, systemServices: Actor) = {
+  def apply(mailbox: Mailbox, systemServices: SystemServices) = {
     val f = new IncDesStringSetFactory(INC_DES_STRING_SET_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavSet[String]]
@@ -70,7 +70,7 @@ class IncDesNavSetFactory[K](id: FactoryId, keyId: FactoryId)
   extends IncDesFactory(id) {
   var keyFactory: IncDesKeyFactory[K] = null
 
-  override def configure(systemServices: Actor, factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {
+  override def configure(systemServices: SystemServices, factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {
     super.configure(systemServices, factoryRegistryComponentFactory)
     keyFactory = factoryRegistryComponentFactory.getFactory(keyId).asInstanceOf[IncDesKeyFactory[K]]
   }

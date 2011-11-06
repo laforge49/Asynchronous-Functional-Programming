@@ -30,7 +30,7 @@ import blip._
 import seq._
 import incDes._
 
-class DbStringSeq[V](db: Actor, _pathname: String)
+class DbStringSeq[V](db: SystemServices, _pathname: String)
   extends Sequence[String, V] {
 
   bind(classOf[Pathname], pathname)
@@ -82,7 +82,7 @@ class DbStringSeq[V](db: Actor, _pathname: String)
   }
 }
 
-class DbLongSeq[V](db: Actor, _pathname: String)
+class DbLongSeq[V](db: SystemServices, _pathname: String)
   extends Sequence[String, V] {
 
   bind(classOf[Pathname], pathname)
@@ -134,7 +134,7 @@ class DbLongSeq[V](db: Actor, _pathname: String)
   }
 }
 
-class DbIntSeq[V](db: Actor, _pathname: String)
+class DbIntSeq[V](db: SystemServices, _pathname: String)
   extends Sequence[String, V] {
 
   bind(classOf[Pathname], pathname)

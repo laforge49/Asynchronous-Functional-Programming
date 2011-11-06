@@ -31,7 +31,7 @@ import blocks._
 import batch._
 
 object RecordSize {
-  def apply(db: Actor, batch: IncDes, recordKey: String, pathname: String) = {
+  def apply(db: SystemServices, batch: IncDes, recordKey: String, pathname: String) = {
     var pn = pathname
     if (!pn.startsWith("/")) pn = "/" + pn
     if (!pn.endsWith("/")) pn = pn + "/"

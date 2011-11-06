@@ -26,21 +26,25 @@ package blip
 
 import services._
 
-class SystemServicesActor extends Actor {
+class SystemServices extends Actor
+
+class RootSystemServices extends SystemServices {
   override def close {
     super.close
     mailbox.mailboxFactory.close
   }
 }
 
+class Subsystem extends SystemServices with IdActor
+
 object SystemServices {
-  def apply(rootComponentFactory: ComponentFactory,
+  def apply(rootComponentFactory: ComponentFactory = null,
             factoryId: FactoryId = new FactoryId("System"),
             properties: Properties = null) = {
-    val systemServicesFactory = new CompositeFactory(factoryId, rootComponentFactory, classOf[SystemServicesActor])
+    val systemServicesFactory = new CompositeFactory(factoryId, rootComponentFactory, classOf[RootSystemServices])
     SetProperties(systemServicesFactory, properties)
     val mailboxFactory = new MailboxFactory
-    val systemServices = systemServicesFactory.newActor(mailboxFactory.syncMailbox)
+    val systemServices = systemServicesFactory.newActor(mailboxFactory.syncMailbox).asInstanceOf[RootSystemServices]
     systemServices.setSystemServices(systemServices)
     systemServices._open
     systemServices
@@ -53,12 +57,11 @@ object Subsystem {
             mailbox: Mailbox = null,
             factoryId: FactoryId = new FactoryId("System"),
             properties: Properties = null,
-            actorClass: Class[_ <: Id_Actor] = classOf[Id_Actor],
             actorId: ActorId = null) = {
-    val subSystemFactory = new CompositeFactory(factoryId, rootComponentFactory, actorClass)
+    val subSystemFactory = new CompositeFactory(factoryId, rootComponentFactory, classOf[Subsystem])
     SetProperties(subSystemFactory, properties)
     val _mailbox = if (mailbox == null) systemServices.mailbox else mailbox
-    val subSystem = subSystemFactory.newActor(_mailbox).asInstanceOf[Id_Actor]
+    val subSystem = subSystemFactory.newActor(_mailbox).asInstanceOf[Subsystem]
     if (actorId != null) {
       subSystem.id(actorId)
     }

@@ -30,7 +30,7 @@ class IncDesIntListFactory(id: FactoryId)
   extends IncDesListFactory[IncDesInt, Int](id, INC_DES_INT_FACTORY_ID)
 
 object IncDesIntList {
-  def apply(mailbox: Mailbox, systemServices: Actor) = {
+  def apply(mailbox: Mailbox, systemServices: SystemServices) = {
     val f = new IncDesIntListFactory(INC_DES_INT_LIST_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesInt, Int]]
@@ -43,7 +43,7 @@ class IncDesLongListFactory(id: FactoryId)
   extends IncDesListFactory[IncDesLong, Long](id, INC_DES_LONG_FACTORY_ID)
 
 object IncDesLongList {
-  def apply(mailbox: Mailbox, systemServices: Actor) = {
+  def apply(mailbox: Mailbox, systemServices: SystemServices) = {
     val f = new IncDesLongListFactory(INC_DES_LONG_LIST_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesLong, Long]]
@@ -56,7 +56,7 @@ class IncDesStringListFactory(id: FactoryId)
   extends IncDesListFactory[IncDesString, String](id, INC_DES_STRING_FACTORY_ID)
 
 object IncDesStringList {
-  def apply(mailbox: Mailbox, systemServices: Actor) = {
+  def apply(mailbox: Mailbox, systemServices: SystemServices) = {
     val f = new IncDesStringListFactory(INC_DES_STRING_LIST_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesString, String]]
@@ -69,7 +69,7 @@ class IncDesBooleanListFactory(id: FactoryId)
   extends IncDesListFactory[IncDesBoolean, Boolean](id, INC_DES_BOOLEAN_FACTORY_ID)
 
 object IncDesBooleanList {
-  def apply(mailbox: Mailbox, systemServices: Actor) = {
+  def apply(mailbox: Mailbox, systemServices: SystemServices) = {
     val f = new IncDesBooleanListFactory(INC_DES_BOOLEAN_LIST_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesBoolean, Boolean]]
@@ -82,7 +82,7 @@ class IncDesBytesListFactory(id: FactoryId)
   extends IncDesListFactory[IncDesBytes, Array[Byte]](id, INC_DES_BYTES_FACTORY_ID)
 
 object IncDesBytesList {
-  def apply(mailbox: Mailbox, systemServices: Actor) = {
+  def apply(mailbox: Mailbox, systemServices: SystemServices) = {
     val f = new IncDesBytesListFactory(INC_DES_BYTES_LIST_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesBytes, Array[Byte]]]
@@ -95,7 +95,7 @@ class IncDesIncDesListFactory(id: FactoryId)
   extends IncDesListFactory[IncDesIncDes, IncDes](id, INC_DES_INCDES_FACTORY_ID)
 
 object IncDesIncDesList {
-  def apply(mailbox: Mailbox, systemServices: Actor) = {
+  def apply(mailbox: Mailbox, systemServices: SystemServices) = {
     val f = new IncDesIncDesListFactory(INC_DES_INCDES_LIST_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesList[IncDesIncDes, IncDes]]

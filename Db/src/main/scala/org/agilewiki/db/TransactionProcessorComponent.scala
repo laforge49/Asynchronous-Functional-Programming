@@ -62,7 +62,7 @@ class TransactionProcessorComponent(actor: Actor)
   private def transactionRequest(msg: AnyRef, rf: Any => Unit) {
     val request = msg.asInstanceOf[TransactionRequest].request
     var block = Block(null)
-    block.setSystemServices(actor)
+    block.setSystemServices(actor.systemServices)
     var timestamp = 0L
     var bytes: Array[Byte] = null
     val results = new Results
@@ -75,7 +75,7 @@ class TransactionProcessorComponent(actor: Actor)
       bytes = results("bytes").asInstanceOf[Array[Byte]]
       block = Block(mailbox)
       block.partness(null, timestamp, null)
-      block.setSystemServices(actor)
+      block.setSystemServices(actor.systemServices)
       block.load(bytes)
       block
     }, IsQuery(), "isQuery")

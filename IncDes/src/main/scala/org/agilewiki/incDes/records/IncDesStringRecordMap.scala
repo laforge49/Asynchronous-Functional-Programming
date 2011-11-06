@@ -34,7 +34,7 @@ class IncDesStringRecordMapFactory(id: FactoryId)
     INC_DES_RECORD_FACTORY_ID)
 
 object IncDesStringRecordMap {
-  def apply(mailbox: Mailbox, systemServices: Actor) = {
+  def apply(mailbox: Mailbox, systemServices: SystemServices) = {
     val f = new IncDesStringRecordMapFactory(INC_DES_STRING_RECORD_MAP_FACTORY_ID)
     f.configure(systemServices)
     val a = f.newActor(mailbox).asInstanceOf[IncDesNavMap[String, Record, IncDes]]

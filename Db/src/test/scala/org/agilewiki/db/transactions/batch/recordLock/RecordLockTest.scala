@@ -10,7 +10,7 @@ import log._
 import incDes._
 import org.specs.SpecificationWithJUnit
 
-case class Counter(db: Actor) {
+case class Counter(db: SystemServices) {
   def init = {
     val counter = IncDesInt(null)
     val batch = Batch(db)

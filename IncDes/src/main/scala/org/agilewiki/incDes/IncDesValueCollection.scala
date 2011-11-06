@@ -32,7 +32,7 @@ class IncDesValueCollectionFactory(id: FactoryId, valueId: FactoryId)
   extends IncDesFactory(id) {
   var valueFactory: IncDesFactory = null
 
-  override def configure(systemServices: Actor, factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {
+  override def configure(systemServices: SystemServices, factoryRegistryComponentFactory: FactoryRegistryComponentFactory) {
     valueFactory = factoryRegistryComponentFactory.getFactory(valueId).asInstanceOf[IncDesFactory]
   }
 }

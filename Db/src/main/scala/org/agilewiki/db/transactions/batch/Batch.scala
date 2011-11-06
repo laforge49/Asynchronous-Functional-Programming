@@ -32,7 +32,7 @@ import incDes._
 import blocks._
 
 object Batch {
-  def apply(db: Actor) = {
+  def apply(db: SystemServices) = {
     val jef = new BatchFactory
     jef.configure(db)
     val je = jef.newActor(null).asInstanceOf[IncDes]
