@@ -27,8 +27,7 @@ package db
 import blip._
 import seq._
 
-class Files extends Actor {
-  setMailbox(new ReactorMailbox)
+class Files extends AsyncActor {
   bind(classOf[FilesSeq], filesSeq)
 
   private def filesSeq(msg: AnyRef, rf: Any => Unit) {
