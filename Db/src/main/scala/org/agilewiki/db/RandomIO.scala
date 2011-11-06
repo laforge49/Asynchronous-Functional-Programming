@@ -65,13 +65,12 @@ class RandomIOComponent(actor: Actor)
   }
 }
 
-class RandomIO extends Actor {
+class RandomIO extends AsyncActor {
   var pathname: String = null
   var accessMode: String = null
   var file: java.io.File = null
   var randomAccessFile: java.io.RandomAccessFile = null
 
-  setMailbox(new AsyncReactorMailbox)
   bind(classOf[ReadBytes], read)
   bind(classOf[WriteBytes], write)
 
