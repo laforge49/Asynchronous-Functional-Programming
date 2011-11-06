@@ -54,6 +54,4 @@ abstract class BaseReactorMailbox
   start
 }
 
-class AsyncReactorMailbox extends BaseReactorMailbox with Mailbox
-
 class ReactorMailbox extends BaseReactorMailbox with SyncMailbox
