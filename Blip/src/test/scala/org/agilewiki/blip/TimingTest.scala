@@ -36,7 +36,7 @@ class TimingTest extends SpecificationWithJUnit {
       val mailboxFactory = new MailboxFactory
       try {
         val a = new TimingActor(null)
-        a.setMailbox(mailboxFactory.syncMailbox)
+        a.setMailbox(mailboxFactory.newSyncMailbox)
         println(Future(a, TimingReq("asynchronous hello world")))
       } finally {
         mailboxFactory.close
@@ -46,7 +46,7 @@ class TimingTest extends SpecificationWithJUnit {
       val c = 10 //00000 //00
       val mailboxFactory = new MailboxFactory
       try {
-        val m = mailboxFactory.syncMailbox
+        val m = mailboxFactory.newSyncMailbox
         val a1 = new TimingActor(null)
         a1.setMailbox(m)
         val a = new RepeatingActor(a1, c)
@@ -64,7 +64,7 @@ class TimingTest extends SpecificationWithJUnit {
       val c = 10 //00000 //00
       val mailboxFactory = new MailboxFactory
       try {
-        val m = mailboxFactory.syncMailbox
+        val m = mailboxFactory.newSyncMailbox
         val a = new ParallelSyncActor(c)
         a.setMailbox(m)
         Future(a, TimingReq("hello world"))

@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicReference
 import messenger._
 
 /**
- * MailboxFactory is used to create asyncMailbox and syncMailbox objects.
+ * MailboxFactory is used to create newAsyncMailbox and newSyncMailbox objects.
  * It also provides the ThreadManager used by these objects.
  */
 class MailboxFactory(_threadManager: ThreadManager = new MessengerThreadManager) {
@@ -48,101 +48,14 @@ class MailboxFactory(_threadManager: ThreadManager = new MessengerThreadManager)
   /**
    * Creates an asynchronous mailbox.
    */
-  def asyncMailbox = {
-    new AsyncMailbox(this)
+  def newAsyncMailbox = {
+    new Mailbox(this)
   }
 
   /**
    * Creates a synchronous mailbox.
    */
-  def syncMailbox = {
-    new SyncMailboxBase(this)
-  }
-}
-
-class AsyncMailbox(_mailboxFactory: MailboxFactory)
-  extends Mailbox with MessengerDispatch[ArrayList[MailboxMsg]] {
-
-  override def mailboxFactory = _mailboxFactory
-
-  val messenger = new Messenger(this, mailboxFactory.threadManager)
-
-  def asyncMailbox = mailboxFactory.asyncMailbox
-
-  def syncMailbox = mailboxFactory.syncMailbox
-
-  override def isMailboxEmpty = messenger.isEmpty
-
-  def poll = messenger.poll
-
-  override def _send(blkmsg: ArrayList[MailboxMsg]) {
-    messenger.put(blkmsg)
-  }
-}
-
-class SyncMailboxBase(mailboxFactory: MailboxFactory)
-  extends AsyncMailbox(mailboxFactory) {
-  val atomicControl = new AtomicReference[Mailbox]
-  val idle = new Semaphore(1)
-
-  override def control = atomicControl.get
-
-  override def processMessage(blkmsg: ArrayList[MailboxMsg]) {
-    while (!atomicControl.compareAndSet(null, this)) {
-      idle.acquire
-      idle.release
-    }
-    try {
-      _receive(blkmsg)
-      flushPendingMsgs
-    } finally {
-      atomicControl.set(null)
-    }
-  }
-
-  override def sendReq(targetActor: Actor,
-                       req: MailboxReq,
-                       srcMailbox: Mailbox) {
-    val controllingMailbox = srcMailbox.control
-    if (controllingMailbox == control) {
-      _sendReq(req)
-    } else if (!atomicControl.compareAndSet(null, controllingMailbox)) {
-      srcMailbox.addPending(targetActor, req)
-    } else {
-      idle.acquire
-      try {
-        _sendReq(req)
-      } finally {
-        atomicControl.set(null)
-        idle.release
-      }
-    }
-  }
-
-  override protected def _receive(blkmsg: ArrayList[MailboxMsg]) {
-    var bm = blkmsg
-    while (bm != null) {
-      super._receive(bm)
-      bm = poll
-    }
-  }
-
-  protected def _sendReq(req: MailboxReq) {
-    curMsg = req
-    req.fastSend = true
-    req.binding.process(this, req)
-    val blkmsg = poll
-    if (blkmsg != null) {
-      _receive(blkmsg)
-      flushPendingMsgs
-    }
-  }
-
-  override protected def sendReply(sender: MsgSrc,
-                                   rspMsg: MailboxRsp,
-                                   senderMailbox: Mailbox) {
-    if (currentRequestMessage.fastSend) {
-      senderMailbox.rsp(rspMsg)
-    } else super.sendReply(sender, rspMsg, senderMailbox)
+  def newSyncMailbox = {
+    new SyncMailbox(this)
   }
 }

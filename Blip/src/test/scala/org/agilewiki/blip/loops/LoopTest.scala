@@ -43,7 +43,7 @@ class LoopTest extends SpecificationWithJUnit {
     "print 1, 2, 3 twice" in {
       val mailboxFactory = new MailboxFactory
       try {
-        val mb = mailboxFactory.asyncMailbox
+        val mb = mailboxFactory.newAsyncMailbox
         val p = new P
         p.setMailbox(mb)
         println("synchronous test")
@@ -52,7 +52,7 @@ class LoopTest extends SpecificationWithJUnit {
         Future(sl, Loop(3))
         println("asynchronous test")
         val al = new L(p)
-        al.setMailbox(mailboxFactory.asyncMailbox)
+        al.setMailbox(mailboxFactory.newAsyncMailbox)
         Future(al, Loop(3))
       } finally {
         mailboxFactory.close

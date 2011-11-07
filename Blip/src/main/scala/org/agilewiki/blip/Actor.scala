@@ -258,7 +258,7 @@ class Actor
 
   def mailboxFactory = mailbox.mailboxFactory
 
-  def newAsyncMailbox = mailboxFactory.asyncMailbox
+  def newAsyncMailbox = mailboxFactory.newAsyncMailbox
 
-  def newSyncMailbox = mailboxFactory.syncMailbox
+  def newSyncMailbox = mailboxFactory.newSyncMailbox
 }

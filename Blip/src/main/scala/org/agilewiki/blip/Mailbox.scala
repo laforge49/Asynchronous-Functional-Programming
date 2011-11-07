@@ -25,16 +25,23 @@ package org.agilewiki
 package blip
 
 import java.util.ArrayList
+import messenger._
 
-trait Mailbox
-  extends MsgCtrl {
+class Mailbox(_mailboxFactory: MailboxFactory)
+  extends MsgCtrl
+  with MessengerDispatch[ArrayList[MailboxMsg]] {
   var curMsg: MailboxMsg = null
   var exceptionFunction: Exception => Unit = null
   var transactionContext: TransactionContext = null
+  val messenger = new Messenger(this, mailboxFactory.threadManager)
 
-  def mailboxFactory: MailboxFactory = {
-    throw new UnsupportedOperationException
+  override def _send(blkmsg: ArrayList[MailboxMsg]) {
+    messenger.put(blkmsg)
   }
+
+  def mailboxFactory: MailboxFactory = _mailboxFactory
+
+  def poll = messenger.poll
 
   def control = this
 
@@ -71,7 +78,7 @@ trait Mailbox
     }
   }
 
-  def isMailboxEmpty: Boolean
+  def isMailboxEmpty = messenger.isEmpty
 
   def currentRequestMessage = {
     if (curMsg.isInstanceOf[MailboxReq])

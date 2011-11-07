@@ -44,7 +44,7 @@ object SystemServices {
     val systemServicesFactory = new CompositeFactory(factoryId, rootComponentFactory, classOf[RootSystemServices])
     SetProperties(systemServicesFactory, properties)
     val mailboxFactory = new MailboxFactory
-    val systemServices = systemServicesFactory.newActor(mailboxFactory.syncMailbox).asInstanceOf[RootSystemServices]
+    val systemServices = systemServicesFactory.newActor(mailboxFactory.newSyncMailbox).asInstanceOf[RootSystemServices]
     systemServices.setSystemServices(systemServices)
     systemServices._open
     systemServices

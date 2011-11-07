@@ -56,7 +56,7 @@ class RecursionTest extends SpecificationWithJUnit {
     "print 1, 2, 3 twice" in {
       val mailboxFactory = new MailboxFactory
       try {
-        val mb = mailboxFactory.asyncMailbox
+        val mb = mailboxFactory.newAsyncMailbox
         val p = new P
         println("synchronous test")
         val sl = new L(p)
@@ -64,7 +64,7 @@ class RecursionTest extends SpecificationWithJUnit {
         Future(sl, Loop(3))
         println("asynchronous test")
         val al = new L(p)
-        al.setMailbox(mailboxFactory.asyncMailbox)
+        al.setMailbox(mailboxFactory.newAsyncMailbox)
         Future(al, Loop(3))
       } finally {
         mailboxFactory.close
