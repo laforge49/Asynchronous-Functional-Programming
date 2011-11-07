@@ -26,6 +26,7 @@ package blip
 
 import annotation.tailrec
 import java.util.ArrayList
+import messenger._
 
 class Future
   extends MsgSrc

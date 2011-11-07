@@ -42,7 +42,6 @@ class SyncMailbox(mailboxFactory: MailboxFactory)
     }
     try {
       poll
-      flushPendingMsgs
     } finally {
       atomicControl.set(null)
     }
@@ -55,7 +54,7 @@ class SyncMailbox(mailboxFactory: MailboxFactory)
     if (controllingMailbox == control) {
       _sendReq(req)
     } else if (!atomicControl.compareAndSet(null, controllingMailbox)) {
-      srcMailbox.addPending(targetActor, req)
+      srcMailbox.messenger.putTo(targetActor.buffered, req)
     } else {
       idle.acquire
       try {
@@ -72,14 +71,12 @@ class SyncMailbox(mailboxFactory: MailboxFactory)
     req.fastSend = true
     req.binding.process(this, req)
     poll
-    flushPendingMsgs
   }
 
-  override protected def sendReply(sender: MsgSrc,
-                                   rspMsg: MailboxRsp,
+  override protected def sendReply(rspMsg: MailboxRsp,
                                    senderMailbox: Mailbox) {
     if (currentRequestMessage.fastSend) {
       senderMailbox.rsp(rspMsg)
-    } else super.sendReply(sender, rspMsg, senderMailbox)
+    } else super.sendReply(rspMsg, senderMailbox)
   }
 }

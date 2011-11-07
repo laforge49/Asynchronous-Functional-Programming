@@ -24,6 +24,7 @@
 package org.agilewiki
 package blip
 
+import messenger._
 import scala.actors.Reactor
 
 class Interop[T >: AnyRef](reactor: Reactor[T])

@@ -24,6 +24,8 @@
 package org.agilewiki
 package blip
 
+import messenger._
+
 trait MsgSrc {
   def buffered: Buffered[MailboxMsg]
 }

@@ -28,16 +28,11 @@ import java.util.ArrayList
 import messenger._
 
 class Mailbox(_mailboxFactory: MailboxFactory)
-  extends Buffered[MailboxMsg]
-  with MessageProcessor[ArrayList[MailboxMsg]] {
+  extends MessageProcessor[MailboxMsg] {
   var curMsg: MailboxMsg = null
   var exceptionFunction: Exception => Unit = null
   var transactionContext: TransactionContext = null
-  val messenger = new Messenger(this, mailboxFactory.threadManager)
-
-  override def putBuffered(blkmsg: ArrayList[MailboxMsg]) {
-    messenger.put(blkmsg)
-  }
+  val messenger = new BufferedMessenger[MailboxMsg](this, mailboxFactory.threadManager)
 
   def mailboxFactory: MailboxFactory = _mailboxFactory
 
@@ -48,34 +43,18 @@ class Mailbox(_mailboxFactory: MailboxFactory)
   def sendReq(targetActor: Actor,
               req: MailboxReq,
               srcMailbox: Mailbox) {
-    srcMailbox.addPending(targetActor, req)
+    srcMailbox.messenger.putTo(targetActor.buffered, req)
   }
 
   override def haveMessage {
     poll
-    flushPendingMsgs
   }
 
-  protected def flushPendingMsgs {
-    if (isMailboxEmpty && !pending.isEmpty) {
-      val it = pending.keySet.iterator
-      while (it.hasNext) {
-        val ctrl = it.next
-        val blkmsg = pending.get(ctrl)
-        ctrl.putBuffered(blkmsg)
-      }
-      pending.clear
-    }
-  }
-
-  override def processMessage(blkmsg: ArrayList[MailboxMsg]) {
-    val it = blkmsg.iterator
-    while (it.hasNext) {
-      curMsg = it.next
-      curMsg match {
-        case msg: MailboxReq => msg.binding.process(this, msg)
-        case msg: MailboxRsp => rsp(msg)
-      }
+  override def processMessage(msg: MailboxMsg) {
+    curMsg = msg
+    curMsg match {
+      case msg: MailboxReq => msg.binding.process(this, msg)
+      case msg: MailboxRsp => rsp(msg)
     }
   }
 
@@ -90,22 +69,6 @@ class Mailbox(_mailboxFactory: MailboxFactory)
 
   def reqExceptionFunction(ex: Exception) {
     reply(ex)
-  }
-
-  val pending = new java.util.HashMap[Buffered[MailboxMsg], ArrayList[MailboxMsg]]
-
-  def addPending(target: MsgSrc, msg: MailboxMsg) {
-    val ctrl = target.buffered
-    var blkmsg = pending.get(ctrl)
-    if (blkmsg == null) {
-      blkmsg = new ArrayList[MailboxMsg]
-      pending.put(ctrl, blkmsg)
-    }
-    blkmsg.add(msg)
-    if (blkmsg.size > 63) {
-      pending.remove(ctrl)
-      ctrl.putBuffered(blkmsg)
-    }
   }
 
   def rsp(msg: MailboxRsp) {
@@ -126,13 +89,13 @@ class Mailbox(_mailboxFactory: MailboxFactory)
     if (sender.isInstanceOf[Actor]) {
       val senderActor = sender.asInstanceOf[Actor]
       val senderMailbox = senderActor.mailbox
-      sendReply(sender, rsp, senderMailbox)
+      sendReply(rsp, senderMailbox)
     } else {
-      addPending(sender, rsp)
+      messenger.putTo(sender.asInstanceOf[Buffered[MailboxMsg]], rsp)
     }
   }
 
-  protected def sendReply(sender: MsgSrc, rsp: MailboxRsp, senderMailbox: Mailbox) {
-    addPending(sender, rsp)
+  protected def sendReply(rsp: MailboxRsp, senderMailbox: Mailbox) {
+    messenger.putTo(senderMailbox.messenger, rsp)
   }
 }

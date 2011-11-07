@@ -54,7 +54,7 @@ class BufferedMessenger[T](messageProcessor: MessageProcessor[T], threadManager:
     var i = 0
     while (i < bufferedMessage.size){
       messageProcessor.processMessage(bufferedMessage.get(i))
-      i -= 1
+      i += 1
     }
   }
 
