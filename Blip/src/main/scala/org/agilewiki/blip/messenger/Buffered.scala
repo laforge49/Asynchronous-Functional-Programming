@@ -26,5 +26,5 @@ package org.agilewiki.blip.messenger
 import java.util.ArrayList
 
 trait Buffered[T] {
-  def putBuffered(bufferedMessage: ArrayList[T])
+  def putBuffered(blkmsg: ArrayList[T])
 }

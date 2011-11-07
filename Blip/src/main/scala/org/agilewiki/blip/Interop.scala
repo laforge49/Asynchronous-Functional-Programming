@@ -28,9 +28,9 @@ import scala.actors.Reactor
 
 class Interop[T >: AnyRef](reactor: Reactor[T])
   extends MsgSrc
-  with MsgCtrl {
+  with Buffered[MailboxMsg] {
 
-  override def ctrl = this
+  override def buffered = this
 
   def afpSend(dst: Actor, msg: AnyRef)(rf: Any => Unit) {
     val safe = dst.messageFunctions.get(msg.getClass)
@@ -46,11 +46,11 @@ class Interop[T >: AnyRef](reactor: Reactor[T])
       val req = new MailboxReq(dst, rf, null, msg, bound, this)
       val blkmsg = new java.util.ArrayList[MailboxMsg]
       blkmsg.add(req)
-      dst.ctrl._send(blkmsg)
+      dst.buffered.putBuffered(blkmsg)
     }
   }
 
-  override def _send(blkmsg: java.util.ArrayList[MailboxMsg]) {
+  override def putBuffered(blkmsg: java.util.ArrayList[MailboxMsg]) {
     var i = 0
     while (i < blkmsg.size) {
       val mailboxRsp = blkmsg.get(i).asInstanceOf[MailboxRsp]

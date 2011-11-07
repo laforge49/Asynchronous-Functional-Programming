@@ -152,7 +152,7 @@ class Actor
     }
   }
 
-  override def ctrl = mailbox
+  override def buffered = mailbox
 
   def isInvalid = transactionActivityLevel < 0
 

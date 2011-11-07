@@ -25,5 +25,5 @@ package org.agilewiki
 package blip
 
 trait MsgSrc {
-  def ctrl: MsgCtrl
+  def buffered: Buffered[MailboxMsg]
 }

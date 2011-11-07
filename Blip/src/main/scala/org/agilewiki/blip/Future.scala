@@ -29,7 +29,7 @@ import java.util.ArrayList
 
 class Future
   extends MsgSrc
-  with MsgCtrl {
+  with Buffered[MailboxMsg] {
   @volatile private[this] var rsp: Any = _
   @volatile private[this] var satisfied = false
 
@@ -47,7 +47,7 @@ class Future
       val req = new MailboxReq(dst, Unit => {}, null, msg, bound, this)
       val blkmsg = new ArrayList[MailboxMsg]
       blkmsg.add(req)
-      dst.ctrl._send(blkmsg)
+      dst.buffered.putBuffered(blkmsg)
     }
   }
 
@@ -56,9 +56,9 @@ class Future
     satisfied = true
   }
 
-  override def ctrl = this
+  override def buffered = this
 
-  override def _send(blkmsg: ArrayList[MailboxMsg]) {
+  override def putBuffered(blkmsg: ArrayList[MailboxMsg]) {
     synchronized {
       if (!satisfied) {
         rsp = blkmsg.get(0).asInstanceOf[MailboxRsp].rsp

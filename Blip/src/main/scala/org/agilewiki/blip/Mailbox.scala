@@ -28,14 +28,14 @@ import java.util.ArrayList
 import messenger._
 
 class Mailbox(_mailboxFactory: MailboxFactory)
-  extends MsgCtrl
+  extends Buffered[MailboxMsg]
   with MessageProcessor[ArrayList[MailboxMsg]] {
   var curMsg: MailboxMsg = null
   var exceptionFunction: Exception => Unit = null
   var transactionContext: TransactionContext = null
   val messenger = new Messenger(this, mailboxFactory.threadManager)
 
-  override def _send(blkmsg: ArrayList[MailboxMsg]) {
+  override def putBuffered(blkmsg: ArrayList[MailboxMsg]) {
     messenger.put(blkmsg)
   }
 
@@ -62,7 +62,7 @@ class Mailbox(_mailboxFactory: MailboxFactory)
       while (it.hasNext) {
         val ctrl = it.next
         val blkmsg = pending.get(ctrl)
-        ctrl._send(blkmsg)
+        ctrl.putBuffered(blkmsg)
       }
       pending.clear
     }
@@ -92,10 +92,10 @@ class Mailbox(_mailboxFactory: MailboxFactory)
     reply(ex)
   }
 
-  val pending = new java.util.HashMap[MsgCtrl, ArrayList[MailboxMsg]]
+  val pending = new java.util.HashMap[Buffered[MailboxMsg], ArrayList[MailboxMsg]]
 
   def addPending(target: MsgSrc, msg: MailboxMsg) {
-    val ctrl = target.ctrl
+    val ctrl = target.buffered
     var blkmsg = pending.get(ctrl)
     if (blkmsg == null) {
       blkmsg = new ArrayList[MailboxMsg]
@@ -104,7 +104,7 @@ class Mailbox(_mailboxFactory: MailboxFactory)
     blkmsg.add(msg)
     if (blkmsg.size > 63) {
       pending.remove(ctrl)
-      ctrl._send(blkmsg)
+      ctrl.putBuffered(blkmsg)
     }
   }
 

@@ -25,12 +25,7 @@ package org.agilewiki
 package blip
 
 import java.util.ArrayList
-import messenger.Buffered
 
-trait MsgCtrl extends Buffered[MailboxMsg] {
-  override def putBuffered(bufferedMessage: ArrayList[MailboxMsg]) {
-    _send(bufferedMessage)
-  }
-
-  def _send(blkmsg: ArrayList[MailboxMsg])
+trait Buffered[T] {
+  def putBuffered(blkmsg: ArrayList[T])
 }
