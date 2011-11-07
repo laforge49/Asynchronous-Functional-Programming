@@ -29,7 +29,7 @@ import annotation.tailrec
 /**
  * A Messenger receives messages, queues them, and then processes them on another thread.
  */
-class Messenger[T](dispatcher: MessengerDispatch[T], threadManager: ThreadManager)
+class Messenger[T](messageProcessor: MessageProcessor[T], threadManager: ThreadManager)
   extends Runnable {
 
   private val queue = new ConcurrentLinkedBlockingQueue[T]
@@ -62,7 +62,7 @@ class Messenger[T](dispatcher: MessengerDispatch[T], threadManager: ThreadManage
     while (incomingMessage != null) {
       val msg = incomingMessage
       incomingMessage = null.asInstanceOf[T]
-      dispatcher.processMessage(msg)
+      messageProcessor.processMessage(msg)
       incomingMessage = queue.poll
     }
     true
@@ -75,11 +75,10 @@ class Messenger[T](dispatcher: MessengerDispatch[T], threadManager: ThreadManage
   @tailrec final override def run {
     incomingMessage = queue.poll
     if (incomingMessage == null) {
-      dispatcher.flushPendingMsgs
       running.set(false)
       if (queue.peek == null || !running.compareAndSet(false, true)) return
     }
-    dispatcher.haveMessage
+    messageProcessor.haveMessage
     run
   }
 }

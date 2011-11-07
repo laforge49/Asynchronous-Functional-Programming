@@ -26,7 +26,7 @@ package org.agilewiki.blip.messenger
 import java.util.ArrayList
 
 class BufferedMessenger[T](messageProcessor: MessageProcessor[T], threadManager: ThreadManager)
-  extends Buffered[T] with MessengerDispatch[ArrayList[T]] {
+  extends Buffered[T] with MessageProcessor[ArrayList[T]] {
   val messenger = new Messenger[ArrayList[T]](this, threadManager)
   val pending = new java.util.HashMap[Buffered[T], ArrayList[T]]
 
@@ -66,7 +66,7 @@ class BufferedMessenger[T](messageProcessor: MessageProcessor[T], threadManager:
    * The flushPendingMsgs is called when there are no pending incoming messages to process.
    * This method is used when outgoing messages are buffered.
    */
-  override def flushPendingMsgs {
+  protected def flushPendingMsgs {
     if (isEmpty && !pending.isEmpty) {
       val it = pending.keySet.iterator
       while (it.hasNext) {

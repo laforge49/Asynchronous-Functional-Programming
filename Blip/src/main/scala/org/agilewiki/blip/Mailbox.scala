@@ -29,7 +29,7 @@ import messenger._
 
 class Mailbox(_mailboxFactory: MailboxFactory)
   extends MsgCtrl
-  with MessengerDispatch[ArrayList[MailboxMsg]] {
+  with MessageProcessor[ArrayList[MailboxMsg]] {
   var curMsg: MailboxMsg = null
   var exceptionFunction: Exception => Unit = null
   var transactionContext: TransactionContext = null
@@ -53,9 +53,10 @@ class Mailbox(_mailboxFactory: MailboxFactory)
 
   override def haveMessage {
     poll
+    flushPendingMsgs
   }
 
-  def flushPendingMsgs {
+  protected def flushPendingMsgs {
     if (isMailboxEmpty && !pending.isEmpty) {
       val it = pending.keySet.iterator
       while (it.hasNext) {
