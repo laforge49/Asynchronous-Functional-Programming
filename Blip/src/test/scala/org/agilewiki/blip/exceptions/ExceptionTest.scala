@@ -44,7 +44,7 @@ class D extends Actor {
 
   def asyncServerEx(msg: AnyRef, rf: Any => Unit) {
     val s = new S
-    s.setMailbox(new ReactorMailbox)
+    s.setMailbox(newAsyncMailbox)
     s(SE())(rsp => rf)
   }
 
@@ -74,7 +74,7 @@ class D extends Actor {
 
   def asyncRspEx(msg: AnyRef, rf: Any => Unit) {
     val s = new S
-    s.setMailbox(new ReactorMailbox)
+    s.setMailbox(newAsyncMailbox)
     s(SNE()) {
       rsp => throw new IllegalAccessException
     }
@@ -101,10 +101,10 @@ class D extends Actor {
 class ExceptionTest extends SpecificationWithJUnit {
   "ExceptionTest" should {
     "exercise exception handlers" in {
-      val mailboxFactory = new MailboxFactory
+      val systemServices = SystemServices()
       try {
         val d = new D
-        d.setMailbox(mailboxFactory.asyncMailbox)
+        d.setMailbox(systemServices.newSyncMailbox)
         println("--server exception async test")
         Future(d, AsyncServerEx())
         println("--server exception sync test")
@@ -114,7 +114,7 @@ class ExceptionTest extends SpecificationWithJUnit {
         println("--response exception sync test")
         Future(d, SyncRspEx())
       } finally {
-        mailboxFactory.close
+        systemServices.close
       }
     }
   }

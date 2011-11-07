@@ -13,22 +13,27 @@ class IntersectionSeqTest extends SpecificationWithJUnit {
       seqs.add(new FilterSeq(range, (x: Int) => x % 3 == 0))
       seqs.add(new FilterSeq(range, (x: Int) => x % 5 == 0))
       val intersection = new IntersectionSeq(seqs)
-      Future(intersection, Loop((key: Int, value: java.util.List[Int]) => println(key+" "+value)))
+      Future(intersection, Loop((key: Int, value: java.util.List[Int]) => println(key + " " + value)))
     }
     "intersect asynchronous" in {
-      val seqs = new java.util.ArrayList[Sequence[Int, Int]]
-      val range2 = new Range(1, 200)
-      range2.setMailbox(new ReactorMailbox)
-      val range3 = new Range(1, 200)
-      range3.setMailbox(new ReactorMailbox)
-      val range5 = new Range(1, 200)
-      range5.setMailbox(new ReactorMailbox)
-      seqs.add(new FilterSeq(range2, (x: Int) => x % 2 == 0))
-      seqs.add(new FilterSeq(range3, (x: Int) => x % 3 == 0))
-      seqs.add(new FilterSeq(range5, (x: Int) => x % 5 == 0))
-      val intersection = new IntersectionSeq(seqs)
-      intersection.setMailbox(new ReactorMailbox)
-      Future(intersection, Loop((key: Int, value: java.util.List[Int]) => println(key+" "+value)))
+      val systemServices = SystemServices()
+      try {
+        val seqs = new java.util.ArrayList[Sequence[Int, Int]]
+        val range2 = new Range(1, 200)
+        range2.setMailbox(systemServices.newAsyncMailbox)
+        val range3 = new Range(1, 200)
+        range3.setMailbox(systemServices.newAsyncMailbox)
+        val range5 = new Range(1, 200)
+        range5.setMailbox(systemServices.newAsyncMailbox)
+        seqs.add(new FilterSeq(range2, (x: Int) => x % 2 == 0))
+        seqs.add(new FilterSeq(range3, (x: Int) => x % 3 == 0))
+        seqs.add(new FilterSeq(range5, (x: Int) => x % 5 == 0))
+        val intersection = new IntersectionSeq(seqs)
+        intersection.setMailbox(systemServices.newAsyncMailbox)
+        Future(intersection, Loop((key: Int, value: java.util.List[Int]) => println(key + " " + value)))
+      } finally {
+        systemServices.close
+      }
     }
   }
 }

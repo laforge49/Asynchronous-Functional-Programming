@@ -37,12 +37,12 @@ case class DoIt()
 
 class Driver extends Actor {
   bind(classOf[DoIt], doit)
-  setMailbox(new ReactorMailbox)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
-    systemServices(Instantiate(FactoryId("greeter"), null)) {rsp =>
-      val greeter = rsp.asInstanceOf[Actor]
-      greeter(Greet())(rf)
+    systemServices(Instantiate(FactoryId("greeter"), null)) {
+      rsp =>
+        val greeter = rsp.asInstanceOf[Actor]
+        greeter(Greet())(rf)
     }
   }
 }
@@ -51,10 +51,15 @@ class SubsystemTest extends SpecificationWithJUnit {
   "SubsystemTest" should {
     "instantiate" in {
       val systemServices = SystemServices(new SomeComponentFactory)
-      val aSubsystem = Subsystem(systemServices, new FactoryRegistryComponentFactory)
-      val driver = new Driver
-      driver.setSystemServices(aSubsystem)
-      Future(driver, DoIt())
+      try {
+        val aSubsystem = Subsystem(systemServices, new FactoryRegistryComponentFactory)
+        val driver = new Driver
+        driver.setSystemServices(aSubsystem)
+        driver.setMailbox(systemServices.newSyncMailbox)
+        Future(driver, DoIt())
+      } finally {
+        systemServices.close
+      }
     }
   }
 }

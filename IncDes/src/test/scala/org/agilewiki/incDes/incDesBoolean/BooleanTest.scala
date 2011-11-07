@@ -54,9 +54,14 @@ class BooleanTest extends SpecificationWithJUnit {
       Future(j5, Value()) must be equalTo (false)
 
       val systemServices = SystemServices(new IncDesComponentFactory)
-      val driver = new Driver
-      driver.setSystemServices(systemServices)
-      Future(driver, DoIt()) must be equalTo (true)
+      try {
+        val driver = new Driver
+        driver.setSystemServices(systemServices)
+        driver.setMailbox(systemServices.newSyncMailbox)
+        Future(driver, DoIt()) must be equalTo (true)
+      } finally {
+        systemServices.close
+      }
     }
   }
 }
@@ -65,7 +70,6 @@ case class DoIt()
 
 class Driver extends Actor {
   bind(classOf[DoIt], doit)
-  setMailbox(new ReactorMailbox)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
     systemServices(Instantiate(INC_DES_BOOLEAN_FACTORY_ID, null)) {

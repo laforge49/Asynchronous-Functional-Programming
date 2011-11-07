@@ -11,17 +11,22 @@ class ExcludeSeqTest extends SpecificationWithJUnit {
       val seq = new FilterSeq(range, (x: Int) => x % 2 == 0)
       val exclude = new FilterSeq(range, (x: Int) => x % 3 == 0)
       val excludeSeq = new ExcludeSeq(seq, exclude)
-      Future(excludeSeq, Loop((key: Int, value: Int) => println(key+" "+value)))
+      Future(excludeSeq, Loop((key: Int, value: Int) => println(key + " " + value)))
     }
     "exclude asynchronous" in {
-      val range2 = new Range(1, 10)
-      range2.setMailbox(new ReactorMailbox)
-      val seq = new FilterSeq(range2, (x: Int) => x % 2 == 0)
-      val range3 = new Range(1, 200)
-      range3.setMailbox(new ReactorMailbox)
-      val exclude = new FilterSeq(range2, (x: Int) => x % 3 == 0)
-      val excludeSeq = new ExcludeSeq(seq, exclude)
-      Future(excludeSeq, Loop((key: Int, value: Int) => println(key+" "+value)))
+      val systemServices = SystemServices()
+      try {
+        val range2 = new Range(1, 10)
+        range2.setMailbox(systemServices.newSyncMailbox)
+        val seq = new FilterSeq(range2, (x: Int) => x % 2 == 0)
+        val range3 = new Range(1, 200)
+        range3.setMailbox(systemServices.newSyncMailbox)
+        val exclude = new FilterSeq(range2, (x: Int) => x % 3 == 0)
+        val excludeSeq = new ExcludeSeq(seq, exclude)
+        Future(excludeSeq, Loop((key: Int, value: Int) => println(key + " " + value)))
+      } finally {
+        systemServices.close
+      }
     }
   }
 }

@@ -54,11 +54,16 @@ class DoubleFactory extends Factory(null) {
 class CompositeTest extends SpecificationWithJUnit {
   "SimpleActor" should {
     "double" in {
-      val doubleFactory = new DoubleFactory
-      val double = doubleFactory.newActor(new ReactorMailbox)
-      Future(double, Set(21))
-      Future(double, Times2())
-      println(Future(double, Get()))
+      val systemServices = SystemServices()
+      try {
+        val doubleFactory = new DoubleFactory
+        val double = doubleFactory.newActor(systemServices.newSyncMailbox)
+        Future(double, Set(21))
+        Future(double, Times2())
+        println(Future(double, Get()))
+      } finally {
+        systemServices.close
+      }
     }
   }
 }

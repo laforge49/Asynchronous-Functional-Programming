@@ -55,9 +55,14 @@ class IntTest extends SpecificationWithJUnit {
       Future(j5, Value()) must be equalTo (-4)
 
       val systemServices = SystemServices(new IncDesComponentFactory)
-      val driver = new Driver
-      driver.setSystemServices(systemServices)
-      Future(driver, DoIt()) must be equalTo (42)
+      try {
+        val driver = new Driver
+        driver.setSystemServices(systemServices)
+        driver.setMailbox(systemServices.newSyncMailbox)
+        Future(driver, DoIt()) must be equalTo (42)
+      } finally {
+        systemServices.close
+      }
     }
   }
 }
@@ -66,7 +71,6 @@ case class DoIt()
 
 class Driver extends Actor {
   bind(classOf[DoIt], doit)
-  setMailbox(new ReactorMailbox)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
     val results = new Results

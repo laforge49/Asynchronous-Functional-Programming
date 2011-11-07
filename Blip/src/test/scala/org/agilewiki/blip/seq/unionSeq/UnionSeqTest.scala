@@ -16,19 +16,24 @@ class UnionSeqTest extends SpecificationWithJUnit {
       Future(union, Loop((key: Int, value: java.util.List[Int]) => println(key+" "+value)))
     }
     "union asynchronous" in {
-      val seqs = new java.util.ArrayList[Sequence[Int, Int]]
+      val systemServices = SystemServices()
+      try {
+        val seqs = new java.util.ArrayList[Sequence[Int, Int]]
       val range2 = new Range(1, 15)
-      range2.setMailbox(new ReactorMailbox)
+      range2.setMailbox(systemServices.newAsyncMailbox)
       val range3 = new Range(1, 15)
-      range3.setMailbox(new ReactorMailbox)
+      range3.setMailbox(systemServices.newAsyncMailbox)
       val range5 = new Range(1, 15)
-      range5.setMailbox(new ReactorMailbox)
+      range5.setMailbox(systemServices.newAsyncMailbox)
       seqs.add(new FilterSeq(range2, (x: Int) => x % 2 == 0))
       seqs.add(new FilterSeq(range3, (x: Int) => x % 3 == 0))
       seqs.add(new FilterSeq(range5, (x: Int) => x % 5 == 0))
       val union = new UnionSeq(seqs)
-      union.setMailbox(new ReactorMailbox)
+      union.setMailbox(systemServices.newAsyncMailbox)
       Future(union, Loop((key: Int, value: java.util.List[Int]) => println(key+" "+value)))
+      } finally {
+        systemServices.close
+      }
     }
   }
 }

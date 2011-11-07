@@ -42,7 +42,6 @@ case class DoIt2()
 class Driver extends Actor {
   bind(classOf[DoIt1], doit1)
   bind(classOf[DoIt2], doit2)
-  setMailbox(new ReactorMailbox)
 
   def doit1(msg: AnyRef, rf: Any => Unit) {
     systemServices(Instantiate(FactoryId("greeter"), null)) {
@@ -80,10 +79,15 @@ class ActorRegistryTest extends SpecificationWithJUnit {
   "ActorRegistryTest" should {
     "register" in {
       val systemServices = SystemServices(new SomeComponentFactory)
-      val driver = new Driver
-      driver.setSystemServices(systemServices)
-      Future(driver, DoIt1())
-      Future(driver, DoIt2())
+      try {
+        val driver = new Driver
+        driver.setSystemServices(systemServices)
+        driver.setMailbox(systemServices.newSyncMailbox)
+        Future(driver, DoIt1())
+        Future(driver, DoIt2())
+      } finally {
+        systemServices.close
+      }
     }
   }
 }

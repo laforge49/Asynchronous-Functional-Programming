@@ -37,7 +37,6 @@ class SomeComponentFactory
 case class DoIt()
 
 class Driver extends Actor {
-  setMailbox(new ReactorMailbox)
   bind(classOf[DoIt], doit)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
@@ -56,9 +55,14 @@ class FactoriesTest extends SpecificationWithJUnit {
   "FactoriesTest" should {
     "print factories" in {
       val systemServices = SystemServices(new SomeComponentFactory)
-      val driver = new Driver
-      driver.setSystemServices(systemServices)
-      Future(driver, DoIt())
+      try {
+        val driver = new Driver
+        driver.setSystemServices(systemServices)
+        driver.setMailbox(systemServices.newSyncMailbox)
+        Future(driver, DoIt())
+      } finally {
+        systemServices.close
+      }
     }
   }
 }

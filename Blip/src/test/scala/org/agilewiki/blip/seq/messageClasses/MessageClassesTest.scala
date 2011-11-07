@@ -55,10 +55,15 @@ class DoubleFactory extends Factory(null) {
 class MessageClassesTest extends SpecificationWithJUnit {
   "MessageClassesTest" should {
     "print message classes" in {
-      val doubleFactory = new DoubleFactory
-      val double = doubleFactory.newActor(new ReactorMailbox)
-      val messageClasses = double.messageClasses
-      Future(messageClasses, Loop((key: Class[_ <: AnyRef], value: Class[_ <: AnyRef]) => println(value)))
+      val systemServices = SystemServices()
+      try {
+        val doubleFactory = new DoubleFactory
+        val double = doubleFactory.newActor(systemServices.newSyncMailbox)
+        val messageClasses = double.messageClasses
+        Future(messageClasses, Loop((key: Class[_ <: AnyRef], value: Class[_ <: AnyRef]) => println(value)))
+      } finally {
+        systemServices.close
+      }
     }
   }
 }

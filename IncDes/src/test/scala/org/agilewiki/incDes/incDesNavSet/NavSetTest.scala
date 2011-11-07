@@ -33,44 +33,47 @@ class NavSetTest extends SpecificationWithJUnit {
   "NavSetTest" should {
     "Serialize/deserialize" in {
       val systemServices = SystemServices(new IncDesComponentFactory)
+      try {
+        val intl0 = IncDesIntSet(systemServices.newSyncMailbox, systemServices)
+        Future(intl0, AddValue(null, 1))
+        Future(intl0, Length()) must be equalTo (8)
+        val intb0 = Future(intl0, Bytes()).asInstanceOf[Array[Byte]]
 
-      val intl0 = IncDesIntSet(new ReactorMailbox, systemServices)
-      Future(intl0, AddValue(null, 1))
-      Future(intl0, Length()) must be equalTo (8)
-      val intb0 = Future(intl0, Bytes()).asInstanceOf[Array[Byte]]
+        val intl1 = IncDesIntSet(systemServices.newSyncMailbox, systemServices)
+        intl1.load(intb0)
+        Future(intl1, Length()) must be equalTo (8)
+        Future(intl1, ContainsKey(1)) must be equalTo (true)
 
-      val intl1 = IncDesIntSet(new ReactorMailbox, systemServices)
-      intl1.load(intb0)
-      Future(intl1, Length()) must be equalTo (8)
-      Future(intl1, ContainsKey(1)) must be equalTo (true)
+        val seq = Future(intl1, Seq()).asInstanceOf[Sequence[Int, Int]]
+        Future(seq, First()).isInstanceOf[KVPair[Int, Int]] must be equalTo (true)
 
-      val seq = Future(intl1, Seq()).asInstanceOf[Sequence[Int, Int]]
-      Future(seq, First()).isInstanceOf[KVPair[Int, Int]] must be equalTo (true)
+        val longl0 = IncDesLongSet(systemServices.newSyncMailbox, systemServices)
+        Future(longl0, AddValue(null, 1L))
+        Future(longl0, AddValue(null, 2L))
+        Future(longl0, Length()) must be equalTo (20)
+        val longb0 = Future(longl0, Bytes()).asInstanceOf[Array[Byte]]
 
-      val longl0 = IncDesLongSet(new ReactorMailbox, systemServices)
-      Future(longl0, AddValue(null, 1L))
-      Future(longl0, AddValue(null, 2L))
-      Future(longl0, Length()) must be equalTo (20)
-      val longb0 = Future(longl0, Bytes()).asInstanceOf[Array[Byte]]
+        val longl1 = IncDesLongSet(systemServices.newSyncMailbox, systemServices)
+        longl1.load(longb0)
+        Future(longl1, Length()) must be equalTo (20)
+        Future(longl1, ContainsKey(1L)) must be equalTo (true)
+        Future(longl1, ContainsKey(2L)) must be equalTo (true)
 
-      val longl1 = IncDesLongSet(new ReactorMailbox, systemServices)
-      longl1.load(longb0)
-      Future(longl1, Length()) must be equalTo (20)
-      Future(longl1, ContainsKey(1L)) must be equalTo (true)
-      Future(longl1, ContainsKey(2L)) must be equalTo (true)
+        val stringl0 = IncDesStringSet(systemServices.newSyncMailbox, systemServices)
+        Future(stringl0, AddValue(null, "a"))
+        Future(stringl0, AddValue(null, "bb"))
+        Future(stringl0, Remove(null, "a"))
+        Future(stringl0, Length()) must be equalTo (12)
+        val stringb0 = Future(stringl0, Bytes()).asInstanceOf[Array[Byte]]
 
-      val stringl0 = IncDesStringSet(new ReactorMailbox, systemServices)
-      Future(stringl0, AddValue(null, "a"))
-      Future(stringl0, AddValue(null, "bb"))
-      Future(stringl0, Remove(null, "a"))
-      Future(stringl0, Length()) must be equalTo (12)
-      val stringb0 = Future(stringl0, Bytes()).asInstanceOf[Array[Byte]]
-
-      val stringl1 = IncDesStringSet(new ReactorMailbox, systemServices)
-      stringl1.load(stringb0)
-      Future(stringl1, Length()) must be equalTo (12)
-      Future(stringl1, ContainsKey("a")) must be equalTo (false)
-      Future(stringl1, ContainsKey("bb")) must be equalTo (true)
+        val stringl1 = IncDesStringSet(systemServices.newSyncMailbox, systemServices)
+        stringl1.load(stringb0)
+        Future(stringl1, Length()) must be equalTo (12)
+        Future(stringl1, ContainsKey("a")) must be equalTo (false)
+        Future(stringl1, ContainsKey("bb")) must be equalTo (true)
+      } finally {
+        systemServices.close
+      }
     }
   }
 }

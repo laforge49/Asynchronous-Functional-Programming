@@ -56,9 +56,14 @@ class BytesTest extends SpecificationWithJUnit {
       Future(j5, Value()).asInstanceOf[Array[Byte]].length must be equalTo (0)
 
       val systemServices = SystemServices(new IncDesComponentFactory)
-      val driver = new Driver
-      driver.setSystemServices(systemServices)
-      Future(driver, DoIt()).asInstanceOf[Array[Byte]].length must be equalTo (3)
+      try {
+        val driver = new Driver
+        driver.setMailbox(systemServices.newSyncMailbox)
+        driver.setSystemServices(systemServices)
+        Future(driver, DoIt()).asInstanceOf[Array[Byte]].length must be equalTo (3)
+      } finally {
+        systemServices.close
+      }
     }
   }
 }
@@ -67,7 +72,6 @@ case class DoIt()
 
 class Driver extends Actor {
   bind(classOf[DoIt], doit)
-  setMailbox(new ReactorMailbox)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
     systemServices(Instantiate(INC_DES_BYTES_FACTORY_ID, null)) {

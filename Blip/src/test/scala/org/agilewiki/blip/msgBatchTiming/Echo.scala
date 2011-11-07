@@ -26,7 +26,6 @@ package blip
 package msgBatchTiming
 
 class Echo extends Actor {
-  setMailbox(new ReactorMailbox)
   bind(classOf[TimingReq], timing)
   def timing(msg: AnyRef, rf: Any => Unit) {
     rf(null)

@@ -37,29 +37,37 @@ class SomeComponentFactory
 }
 
 case class DoIt1()
+
 case class DoIt2()
 
 class Driver extends Actor {
-  setMailbox(new ReactorMailbox)
   bind(classOf[DoIt1], doit1)
   bind(classOf[DoIt2], doit2)
 
   def doit1(msg: AnyRef, rf: Any => Unit) {
-    systemServices(Instantiate(FactoryId("greeter"), null)) {rsp =>
-      val greeter = rsp.asInstanceOf[IdActor]
-      greeter.id(ActorId("a"))
-      systemServices(Register(greeter)) {rsp => {}}
+    systemServices(Instantiate(FactoryId("greeter"), null)) {
+      rsp =>
+        val greeter = rsp.asInstanceOf[IdActor]
+        greeter.id(ActorId("a"))
+        systemServices(Register(greeter)) {
+          rsp => {}
+        }
     }
-    systemServices(ResolveName(FactoryId("greeter"), null)) {rsp =>
-      val greeter = rsp.asInstanceOf[IdActor]
-      greeter.id(ActorId("b"))
-      systemServices(Register(greeter)) {rsp => {}}
+    systemServices(ResolveName(FactoryId("greeter"), null)) {
+      rsp =>
+        val greeter = rsp.asInstanceOf[IdActor]
+        greeter.id(ActorId("b"))
+        systemServices(Register(greeter)) {
+          rsp => {}
+        }
     }
     rf(null)
   }
 
   def doit2(msg: AnyRef, rf: Any => Unit) {
-    systemServices(Unregister(ActorId("a"))) {rsp => {}}
+    systemServices(Unregister(ActorId("a"))) {
+      rsp => {}
+    }
     systemServices(Actors()) {
       rsp =>
         val actors = rsp.asInstanceOf[Actor]
@@ -75,10 +83,15 @@ class ActorsTest extends SpecificationWithJUnit {
   "ActorsTest" should {
     "display actors" in {
       val systemServices = SystemServices(new SomeComponentFactory)
-      val driver = new Driver
-      driver.setSystemServices(systemServices)
-      Future(driver, DoIt1())
-      Future(driver, DoIt2())
+      try {
+        val driver = new Driver
+        driver.setSystemServices(systemServices)
+        driver.setMailbox(systemServices.newSyncMailbox)
+        Future(driver, DoIt1())
+        Future(driver, DoIt2())
+      } finally {
+        systemServices.close
+      }
     }
   }
 }

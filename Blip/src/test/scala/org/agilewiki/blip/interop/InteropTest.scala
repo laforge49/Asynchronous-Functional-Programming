@@ -5,7 +5,9 @@ import org.specs.SpecificationWithJUnit
 import actors.{ReplyReactor, Reactor}
 
 case class SimpleEcho(value: String)
+
 case class QueryEcho(value: String)
+
 case class Ex()
 
 class SimpleActor extends Actor {
@@ -27,20 +29,23 @@ class SimpleActor extends Actor {
 }
 
 case class T1()
+
 case class T2()
+
 case class T3()
+
 case class T4()
 
-class SimpleReactor extends Reactor[Any] {
+class SimpleReactor(systemServices: SystemServices) extends Reactor[Any] {
   val interop = new Interop(this)
   val simpleActor = new SimpleActor
-  simpleActor.setMailbox(new ReactorMailbox)
+  simpleActor.setMailbox(systemServices.newSyncMailbox)
 
   start
 
   override def act {
-    loop{
-      react{
+    loop {
+      react {
         case afpResponse: MailboxRsp => interop.afpResponse(afpResponse)
         case req: T1 => println("a")
         case req: T2 => {
@@ -68,11 +73,16 @@ class SimpleReactor extends Reactor[Any] {
 class InteropTest extends SpecificationWithJUnit {
   "SimpleActor" should {
     "print" in {
-      val simpleReactor = new SimpleReactor
-      simpleReactor ! T1()
-      simpleReactor ! T2()
-      simpleReactor ! T3()
-      simpleReactor ! T4()
+      val systemServices = SystemServices()
+      try {
+        val simpleReactor = new SimpleReactor(systemServices)
+        simpleReactor ! T1()
+        simpleReactor ! T2()
+        simpleReactor ! T3()
+        simpleReactor ! T4()
+      } finally {
+        systemServices.close
+      }
     }
   }
 }

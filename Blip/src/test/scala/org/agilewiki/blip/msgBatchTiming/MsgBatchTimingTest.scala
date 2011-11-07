@@ -30,22 +30,30 @@ import org.specs.SpecificationWithJUnit
 class MsgBatchTimingTest extends SpecificationWithJUnit {
   "MsgBatchTimingTest" should {
     "asynchronous timing" in {
-      val e = 10//000//0
-      val b = 1//0
-      val batchers = new Array[Batcher](b)
-      var i = 0
-      while(i < b) {
-        val echo = new Echo
-        val batcher = new Batcher(echo, e)
-        batchers(i) = batcher
-        i += 1
+      val systemServices = SystemServices()
+      try {
+        val e = 10 //000//0
+        val b = 1 //0
+        val batchers = new Array[Batcher](b)
+        var i = 0
+        while (i < b) {
+          val echo = new Echo
+          echo.setMailbox(systemServices.newSyncMailbox)
+          val batcher = new Batcher(echo, e)
+          batcher.setMailbox(systemServices.newSyncMailbox)
+          batchers(i) = batcher
+          i += 1
+        }
+        val driver = new Driver(batchers)
+        driver.setMailbox(systemServices.newSyncMailbox)
+        Future(driver, TimingReq())
+        val t0 = System.currentTimeMillis
+        Future(driver, TimingReq())
+        val t1 = System.currentTimeMillis
+        if (t1 != t0) println("async msgs per sec = " + (2L * (e + 1L) * b * 1000L / (t1 - t0)))
+      } finally {
+        systemServices.close
       }
-      val driver = new Driver(batchers)
-      Future(driver, TimingReq())
-      val t0 = System.currentTimeMillis
-      Future(driver, TimingReq())
-      val t1 = System.currentTimeMillis
-      if (t1 != t0) println("async msgs per sec = "+(2L * (e + 1L) * b * 1000L / (t1 - t0)))
     }
   }
 }
