@@ -25,13 +25,22 @@ package org.agilewiki.blip.messenger
 
 import java.util.ArrayList
 
+/**
+ * A BufferedMessenger exchanges lists of messages with other BufferedMessenger objects,
+ * where each BufferedMessenger is operating on a different thread.
+ */
 class BufferedMessenger[T](messageProcessor: MessageProcessor[T], threadManager: ThreadManager)
   extends Buffered[T] with MessageProcessor[ArrayList[T]] {
   val messenger = new Messenger[ArrayList[T]](this, threadManager)
   val pending = new java.util.HashMap[Buffered[T], ArrayList[T]]
 
-  override def putBuffered(bufferedMessage: ArrayList[T]) {
-    messenger.put(bufferedMessage)
+  /**
+   * The incomingMessageList method is called to process a list of messages
+   * when the current thread is different
+   * from the thread being used by the object being called.
+   */
+  override def incomingMessageList(messageList: ArrayList[T]) {
+    messenger.put(messageList)
   }
 
   /**
@@ -42,52 +51,58 @@ class BufferedMessenger[T](messageProcessor: MessageProcessor[T], threadManager:
 
   /**
    * The poll method processes any messages in the queue.
+   * Once complete, any pending outgoing messages are sent.
    */
   def poll {
     if (messenger.poll) flushPendingMsgs
   }
 
   /**
-   * The processMessage method is used to process an incoming message.
+   * The processMessage method is used to process an incoming list of messages.
    */
-  override def processMessage(bufferedMessage: ArrayList[T]) {
+  override def processMessage(messageList: ArrayList[T]) {
     var i = 0
-    while (i < bufferedMessage.size){
-      messageProcessor.processMessage(bufferedMessage.get(i))
+    while (i < messageList.size){
+      messageProcessor.processMessage(messageList.get(i))
       i += 1
     }
   }
 
+  /**
+   * The haveMessage method is called when there is an incoming message to be processed.
+   */
   override def haveMessage {
     messageProcessor.haveMessage
   }
 
   /**
    * The flushPendingMsgs is called when there are no pending incoming messages to process.
-   * This method is used when outgoing messages are buffered.
    */
   protected def flushPendingMsgs {
     if (isEmpty && !pending.isEmpty) {
       val it = pending.keySet.iterator
       while (it.hasNext) {
         val buffered = it.next
-        val bufferedMessage = pending.get(buffered)
-        buffered.putBuffered(bufferedMessage)
+        val messageList = pending.get(buffered)
+        buffered.incomingMessageList(messageList)
       }
       pending.clear
     }
   }
 
+  /**
+   * The putTo message builds lists of messages to be sent to other Buffered objects.
+   */
   def putTo(buffered: Buffered[T], message: T) {
-    var bufferedMessage = pending.get(buffered)
-    if (bufferedMessage == null) {
-      bufferedMessage = new ArrayList[T]
-      pending.put(buffered, bufferedMessage)
+    var messageList = pending.get(buffered)
+    if (messageList == null) {
+      messageList = new ArrayList[T]
+      pending.put(buffered, messageList)
     }
-    bufferedMessage.add(message)
-    if (bufferedMessage.size > 63) {
+    messageList.add(message)
+    if (messageList.size > 1023) {
       pending.remove(buffered)
-      buffered.putBuffered(bufferedMessage)
+      buffered.incomingMessageList(messageList)
     }
   }
 }

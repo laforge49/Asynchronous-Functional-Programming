@@ -48,7 +48,7 @@ class Future
       val req = new MailboxReq(dst, Unit => {}, null, msg, bound, this)
       val blkmsg = new ArrayList[MailboxMsg]
       blkmsg.add(req)
-      dst.buffered.putBuffered(blkmsg)
+      dst.buffered.incomingMessageList(blkmsg)
     }
   }
 
@@ -59,7 +59,7 @@ class Future
 
   override def buffered = this
 
-  override def putBuffered(blkmsg: ArrayList[MailboxMsg]) {
+  override def incomingMessageList(blkmsg: ArrayList[MailboxMsg]) {
     synchronized {
       if (!satisfied) {
         rsp = blkmsg.get(0).asInstanceOf[MailboxRsp].rsp

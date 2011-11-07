@@ -25,6 +25,15 @@ package org.agilewiki.blip.messenger
 
 import java.util.ArrayList
 
+/**
+ * A Buffered object receives lists of messages from objects operating
+ * on a different thread.
+ */
 trait Buffered[T] {
-  def putBuffered(blkmsg: ArrayList[T])
+  /**
+   * The incomingMessageList method is called to process a list of messages
+   * when the current thread is different
+   * from the thread being used by the object being called.
+   */
+  def incomingMessageList(bufferedMessages: ArrayList[T])
 }

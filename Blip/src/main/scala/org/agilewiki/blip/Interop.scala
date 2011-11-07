@@ -47,11 +47,11 @@ class Interop[T >: AnyRef](reactor: Reactor[T])
       val req = new MailboxReq(dst, rf, null, msg, bound, this)
       val blkmsg = new java.util.ArrayList[MailboxMsg]
       blkmsg.add(req)
-      dst.buffered.putBuffered(blkmsg)
+      dst.buffered.incomingMessageList(blkmsg)
     }
   }
 
-  override def putBuffered(blkmsg: java.util.ArrayList[MailboxMsg]) {
+  override def incomingMessageList(blkmsg: java.util.ArrayList[MailboxMsg]) {
     var i = 0
     while (i < blkmsg.size) {
       val mailboxRsp = blkmsg.get(i).asInstanceOf[MailboxRsp]

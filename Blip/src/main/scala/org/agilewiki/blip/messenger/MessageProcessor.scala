@@ -24,11 +24,12 @@
 package org.agilewiki.blip.messenger
 
 /**
- * A MessengerDispatch object receives and processes messages.
+ * A MessageProcessor object processes messages and
+ * receives notifications that there are messages to be processed.
  */
 trait MessageProcessor[T] {
   /**
-   * The processMessage method is used to process an incoming message.
+   * The processMessage method is called when there is an incoming message to process.
    */
   def processMessage(message: T)
 
