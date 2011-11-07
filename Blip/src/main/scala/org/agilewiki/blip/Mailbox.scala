@@ -51,8 +51,8 @@ class Mailbox(_mailboxFactory: MailboxFactory)
     srcMailbox.addPending(targetActor, req)
   }
 
-  def processMessage(blkmsg: ArrayList[MailboxMsg]) {
-    _receive(blkmsg)
+  override def haveMessage {
+    poll
   }
 
   def flushPendingMsgs {
@@ -67,7 +67,7 @@ class Mailbox(_mailboxFactory: MailboxFactory)
     }
   }
 
-  protected def _receive(blkmsg: ArrayList[MailboxMsg]) {
+  override def processMessage(blkmsg: ArrayList[MailboxMsg]) {
     val it = blkmsg.iterator
     while (it.hasNext) {
       curMsg = it.next

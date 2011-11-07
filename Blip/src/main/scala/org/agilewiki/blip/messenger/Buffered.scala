@@ -21,16 +21,10 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki
-package blip
+package org.agilewiki.blip.messenger
 
 import java.util.ArrayList
-import messenger.Buffered
 
-trait MsgCtrl extends Buffered[MailboxMsg] {
-  override def putBuffered(bufferedMessage: ArrayList[MailboxMsg]) {
-    _send(bufferedMessage)
-  }
-
-  def _send(blkmsg: ArrayList[MailboxMsg])
+trait Buffered[T] {
+  def putBuffered(bufferedMessage: ArrayList[T])
 }

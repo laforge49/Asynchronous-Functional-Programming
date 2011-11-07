@@ -27,7 +27,6 @@ package blip
 import java.util.ArrayList
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicReference
-import messenger._
 
 class SyncMailbox(mailboxFactory: MailboxFactory)
   extends Mailbox(mailboxFactory) {
@@ -36,13 +35,13 @@ class SyncMailbox(mailboxFactory: MailboxFactory)
 
   override def control = atomicControl.get
 
-  override def processMessage(blkmsg: ArrayList[MailboxMsg]) {
+  override def haveMessage {
     while (!atomicControl.compareAndSet(null, this)) {
       idle.acquire
       idle.release
     }
     try {
-      _receive(blkmsg)
+      poll
       flushPendingMsgs
     } finally {
       atomicControl.set(null)
@@ -68,23 +67,12 @@ class SyncMailbox(mailboxFactory: MailboxFactory)
     }
   }
 
-  override protected def _receive(blkmsg: ArrayList[MailboxMsg]) {
-    var bm = blkmsg
-    while (bm != null) {
-      super._receive(bm)
-      bm = poll
-    }
-  }
-
   protected def _sendReq(req: MailboxReq) {
     curMsg = req
     req.fastSend = true
     req.binding.process(this, req)
-    val blkmsg = poll
-    if (blkmsg != null) {
-      _receive(blkmsg)
-      flushPendingMsgs
-    }
+    poll
+    flushPendingMsgs
   }
 
   override protected def sendReply(sender: MsgSrc,

@@ -34,6 +34,7 @@ class Messenger[T](dispatcher: MessengerDispatch[T], threadManager: ThreadManage
 
   private val queue = new ConcurrentLinkedBlockingQueue[T]
   private val running = new AtomicBoolean
+  private var incomingMessage: T = null.asInstanceOf[T]
 
   /**
    * The isEmpty method returns true when there are no messages to be processed,
@@ -52,34 +53,33 @@ class Messenger[T](dispatcher: MessengerDispatch[T], threadManager: ThreadManage
   }
 
   /**
-   * The poll method removes a message from the queue of messages to be processed and
-   * returns it. But if the queue is empty, null is returned.
+   * The poll method processes any messages in the queue.
+   * True is returned if any messages were processed.
    */
-  def poll = queue.poll
+  def poll: Boolean = {
+    if (incomingMessage == null) incomingMessage = queue.poll
+    if (incomingMessage == null) return false
+    while (incomingMessage != null) {
+      val msg = incomingMessage
+      incomingMessage = null.asInstanceOf[T]
+      dispatcher.processMessage(msg)
+      incomingMessage = queue.poll
+    }
+    true
+  }
 
   /**
    * The run method is used to process the messages in the message queue.
    * Each message is in turn processed using the MessageDispatcher.
    */
   @tailrec final override def run {
-    var message = queue.poll
-    if (message == null) {
+    incomingMessage = queue.poll
+    if (incomingMessage == null) {
       dispatcher.flushPendingMsgs
       running.set(false)
       if (queue.peek == null || !running.compareAndSet(false, true)) return
     }
-    processMessage(message)
+    dispatcher.haveMessage
     run
-  }
-
-  /**
-   * The processMessage method is used to process an incoming message.
-   */
-  protected def processMessage(message: T) {
-    var msg = message
-    while (msg != null) {
-      dispatcher.processMessage(msg)
-      msg = poll
-    }
   }
 }

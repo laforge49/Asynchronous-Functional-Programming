@@ -21,16 +21,19 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki
-package blip
+package org.agilewiki.blip.messenger
 
-import java.util.ArrayList
-import messenger.Buffered
+/**
+ * A MessengerDispatch object receives and processes messages.
+ */
+trait MessageProcessor[T] {
+  /**
+   * The processMessage method is used to process an incoming message.
+   */
+  def processMessage(message: T)
 
-trait MsgCtrl extends Buffered[MailboxMsg] {
-  override def putBuffered(bufferedMessage: ArrayList[MailboxMsg]) {
-    _send(bufferedMessage)
-  }
-
-  def _send(blkmsg: ArrayList[MailboxMsg])
+  /**
+   * The haveMessage method is called when there is an incoming message to be processed.
+   */
+  def haveMessage
 }
