@@ -29,7 +29,7 @@ import scala.actors.Reactor
 
 class Interop[T >: AnyRef](reactor: Reactor[T])
   extends MsgSrc
-  with Buffered[MailboxMsg] {
+  with MessageListDestination[MailboxMsg] {
 
   override def buffered = this
 

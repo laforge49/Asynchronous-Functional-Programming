@@ -26,13 +26,13 @@ package org.agilewiki.blip.messenger
 import java.util.ArrayList
 
 /**
- * A BufferedMessenger exchanges lists of messages with other BufferedMessenger objects,
- * where each BufferedMessenger is operating on a different thread.
+ * A BufferedMessenger exchanges lists of messages with other Buffered objects,
+ * where each Buffered object is operating on a different thread.
  */
 class BufferedMessenger[T](messageProcessor: MessageProcessor[T], threadManager: ThreadManager)
-  extends Buffered[T] with MessageProcessor[ArrayList[T]] {
+  extends MessageListDestination[T] with MessageProcessor[ArrayList[T]] {
   val messenger = new Messenger[ArrayList[T]](this, threadManager)
-  val pending = new java.util.HashMap[Buffered[T], ArrayList[T]]
+  val pending = new java.util.HashMap[MessageListDestination[T], ArrayList[T]]
 
   /**
    * The incomingMessageList method is called to process a list of messages
@@ -93,7 +93,7 @@ class BufferedMessenger[T](messageProcessor: MessageProcessor[T], threadManager:
   /**
    * The putTo message builds lists of messages to be sent to other Buffered objects.
    */
-  def putTo(buffered: Buffered[T], message: T) {
+  def putTo(buffered: MessageListDestination[T], message: T) {
     var messageList = pending.get(buffered)
     if (messageList == null) {
       messageList = new ArrayList[T]

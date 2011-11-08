@@ -30,7 +30,7 @@ import messenger._
 
 class Future
   extends MsgSrc
-  with Buffered[MailboxMsg] {
+  with MessageListDestination[MailboxMsg] {
   @volatile private[this] var rsp: Any = _
   @volatile private[this] var satisfied = false
 

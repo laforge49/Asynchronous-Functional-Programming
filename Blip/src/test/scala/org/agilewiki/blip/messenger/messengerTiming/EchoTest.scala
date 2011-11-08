@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Bill La Forge
+ * Copyright 2010 Barrie McGuire
  *
  * This file is part of AgileWiki and is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,18 +22,17 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki.blip.messenger
+package messengerTiming
 
-import java.util.ArrayList
+import org.specs.SpecificationWithJUnit
 
-/**
- * A Buffered object receives lists of messages from objects operating
- * on a different thread.
- */
-trait Buffered[T] {
-  /**
-   * The incomingMessageList method is called to process a list of messages
-   * when the current thread is different
-   * from the thread being used by the object being called.
-   */
-  def incomingMessageList(bufferedMessages: ArrayList[T])
+class EchoTest extends SpecificationWithJUnit {
+  "EchoTest" should {
+    "time messages" in {
+      val threadManager = new MessengerThreadManager
+      val sender = new Sender(threadManager)
+      sender.put(10000000)
+      sender.finished //8 microseconds
+    }
+  }
 }

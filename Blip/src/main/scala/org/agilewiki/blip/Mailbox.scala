@@ -91,7 +91,7 @@ class Mailbox(_mailboxFactory: MailboxFactory)
       val senderMailbox = senderActor.mailbox
       sendReply(rsp, senderMailbox)
     } else {
-      messenger.putTo(sender.asInstanceOf[Buffered[MailboxMsg]], rsp)
+      messenger.putTo(sender.asInstanceOf[MessageListDestination[MailboxMsg]], rsp)
     }
   }
 
