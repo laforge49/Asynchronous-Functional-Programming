@@ -31,7 +31,8 @@ class EchoTest extends SpecificationWithJUnit {
     "time messages" in {
       val threadManager = new MessengerThreadManager
       val sender = new Sender(threadManager)
-      sender.put(10000000)
+      val c = 10//000000
+      sender.put(c) //c should be at least 10 million
       sender.finished //8 microseconds
     }
   }
