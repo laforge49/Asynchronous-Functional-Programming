@@ -1,5 +1,5 @@
 package org.agilewiki.blip.messenger
-package messengerTiming
+package echoTiming
 
 class Echo(threadManager: ThreadManager)
   extends MessageProcessor[Any] {
