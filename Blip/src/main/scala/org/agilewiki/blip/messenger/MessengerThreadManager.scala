@@ -33,10 +33,10 @@ import annotation.tailrec
  * though it is easily replaced by any class which implements java.util.ThreadFactory.
  */
 class MessengerThreadManager(threadCount: Int = 12,
-                           threadFactory: ThreadFactory = new MessengerThreadFactory)
+                             threadFactory: ThreadFactory = new MessengerThreadFactory)
   extends ThreadManager with Runnable {
 
-  val semaphore = new Semaphore(0)
+  val taskRequest = new Semaphore(0)
   val tasks = new ConcurrentLinkedQueue[Runnable]
   var closing = false
 
@@ -59,7 +59,7 @@ class MessengerThreadManager(threadCount: Int = 12,
    * and stops idle threads after the close method has been called.
    */
   @tailrec final override def run {
-    semaphore.acquire
+    taskRequest.acquire
     if (closing) return
     val task = tasks.poll
     try {
@@ -77,7 +77,7 @@ class MessengerThreadManager(threadCount: Int = 12,
    */
   override def process(task: Runnable) {
     tasks.add(task)
-    semaphore.release
+    taskRequest.release
   }
 
   /**
@@ -90,7 +90,7 @@ class MessengerThreadManager(threadCount: Int = 12,
     var c = 0
     while (c < threadCount) {
       c += 1
-      semaphore.release
+      taskRequest.release
     }
   }
 }

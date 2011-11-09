@@ -9,31 +9,42 @@ import annotation.tailrec
  */
 class ConcurrentLinkedBlockingQueue[E]
   extends ConcurrentLinkedQueue[E] {
-  private val ab = new atomic.AtomicBoolean //when true, take is requesting a permit
-  private val s = new Semaphore(0) //to wake up a pending take
+  private val waiting = new atomic.AtomicBoolean //when true, take is requesting a permit
+  private val wakeup = new Semaphore(0) //to wake up a pending take
 
+  /**
+   * Inserts the element at the tail of the queue.
+   */
   def put(e: E) {
     offer(e)
   }
 
+  /**
+   * Inserts the element at the tail of the queue.
+   * As the queue is unbounded, this method will never return {@code false}.
+   */
   override def offer(e: E) = {
     super.offer(e)
-    if (ab.compareAndSet(true, false)) s.release //if there is a pending take, wake it up
+    if (waiting.compareAndSet(true, false)) wakeup.release //if there is a pending take, wake it up
     true
   }
 
+  /**
+   * Returns the element at head of the queue when an element is available.
+   * This method is similar to poll, except that it does not return null.
+   */
   @tailrec final def take(): E = {
     var rv = poll
     if (rv != null) return rv
     //the queue may now be empty, so request a permit
-    ab.set(true)
+    waiting.set(true)
     rv = poll
     if (rv != null) {
       //the queue was not empty
-      if (!ab.compareAndSet(true, false)) s.drainPermits //clear the permit that we didn't need
+      if (!waiting.compareAndSet(true, false)) wakeup.drainPermits //clear the permit that we didn't need
       return rv
     }
-    s.acquire //wait for a permit
+    wakeup.acquire //wait for a permit
     take
   }
 }
