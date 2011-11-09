@@ -21,20 +21,21 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki
-package blip
+package org.agilewiki.blip
 
-import java.util.ArrayList
 import messenger._
 
 class Mailbox(_mailboxFactory: MailboxFactory)
   extends MessageProcessor[MailboxMsg] {
-  var curMsg: MailboxMsg = null
-  var exceptionFunction: Exception => Unit = null
-  var transactionContext: TransactionContext = null
   val messenger = new BufferedMessenger[MailboxMsg](this, mailboxFactory.threadManager)
+  var mailboxState: MailboxState = null
 
   def mailboxFactory: MailboxFactory = _mailboxFactory
+
+  def newMailboxState = {
+    mailboxState = new MailboxState
+    mailboxState
+  }
 
   def poll = messenger.poll
 
@@ -51,21 +52,13 @@ class Mailbox(_mailboxFactory: MailboxFactory)
   }
 
   override def processMessage(msg: MailboxMsg) {
-    curMsg = msg
-    curMsg match {
+    msg match {
       case msg: MailboxReq => msg.binding.process(this, msg)
       case msg: MailboxRsp => rsp(msg)
     }
   }
 
   def isMailboxEmpty = messenger.isEmpty
-
-  def currentRequestMessage = {
-    if (curMsg.isInstanceOf[MailboxReq])
-      curMsg.asInstanceOf[MailboxReq]
-    else
-      curMsg.asInstanceOf[MailboxRsp].oldRequest
-  }
 
   def reqExceptionFunction(ex: Exception) {
     reply(ex)
@@ -76,7 +69,7 @@ class Mailbox(_mailboxFactory: MailboxFactory)
   }
 
   def reply(content: Any) {
-    val req = currentRequestMessage
+    val req = mailboxState.currentRequestMessage
     if (!req.active || req.responseFunction == null) {
       return
     }

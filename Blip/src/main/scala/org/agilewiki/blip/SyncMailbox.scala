@@ -67,7 +67,6 @@ class SyncMailbox(mailboxFactory: MailboxFactory)
   }
 
   protected def _sendReq(req: MailboxReq) {
-    curMsg = req
     req.fastSend = true
     req.binding.process(this, req)
     poll
@@ -75,7 +74,7 @@ class SyncMailbox(mailboxFactory: MailboxFactory)
 
   override protected def sendReply(rspMsg: MailboxRsp,
                                    senderMailbox: Mailbox) {
-    if (currentRequestMessage.fastSend) {
+    if (mailboxState.currentRequestMessage.fastSend) {
       senderMailbox.rsp(rspMsg)
     } else super.sendReply(rspMsg, senderMailbox)
   }

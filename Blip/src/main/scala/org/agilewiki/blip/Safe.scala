@@ -56,8 +56,10 @@ abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Saf
   def reqFunction = messageFunction
 
   def process(mailbox: Mailbox, mailboxReq: MailboxReq) {
-    mailbox.exceptionFunction = mailbox.reqExceptionFunction
-    mailbox.transactionContext = null
+    var mailboxState = mailbox.newMailboxState
+    mailboxState.curMsg = mailboxReq
+    mailboxState.exceptionFunction = mailbox.reqExceptionFunction
+    mailboxState.transactionContext = null
     try {
       messageFunction(mailboxReq.req, mailbox.reply)
     } catch {
@@ -71,7 +73,7 @@ abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Saf
                    targetActor: Actor,
                    content: AnyRef,
                    responseFunction: Any => Unit) {
-    val oldReq = srcMailbox.currentRequestMessage
+    val oldReq = srcMailbox.mailboxState.currentRequestMessage
     val sender = oldReq.target
     val req = new MailboxReq(
       targetActor,
@@ -89,9 +91,7 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
 
   override def func(target: Actor, msg: AnyRef, rf: Any => Unit)
                    (implicit srcActor: ActiveActor) {
-    var oldCurMsg: MailboxMsg = null
-    var oldExceptionFunction: Exception => Unit = null
-    var oldTransactionContext: TransactionContext = null
+    var oldMailboxState: MailboxState = null
     val srcMailbox = {
       if (srcActor == null) null
       else {
@@ -109,23 +109,19 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
         )
       }
     } else {
-      oldCurMsg = srcMailbox.curMsg
-      oldExceptionFunction = srcMailbox.exceptionFunction
-      oldTransactionContext = srcMailbox.transactionContext
+      oldMailboxState = srcMailbox.mailboxState
     }
     val responseFunction: Any => Unit = {
       rsp => {
         if (srcMailbox != null) {
-          srcMailbox.curMsg = oldCurMsg
-          srcMailbox.exceptionFunction = oldExceptionFunction
-          srcMailbox.transactionContext = oldTransactionContext
+          srcMailbox.mailboxState = oldMailboxState
         }
         rsp match {
-          case rsp: Exception => srcMailbox.exceptionFunction(rsp)
+          case rsp: Exception => srcMailbox.mailboxState.exceptionFunction(rsp)
           case rsp => try {
             rf(rsp)
           } catch {
-            case ex: Exception => srcMailbox.exceptionFunction(ex)
+            case ex: Exception => srcMailbox.mailboxState.exceptionFunction(ex)
           }
         }
       }
@@ -155,20 +151,16 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
     if (srcMailbox == null || targetMailbox == null) throw new UnsupportedOperationException(
       "Transactions require that both the requesting and target actors have mailboxes."
     )
-    val oldCurMsg = srcMailbox.curMsg
-    val oldExceptionFunction = srcMailbox.exceptionFunction
-    val oldTransactionContext = srcMailbox.transactionContext
+    val oldMailboxState = srcMailbox.mailboxState
     val responseFunction: Any => Unit = {
       rsp => {
-          srcMailbox.curMsg = oldCurMsg
-          srcMailbox.exceptionFunction = oldExceptionFunction
-          srcMailbox.transactionContext = oldTransactionContext
+        srcMailbox.mailboxState = oldMailboxState
         rsp match {
-          case rsp: Exception => srcMailbox.exceptionFunction(rsp)
+          case rsp: Exception => srcMailbox.mailboxState.exceptionFunction(rsp)
           case rsp => try {
             rf(rsp)
           } catch {
-            case ex: Exception => srcMailbox.exceptionFunction(ex)
+            case ex: Exception => srcMailbox.mailboxState.exceptionFunction(ex)
           }
         }
       }
@@ -185,9 +177,10 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
 
   def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq, transactionContext: TransactionContext) {
     val transactionProcessor = mailboxReq.target
-    mailbox.curMsg = mailboxReq
-    mailbox.exceptionFunction = mailbox.reqExceptionFunction
-    mailbox.transactionContext = transactionContext
+    val mailboxState = mailbox.newMailboxState
+    mailboxState.curMsg = mailboxReq
+    mailboxState.exceptionFunction = mailbox.reqExceptionFunction
+    mailboxState.transactionContext = transactionContext
     try {
       if (transactionProcessor.isInvalid) throw new IllegalStateException
       messageFunction(mailboxReq.req, {

@@ -105,7 +105,7 @@ class TransactionProcessorComponent(actor: Actor)
   private def process(msg: AnyRef, rf: Any => Unit) {
     val req = msg.asInstanceOf[Transaction]
     val block = req.block
-    val tc = mailbox.transactionContext
+    val tc = mailbox.mailboxState.transactionContext
     if (req.isInstanceOf[UpdateTransaction]) {
       val ts = req.asInstanceOf[UpdateTransaction].timestamp
       val utc = tc.asInstanceOf[UpdateContext]
