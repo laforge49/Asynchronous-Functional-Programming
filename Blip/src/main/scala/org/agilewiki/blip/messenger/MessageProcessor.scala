@@ -34,7 +34,7 @@ trait MessageProcessor[T] {
   def processMessage(message: T)
 
   /**
-   * The haveMessage method is called when there is an incoming message to be processed.
+   * The haveMessage method is called when there may be an incoming message to be processed.
    */
   def haveMessage
 }
