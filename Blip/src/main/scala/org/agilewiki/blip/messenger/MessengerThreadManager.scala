@@ -29,6 +29,8 @@ import annotation.tailrec
 /**
  * The MessengerThreadManager starts a number of threads (12 by default)
  * for processing Runnable tasks.
+ * By default, the MessengerThreadFactory is used to create threads,
+ * though it is easily replaced by any class which implements java.util.ThreadFactory.
  */
 class MessengerThreadManager(threadCount: Int = 12,
                            threadFactory: ThreadFactory = new MessengerThreadFactory)
