@@ -21,46 +21,10 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki
-package blip
+package org.agilewiki.blip.messenger
 
-import messenger._
+trait ExchangeMessage
 
-sealed abstract class MailboxMsg(rf: Any => Unit,
-                                 oldReq: MailboxReq)
-  extends ExchangeMessage {
+trait ExchangeRequest extends ExchangeMessage
 
-  def responseFunction = rf
-
-  def oldRequest = oldReq
-}
-
-final class MailboxReq(dst: Actor,
-                       rf: Any => Unit,
-                       oldReq: MailboxReq,
-                       data: AnyRef,
-                       bound: Bound,
-                       src: MsgSrc)
-  extends MailboxMsg(rf, oldReq)
-  with ExchangeRequest {
-
-  var active = true
-  var fastSend = false
-
-  def sender = src
-
-  def target = dst
-
-  def req = data
-
-  def binding = bound
-}
-
-final class MailboxRsp(rf: Any => Unit,
-                       oldReq: MailboxReq,
-                       data: Any)
-  extends MailboxMsg(rf, oldReq)
-  with ExchangeResponse {
-
-  def rsp = data
-}
+trait ExchangeResponse extends ExchangeMessage

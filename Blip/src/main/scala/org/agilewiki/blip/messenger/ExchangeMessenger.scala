@@ -21,46 +21,40 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki
-package blip
+package org.agilewiki.blip.messenger
 
-import messenger._
+abstract class ExchangeMessenger(threadManager: ThreadManager)
+  extends MessageProcessor[ExchangeMessage] {
+  val messenger = new BufferedMessenger[ExchangeMessage](this, threadManager)
 
-sealed abstract class MailboxMsg(rf: Any => Unit,
-                                 oldReq: MailboxReq)
-  extends ExchangeMessage {
+  def control = this
 
-  def responseFunction = rf
+  def isMailboxEmpty = messenger.isEmpty
 
-  def oldRequest = oldReq
-}
+  def poll = messenger.poll
 
-final class MailboxReq(dst: Actor,
-                       rf: Any => Unit,
-                       oldReq: MailboxReq,
-                       data: AnyRef,
-                       bound: Bound,
-                       src: MsgSrc)
-  extends MailboxMsg(rf, oldReq)
-  with ExchangeRequest {
+  override def haveMessage {
+    poll
+  }
 
-  var active = true
-  var fastSend = false
+  override def processMessage(msg: ExchangeMessage) {
+    msg match {
+      case req: ExchangeRequest => mailboxReq(req)
+      case rsp: ExchangeResponse => mailboxRsp(rsp)
+    }
+  }
 
-  def sender = src
+  def sendReq(msgSrc: MsgSrc,
+              req: ExchangeRequest,
+              srcExchange: ExchangeMessenger) {
+    srcExchange.messenger.putTo(msgSrc.buffered, req)
+  }
 
-  def target = dst
+  def mailboxReq(msg: ExchangeRequest)
 
-  def req = data
+  protected def sendReply(rsp: ExchangeResponse, senderExchange: ExchangeMessenger) {
+    messenger.putTo(senderExchange.messenger, rsp)
+  }
 
-  def binding = bound
-}
-
-final class MailboxRsp(rf: Any => Unit,
-                       oldReq: MailboxReq,
-                       data: Any)
-  extends MailboxMsg(rf, oldReq)
-  with ExchangeResponse {
-
-  def rsp = data
+  def mailboxRsp(msg: ExchangeResponse)
 }

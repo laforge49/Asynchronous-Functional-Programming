@@ -21,11 +21,8 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki
-package blip
-
-import messenger._
+package org.agilewiki.blip.messenger
 
 trait MsgSrc {
-  def buffered: MessageListDestination[MailboxMsg]
+  def buffered: MessageListDestination[ExchangeMessage]
 }

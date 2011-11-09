@@ -30,7 +30,7 @@ import messenger._
 
 class Future
   extends MsgSrc
-  with MessageListDestination[MailboxMsg] {
+  with MessageListDestination[ExchangeMessage] {
   @volatile private[this] var rsp: Any = _
   @volatile private[this] var satisfied = false
 
@@ -46,7 +46,7 @@ class Future
     } else {
       val bound = safe.asInstanceOf[Bound]
       val req = new MailboxReq(dst, Unit => {}, null, msg, bound, this)
-      val blkmsg = new ArrayList[MailboxMsg]
+      val blkmsg = new ArrayList[ExchangeMessage]
       blkmsg.add(req)
       dst.buffered.incomingMessageList(blkmsg)
     }
@@ -59,7 +59,7 @@ class Future
 
   override def buffered = this
 
-  override def incomingMessageList(blkmsg: ArrayList[MailboxMsg]) {
+  override def incomingMessageList(blkmsg: ArrayList[ExchangeMessage]) {
     synchronized {
       if (!satisfied) {
         rsp = blkmsg.get(0).asInstanceOf[MailboxRsp].rsp

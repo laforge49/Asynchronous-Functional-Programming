@@ -24,13 +24,13 @@
 package org.agilewiki
 package blip
 
-import java.util.ArrayList
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicReference
+import messenger._
 
 class SyncMailbox(mailboxFactory: MailboxFactory)
   extends Mailbox(mailboxFactory) {
-  val atomicControl = new AtomicReference[Mailbox]
+  val atomicControl = new AtomicReference[ExchangeMessenger]
   val idle = new Semaphore(1)
 
   override def control = atomicControl.get
@@ -47,14 +47,14 @@ class SyncMailbox(mailboxFactory: MailboxFactory)
     }
   }
 
-  override def sendReq(targetActor: Actor,
-                       req: MailboxReq,
-                       srcMailbox: Mailbox) {
-    val controllingMailbox = srcMailbox.control
+  override def sendReq(msgSrc: MsgSrc,
+                       req: ExchangeRequest,
+                       srcExchange: ExchangeMessenger) {
+    val controllingMailbox = srcExchange.control
     if (controllingMailbox == control) {
       _sendReq(req)
     } else if (!atomicControl.compareAndSet(null, controllingMailbox)) {
-      srcMailbox.messenger.putTo(targetActor.buffered, req)
+      srcExchange.messenger.putTo(msgSrc.buffered, req)
     } else {
       idle.acquire
       try {
@@ -66,16 +66,17 @@ class SyncMailbox(mailboxFactory: MailboxFactory)
     }
   }
 
-  protected def _sendReq(req: MailboxReq) {
+  protected def _sendReq(exchangeRequest: ExchangeRequest) {
+    val req = exchangeRequest.asInstanceOf[MailboxReq]
     req.fastSend = true
     req.binding.process(this, req)
     poll
   }
 
-  override protected def sendReply(rspMsg: MailboxRsp,
-                                   senderMailbox: Mailbox) {
+  override protected def sendReply(rsp: ExchangeResponse,
+                                   senderExchange: ExchangeMessenger) {
     if (mailboxState.currentRequestMessage.fastSend) {
-      senderMailbox.rsp(rspMsg)
-    } else super.sendReply(rspMsg, senderMailbox)
+      senderExchange.mailboxRsp(rsp)
+    } else super.sendReply(rsp, senderExchange)
   }
 }

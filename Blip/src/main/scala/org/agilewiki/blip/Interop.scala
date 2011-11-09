@@ -29,7 +29,7 @@ import scala.actors.Reactor
 
 class Interop[T >: AnyRef](reactor: Reactor[T])
   extends MsgSrc
-  with MessageListDestination[MailboxMsg] {
+  with MessageListDestination[ExchangeMessage] {
 
   override def buffered = this
 
@@ -45,13 +45,13 @@ class Interop[T >: AnyRef](reactor: Reactor[T])
     } else {
       val bound = safe.asInstanceOf[Bound]
       val req = new MailboxReq(dst, rf, null, msg, bound, this)
-      val blkmsg = new java.util.ArrayList[MailboxMsg]
+      val blkmsg = new java.util.ArrayList[ExchangeMessage]
       blkmsg.add(req)
       dst.buffered.incomingMessageList(blkmsg)
     }
   }
 
-  override def incomingMessageList(blkmsg: java.util.ArrayList[MailboxMsg]) {
+  override def incomingMessageList(blkmsg: java.util.ArrayList[ExchangeMessage]) {
     var i = 0
     while (i < blkmsg.size) {
       val mailboxRsp = blkmsg.get(i).asInstanceOf[MailboxRsp]

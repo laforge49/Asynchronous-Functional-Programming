@@ -26,8 +26,7 @@ package org.agilewiki.blip
 import messenger._
 
 class Mailbox(_mailboxFactory: MailboxFactory)
-  extends MessageProcessor[MailboxMsg] {
-  val messenger = new BufferedMessenger[MailboxMsg](this, mailboxFactory.threadManager)
+  extends ExchangeMessenger(_mailboxFactory.threadManager) {
   var mailboxState: MailboxState = null
 
   def mailboxFactory: MailboxFactory = _mailboxFactory
@@ -37,35 +36,18 @@ class Mailbox(_mailboxFactory: MailboxFactory)
     mailboxState
   }
 
-  def poll = messenger.poll
-
-  def control = this
-
-  def sendReq(targetActor: Actor,
-              req: MailboxReq,
-              srcMailbox: Mailbox) {
-    srcMailbox.messenger.putTo(targetActor.buffered, req)
-  }
-
-  override def haveMessage {
-    poll
-  }
-
-  override def processMessage(msg: MailboxMsg) {
-    msg match {
-      case msg: MailboxReq => msg.binding.process(this, msg)
-      case msg: MailboxRsp => rsp(msg)
-    }
-  }
-
-  def isMailboxEmpty = messenger.isEmpty
-
   def reqExceptionFunction(ex: Exception) {
     reply(ex)
   }
 
-  def rsp(msg: MailboxRsp) {
-    msg.responseFunction(msg.rsp)
+  override def mailboxReq(msg: ExchangeRequest) {
+    val req = msg.asInstanceOf[MailboxReq]
+    req.binding.process(this, req)
+  }
+
+  override def mailboxRsp(msg: ExchangeResponse) {
+    val rsp = msg.asInstanceOf[MailboxRsp]
+    rsp.responseFunction(rsp.rsp)
   }
 
   def reply(content: Any) {
@@ -84,11 +66,7 @@ class Mailbox(_mailboxFactory: MailboxFactory)
       val senderMailbox = senderActor.mailbox
       sendReply(rsp, senderMailbox)
     } else {
-      messenger.putTo(sender.asInstanceOf[MessageListDestination[MailboxMsg]], rsp)
+      messenger.putTo(sender.asInstanceOf[MessageListDestination[ExchangeMessage]], rsp)
     }
-  }
-
-  protected def sendReply(rsp: MailboxRsp, senderMailbox: Mailbox) {
-    messenger.putTo(senderMailbox.messenger, rsp)
   }
 }

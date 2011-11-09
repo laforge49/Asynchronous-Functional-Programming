@@ -24,6 +24,7 @@
 package org.agilewiki
 package blip
 
+import messenger._
 import seq.NavSetSeq
 import annotation.tailrec
 
