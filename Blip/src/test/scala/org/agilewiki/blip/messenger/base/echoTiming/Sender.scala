@@ -1,5 +1,5 @@
 package org.agilewiki.blip.messenger
-package echoTiming
+package base.echoTiming
 
 import java.util.concurrent.Semaphore
 

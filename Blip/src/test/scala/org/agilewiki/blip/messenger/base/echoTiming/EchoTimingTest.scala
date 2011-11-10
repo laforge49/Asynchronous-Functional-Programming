@@ -22,19 +22,18 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki.blip.messenger
-package burstTiming
+package base.echoTiming
 
 import org.specs.SpecificationWithJUnit
 
-class BurstTimingTest extends SpecificationWithJUnit {
-  "BurstTimingTest" should {
+class EchoTimingTest extends SpecificationWithJUnit {
+  "EchoTimingTest" should {
     "time messages" in {
       val threadManager = new MessengerThreadManager
       val sender = new Sender(threadManager)
-      val c = 10//000
-      val b = 10//000
-      sender.put((c, b))
-      sender.finished //1.5 microseconds
+      val c = 10//000000
+      sender.put(c) //c should be at least 10 million
+      sender.finished //8 microseconds
     }
   }
 }

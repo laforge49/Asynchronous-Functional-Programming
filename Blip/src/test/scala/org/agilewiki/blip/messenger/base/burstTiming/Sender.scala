@@ -1,5 +1,5 @@
 package org.agilewiki.blip.messenger
-package burstTiming
+package base.burstTiming
 
 import java.util.concurrent.Semaphore
 

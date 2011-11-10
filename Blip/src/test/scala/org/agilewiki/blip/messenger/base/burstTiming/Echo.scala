@@ -1,5 +1,5 @@
 package org.agilewiki.blip.messenger
-package echoTiming
+package base.burstTiming
 
 class Echo(threadManager: ThreadManager)
   extends MessageProcessor[Any] {
