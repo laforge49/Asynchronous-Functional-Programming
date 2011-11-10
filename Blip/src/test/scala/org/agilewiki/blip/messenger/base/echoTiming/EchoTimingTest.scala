@@ -33,7 +33,7 @@ class EchoTimingTest extends SpecificationWithJUnit {
       val sender = new Sender(threadManager)
       val c = 10//000000
       sender.put(c) //c should be at least 10 million
-      sender.finished //8 microseconds
+      sender.finished //about 816 nanoseconds per message
     }
   }
 }

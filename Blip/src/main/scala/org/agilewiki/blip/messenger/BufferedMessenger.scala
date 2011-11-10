@@ -78,7 +78,7 @@ class BufferedMessenger[T](messageProcessor: MessageProcessor[T], threadManager:
   /**
    * The flushPendingMsgs is called when there are no pending incoming messages to process.
    */
-  protected def flushPendingMsgs {
+  def flushPendingMsgs {
     if (isEmpty && !pending.isEmpty) {
       val it = pending.keySet.iterator
       while (it.hasNext) {

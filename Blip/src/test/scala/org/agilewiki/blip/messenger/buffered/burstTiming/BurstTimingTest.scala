@@ -22,7 +22,7 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki.blip.messenger
-package base.burstTiming
+package buffered.burstTiming
 
 import org.specs.SpecificationWithJUnit
 
@@ -30,11 +30,10 @@ class BurstTimingTest extends SpecificationWithJUnit {
   "BurstTimingTest" should {
     "time messages" in {
       val threadManager = new MessengerThreadManager
-      val sender = new Sender(threadManager)
-      val c = 10//000
-      val b = 10//000
-      sender.put((c, b))
-      sender.finished //about 148 nanoseconds per message
+      val c = 10000
+      val b = 10000
+      val sender = new Sender(c, b, threadManager)
+      sender.finished //about 40 nanoseconds per message
     }
   }
 }
