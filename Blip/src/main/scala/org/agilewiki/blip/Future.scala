@@ -29,7 +29,7 @@ import java.util.ArrayList
 import messenger._
 
 class Future
-  extends MsgSrc
+  extends MessageSource
   with MessageListDestination[ExchangeMessage] {
   @volatile private[this] var rsp: Any = _
   @volatile private[this] var satisfied = false
@@ -48,7 +48,7 @@ class Future
       val req = new MailboxReq(dst, Unit => {}, null, msg, bound, this)
       val blkmsg = new ArrayList[ExchangeMessage]
       blkmsg.add(req)
-      dst.buffered.incomingMessageList(blkmsg)
+      dst.messageListDestination.incomingMessageList(blkmsg)
     }
   }
 
@@ -57,7 +57,7 @@ class Future
     satisfied = true
   }
 
-  override def buffered = this
+  override def messageListDestination = this
 
   override def incomingMessageList(blkmsg: ArrayList[ExchangeMessage]) {
     synchronized {

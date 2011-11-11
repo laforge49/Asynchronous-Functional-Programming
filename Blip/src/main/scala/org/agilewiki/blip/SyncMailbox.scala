@@ -33,7 +33,7 @@ class SyncMailbox(mailboxFactory: MailboxFactory)
   val atomicControl = new AtomicReference[ExchangeMessenger]
   val idle = new Semaphore(1)
 
-  override def control = atomicControl.get
+  override def controllingExchange = atomicControl.get
 
   override def haveMessage {
     while (!atomicControl.compareAndSet(null, this)) {
@@ -47,14 +47,14 @@ class SyncMailbox(mailboxFactory: MailboxFactory)
     }
   }
 
-  override def sendReq(msgSrc: MsgSrc,
+  override def sendReq(targetActor: ExchangeActor,
                        req: ExchangeRequest,
                        srcExchange: ExchangeMessenger) {
-    val controllingMailbox = srcExchange.control
-    if (controllingMailbox == control) {
+    val controllingMailbox = srcExchange.controllingExchange
+    if (controllingMailbox == controllingExchange) {
       _sendReq(req)
     } else if (!atomicControl.compareAndSet(null, controllingMailbox)) {
-      srcExchange.messenger.putTo(msgSrc.buffered, req)
+      srcExchange.putTo(targetActor.messageListDestination, req)
     } else {
       idle.acquire
       try {
@@ -73,10 +73,10 @@ class SyncMailbox(mailboxFactory: MailboxFactory)
     poll
   }
 
-  override protected def sendReply(rsp: ExchangeResponse,
-                                   senderExchange: ExchangeMessenger) {
+  override def sendResponse(senderExchange: ExchangeMessenger,
+                                      rsp: ExchangeResponse) {
     if (mailboxState.currentRequestMessage.fastSend) {
-      senderExchange.mailboxRsp(rsp)
-    } else super.sendReply(rsp, senderExchange)
+      senderExchange.exchangeRsp(rsp)
+    } else super.sendResponse(senderExchange, rsp)
   }
 }

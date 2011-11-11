@@ -23,8 +23,11 @@
  */
 package org.agilewiki.blip.messenger
 
-trait ExchangeMessage
+class ExchangeMessage
 
-trait ExchangeRequest extends ExchangeMessage
+class ExchangeRequest(src: MessageSource)
+extends ExchangeMessage {
+  def sender = src
+}
 
-trait ExchangeResponse extends ExchangeMessage
+class ExchangeResponse extends ExchangeMessage

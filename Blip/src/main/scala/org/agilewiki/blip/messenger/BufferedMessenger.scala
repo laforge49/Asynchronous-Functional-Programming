@@ -93,16 +93,16 @@ class BufferedMessenger[T](messageProcessor: MessageProcessor[T], threadManager:
   /**
    * The putTo message builds lists of messages to be sent to other Buffered objects.
    */
-  def putTo(buffered: MessageListDestination[T], message: T) {
-    var messageList = pending.get(buffered)
+  def putTo(messageListDestination: MessageListDestination[T], message: T) {
+    var messageList = pending.get(messageListDestination)
     if (messageList == null) {
       messageList = new ArrayList[T]
-      pending.put(buffered, messageList)
+      pending.put(messageListDestination, messageList)
     }
     messageList.add(message)
     if (messageList.size > 1023) {
-      pending.remove(buffered)
-      buffered.incomingMessageList(messageList)
+      pending.remove(messageListDestination)
+      messageListDestination.incomingMessageList(messageList)
     }
   }
 }

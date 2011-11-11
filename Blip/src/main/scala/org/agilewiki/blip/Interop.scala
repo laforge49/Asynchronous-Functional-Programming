@@ -28,10 +28,10 @@ import messenger._
 import scala.actors.Reactor
 
 class Interop[T >: AnyRef](reactor: Reactor[T])
-  extends MsgSrc
+  extends MessageSource
   with MessageListDestination[ExchangeMessage] {
 
-  override def buffered = this
+  override def messageListDestination = this
 
   def afpSend(dst: Actor, msg: AnyRef)(rf: Any => Unit) {
     val safe = dst.messageFunctions.get(msg.getClass)
@@ -47,7 +47,7 @@ class Interop[T >: AnyRef](reactor: Reactor[T])
       val req = new MailboxReq(dst, rf, null, msg, bound, this)
       val blkmsg = new java.util.ArrayList[ExchangeMessage]
       blkmsg.add(req)
-      dst.buffered.incomingMessageList(blkmsg)
+      dst.messageListDestination.incomingMessageList(blkmsg)
     }
   }
 

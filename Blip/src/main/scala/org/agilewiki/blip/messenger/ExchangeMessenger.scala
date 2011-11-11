@@ -23,15 +23,27 @@
  */
 package org.agilewiki.blip.messenger
 
+import java.util.ArrayList
+
 abstract class ExchangeMessenger(threadManager: ThreadManager)
-  extends MessageProcessor[ExchangeMessage] {
-  val messenger = new BufferedMessenger[ExchangeMessage](this, threadManager)
+  extends MessageProcessor[ExchangeMessage]
+  with MessageListDestination[ExchangeMessage] {
 
-  def control = this
+  private val buffered = new BufferedMessenger[ExchangeMessage](this, threadManager)
 
-  def isMailboxEmpty = messenger.isEmpty
+  def incomingMessageList(bufferedMessages: ArrayList[ExchangeMessage]) {
+    buffered.incomingMessageList(bufferedMessages)
+  }
 
-  def poll = messenger.poll
+  def putTo(messageListDestination: MessageListDestination[ExchangeMessage], message: ExchangeMessage) {
+    buffered.putTo(messageListDestination, message)
+  }
+
+  def controllingExchange = this
+
+  def isEmpty = buffered.isEmpty
+
+  def poll = buffered.poll
 
   override def haveMessage {
     poll
@@ -39,22 +51,22 @@ abstract class ExchangeMessenger(threadManager: ThreadManager)
 
   override def processMessage(msg: ExchangeMessage) {
     msg match {
-      case req: ExchangeRequest => mailboxReq(req)
-      case rsp: ExchangeResponse => mailboxRsp(rsp)
+      case req: ExchangeRequest => exchangeReq(req)
+      case rsp: ExchangeResponse => exchangeRsp(rsp)
     }
   }
 
-  def sendReq(msgSrc: MsgSrc,
+  def sendReq(targetActor: ExchangeActor,
               req: ExchangeRequest,
               srcExchange: ExchangeMessenger) {
-    srcExchange.messenger.putTo(msgSrc.buffered, req)
+    srcExchange.putTo(targetActor.messageListDestination, req)
   }
 
-  def mailboxReq(msg: ExchangeRequest)
+  def exchangeReq(msg: ExchangeRequest)
 
-  protected def sendReply(rsp: ExchangeResponse, senderExchange: ExchangeMessenger) {
-    messenger.putTo(senderExchange.messenger, rsp)
+  def sendResponse(senderExchange: ExchangeMessenger, rsp: ExchangeResponse) {
+    putTo(senderExchange.buffered, rsp)
   }
 
-  def mailboxRsp(msg: ExchangeResponse)
+  def exchangeRsp(msg: ExchangeResponse)
 }

@@ -29,7 +29,9 @@ import seq.NavSetSeq
 import annotation.tailrec
 
 class Actor
-  extends Responder with MsgSrc {
+  extends Responder
+  with ExchangeActor {
+
   private var _mailbox: Mailbox = null
   private var _factory: Factory = null
   val components = new java.util.LinkedHashMap[Class[_ <: ComponentFactory], Component]
@@ -153,7 +155,7 @@ class Actor
     }
   }
 
-  override def buffered = mailbox.messenger
+  override def messageListDestination = mailbox
 
   def isInvalid = transactionActivityLevel < 0
 
@@ -262,4 +264,6 @@ class Actor
   def newAsyncMailbox = mailboxFactory.newAsyncMailbox
 
   def newSyncMailbox = mailboxFactory.newSyncMailbox
+
+  override def exchangeMessenger = mailbox
 }

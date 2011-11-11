@@ -40,12 +40,12 @@ class Mailbox(_mailboxFactory: MailboxFactory)
     reply(ex)
   }
 
-  override def mailboxReq(msg: ExchangeRequest) {
+  override def exchangeReq(msg: ExchangeRequest) {
     val req = msg.asInstanceOf[MailboxReq]
     req.binding.process(this, req)
   }
 
-  override def mailboxRsp(msg: ExchangeResponse) {
+  override def exchangeRsp(msg: ExchangeResponse) {
     val rsp = msg.asInstanceOf[MailboxRsp]
     rsp.responseFunction(rsp.rsp)
   }
@@ -61,12 +61,6 @@ class Mailbox(_mailboxFactory: MailboxFactory)
       req.responseFunction,
       req.oldRequest,
       content)
-    if (sender.isInstanceOf[Actor]) {
-      val senderActor = sender.asInstanceOf[Actor]
-      val senderMailbox = senderActor.mailbox
-      sendReply(rsp, senderMailbox)
-    } else {
-      messenger.putTo(sender.asInstanceOf[MessageListDestination[ExchangeMessage]], rsp)
-    }
+    sender.responseFrom(this, rsp)
   }
 }

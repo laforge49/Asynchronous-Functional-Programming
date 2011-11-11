@@ -21,19 +21,12 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki.blip
+package org.agilewiki.blip.messenger
 
-import messenger._
+trait MessageSource {
+  def messageListDestination: MessageListDestination[ExchangeMessage]
 
-class MailboxState {
-  var curMsg: ExchangeMessage = null
-  var exceptionFunction: Exception => Unit = null
-  var transactionContext: TransactionContext = null
-
-  def currentRequestMessage = {
-    if (curMsg.isInstanceOf[MailboxReq])
-      curMsg.asInstanceOf[MailboxReq]
-    else
-      curMsg.asInstanceOf[MailboxRsp].oldRequest
+  def responseFrom(exchangeMessenger: ExchangeMessenger, rsp: ExchangeResponse) {
+    exchangeMessenger.putTo(messageListDestination, rsp)
   }
 }

@@ -21,8 +21,42 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki.blip.messenger
+package org.agilewiki
+package blip
 
-trait MsgSrc {
-  def buffered: MessageListDestination[ExchangeMessage]
+import messenger._
+
+final class MailboxReq(dst: Actor,
+                       rf: Any => Unit,
+                       oldReq: MailboxReq,
+                       data: AnyRef,
+                       bound: Bound,
+                       src: MessageSource)
+
+  extends ExchangeRequest(src) {
+
+  var active = true
+  var fastSend = false
+
+  def responseFunction = rf
+
+  def oldRequest = oldReq
+
+  def target = dst
+
+  def req = data
+
+  def binding = bound
+}
+
+final class MailboxRsp(rf: Any => Unit,
+                       oldReq: MailboxReq,
+                       data: Any)
+  extends ExchangeResponse {
+
+  def responseFunction = rf
+
+  def oldRequest = oldReq
+
+  def rsp = data
 }

@@ -24,6 +24,8 @@
 package org.agilewiki
 package blip
 
+import messenger._
+
 trait Responder extends SystemServicesGetter {
   val messageFunctions =
     new java.util.HashMap[Class[_ <: AnyRef], Safe]
