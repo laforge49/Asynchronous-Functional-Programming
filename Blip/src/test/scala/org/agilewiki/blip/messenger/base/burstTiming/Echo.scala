@@ -4,7 +4,8 @@ package base.burstTiming
 class Echo(threadManager: ThreadManager)
   extends MessageProcessor[Any] {
 
-  val messenger = new Messenger[Any](this, threadManager)
+  val messenger = new Messenger[Any](threadManager)
+  messenger.setMessageProcessor(this)
 
   def put(message: Any) {
     messenger.put(message)

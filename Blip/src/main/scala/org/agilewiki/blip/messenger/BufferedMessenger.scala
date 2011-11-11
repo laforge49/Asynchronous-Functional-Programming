@@ -29,10 +29,16 @@ import java.util.ArrayList
  * A BufferedMessenger exchanges lists of messages with other Buffered objects,
  * where each Buffered object is operating on a different thread.
  */
-class BufferedMessenger[T](messageProcessor: MessageProcessor[T], threadManager: ThreadManager)
+class BufferedMessenger[T](messageProcessor: MessageProcessor[T], threadManager: ThreadManager,
+                           _messenger: Messenger[ArrayList[T]] = null)
   extends MessageListDestination[T] with MessageProcessor[ArrayList[T]] {
-  val messenger = new Messenger[ArrayList[T]](this, threadManager)
-  val pending = new java.util.HashMap[MessageListDestination[T], ArrayList[T]]
+  private val messenger = {
+    if (_messenger != null) _messenger
+    else new Messenger[ArrayList[T]](threadManager)
+  }
+  private val pending = new java.util.HashMap[MessageListDestination[T], ArrayList[T]]
+
+  messenger.setMessageProcessor(this)
 
   /**
    * The incomingMessageList method is called to process a list of messages

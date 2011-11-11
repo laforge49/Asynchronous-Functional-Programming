@@ -29,12 +29,20 @@ import annotation.tailrec
 /**
  * A Messenger receives messages, queues them, and then processes them on another thread.
  */
-class Messenger[T](messageProcessor: MessageProcessor[T], threadManager: ThreadManager)
+class Messenger[T](threadManager: ThreadManager)
   extends Runnable {
 
+  private var messageProcessor: MessageProcessor[T] = null
   private val queue = new ConcurrentLinkedBlockingQueue[T]
   private val running = new AtomicBoolean
   private var incomingMessage: T = null.asInstanceOf[T]
+
+  /**
+   * Specifies the object which will process the messages.
+   */
+  def setMessageProcessor(_messageProcessor: MessageProcessor[T]) {
+    messageProcessor = _messageProcessor
+  }
 
   /**
    * The isEmpty method returns true when there are no messages to be processed,
