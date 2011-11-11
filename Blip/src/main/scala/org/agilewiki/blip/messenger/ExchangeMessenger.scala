@@ -25,11 +25,17 @@ package org.agilewiki.blip.messenger
 
 import java.util.ArrayList
 
-abstract class ExchangeMessenger(threadManager: ThreadManager)
+abstract class ExchangeMessenger(threadManager: ThreadManager,
+                                 _buffered: BufferedMessenger[ExchangeMessage] = null)
   extends MessageProcessor[ExchangeMessage]
   with MessageListDestination[ExchangeMessage] {
 
-  private val buffered = new BufferedMessenger[ExchangeMessage](this, threadManager)
+  private val buffered = {
+    if (_buffered != null) _buffered
+    else new BufferedMessenger[ExchangeMessage](threadManager)
+  }
+
+  buffered.setMessageProcessor(this)
 
   def incomingMessageList(bufferedMessages: ArrayList[ExchangeMessage]) {
     buffered.incomingMessageList(bufferedMessages)

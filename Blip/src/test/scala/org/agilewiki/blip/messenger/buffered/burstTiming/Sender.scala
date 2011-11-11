@@ -7,7 +7,8 @@ class Sender(c: Int, b: Int, threadManager: ThreadManager)
   extends MessageProcessor[Any] {
 
   val done = new Semaphore(0)
-  val messenger = new BufferedMessenger[Any](this, threadManager)
+  val messenger = new BufferedMessenger[Any](threadManager)
+  messenger.setMessageProcessor(this)
   val echo = new Echo(threadManager)
   var count = 0
   var i = 0
