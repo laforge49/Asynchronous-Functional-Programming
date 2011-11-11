@@ -25,54 +25,82 @@ package org.agilewiki.blip.messenger
 
 import java.util.ArrayList
 
+/**
+ * ExchangeMessenger distinguishes between request and response messages,
+ * with a response assured for every request received.
+ */
 abstract class ExchangeMessenger(threadManager: ThreadManager,
                                  _buffered: BufferedMessenger[ExchangeMessage] = null)
   extends MessageProcessor[ExchangeMessage]
   with MessageListDestination[ExchangeMessage] {
 
-  private val buffered = {
+  /**
+   * The BufferedMessenger object wrapped by the ExchangeMessenger.
+   */
+  val bufferedMessenger = {
     if (_buffered != null) _buffered
     else new BufferedMessenger[ExchangeMessage](threadManager)
   }
 
-  buffered.setMessageProcessor(this)
+  bufferedMessenger.setMessageProcessor(this)
 
-  def incomingMessageList(bufferedMessages: ArrayList[ExchangeMessage]) {
-    buffered.incomingMessageList(bufferedMessages)
+  /**
+   * The incomingMessageList method is called to process a list of messages
+   * when the current thread is different
+   * from the thread being used by the object being called.
+   */
+  final def incomingMessageList(bufferedMessages: ArrayList[ExchangeMessage]) {
+    bufferedMessenger.incomingMessageList(bufferedMessages)
   }
 
-  def putTo(messageListDestination: MessageListDestination[ExchangeMessage], message: ExchangeMessage) {
-    buffered.putTo(messageListDestination, message)
+  /**
+   * The putTo message builds lists of messages to be sent to other Buffered objects.
+   */
+  final def putTo(messageListDestination: MessageListDestination[ExchangeMessage], message: ExchangeMessage) {
+    bufferedMessenger.putTo(messageListDestination, message)
   }
 
-  def controllingExchange = this
+  /**
+   * The isEmpty method returns true when there are no messages to be processed,
+   * though the results may not always be correct due to concurrency issues.
+   */
+  final def isEmpty = bufferedMessenger.isEmpty
 
-  def isEmpty = buffered.isEmpty
+  /**
+   * The poll method processes any messages in the queue.
+   * Once complete, any pending outgoing messages are sent.
+   */
+  final protected def poll = bufferedMessenger.poll
 
-  def poll = buffered.poll
+  /**
+   * The flushPendingMsgs is called when there are no pending incoming messages to process.
+   */
+  final protected def flushPendingMsgs = bufferedMessenger.flushPendingMsgs
 
+  /**
+   * The haveMessage method is called when there may be an incoming message to be processed.
+   */
   override def haveMessage {
     poll
   }
 
-  override def processMessage(msg: ExchangeMessage) {
+  /**
+   * The processMessage method is called when there is an incoming message to process.
+   */
+  final override def processMessage(msg: ExchangeMessage) {
     msg match {
       case req: ExchangeRequest => exchangeReq(req)
       case rsp: ExchangeResponse => exchangeRsp(rsp)
     }
   }
 
-  def sendReq(targetActor: ExchangeActor,
-              req: ExchangeRequest,
-              srcExchange: ExchangeMessenger) {
-    srcExchange.putTo(targetActor.messageListDestination, req)
-  }
+  /**
+   * The exchangeReq method is called when there is an incoming request to process.
+   */
+  protected def exchangeReq(req: ExchangeRequest)
 
-  def exchangeReq(msg: ExchangeRequest)
-
-  def sendResponse(senderExchange: ExchangeMessenger, rsp: ExchangeResponse) {
-    putTo(senderExchange.buffered, rsp)
-  }
-
-  def exchangeRsp(msg: ExchangeResponse)
+  /**
+   * The exchangeRsp method is called when there is an incoming response to process.
+   */
+  def exchangeRsp(rsp: ExchangeResponse)
 }

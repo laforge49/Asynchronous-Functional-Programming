@@ -23,9 +23,21 @@
  */
 package org.agilewiki.blip.messenger
 
+/**
+ * The MessageSource trait is implemented by objects which send
+ * messages to an ExchangeMessenger.
+ */
 trait MessageSource {
+  /**
+   * The messageListDestination method returns a MessageListDestination to which
+   * lists of responses are to be sent.
+   */
   def messageListDestination: MessageListDestination[ExchangeMessage]
 
+  /**
+   * The responseFrom method is used to send the response to a request
+   * that was sent to an ExchangeMessenger.
+   */
   def responseFrom(exchangeMessenger: ExchangeMessenger, rsp: ExchangeResponse) {
     exchangeMessenger.putTo(messageListDestination, rsp)
   }

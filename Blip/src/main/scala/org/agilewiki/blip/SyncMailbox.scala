@@ -47,10 +47,10 @@ class SyncMailbox(mailboxFactory: MailboxFactory)
     }
   }
 
-  override def sendReq(targetActor: ExchangeActor,
+  override def sendReq(targetActor: BlipActor,
                        req: ExchangeRequest,
                        srcExchange: ExchangeMessenger) {
-    val controllingMailbox = srcExchange.controllingExchange
+    val controllingMailbox = srcExchange.asInstanceOf[Mailbox].controllingExchange
     if (controllingMailbox == controllingExchange) {
       _sendReq(req)
     } else if (!atomicControl.compareAndSet(null, controllingMailbox)) {

@@ -26,8 +26,8 @@ package org.agilewiki.blip.messenger
 import java.util.ArrayList
 
 /**
- * A BufferedMessenger exchanges lists of messages with other Buffered objects,
- * where each Buffered object is operating on a different thread.
+ * A BufferedMessenger sends lists of messages to MessageListDestination objects
+ * which are operating on a different thread.
  */
 class BufferedMessenger[T](threadManager: ThreadManager,
                            _messenger: Messenger[ArrayList[T]] = null)

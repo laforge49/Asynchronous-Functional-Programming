@@ -29,6 +29,18 @@ class Mailbox(_mailboxFactory: MailboxFactory)
   extends ExchangeMessenger(_mailboxFactory.threadManager) {
   var mailboxState: MailboxState = null
 
+  def controllingExchange: ExchangeMessenger = this
+
+  def sendReq(targetActor: BlipActor,
+              req: ExchangeRequest,
+              srcExchange: ExchangeMessenger) {
+    srcExchange.putTo(targetActor.messageListDestination, req)
+  }
+
+  def sendResponse(senderExchange: ExchangeMessenger, rsp: ExchangeResponse) {
+    putTo(senderExchange.bufferedMessenger, rsp)
+  }
+
   def mailboxFactory: MailboxFactory = _mailboxFactory
 
   def newMailboxState = {

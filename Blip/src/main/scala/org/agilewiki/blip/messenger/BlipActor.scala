@@ -23,10 +23,12 @@
  */
 package org.agilewiki.blip.messenger
 
-trait ExchangeActor extends MessageSource {
+import org.agilewiki.blip.Mailbox
+
+trait BlipActor extends MessageSource {
   def exchangeMessenger: ExchangeMessenger
 
   override def responseFrom(_exchangeMessenger: ExchangeMessenger, rsp: ExchangeResponse) {
-    _exchangeMessenger.sendResponse(exchangeMessenger, rsp)
+    _exchangeMessenger.asInstanceOf[Mailbox].sendResponse(exchangeMessenger, rsp)
   }
 }

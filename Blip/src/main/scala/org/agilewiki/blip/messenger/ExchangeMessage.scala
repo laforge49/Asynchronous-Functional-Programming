@@ -23,11 +23,27 @@
  */
 package org.agilewiki.blip.messenger
 
+/**
+ * All messages sent to an ExchangeMessenger must ExchangeMessages.
+ * And all ExchangeMessages must be either ExchangeRequests
+ * or ExchangeResponses.
+ */
 class ExchangeMessage
 
-class ExchangeRequest(src: MessageSource)
-extends ExchangeMessage {
-  def sender = src
+/**
+ * All requests sent to an ExchangeMessenger must be either
+ * ExchangeRequests or subclasses of ExchangeRequest.
+ */
+class ExchangeRequest(_sender: MessageSource)
+  extends ExchangeMessage {
+  /**
+   * The sender method returns the object which sent the request.
+   */
+  def sender = _sender
 }
 
+/**
+ * All responses sent to an ExchangeMessenger must be either
+ * ExchangeResponses or subclasses of ExchangeResponse.
+ */
 class ExchangeResponse extends ExchangeMessage
