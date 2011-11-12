@@ -27,10 +27,11 @@ package blip
 import annotation.tailrec
 import java.util.ArrayList
 import messenger._
+import exchange._
 
 class Future
-  extends MessageSource
-  with MessageListDestination[ExchangeMessage] {
+  extends ExchangeSource
+  with MessageListDestination[ExchangeMessengerMessage] {
   @volatile private[this] var rsp: Any = _
   @volatile private[this] var satisfied = false
 
@@ -46,7 +47,7 @@ class Future
     } else {
       val bound = safe.asInstanceOf[Bound]
       val req = new MailboxReq(dst, Unit => {}, null, msg, bound, this)
-      val blkmsg = new ArrayList[ExchangeMessage]
+      val blkmsg = new ArrayList[ExchangeMessengerMessage]
       blkmsg.add(req)
       dst.messageListDestination.incomingMessageList(blkmsg)
     }
@@ -59,7 +60,7 @@ class Future
 
   override def messageListDestination = this
 
-  override def incomingMessageList(blkmsg: ArrayList[ExchangeMessage]) {
+  override def incomingMessageList(blkmsg: ArrayList[ExchangeMessengerMessage]) {
     synchronized {
       if (!satisfied) {
         rsp = blkmsg.get(0).asInstanceOf[MailboxRsp].rsp

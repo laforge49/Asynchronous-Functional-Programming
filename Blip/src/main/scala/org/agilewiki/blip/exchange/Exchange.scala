@@ -22,46 +22,24 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki.blip
+package exchange
 
-import exchange._
+import messenger._
 
-class Mailbox(_mailboxFactory: MailboxFactory,
-              async: Boolean)
-  extends Exchange(_mailboxFactory.threadManager, async) {
-  var mailboxState: MailboxState = null
+abstract class Exchange(threadManager: ThreadManager,
+                        async: Boolean,
+                        _bufferedMessenger: BufferedMessenger[ExchangeMessengerMessage] = null)
+  extends ExchangeMessenger(threadManager, _bufferedMessenger) {
 
-  def mailboxFactory: MailboxFactory = _mailboxFactory
+  def controllingExchange = this
 
-  def newMailboxState = {
-    mailboxState = new MailboxState
-    mailboxState
+  def sendReq(targetActor: ExchangeActor,
+              req: ExchangeRequest,
+              srcExchange: Exchange) {
+    srcExchange.putTo(targetActor.messageListDestination, req)
   }
 
-  def reqExceptionFunction(ex: Exception) {
-    reply(ex)
-  }
-
-  override def exchangeReq(msg: ExchangeMessengerRequest) {
-    val req = msg.asInstanceOf[MailboxReq]
-    req.binding.process(this, req)
-  }
-
-  override def exchangeRsp(msg: ExchangeMessengerResponse) {
-    val rsp = msg.asInstanceOf[MailboxRsp]
-    rsp.responseFunction(rsp.rsp)
-  }
-
-  def reply(content: Any) {
-    val req = mailboxState.currentRequestMessage
-    if (!req.active || req.responseFunction == null) {
-      return
-    }
-    req.active = false
-    val sender = req.sender
-    val rsp = new MailboxRsp(
-      req.responseFunction,
-      req.oldRequest,
-      content)
-    sender.responseFrom(this, rsp)
+  def sendResponse(senderExchange: Exchange, rsp: ExchangeMessengerResponse) {
+    putTo(senderExchange.bufferedMessenger, rsp)
   }
 }

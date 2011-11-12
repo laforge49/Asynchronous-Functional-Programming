@@ -23,10 +23,10 @@
  */
 package org.agilewiki.blip
 
-import messenger._
+import exchange._
 
 class MailboxState {
-  var curMsg: ExchangeMessage = null
+  var curMsg: ExchangeMessengerMessage = null
   var exceptionFunction: Exception => Unit = null
   var transactionContext: TransactionContext = null
 

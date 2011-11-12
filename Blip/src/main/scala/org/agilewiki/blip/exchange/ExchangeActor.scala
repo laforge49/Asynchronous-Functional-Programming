@@ -21,24 +21,13 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki.blip.messenger
+package org.agilewiki.blip
+package exchange
 
-/**
- * The MessageSource trait is implemented by objects which send
- * messages to an ExchangeMessenger.
- */
-trait MessageSource {
-  /**
-   * The messageListDestination method returns a MessageListDestination to which
-   * lists of responses are to be sent.
-   */
-  def messageListDestination: MessageListDestination[ExchangeMessage]
+trait ExchangeActor extends ExchangeSource {
+  def exchange: Exchange
 
-  /**
-   * The responseFrom method is used to send the response to a request
-   * that was sent to an ExchangeMessenger.
-   */
-  def responseFrom(exchangeMessenger: ExchangeMessenger, rsp: ExchangeResponse) {
-    exchangeMessenger.putTo(messageListDestination, rsp)
+  override def responseFrom(_exchange: Exchange, rsp: ExchangeMessengerResponse) {
+    _exchange.sendResponse(exchange, rsp)
   }
 }

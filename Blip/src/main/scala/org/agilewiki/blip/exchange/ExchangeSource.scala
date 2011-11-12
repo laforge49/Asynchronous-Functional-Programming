@@ -21,29 +21,15 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki.blip.messenger
+package org.agilewiki.blip
+package exchange
 
-/**
- * All messages sent to an ExchangeMessenger must ExchangeMessages.
- * And all ExchangeMessages must be either ExchangeRequests
- * or ExchangeResponses.
- */
-class ExchangeMessage
-
-/**
- * All requests sent to an ExchangeMessenger must be either
- * ExchangeRequests or subclasses of ExchangeRequest.
- */
-class ExchangeRequest(_sender: MessageSource)
-  extends ExchangeMessage {
+trait ExchangeSource extends ExchangeMessengerSource {
   /**
-   * The sender method returns the object which sent the request.
+   * The responseFrom method is used to send the response to a request
+   * that was sent to an ExchangeMessenger.
    */
-  def sender = _sender
+  def responseFrom(exchange: Exchange, rsp: ExchangeMessengerResponse) {
+    exchange.putTo(messageListDestination, rsp)
+  }
 }
-
-/**
- * All responses sent to an ExchangeMessenger must be either
- * ExchangeResponses or subclasses of ExchangeResponse.
- */
-class ExchangeResponse extends ExchangeMessage

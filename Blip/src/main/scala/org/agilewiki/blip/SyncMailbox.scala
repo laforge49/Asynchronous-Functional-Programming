@@ -26,11 +26,12 @@ package blip
 
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicReference
-import messenger._
+import exchange._
 
-class SyncMailbox(mailboxFactory: MailboxFactory)
-  extends Mailbox(mailboxFactory) {
-  val atomicControl = new AtomicReference[ExchangeMessenger]
+class SyncMailbox(mailboxFactory: MailboxFactory,
+                  async: Boolean)
+  extends Mailbox(mailboxFactory, async) {
+  val atomicControl = new AtomicReference[Exchange]
   val idle = new Semaphore(1)
 
   override def controllingExchange = atomicControl.get
@@ -47,9 +48,9 @@ class SyncMailbox(mailboxFactory: MailboxFactory)
     }
   }
 
-  override def sendReq(targetActor: BlipActor,
+  override def sendReq(targetActor: ExchangeActor,
                        req: ExchangeRequest,
-                       srcExchange: ExchangeMessenger) {
+                       srcExchange: Exchange) {
     val controllingMailbox = srcExchange.asInstanceOf[Mailbox].controllingExchange
     if (controllingMailbox == controllingExchange) {
       _sendReq(req)
@@ -66,15 +67,15 @@ class SyncMailbox(mailboxFactory: MailboxFactory)
     }
   }
 
-  protected def _sendReq(exchangeRequest: ExchangeRequest) {
+  protected def _sendReq(exchangeRequest: ExchangeMessengerRequest) {
     val req = exchangeRequest.asInstanceOf[MailboxReq]
     req.fastSend = true
     req.binding.process(this, req)
     poll
   }
 
-  override def sendResponse(senderExchange: ExchangeMessenger,
-                                      rsp: ExchangeResponse) {
+  override def sendResponse(senderExchange: Exchange,
+                                      rsp: ExchangeMessengerResponse) {
     if (mailboxState.currentRequestMessage.fastSend) {
       senderExchange.exchangeRsp(rsp)
     } else super.sendResponse(senderExchange, rsp)

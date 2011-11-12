@@ -24,19 +24,17 @@
 package org.agilewiki
 package blip
 
-import messenger._
+import exchange._
 
 final class MailboxReq(dst: Actor,
                        rf: Any => Unit,
                        oldReq: MailboxReq,
                        data: AnyRef,
                        bound: Bound,
-                       src: MessageSource)
-
+                       src: ExchangeSource)
   extends ExchangeRequest(src) {
 
   var active = true
-  var fastSend = false
 
   def responseFunction = rf
 
@@ -52,7 +50,7 @@ final class MailboxReq(dst: Actor,
 final class MailboxRsp(rf: Any => Unit,
                        oldReq: MailboxReq,
                        data: Any)
-  extends ExchangeResponse {
+  extends ExchangeMessengerResponse {
 
   def responseFunction = rf
 

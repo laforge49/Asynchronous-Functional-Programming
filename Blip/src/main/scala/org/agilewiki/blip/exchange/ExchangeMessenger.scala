@@ -21,8 +21,10 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki.blip.messenger
+package org.agilewiki.blip
+package exchange
 
+import messenger._
 import java.util.ArrayList
 
 /**
@@ -30,16 +32,16 @@ import java.util.ArrayList
  * with a response assured for every request received.
  */
 abstract class ExchangeMessenger(threadManager: ThreadManager,
-                                 _buffered: BufferedMessenger[ExchangeMessage] = null)
-  extends MessageProcessor[ExchangeMessage]
-  with MessageListDestination[ExchangeMessage] {
+                                 _bufferedMessenger: BufferedMessenger[ExchangeMessengerMessage] = null)
+  extends MessageProcessor[ExchangeMessengerMessage]
+  with MessageListDestination[ExchangeMessengerMessage] {
 
   /**
    * The BufferedMessenger object wrapped by the ExchangeMessenger.
    */
   val bufferedMessenger = {
-    if (_buffered != null) _buffered
-    else new BufferedMessenger[ExchangeMessage](threadManager)
+    if (_bufferedMessenger != null) _bufferedMessenger
+    else new BufferedMessenger[ExchangeMessengerMessage](threadManager)
   }
 
   bufferedMessenger.setMessageProcessor(this)
@@ -49,14 +51,14 @@ abstract class ExchangeMessenger(threadManager: ThreadManager,
    * when the current thread is different
    * from the thread being used by the object being called.
    */
-  final def incomingMessageList(bufferedMessages: ArrayList[ExchangeMessage]) {
+  final def incomingMessageList(bufferedMessages: ArrayList[ExchangeMessengerMessage]) {
     bufferedMessenger.incomingMessageList(bufferedMessages)
   }
 
   /**
    * The putTo message builds lists of messages to be sent to other Buffered objects.
    */
-  final def putTo(messageListDestination: MessageListDestination[ExchangeMessage], message: ExchangeMessage) {
+  final def putTo(messageListDestination: MessageListDestination[ExchangeMessengerMessage], message: ExchangeMessengerMessage) {
     bufferedMessenger.putTo(messageListDestination, message)
   }
 
@@ -87,20 +89,20 @@ abstract class ExchangeMessenger(threadManager: ThreadManager,
   /**
    * The processMessage method is called when there is an incoming message to process.
    */
-  final override def processMessage(msg: ExchangeMessage) {
+  final override def processMessage(msg: ExchangeMessengerMessage) {
     msg match {
-      case req: ExchangeRequest => exchangeReq(req)
-      case rsp: ExchangeResponse => exchangeRsp(rsp)
+      case req: ExchangeMessengerRequest => exchangeReq(req)
+      case rsp: ExchangeMessengerResponse => exchangeRsp(rsp)
     }
   }
 
   /**
    * The exchangeReq method is called when there is an incoming request to process.
    */
-  protected def exchangeReq(req: ExchangeRequest)
+  protected def exchangeReq(req: ExchangeMessengerRequest)
 
   /**
    * The exchangeRsp method is called when there is an incoming response to process.
    */
-  def exchangeRsp(rsp: ExchangeResponse)
+  def exchangeRsp(rsp: ExchangeMessengerResponse)
 }

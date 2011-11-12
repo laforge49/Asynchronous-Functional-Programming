@@ -22,46 +22,29 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki.blip
+package exchange
 
-import exchange._
+/**
+ * All messages sent to an ExchangeMessenger must ExchangeMessengerMessages.
+ * And all ExchangeMessengerMessages must be either ExchangeMessengerRequests
+ * or ExchangeMessengerResponses.
+ */
+class ExchangeMessengerMessage
 
-class Mailbox(_mailboxFactory: MailboxFactory,
-              async: Boolean)
-  extends Exchange(_mailboxFactory.threadManager, async) {
-  var mailboxState: MailboxState = null
-
-  def mailboxFactory: MailboxFactory = _mailboxFactory
-
-  def newMailboxState = {
-    mailboxState = new MailboxState
-    mailboxState
-  }
-
-  def reqExceptionFunction(ex: Exception) {
-    reply(ex)
-  }
-
-  override def exchangeReq(msg: ExchangeMessengerRequest) {
-    val req = msg.asInstanceOf[MailboxReq]
-    req.binding.process(this, req)
-  }
-
-  override def exchangeRsp(msg: ExchangeMessengerResponse) {
-    val rsp = msg.asInstanceOf[MailboxRsp]
-    rsp.responseFunction(rsp.rsp)
-  }
-
-  def reply(content: Any) {
-    val req = mailboxState.currentRequestMessage
-    if (!req.active || req.responseFunction == null) {
-      return
-    }
-    req.active = false
-    val sender = req.sender
-    val rsp = new MailboxRsp(
-      req.responseFunction,
-      req.oldRequest,
-      content)
-    sender.responseFrom(this, rsp)
-  }
+/**
+ * All requests sent to an ExchangeMessenger must be either
+ * ExchangeMessengerRequests or subclasses of ExchangeMessengerRequest.
+ */
+class ExchangeMessengerRequest(_sender: ExchangeMessengerSource)
+  extends ExchangeMessengerMessage {
+  /**
+   * The sender method returns the object which sent the request.
+   */
+  def sender = _sender
 }
+
+/**
+ * All responses sent to an ExchangeMessenger must be either
+ * ExchangeMessengerResponses or subclasses of ExchangeMessengerResponse.
+ */
+class ExchangeMessengerResponse extends ExchangeMessengerMessage

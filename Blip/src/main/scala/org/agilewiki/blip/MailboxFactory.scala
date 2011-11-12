@@ -49,13 +49,13 @@ class MailboxFactory(_threadManager: ThreadManager = new MessengerThreadManager)
    * Creates an asynchronous mailbox.
    */
   def newAsyncMailbox = {
-    new Mailbox(this)
+    new Mailbox(this, true)
   }
 
   /**
    * Creates a synchronous mailbox.
    */
   def newSyncMailbox = {
-    new SyncMailbox(this)
+    new SyncMailbox(this, false)
   }
 }

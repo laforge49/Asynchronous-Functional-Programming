@@ -24,13 +24,13 @@
 package org.agilewiki
 package blip
 
-import messenger._
+import exchange._
 import seq.NavSetSeq
 import annotation.tailrec
 
 class Actor
   extends Responder
-  with BlipActor {
+  with ExchangeActor {
 
   private var _mailbox: Mailbox = null
   private var _factory: Factory = null
@@ -265,5 +265,5 @@ class Actor
 
   def newSyncMailbox = mailboxFactory.newSyncMailbox
 
-  override def exchangeMessenger = mailbox
+  override def exchange = mailbox
 }

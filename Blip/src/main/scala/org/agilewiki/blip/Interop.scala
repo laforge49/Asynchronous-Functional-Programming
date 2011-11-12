@@ -25,11 +25,12 @@ package org.agilewiki
 package blip
 
 import messenger._
+import exchange._
 import scala.actors.Reactor
 
 class Interop[T >: AnyRef](reactor: Reactor[T])
-  extends MessageSource
-  with MessageListDestination[ExchangeMessage] {
+  extends ExchangeSource
+  with MessageListDestination[ExchangeMessengerMessage] {
 
   override def messageListDestination = this
 
@@ -45,13 +46,13 @@ class Interop[T >: AnyRef](reactor: Reactor[T])
     } else {
       val bound = safe.asInstanceOf[Bound]
       val req = new MailboxReq(dst, rf, null, msg, bound, this)
-      val blkmsg = new java.util.ArrayList[ExchangeMessage]
+      val blkmsg = new java.util.ArrayList[ExchangeMessengerMessage]
       blkmsg.add(req)
       dst.messageListDestination.incomingMessageList(blkmsg)
     }
   }
 
-  override def incomingMessageList(blkmsg: java.util.ArrayList[ExchangeMessage]) {
+  override def incomingMessageList(blkmsg: java.util.ArrayList[ExchangeMessengerMessage]) {
     var i = 0
     while (i < blkmsg.size) {
       val mailboxRsp = blkmsg.get(i).asInstanceOf[MailboxRsp]
