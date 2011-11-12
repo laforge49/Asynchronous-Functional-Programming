@@ -28,8 +28,20 @@ import messenger._
 
 abstract class Exchange(threadManager: ThreadManager,
                         async: Boolean,
+                        stateFactory: MailboxStateFactory = new MailboxStateFactory,
                         _bufferedMessenger: BufferedMessenger[ExchangeMessengerMessage] = null)
   extends ExchangeMessenger(threadManager, _bufferedMessenger) {
+  protected var _state: ExchangeState = null
+
+  def state = _state
+
+  def setState(state: ExchangeState) {
+    _state = state
+  }
+
+  def newState {
+    _state = stateFactory()
+  }
 
   def controllingExchange = this
 

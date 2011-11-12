@@ -22,43 +22,8 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki.blip
+package exchange
 
-import exchange._
-
-class Mailbox(_mailboxFactory: MailboxFactory,
-              async: Boolean,
-              stateFactory: MailboxStateFactory = new MailboxStateFactory)
-  extends Exchange(_mailboxFactory.threadManager, async, stateFactory) {
-
-  override def state = _state.asInstanceOf[MailboxState]
-
-  def mailboxFactory: MailboxFactory = _mailboxFactory
-
-  def reqExceptionFunction(ex: Exception) {
-    reply(ex)
-  }
-
-  override def exchangeReq(msg: ExchangeMessengerRequest) {
-    val req = msg.asInstanceOf[MailboxReq]
-    req.binding.process(this, req)
-  }
-
-  override def exchangeRsp(msg: ExchangeMessengerResponse) {
-    val rsp = msg.asInstanceOf[MailboxRsp]
-    rsp.responseFunction(rsp.rsp)
-  }
-
-  def reply(content: Any) {
-    val req = state.currentRequest
-    if (!req.active || req.responseFunction == null) {
-      return
-    }
-    req.active = false
-    val sender = req.sender
-    val rsp = new MailboxRsp(
-      req.responseFunction,
-      req.oldRequest,
-      content)
-    sender.responseFrom(this, rsp)
-  }
+class ExchangeStateFactory {
+  def apply() = new ExchangeState
 }

@@ -25,12 +25,11 @@ package org.agilewiki.blip
 package exchange
 
 class ExchangeState {
-  var curMsg: ExchangeMessengerMessage = null
+  var _currentRequest: ExchangeRequest = null
 
-  def currentRequestMessage = {
-    if (curMsg.isInstanceOf[ExchangeRequest])
-      curMsg.asInstanceOf[ExchangeRequest]
-    else
-      curMsg.asInstanceOf[MailboxRsp].oldRequest
+  def currentRequest = _currentRequest
+
+  def setCurrentRequest(curReq: ExchangeRequest) {
+    _currentRequest = curReq
   }
 }

@@ -76,7 +76,7 @@ class SyncMailbox(mailboxFactory: MailboxFactory,
 
   override def sendResponse(senderExchange: Exchange,
                                       rsp: ExchangeMessengerResponse) {
-    if (mailboxState.currentRequestMessage.fastSend) {
+    if (state.currentRequest.fastSend) {
       senderExchange.exchangeRsp(rsp)
     } else super.sendResponse(senderExchange, rsp)
   }
