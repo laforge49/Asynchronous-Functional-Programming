@@ -56,6 +56,6 @@ class MailboxFactory(_threadManager: ThreadManager = new MessengerThreadManager)
    * Creates a synchronous mailbox.
    */
   def newSyncMailbox = {
-    new SyncMailbox(this, false)
+    new Mailbox(this, false)
   }
 }

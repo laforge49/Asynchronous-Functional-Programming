@@ -29,7 +29,7 @@ trait ExchangeSource extends ExchangeMessengerSource {
    * The responseFrom method is used to send the response to a request
    * that was sent to an ExchangeMessenger.
    */
-  def responseFrom(exchange: Exchange, rsp: ExchangeMessengerResponse) {
-    exchange.putTo(messageListDestination, rsp)
+  def responseFrom(respondingExchange: Exchange, rsp: ExchangeMessengerResponse) {
+    respondingExchange.putTo(messageListDestination, rsp)
   }
 }

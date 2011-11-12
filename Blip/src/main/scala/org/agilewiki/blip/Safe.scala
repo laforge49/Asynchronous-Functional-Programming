@@ -91,7 +91,6 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
 
   override def func(target: Actor, msg: AnyRef, rf: Any => Unit)
                    (implicit srcActor: ActiveActor) {
-    var oldMailboxState: MailboxState = null
     val srcMailbox = {
       if (srcActor == null) null
       else {
@@ -108,14 +107,9 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
           "An immutable actor can only send to another immutable actor."
         )
       }
-    } else {
-      oldMailboxState = srcMailbox.state
     }
     val responseFunction: Any => Unit = {
       rsp => {
-        if (srcMailbox != null) {
-          srcMailbox.setState(oldMailboxState)
-        }
         rsp match {
           case rsp: Exception => srcMailbox.state.exceptionFunction(rsp)
           case rsp => try {
@@ -151,10 +145,8 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
     if (srcMailbox == null || targetMailbox == null) throw new UnsupportedOperationException(
       "Transactions require that both the requesting and target actors have mailboxes."
     )
-    val oldMailboxState = srcMailbox.state
     val responseFunction: Any => Unit = {
       rsp => {
-        srcMailbox.setState(oldMailboxState)
         rsp match {
           case rsp: Exception => srcMailbox.state.exceptionFunction(rsp)
           case rsp => try {

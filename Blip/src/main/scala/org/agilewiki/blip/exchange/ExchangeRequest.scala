@@ -28,6 +28,7 @@ class ExchangeRequest(_sender: ExchangeSource)
   extends ExchangeMessengerRequest(_sender) {
 
   var fastSend = false
+  var sourceState: ExchangeState = null
 
   override def sender = _sender
 }

@@ -43,12 +43,3 @@ final class MailboxReq(dst: Actor,
 
   def binding = bound
 }
-
-final class MailboxRsp(rf: Any => Unit,
-                       data: Any)
-  extends ExchangeMessengerResponse {
-
-  def responseFunction = rf
-
-  def rsp = data
-}

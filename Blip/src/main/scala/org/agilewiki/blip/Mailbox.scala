@@ -43,14 +43,14 @@ class Mailbox(_mailboxFactory: MailboxFactory,
     req.binding.process(this, req)
   }
 
-  override def exchangeRsp(msg: ExchangeMessengerResponse) {
+  override def processResponse(msg: ExchangeResponse) {
     val rsp = msg.asInstanceOf[MailboxRsp]
     rsp.responseFunction(rsp.rsp)
   }
 
   def reply(content: Any) {
     val req = state.currentRequest
-    if (!req.active || req.responseFunction == null) {
+    if (!req.active) {
       return
     }
     req.active = false

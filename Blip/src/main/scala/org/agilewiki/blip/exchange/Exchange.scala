@@ -25,13 +25,18 @@ package org.agilewiki.blip
 package exchange
 
 import messenger._
+import java.util.concurrent.atomic.AtomicReference
+import java.util.concurrent.Semaphore
 
 abstract class Exchange(threadManager: ThreadManager,
                         async: Boolean,
-                        stateFactory: MailboxStateFactory = new MailboxStateFactory,
+                        stateFactory: ExchangeStateFactory = new ExchangeStateFactory,
                         _bufferedMessenger: BufferedMessenger[ExchangeMessengerMessage] = null)
   extends ExchangeMessenger(threadManager, _bufferedMessenger) {
+
   protected var _state: ExchangeState = null
+  val atomicControl = new AtomicReference[Exchange]
+  val idle = new Semaphore(1)
 
   def state = _state
 
@@ -43,15 +48,64 @@ abstract class Exchange(threadManager: ThreadManager,
     _state = stateFactory()
   }
 
-  def controllingExchange = this
+  def controllingExchange = atomicControl.get
+
+  override def haveMessage {
+    if (async) poll
+    else {
+      while (!atomicControl.compareAndSet(null, this)) {
+        idle.acquire
+        idle.release
+      }
+      try {
+        poll
+      } finally {
+        atomicControl.set(null)
+      }
+    }
+  }
 
   def sendReq(targetActor: ExchangeActor,
-              req: ExchangeRequest,
+              exchangeRequest: ExchangeRequest,
               srcExchange: Exchange) {
-    srcExchange.putTo(targetActor.messageListDestination, req)
+    exchangeRequest.sourceState = srcExchange.state
+    if (async) srcExchange.putTo(targetActor.messageListDestination, exchangeRequest)
+    else {
+      val controllingMailbox = srcExchange.asInstanceOf[Mailbox].controllingExchange
+      if (controllingMailbox == controllingExchange) {
+        _sendReq(exchangeRequest)
+      } else if (!atomicControl.compareAndSet(null, controllingMailbox)) {
+        srcExchange.putTo(targetActor.messageListDestination, exchangeRequest)
+      } else {
+        idle.acquire
+        try {
+          _sendReq(exchangeRequest)
+        } finally {
+          atomicControl.set(null)
+          idle.release
+        }
+      }
+    }
+  }
+
+  private def _sendReq(exchangeRequest: ExchangeMessengerRequest) {
+    val req = exchangeRequest.asInstanceOf[MailboxReq]
+    req.fastSend = true
+    exchangeReq(req)
+    poll
   }
 
   def sendResponse(senderExchange: Exchange, rsp: ExchangeMessengerResponse) {
-    putTo(senderExchange.bufferedMessenger, rsp)
+    if (state.currentRequest.fastSend) {
+      senderExchange.exchangeRsp(rsp)
+    } else putTo(senderExchange.bufferedMessenger, rsp)
   }
+
+  override def exchangeRsp(msg: ExchangeMessengerResponse) {
+    val exchangeResponse = msg.asInstanceOf[ExchangeResponse]
+    setState(exchangeResponse.sourceState)
+    processResponse(exchangeResponse)
+  }
+
+  def processResponse(msg: ExchangeResponse)
 }

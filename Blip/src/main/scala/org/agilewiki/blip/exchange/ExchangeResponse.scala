@@ -24,13 +24,8 @@
 package org.agilewiki.blip
 package exchange
 
-trait ExchangeActor extends ExchangeSource {
-  def exchange: Exchange
+class ExchangeResponse
+  extends ExchangeMessengerResponse {
 
-  override def responseFrom(respondingExchange: Exchange, rsp: ExchangeMessengerResponse) {
-    val currentRequest = respondingExchange.state.currentRequest
-    val exchangeResponse = rsp.asInstanceOf[ExchangeResponse]
-    exchangeResponse.sourceState = currentRequest.sourceState
-    respondingExchange.sendResponse(exchange, rsp)
-  }
+  var sourceState: ExchangeState = null
 }

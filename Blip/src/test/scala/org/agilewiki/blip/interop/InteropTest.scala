@@ -3,6 +3,7 @@ package interop
 
 import org.specs.SpecificationWithJUnit
 import actors.{ReplyReactor, Reactor}
+import exchange._
 
 case class SimpleEcho(value: String)
 

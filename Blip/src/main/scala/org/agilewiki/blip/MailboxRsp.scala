@@ -22,15 +22,14 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki.blip
-package exchange
 
-trait ExchangeActor extends ExchangeSource {
-  def exchange: Exchange
+import exchange._
 
-  override def responseFrom(respondingExchange: Exchange, rsp: ExchangeMessengerResponse) {
-    val currentRequest = respondingExchange.state.currentRequest
-    val exchangeResponse = rsp.asInstanceOf[ExchangeResponse]
-    exchangeResponse.sourceState = currentRequest.sourceState
-    respondingExchange.sendResponse(exchange, rsp)
-  }
+final class MailboxRsp(rf: Any => Unit,
+                       data: Any)
+  extends ExchangeResponse {
+
+  def responseFunction = rf
+
+  def rsp = data
 }
