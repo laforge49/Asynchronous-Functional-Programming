@@ -26,14 +26,7 @@ package org.agilewiki.blip
 import exchange._
 
 class MailboxState {
-  var curMsg: ExchangeMessengerMessage = null
+  var currentRequestMessage: MailboxReq = null
   var exceptionFunction: Exception => Unit = null
   var transactionContext: TransactionContext = null
-
-  def currentRequestMessage = {
-    if (curMsg.isInstanceOf[MailboxReq])
-      curMsg.asInstanceOf[MailboxReq]
-    else
-      curMsg.asInstanceOf[MailboxRsp].oldRequest
-  }
 }

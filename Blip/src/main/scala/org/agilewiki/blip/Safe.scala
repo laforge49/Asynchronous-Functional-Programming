@@ -57,7 +57,7 @@ abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Saf
 
   def process(mailbox: Mailbox, mailboxReq: MailboxReq) {
     var mailboxState = mailbox.newMailboxState
-    mailboxState.curMsg = mailboxReq
+    mailboxState.currentRequestMessage = mailboxReq
     mailboxState.exceptionFunction = mailbox.reqExceptionFunction
     mailboxState.transactionContext = null
     try {
@@ -178,7 +178,7 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
   def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq, transactionContext: TransactionContext) {
     val transactionProcessor = mailboxReq.target
     val mailboxState = mailbox.newMailboxState
-    mailboxState.curMsg = mailboxReq
+    mailboxState.currentRequestMessage = mailboxReq
     mailboxState.exceptionFunction = mailbox.reqExceptionFunction
     mailboxState.transactionContext = transactionContext
     try {
