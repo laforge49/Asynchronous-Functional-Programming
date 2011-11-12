@@ -27,13 +27,13 @@ package exchange
 import messenger._
 
 /**
- * The MessageSource trait is implemented by objects which send
+ * The ExchangeMessengerSource trait is implemented by objects which send
  * requests to an ExchangeMessenger.
  */
 trait ExchangeMessengerSource {
   /**
-   * The messageListDestination method returns a MessageListDestination to which
-   * lists of responses are to be sent.
+   * The messageListDestination method returns a MessageListDestination object
+   * to which lists of responses can be sent.
    */
   def messageListDestination: MessageListDestination[ExchangeMessengerMessage]
 }
