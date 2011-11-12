@@ -45,7 +45,7 @@ class Interop[T >: AnyRef](reactor: Reactor[T])
       boundFunction.reqFunction(msg, rf) //todo very weak
     } else {
       val bound = safe.asInstanceOf[Bound]
-      val req = new MailboxReq(dst, rf, null, msg, bound, this)
+      val req = new MailboxReq(dst, rf, msg, bound, this)
       val blkmsg = new java.util.ArrayList[ExchangeMessengerMessage]
       blkmsg.add(req)
       dst.messageListDestination.incomingMessageList(blkmsg)

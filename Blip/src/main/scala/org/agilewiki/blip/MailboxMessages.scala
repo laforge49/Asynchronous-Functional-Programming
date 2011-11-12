@@ -28,7 +28,6 @@ import exchange._
 
 final class MailboxReq(dst: Actor,
                        rf: Any => Unit,
-                       oldReq: MailboxReq,
                        data: AnyRef,
                        bound: Bound,
                        src: ExchangeSource)
@@ -38,8 +37,6 @@ final class MailboxReq(dst: Actor,
 
   def responseFunction = rf
 
-  def oldRequest = oldReq
-
   def target = dst
 
   def req = data
@@ -48,13 +45,10 @@ final class MailboxReq(dst: Actor,
 }
 
 final class MailboxRsp(rf: Any => Unit,
-                       oldReq: MailboxReq,
                        data: Any)
   extends ExchangeMessengerResponse {
 
   def responseFunction = rf
-
-  def oldRequest = oldReq
 
   def rsp = data
 }

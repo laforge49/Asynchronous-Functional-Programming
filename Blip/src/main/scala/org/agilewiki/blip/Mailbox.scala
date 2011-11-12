@@ -57,7 +57,6 @@ class Mailbox(_mailboxFactory: MailboxFactory,
     val sender = req.sender
     val rsp = new MailboxRsp(
       req.responseFunction,
-      req.oldRequest,
       content)
     sender.responseFrom(this, rsp)
   }

@@ -79,7 +79,6 @@ abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Saf
     val req = new MailboxReq(
       targetActor,
       responseFunction,
-      oldReq,
       content,
       this,
       sender)
