@@ -25,11 +25,11 @@ package org.agilewiki.blip
 
 import exchange._
 
-class MailboxState
-  extends ExchangeState {
+class MailboxState(exchange: Mailbox, _currentRequest: MailboxReq)
+  extends ExchangeState(exchange, _currentRequest) {
 
-  var exceptionFunction: Exception => Unit = null
+  var exceptionFunction: Exception => Unit = exchange.reqExceptionFunction
   var transactionContext: TransactionContext = null
 
-  override def currentRequest = _currentRequest.asInstanceOf[MailboxReq]
+  override def currentRequest = _currentRequest
 }

@@ -24,12 +24,6 @@
 package org.agilewiki.blip
 package exchange
 
-class ExchangeState {
-  var _currentRequest: ExchangeRequest = null
-
+class ExchangeState(exchange: Exchange, _currentRequest: ExchangeRequest) {
   def currentRequest = _currentRequest
-
-  def setCurrentRequest(curReq: ExchangeRequest) {
-    _currentRequest = curReq
-  }
 }

@@ -44,8 +44,8 @@ abstract class Exchange(threadManager: ThreadManager,
     _state = state
   }
 
-  def newState {
-    _state = stateFactory()
+  def newState(currentRequest: ExchangeRequest) {
+    _state = stateFactory(this, currentRequest)
   }
 
   def controllingExchange = atomicControl.get

@@ -56,11 +56,7 @@ abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Saf
   def reqFunction = messageFunction
 
   def process(mailbox: Mailbox, mailboxReq: MailboxReq) {
-    mailbox.newState
-    var mailboxState = mailbox.state
-    mailboxState.setCurrentRequest(mailboxReq)
-    mailboxState.exceptionFunction = mailbox.reqExceptionFunction
-    mailboxState.transactionContext = null
+    mailbox.newState(mailboxReq)
     try {
       messageFunction(mailboxReq.req, mailbox.reply)
     } catch {
@@ -169,10 +165,8 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
 
   def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq, transactionContext: TransactionContext) {
     val transactionProcessor = mailboxReq.target
-    mailbox.newState
+    mailbox.newState(mailboxReq)
     val mailboxState = mailbox.state
-    mailboxState.setCurrentRequest(mailboxReq)
-    mailboxState.exceptionFunction = mailbox.reqExceptionFunction
     mailboxState.transactionContext = transactionContext
     try {
       if (transactionProcessor.isInvalid) throw new IllegalStateException
