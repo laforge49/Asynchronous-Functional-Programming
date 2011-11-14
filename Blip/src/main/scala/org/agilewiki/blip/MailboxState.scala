@@ -28,7 +28,9 @@ import exchange._
 class MailboxState(exchange: Mailbox, _currentRequest: MailboxReq)
   extends ExchangeState(exchange, _currentRequest) {
 
-  var exceptionFunction: Exception => Unit = exchange.reqExceptionFunction
+  var exceptionFunction: Exception => Unit = {
+    ex => exchange.reply(ex)
+  }
   var transactionContext: TransactionContext = null
 
   override def currentRequest = _currentRequest
