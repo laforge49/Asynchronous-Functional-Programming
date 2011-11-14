@@ -15,5 +15,5 @@ class Echo(threadManager: ThreadManager)
     putTo(sender.messageListDestination, new ExchangeMessengerResponse)
   }
 
-  def exchangeRsp(rsp: ExchangeMessengerResponse) {}
+  override def exchangeRsp(rsp: ExchangeMessengerResponse) {}
 }

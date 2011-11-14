@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicReference
 import java.util.concurrent.Semaphore
 
 abstract class Exchange(threadManager: ThreadManager,
-                        async: Boolean,
+                        async: Boolean = false,
                         stateFactory: ExchangeStateFactory = new ExchangeStateFactory,
                         _bufferedMessenger: BufferedMessenger[ExchangeMessengerMessage] = null)
   extends ExchangeMessenger(threadManager, _bufferedMessenger) {

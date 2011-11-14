@@ -155,8 +155,6 @@ class Actor
     }
   }
 
-  override def messageListDestination = mailbox
-
   def isInvalid = transactionActivityLevel < 0
 
   def isActive = transactionActivityLevel > 0

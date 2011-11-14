@@ -24,8 +24,12 @@
 package org.agilewiki.blip
 package exchange
 
+import messenger.MessageListDestination
+
 trait ExchangeActor extends ExchangeSource {
   def exchange: Exchange
+
+  def messageListDestination = exchange
 
   override def responseFrom(respondingExchange: Exchange, rsp: ExchangeMessengerResponse) {
     val currentRequest = respondingExchange.state.currentRequest
