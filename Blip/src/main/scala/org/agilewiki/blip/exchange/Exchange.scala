@@ -38,6 +38,8 @@ abstract class Exchange(threadManager: ThreadManager,
   val atomicControl = new AtomicReference[Exchange]
   val idle = new Semaphore(1)
 
+  stateFactory.exchange = this
+
   def state = _state
 
   def setState(state: ExchangeState) {
@@ -45,7 +47,7 @@ abstract class Exchange(threadManager: ThreadManager,
   }
 
   def newState(currentRequest: ExchangeRequest) {
-    _state = stateFactory(this, currentRequest)
+    _state = stateFactory(currentRequest)
   }
 
   def controllingExchange = atomicControl.get

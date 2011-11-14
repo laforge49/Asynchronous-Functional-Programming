@@ -27,7 +27,7 @@ import exchange._
 
 class MailboxStateFactory
   extends ExchangeStateFactory {
-  override def apply(exchange: Exchange, currentRequest: ExchangeRequest) = {
+  override def apply(currentRequest: ExchangeRequest) = {
     new MailboxState(
       exchange.asInstanceOf[Mailbox],
       currentRequest.asInstanceOf[MailboxReq])

@@ -25,6 +25,8 @@ package org.agilewiki.blip
 package exchange
 
 class ExchangeStateFactory {
-  def apply(exchange: Exchange, currentRequest: ExchangeRequest) =
+  var exchange: Exchange = null
+
+  def apply(currentRequest: ExchangeRequest) =
     new ExchangeState(exchange, currentRequest)
 }
