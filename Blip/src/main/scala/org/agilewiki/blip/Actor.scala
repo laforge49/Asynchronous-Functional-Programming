@@ -38,9 +38,9 @@ class Actor
   private var componentList: java.util.ArrayList[Component] = null
   var opened = false
   private var _superior: Actor = null
-  var transactionActivityLevel = 0
-  lazy val pendingTransactions = new java.util.ArrayDeque[MailboxReq]
-  lazy val activeTransactions = new java.util.HashSet[MailboxReq]
+  private var transactionActivityLevel = 0
+  private lazy val pendingTransactions = new java.util.ArrayDeque[MailboxReq]
+  private lazy val activeTransactions = new java.util.HashSet[MailboxReq]
   private val _activeActor = ActiveActor(this)
 
   override implicit def activeActor: ActiveActor = _activeActor
