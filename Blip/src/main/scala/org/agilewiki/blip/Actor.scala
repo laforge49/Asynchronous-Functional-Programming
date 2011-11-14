@@ -39,8 +39,8 @@ class Actor
   var opened = false
   private var _superior: Actor = null
   private var transactionActivityLevel = 0
-  private lazy val pendingTransactions = new java.util.ArrayDeque[MailboxReq]
-  private lazy val activeTransactions = new java.util.HashSet[MailboxReq]
+  private lazy val pendingTransactions = new java.util.ArrayDeque[MailboxState]
+  private lazy val activeTransactions = new java.util.HashSet[MailboxState]
   private val _activeActor = ActiveActor(this)
 
   override implicit def activeActor: ActiveActor = _activeActor
@@ -167,24 +167,27 @@ class Actor
     var level = 0
     val it = activeTransactions.iterator
     while (it.hasNext) {
-      val l = it.next.binding.asInstanceOf[BoundTransaction].level
+      val currentRequest = it.next.currentRequest
+      val l = currentRequest.binding.asInstanceOf[BoundTransaction].level
       if (l > level) level = l
     }
     level
   }
 
-  def addPendingTransaction(mailboxReq: MailboxReq) {
-    pendingTransactions.addLast(mailboxReq)
+  def addPendingTransaction(mailboxState: MailboxState) {
+    pendingTransactions.addLast(mailboxState)
     runPendingTransaction
   }
 
   @tailrec final def runPendingTransaction {
-    val mailboxReq = pendingTransactions.peekFirst
-    if (mailboxReq == null) return
+    val mailboxState = pendingTransactions.peekFirst
+    if (mailboxState == null) return
+    val mailboxReq = mailboxState.currentRequest
     if (!isTransactionCompatible(mailboxReq)) return
     pendingTransactions.removeFirst
-    addActiveTransaction(mailboxReq)
+    addActiveTransaction(mailboxState)
     val transaction = mailboxReq.binding.asInstanceOf[BoundTransaction]
+    mailbox.setState(mailboxState)
     transaction.processTransaction(mailbox, mailboxReq)
     runPendingTransaction
   }
@@ -192,15 +195,18 @@ class Actor
   def isTransactionCompatible(mailboxReq: MailboxReq) =
     mailboxReq.binding.asInstanceOf[BoundTransaction].maxCompatibleLevel >= transactionActivityLevel
 
-  def addActiveTransaction(mailboxReq: MailboxReq) {
+  def addActiveTransaction(mailboxState: MailboxState) {
+    val mailboxReq = mailboxState.currentRequest
     val l = mailboxReq.binding.asInstanceOf[BoundTransaction].level
     if (l > transactionActivityLevel) transactionActivityLevel = l
-    activeTransactions.add(mailboxReq)
+    activeTransactions.add(mailboxState)
   }
 
-  def removeActiveTransaction(mailboxReq: MailboxReq) {
+  def removeActiveTransaction {
+    val state = mailbox.state
+    val mailboxReq = state.currentRequest
     val l = mailboxReq.binding.asInstanceOf[BoundTransaction].level
-    activeTransactions.remove(mailboxReq)
+    activeTransactions.remove(state)
     if (l == transactionActivityLevel) transactionActivityLevel = maxLevel
   }
 

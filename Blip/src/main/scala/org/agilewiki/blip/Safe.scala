@@ -157,29 +157,31 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
   }
 
   override def process(mailbox: Mailbox, mailboxReq: MailboxReq) {
+    mailbox.newState(mailboxReq)
     val transactionProcessor = mailboxReq.target
-    transactionProcessor.addPendingTransaction(mailboxReq)
+    transactionProcessor.addPendingTransaction(mailbox.state)
   }
 
   def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq)
 
-  def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq, transactionContext: TransactionContext) {
+  def processTransaction(mailbox: Mailbox,
+                         mailboxReq: MailboxReq,
+                         transactionContext: TransactionContext) {
     val transactionProcessor = mailboxReq.target
-    mailbox.newState(mailboxReq)
     val mailboxState = mailbox.state
     mailboxState.transactionContext = transactionContext
     try {
       if (transactionProcessor.isInvalid) throw new IllegalStateException
       messageFunction(mailboxReq.req, {
         rsp1: Any => {
-          transactionProcessor.removeActiveTransaction(mailboxReq)
+          transactionProcessor.removeActiveTransaction
           mailbox.reply(rsp1)
           transactionProcessor.runPendingTransaction
         }
       })
     } catch {
       case ex: Exception => {
-        transactionProcessor.removeActiveTransaction(mailboxReq)
+        transactionProcessor.removeActiveTransaction
         mailbox.reply(ex)
       }
     }
