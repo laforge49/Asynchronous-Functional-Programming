@@ -97,6 +97,14 @@ abstract class Exchange(threadManager: ThreadManager,
     poll
   }
 
+  override def exchangeReq(msg: ExchangeMessengerRequest) {
+    val req = msg.asInstanceOf[ExchangeRequest]
+    newState(req)
+    processRequest(req)
+  }
+
+  protected def processRequest(msg: ExchangeRequest)
+
   def sendResponse(senderExchange: Exchange, rsp: ExchangeMessengerResponse) {
     if (state.currentRequest.fastSend) {
       senderExchange.exchangeRsp(rsp)
@@ -109,5 +117,5 @@ abstract class Exchange(threadManager: ThreadManager,
     processResponse(exchangeResponse)
   }
 
-  def processResponse(msg: ExchangeResponse)
+  protected def processResponse(msg: ExchangeResponse)
 }

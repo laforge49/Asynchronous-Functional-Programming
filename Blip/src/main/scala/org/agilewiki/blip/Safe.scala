@@ -56,7 +56,6 @@ abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Saf
   def reqFunction = messageFunction
 
   def process(mailbox: Mailbox, mailboxReq: MailboxReq) {
-    mailbox.newState(mailboxReq)
     try {
       messageFunction(mailboxReq.req, mailbox.reply)
     } catch {
@@ -157,7 +156,6 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
   }
 
   override def process(mailbox: Mailbox, mailboxReq: MailboxReq) {
-    mailbox.newState(mailboxReq)
     val transactionProcessor = mailboxReq.target
     transactionProcessor.addPendingTransaction(mailbox.state)
   }

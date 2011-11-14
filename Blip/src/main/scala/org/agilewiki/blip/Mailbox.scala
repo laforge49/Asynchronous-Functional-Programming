@@ -34,7 +34,7 @@ class Mailbox(_mailboxFactory: MailboxFactory,
 
   def mailboxFactory: MailboxFactory = _mailboxFactory
 
-  override def exchangeReq(msg: ExchangeMessengerRequest) {
+  override protected def processRequest(msg: ExchangeRequest) {
     val req = msg.asInstanceOf[MailboxReq]
     req.binding.process(this, req)
   }
