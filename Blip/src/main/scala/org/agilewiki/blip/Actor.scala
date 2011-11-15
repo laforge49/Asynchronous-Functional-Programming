@@ -30,7 +30,7 @@ import annotation.tailrec
 
 class Actor
   extends Responder
-  with ExchangeActor {
+  with ExchangeMessengerActor {
 
   private var _mailbox: Mailbox = null
   private var _factory: Factory = null

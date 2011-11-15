@@ -36,15 +36,19 @@ abstract class ExchangeMessenger(threadManager: ThreadManager,
   extends MessageProcessor[ExchangeMessengerMessage]
   with MessageListDestination[ExchangeMessengerMessage] {
 
-  /**
-   * The BufferedMessenger object wrapped by the ExchangeMessenger.
-   */
+  protected var _curReq: ExchangeMessengerRequest = null
   val bufferedMessenger = {
     if (_bufferedMessenger != null) _bufferedMessenger
     else new BufferedMessenger[ExchangeMessengerMessage](threadManager)
   }
 
   bufferedMessenger.setMessageProcessor(this)
+
+  def curReq = _curReq
+
+  def setCurrentRequest(req: ExchangeMessengerRequest) {
+    _curReq = req
+  }
 
   /**
    * The incomingMessageList method is called to process a list of messages
@@ -96,13 +100,34 @@ abstract class ExchangeMessenger(threadManager: ThreadManager,
     }
   }
 
+  def sendReq(targetActor: ExchangeMessengerActor,
+              exchangeRequest: ExchangeRequest,
+              srcExchange: Exchange) {
+    srcExchange.putTo(targetActor.messageListDestination, exchangeRequest)
+  }
+
   /**
    * The exchangeReq method is called when there is an incoming request to process.
    */
-  protected def exchangeReq(req: ExchangeMessengerRequest)
+  override def exchangeReq(msg: ExchangeMessengerRequest) {
+    setCurrentRequest(msg)
+    processRequest
+  }
+
+  protected def processRequest
+
+  def sendResponse(senderExchange: ExchangeMessenger, rsp: ExchangeMessengerResponse) {
+    putTo(senderExchange.bufferedMessenger, rsp)
+  }
 
   /**
    * The exchangeRsp method is called when there is an incoming response to process.
    */
-  def exchangeRsp(rsp: ExchangeMessengerResponse)
+  override def exchangeRsp(msg: ExchangeMessengerResponse) {
+    val exchangeResponse = msg
+    setCurrentRequest(exchangeResponse.oldRequest)
+    processResponse(exchangeResponse)
+  }
+
+  protected def processResponse(msg: ExchangeMessengerResponse)
 }

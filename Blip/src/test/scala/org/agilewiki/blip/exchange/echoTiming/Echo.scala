@@ -6,7 +6,7 @@ import messenger._
 
 class Echo(threadManager: ThreadManager)
   extends Exchange(threadManager)
-  with ExchangeActor {
+  with ExchangeMessengerActor {
 
   override def exchange = this
 

@@ -24,17 +24,12 @@
 package org.agilewiki.blip
 package exchange
 
-class ExchangeRequest(_sender: ExchangeSource)
+class ExchangeRequest(_sender: ExchangeMessengerSource)
   extends ExchangeMessengerRequest(_sender) {
 
   var fastSend = false
-  var _oldRequest: ExchangeRequest = null
 
-  def oldRequest = _oldRequest
-
-  def setOldRequest(oldRequest: ExchangeRequest) {
-    _oldRequest = oldRequest
-  }
+  override def oldRequest = super.oldRequest.asInstanceOf[ExchangeRequest]
 
   override def sender = _sender
 }

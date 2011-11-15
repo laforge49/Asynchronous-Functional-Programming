@@ -33,15 +33,10 @@ abstract class Exchange(threadManager: ThreadManager,
                         _bufferedMessenger: BufferedMessenger[ExchangeMessengerMessage] = null)
   extends ExchangeMessenger(threadManager, _bufferedMessenger) {
 
-  protected var _curReq: ExchangeRequest = null
   val atomicControl = new AtomicReference[Exchange]
   val idle = new Semaphore(1)
 
-  def curReq = _curReq
-
-  def setCurrentRequest(req: ExchangeRequest) {
-    _curReq = req
-  }
+  override def curReq = super.curReq.asInstanceOf[ExchangeRequest]
 
   def controllingExchange = atomicControl.get
 
@@ -60,16 +55,16 @@ abstract class Exchange(threadManager: ThreadManager,
     }
   }
 
-  def sendReq(targetActor: ExchangeActor,
+  override def sendReq(targetActor: ExchangeMessengerActor,
               exchangeRequest: ExchangeRequest,
               srcExchange: Exchange) {
-    if (async) srcExchange.putTo(targetActor.messageListDestination, exchangeRequest)
+    if (async) super.sendReq(targetActor, exchangeRequest, srcExchange)
     else {
       val srcControllingExchange = srcExchange.controllingExchange
       if (controllingExchange == srcControllingExchange) {
         _sendReq(exchangeRequest)
       } else if (!atomicControl.compareAndSet(null, srcControllingExchange)) {
-        srcExchange.putTo(targetActor.messageListDestination, exchangeRequest)
+        super.sendReq(targetActor, exchangeRequest, srcExchange)
       } else {
         idle.acquire
         try {
@@ -88,24 +83,9 @@ abstract class Exchange(threadManager: ThreadManager,
     poll
   }
 
-  override def exchangeReq(msg: ExchangeMessengerRequest) {
-    setCurrentRequest(msg.asInstanceOf[ExchangeRequest])
-    processRequest
-  }
-
-  protected def processRequest
-
-  def sendResponse(senderExchange: Exchange, rsp: ExchangeMessengerResponse) {
+  override def sendResponse(senderExchange: ExchangeMessenger, rsp: ExchangeMessengerResponse) {
     if (curReq.fastSend) {
       senderExchange.exchangeRsp(rsp)
-    } else putTo(senderExchange.bufferedMessenger, rsp)
+    } else super.sendResponse(senderExchange, rsp)
   }
-
-  override def exchangeRsp(msg: ExchangeMessengerResponse) {
-    val exchangeResponse = msg.asInstanceOf[ExchangeResponse]
-    setCurrentRequest(exchangeResponse.oldRequest)
-    processResponse(exchangeResponse)
-  }
-
-  protected def processResponse(msg: ExchangeResponse)
 }

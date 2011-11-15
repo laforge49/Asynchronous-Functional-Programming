@@ -30,7 +30,7 @@ final class MailboxReq(dst: Actor,
                        rf: Any => Unit,
                        data: AnyRef,
                        bound: Bound,
-                       src: ExchangeSource)
+                       src: ExchangeMessengerSource)
   extends ExchangeRequest(src) {
 
   var active = true

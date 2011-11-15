@@ -24,15 +24,15 @@
 package org.agilewiki.blip
 package exchange
 
-trait ExchangeActor extends ExchangeSource {
+trait ExchangeMessengerActor extends ExchangeMessengerSource {
   def exchange: Exchange
 
   def messageListDestination = exchange
 
-  override def responseFrom(respondingExchange: Exchange, rsp: ExchangeMessengerResponse) {
+  override def responseFrom(respondingExchange: ExchangeMessenger, rsp: ExchangeMessengerResponse) {
     val currentRequest = respondingExchange.curReq
     val exchangeResponse = rsp.asInstanceOf[ExchangeResponse]
-    exchangeResponse.oldRequest = currentRequest.oldRequest
+    exchangeResponse.setOldRequest(currentRequest.oldRequest)
     respondingExchange.sendResponse(exchange, rsp)
   }
 }

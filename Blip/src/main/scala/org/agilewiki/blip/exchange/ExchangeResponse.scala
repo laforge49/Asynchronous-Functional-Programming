@@ -27,5 +27,5 @@ package exchange
 class ExchangeResponse
   extends ExchangeMessengerResponse {
 
-  var oldRequest: ExchangeRequest = null
+  override def oldRequest = super.oldRequest.asInstanceOf[ExchangeRequest]
 }

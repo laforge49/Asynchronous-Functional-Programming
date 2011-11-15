@@ -30,7 +30,7 @@ import messenger._
 import exchange._
 
 class Future
-  extends ExchangeSource
+  extends ExchangeMessengerSource
   with MessageListDestination[ExchangeMessengerMessage] {
   @volatile private[this] var rsp: Any = _
   @volatile private[this] var satisfied = false

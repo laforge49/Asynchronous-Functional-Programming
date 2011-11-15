@@ -7,7 +7,7 @@ import java.util.concurrent.Semaphore
 
 class Sender(c: Int, threadManager: ThreadManager)
   extends Exchange(threadManager)
-  with ExchangeActor {
+  with ExchangeMessengerActor {
 
   val done = new Semaphore(0)
   val echo = new Echo(threadManager)

@@ -36,4 +36,12 @@ trait ExchangeMessengerSource {
    * to which lists of responses can be sent.
    */
   def messageListDestination: MessageListDestination[ExchangeMessengerMessage]
+
+  /**
+   * The responseFrom method is used to send the response to a request
+   * that was sent to an ExchangeMessenger.
+   */
+  def responseFrom(respondingExchange: ExchangeMessenger, rsp: ExchangeMessengerResponse) {
+    respondingExchange.putTo(messageListDestination, rsp)
+  }
 }

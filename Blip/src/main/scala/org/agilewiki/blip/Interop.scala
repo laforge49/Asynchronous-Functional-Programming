@@ -29,7 +29,7 @@ import exchange._
 import scala.actors.Reactor
 
 class Interop[T >: AnyRef](reactor: Reactor[T])
-  extends ExchangeSource
+  extends ExchangeMessengerSource
   with MessageListDestination[ExchangeMessengerMessage] {
 
   override def messageListDestination = this

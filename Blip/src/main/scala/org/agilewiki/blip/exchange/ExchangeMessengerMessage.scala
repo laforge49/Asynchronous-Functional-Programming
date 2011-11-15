@@ -37,6 +37,15 @@ class ExchangeMessengerMessage
  */
 class ExchangeMessengerRequest(_sender: ExchangeMessengerSource)
   extends ExchangeMessengerMessage {
+  
+  private var _oldRequest: ExchangeMessengerRequest = null
+
+  def oldRequest = _oldRequest
+
+  def setOldRequest(oldRequest: ExchangeMessengerRequest) {
+    _oldRequest = oldRequest
+  }
+
   /**
    * The sender method returns the object which sent the request.
    */
@@ -47,4 +56,14 @@ class ExchangeMessengerRequest(_sender: ExchangeMessengerSource)
  * All responses sent to an ExchangeMessenger must be either
  * ExchangeMessengerResponses or subclasses of ExchangeMessengerResponse.
  */
-class ExchangeMessengerResponse extends ExchangeMessengerMessage
+class ExchangeMessengerResponse
+  extends ExchangeMessengerMessage {
+
+  private var _oldRequest: ExchangeMessengerRequest = null
+
+  def oldRequest = _oldRequest
+
+  def setOldRequest(oldRequest: ExchangeMessengerRequest) {
+    _oldRequest = oldRequest
+  }
+}
