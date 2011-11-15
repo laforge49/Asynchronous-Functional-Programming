@@ -17,7 +17,7 @@ class S extends Actor {
   bind(classOf[SNE], {
     (msg, rf) =>
       exceptionHandler(msg, rf, se) {
-        ex =>
+        (ex, mailbox) =>
           println("S got exception " + ex.toString)
           rf(null)
       }
@@ -36,7 +36,7 @@ class D extends Actor {
   bind(classOf[AsyncServerEx], {
     (msg, rf) =>
       exceptionHandler(msg, rf, asyncServerEx) {
-        ex =>
+        (ex, mailbox) =>
           println("D got exception " + ex.toString)
           rf(null)
       }
@@ -51,7 +51,7 @@ class D extends Actor {
   bind(classOf[SyncServerEx], {
     (msg, rf) =>
       exceptionHandler(msg, rf, syncServerEx) {
-        ex =>
+        (ex, mailbox) =>
           println("D got exception " + ex.toString)
           rf(null)
       }
@@ -66,7 +66,7 @@ class D extends Actor {
   bind(classOf[AsyncRspEx], {
     (msg, rf) =>
       exceptionHandler(msg, rf, asyncRspEx) {
-        ex =>
+        (ex, mailbox) =>
           println("D got exception " + ex.toString)
           rf(null)
       }
@@ -83,7 +83,7 @@ class D extends Actor {
   bind(classOf[SyncRspEx], {
     (msg, rf) =>
       exceptionHandler(msg, rf, syncRspEx) {
-        ex =>
+        (ex, mailbox) =>
           println("D got exception " + ex.toString)
           rf(null)
       }

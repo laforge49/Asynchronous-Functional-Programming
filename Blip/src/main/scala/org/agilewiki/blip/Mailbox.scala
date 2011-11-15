@@ -45,15 +45,6 @@ class Mailbox(_mailboxFactory: MailboxFactory,
   }
 
   def reply(content: Any) {
-    val req = state.currentRequest
-    if (!req.active) {
-      return
-    }
-    req.active = false
-    val sender = req.sender
-    val rsp = new MailboxRsp(
-      req.responseFunction,
-      content)
-    sender.responseFrom(this, rsp)
+    state.currentRequest.reply(this, content)
   }
 }

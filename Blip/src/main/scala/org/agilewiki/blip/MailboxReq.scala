@@ -34,6 +34,10 @@ final class MailboxReq(dst: Actor,
   extends ExchangeRequest(src) {
 
   var active = true
+  var transactionContext: TransactionContext = null
+  var exceptionFunction: (Exception, Mailbox) => Unit = {
+    (ex, mailbox) => reply(mailbox, ex)
+  }
 
   def responseFunction = rf
 
@@ -42,4 +46,15 @@ final class MailboxReq(dst: Actor,
   def req = data
 
   def binding = bound
+
+  def reply(mailbox: Mailbox, content: Any) {
+    if (!active) {
+      return
+    }
+    active = false
+    val rsp = new MailboxRsp(
+      responseFunction,
+      content)
+    sender.responseFrom(mailbox, rsp)
+  }
 }

@@ -48,7 +48,7 @@ class SmallDataStoreRecoveryComponent(actor: Actor)
   bind(classOf[Recover], recover)
   bind(classOf[ProcessFile], {
     (msg, rf) => exceptionHandler(msg, rf, processFile) {
-      ex => {
+      (ex, mailbox) => {
         abort(ex, rf)
       }
     }

@@ -45,7 +45,7 @@ class TransactionProcessorComponent(actor: Actor)
   bindSafe(classOf[QueryTransaction], new Query(process))
   bindSafe(classOf[UpdateTransaction], new Update({
     (msg, rf) => exceptionHandler(msg, rf, process) {
-      ex => {
+      (ex, mailbox) => {
         systemServices(Abort(ex))(rf)
       }
     }
@@ -105,7 +105,7 @@ class TransactionProcessorComponent(actor: Actor)
   private def process(msg: AnyRef, rf: Any => Unit) {
     val req = msg.asInstanceOf[Transaction]
     val block = req.block
-    val tc = mailbox.state.transactionContext
+    val tc = mailbox.state.currentRequest.transactionContext
     if (req.isInstanceOf[UpdateTransaction]) {
       val ts = req.asInstanceOf[UpdateTransaction].timestamp
       val utc = tc.asInstanceOf[UpdateContext]

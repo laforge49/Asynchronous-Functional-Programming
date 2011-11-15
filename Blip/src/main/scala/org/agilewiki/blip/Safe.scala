@@ -106,11 +106,11 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
     val responseFunction: Any => Unit = {
       rsp => {
         rsp match {
-          case rsp: Exception => srcMailbox.state.exceptionFunction(rsp)
+          case rsp: Exception => srcMailbox.state.currentRequest.exceptionFunction(rsp, srcMailbox)
           case rsp => try {
             rf(rsp)
           } catch {
-            case ex: Exception => srcMailbox.state.exceptionFunction(ex)
+            case ex: Exception => srcMailbox.state.currentRequest.exceptionFunction(ex, srcMailbox)
           }
         }
       }
@@ -143,11 +143,11 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
     val responseFunction: Any => Unit = {
       rsp => {
         rsp match {
-          case rsp: Exception => srcMailbox.state.exceptionFunction(rsp)
+          case rsp: Exception => srcMailbox.state.currentRequest.exceptionFunction(rsp, srcMailbox)
           case rsp => try {
             rf(rsp)
           } catch {
-            case ex: Exception => srcMailbox.state.exceptionFunction(ex)
+            case ex: Exception => srcMailbox.state.currentRequest.exceptionFunction(ex, srcMailbox)
           }
         }
       }
@@ -167,7 +167,7 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
                          transactionContext: TransactionContext) {
     val transactionProcessor = mailboxReq.target
     val mailboxState = mailbox.state
-    mailboxState.transactionContext = transactionContext
+    mailboxState.currentRequest.transactionContext = transactionContext
     try {
       if (transactionProcessor.isInvalid) throw new IllegalStateException
       messageFunction(mailboxReq.req, {

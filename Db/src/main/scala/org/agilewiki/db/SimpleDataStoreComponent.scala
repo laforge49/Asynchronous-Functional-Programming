@@ -45,7 +45,7 @@ class SimpleDataStoreComponent(actor: Actor)
   bind(classOf[DirtyBlock], dirtyBlock)
   bind(classOf[DbRoot], {
     (msg, rf) => exceptionHandler(msg, rf, dbRoot) {
-      ex => {
+      (ex, mailbox) => {
         init(rf)
       }
     }
