@@ -23,7 +23,7 @@ class Sender(c: Int, b: Int, threadManager: ThreadManager)
   burst = b
   r = 0
   t0 = System.currentTimeMillis
-  echo.sendReq(echo, new ExchangeMessengerRequest(this), this)
+  echo.sendReq(echo, new ExchangeMessengerRequest(this, processResponse), this)
   flushPendingMsgs
 
   def finished {
@@ -34,7 +34,7 @@ class Sender(c: Int, b: Int, threadManager: ThreadManager)
 
   override protected def processRequest {}
 
-  override def processResponse(rsp: ExchangeMessengerResponse) {
+  def processResponse(rsp: Any) {
     if (r > 1) {
       r -= 1
     } else if (i > 0) {
@@ -43,7 +43,7 @@ class Sender(c: Int, b: Int, threadManager: ThreadManager)
       r = burst
       while (j > 0) {
         j -= 1
-        echo.sendReq(echo, new ExchangeMessengerRequest(this), this)
+        echo.sendReq(echo, new ExchangeMessengerRequest(this, processResponse), this)
       }
     } else {
       val t1 = System.currentTimeMillis

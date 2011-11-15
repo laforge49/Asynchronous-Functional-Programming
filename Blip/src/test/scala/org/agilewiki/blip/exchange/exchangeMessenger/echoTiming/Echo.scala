@@ -11,8 +11,6 @@ class Echo(threadManager: ThreadManager)
   override def exchangeMessenger = this
 
   override protected def processRequest {
-    curReq.sender.responseFrom(this, new ExchangeMessengerResponse)
+    reply(null)
   }
-
-  override protected def processResponse(rsp: ExchangeMessengerResponse) {}
 }

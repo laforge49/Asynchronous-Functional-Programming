@@ -117,6 +117,10 @@ abstract class ExchangeMessenger(threadManager: ThreadManager,
 
   protected def processRequest
 
+  def reply(content: Any) {
+    curReq.reply(this, content)
+  }
+
   def sendResponse(senderExchange: ExchangeMessenger, rsp: ExchangeMessengerResponse) {
     putTo(senderExchange.bufferedMessenger, rsp)
   }
@@ -126,8 +130,6 @@ abstract class ExchangeMessenger(threadManager: ThreadManager,
    */
   def exchangeRsp(msg: ExchangeMessengerResponse) {
     setCurrentRequest(msg.oldRequest)
-    processResponse(msg)
+    msg.responseFunction(msg.rsp)
   }
-
-  protected def processResponse(msg: ExchangeMessengerResponse)
 }

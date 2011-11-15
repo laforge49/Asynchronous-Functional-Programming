@@ -35,9 +35,10 @@ class ExchangeMessengerMessage
  * All requests sent to an ExchangeMessenger must be either
  * ExchangeMessengerRequests or subclasses of ExchangeMessengerRequest.
  */
-class ExchangeMessengerRequest(_sender: ExchangeMessengerSource)
+class ExchangeMessengerRequest(_sender: ExchangeMessengerSource,
+                               rf: Any => Unit)
   extends ExchangeMessengerMessage {
-  
+
   private var _oldRequest: ExchangeMessengerRequest = null
 
   def oldRequest = _oldRequest
@@ -50,20 +51,31 @@ class ExchangeMessengerRequest(_sender: ExchangeMessengerSource)
    * The sender method returns the object which sent the request.
    */
   def sender = _sender
+
+  def responseFunction = rf
+
+  def reply(exchangeMessenger: ExchangeMessenger, content: Any) {
+    val rsp = new ExchangeMessengerResponse(content)
+    sender.responseFrom(exchangeMessenger, rsp)
+  }
 }
 
 /**
  * All responses sent to an ExchangeMessenger must be either
  * ExchangeMessengerResponses or subclasses of ExchangeMessengerResponse.
  */
-class ExchangeMessengerResponse
+final class ExchangeMessengerResponse(data: Any)
   extends ExchangeMessengerMessage {
 
-  private var _oldRequest: ExchangeMessengerRequest = null
+  private var _request: ExchangeMessengerRequest = null
 
-  def oldRequest = _oldRequest
+  def oldRequest = _request.oldRequest
 
-  def setOldRequest(oldRequest: ExchangeMessengerRequest) {
-    _oldRequest = oldRequest
+  def setRequest(request: ExchangeMessengerRequest) {
+    _request = request
   }
+
+  def responseFunction = _request.responseFunction
+
+  def rsp = data
 }

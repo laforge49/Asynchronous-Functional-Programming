@@ -63,7 +63,7 @@ class Future
   override def incomingMessageList(blkmsg: ArrayList[ExchangeMessengerMessage]) {
     synchronized {
       if (!satisfied) {
-        rsp = blkmsg.get(0).asInstanceOf[MailboxRsp].rsp
+        rsp = blkmsg.get(0).asInstanceOf[ExchangeMessengerResponse].rsp
         satisfied = true
       }
       notify()

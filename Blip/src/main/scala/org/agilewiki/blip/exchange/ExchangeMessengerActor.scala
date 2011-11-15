@@ -31,7 +31,7 @@ trait ExchangeMessengerActor extends ExchangeMessengerSource {
 
   override def responseFrom(respondingExchange: ExchangeMessenger, rsp: ExchangeMessengerResponse) {
     val currentRequest = respondingExchange.curReq
-    rsp.setOldRequest(currentRequest.oldRequest)
+    rsp.setRequest(currentRequest)
     respondingExchange.sendResponse(exchangeMessenger, rsp)
   }
 }

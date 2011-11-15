@@ -55,13 +55,13 @@ class Interop[T >: AnyRef](reactor: Reactor[T])
   override def incomingMessageList(blkmsg: java.util.ArrayList[ExchangeMessengerMessage]) {
     var i = 0
     while (i < blkmsg.size) {
-      val mailboxRsp = blkmsg.get(i).asInstanceOf[MailboxRsp]
+      val mailboxRsp = blkmsg.get(i).asInstanceOf[ExchangeMessengerResponse]
       i += 1
       reactor ! mailboxRsp
     }
   }
 
-  def afpResponse(mailboxRsp: MailboxRsp) {
+  def afpResponse(mailboxRsp: ExchangeMessengerResponse) {
     mailboxRsp.responseFunction(mailboxRsp.rsp)
   }
 }

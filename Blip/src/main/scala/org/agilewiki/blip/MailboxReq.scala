@@ -31,7 +31,7 @@ final class MailboxReq(dst: Actor,
                        data: AnyRef,
                        bound: Bound,
                        src: ExchangeMessengerSource)
-  extends ExchangeRequest(src) {
+  extends ExchangeRequest(src, rf) {
 
   var active = true
   var transactionContext: TransactionContext = null
@@ -41,22 +41,17 @@ final class MailboxReq(dst: Actor,
 
   override def oldRequest = super.oldRequest.asInstanceOf[MailboxReq]
 
-  def responseFunction = rf
-
   def target = dst
 
   def req = data
 
   def binding = bound
 
-  def reply(mailbox: Mailbox, content: Any) {
+  override def reply(exchangeMessenger: ExchangeMessenger, content: Any) {
     if (!active) {
       return
     }
     active = false
-    val rsp = new MailboxRsp(
-      responseFunction,
-      content)
-    sender.responseFrom(mailbox, rsp)
+    super.reply(exchangeMessenger, content)
   }
 }

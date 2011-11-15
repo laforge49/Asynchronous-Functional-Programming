@@ -47,7 +47,7 @@ class SimpleReactor(systemServices: SystemServices) extends Reactor[Any] {
   override def act {
     loop {
       react {
-        case afpResponse: MailboxRsp => interop.afpResponse(afpResponse)
+        case afpResponse: ExchangeMessengerResponse => interop.afpResponse(afpResponse)
         case req: T1 => println("a")
         case req: T2 => {
           interop.afpSend(simpleActor, SimpleEcho("b")) {

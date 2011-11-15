@@ -18,7 +18,7 @@ class Sender(c: Int, threadManager: ThreadManager)
   count = c
   i = c
   t0 = System.currentTimeMillis
-  echo.sendReq(echo, new ExchangeRequest(this), this)
+  echo.sendReq(echo, new ExchangeRequest(this, processResponse), this)
   flushPendingMsgs
 
   def finished {
@@ -29,10 +29,10 @@ class Sender(c: Int, threadManager: ThreadManager)
 
   override def processRequest {}
 
-  override def processResponse(rsp: ExchangeMessengerResponse) {
+  def processResponse(rsp: Any) {
     if (i > 0) {
       i -= 1
-      echo.sendReq(echo, new ExchangeRequest(this), this)
+      echo.sendReq(echo, new ExchangeRequest(this, processResponse), this)
     } else {
       val t1 = System.currentTimeMillis
       if (t1 != t0) println("msgs per sec = " + (count * 2L * 1000L / (t1 - t0)))
