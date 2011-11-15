@@ -27,5 +27,5 @@ package exchange
 class ExchangeResponse
   extends ExchangeMessengerResponse {
 
-  var sourceState: ExchangeState = null
+  var oldRequest: ExchangeRequest = null
 }

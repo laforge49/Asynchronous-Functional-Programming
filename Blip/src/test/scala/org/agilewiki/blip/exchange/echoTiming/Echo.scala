@@ -10,8 +10,8 @@ class Echo(threadManager: ThreadManager)
 
   override def exchange = this
 
-  override def processRequest(req: ExchangeRequest) {
-    req.sender.responseFrom(this, new ExchangeResponse)
+  override def processRequest {
+    curReq.sender.responseFrom(this, new ExchangeResponse)
   }
 
   override def processResponse(rsp: ExchangeResponse) {}

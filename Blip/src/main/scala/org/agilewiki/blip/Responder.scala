@@ -59,11 +59,11 @@ trait Responder extends SystemServicesGetter {
     if (mailbox == null) throw
       new UnsupportedOperationException("Immutable actors can not use excepton handlers")
     val actor = activeActor.actor
-    val oldExceptionFunction = mailbox.state.currentRequest.exceptionFunction
-    mailbox.state.currentRequest.exceptionFunction = exceptionFunction
+    val oldExceptionFunction = mailbox.curReq.exceptionFunction
+    mailbox.curReq.exceptionFunction = exceptionFunction
     try {
       messageFunction(msg, rsp => {
-        mailbox.state.currentRequest.exceptionFunction = oldExceptionFunction
+        mailbox.curReq.exceptionFunction = oldExceptionFunction
         try {
           responseFunction(rsp)
         } catch {
@@ -75,7 +75,7 @@ trait Responder extends SystemServicesGetter {
         exceptionFunction(ex.getCause.asInstanceOf[Exception], mailbox)
       }
       case ex: Exception => {
-        mailbox.state.currentRequest.exceptionFunction = oldExceptionFunction
+        mailbox.curReq.exceptionFunction = oldExceptionFunction
         exceptionFunction(ex, mailbox)
       }
     }

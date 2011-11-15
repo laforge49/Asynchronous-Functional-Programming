@@ -30,9 +30,9 @@ trait ExchangeActor extends ExchangeSource {
   def messageListDestination = exchange
 
   override def responseFrom(respondingExchange: Exchange, rsp: ExchangeMessengerResponse) {
-    val currentRequest = respondingExchange.state.currentRequest
+    val currentRequest = respondingExchange.curReq
     val exchangeResponse = rsp.asInstanceOf[ExchangeResponse]
-    exchangeResponse.sourceState = currentRequest.sourceState
+    exchangeResponse.oldRequest = currentRequest.oldRequest
     respondingExchange.sendResponse(exchange, rsp)
   }
 }

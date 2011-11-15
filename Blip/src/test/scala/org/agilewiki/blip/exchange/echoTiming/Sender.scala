@@ -27,7 +27,7 @@ class Sender(c: Int, threadManager: ThreadManager)
 
   override def exchange = this
 
-  override def processRequest(req: ExchangeRequest) {}
+  override def processRequest {}
 
   override def processResponse(rsp: ExchangeResponse) {
     if (i > 0) {

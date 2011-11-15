@@ -24,19 +24,19 @@
 package org.agilewiki.blip
 
 import exchange._
+import messenger._
 
 class Mailbox(_mailboxFactory: MailboxFactory,
               async: Boolean,
-              stateFactory: MailboxStateFactory = new MailboxStateFactory)
-  extends Exchange(_mailboxFactory.threadManager, async, stateFactory) {
+              _bufferedMessenger: BufferedMessenger[ExchangeMessengerMessage] = null)
+  extends Exchange(_mailboxFactory.threadManager, async, _bufferedMessenger) {
 
-  override def state = _state.asInstanceOf[MailboxState]
+  override def curReq = super.curReq.asInstanceOf[MailboxReq]
 
   def mailboxFactory: MailboxFactory = _mailboxFactory
 
-  override protected def processRequest(msg: ExchangeRequest) {
-    val req = msg.asInstanceOf[MailboxReq]
-    req.binding.process(this, req)
+  override protected def processRequest {
+    curReq.binding.process(this, curReq)
   }
 
   override def processResponse(msg: ExchangeResponse) {
@@ -45,6 +45,6 @@ class Mailbox(_mailboxFactory: MailboxFactory,
   }
 
   def reply(content: Any) {
-    state.currentRequest.reply(this, content)
+    curReq.reply(this, content)
   }
 }

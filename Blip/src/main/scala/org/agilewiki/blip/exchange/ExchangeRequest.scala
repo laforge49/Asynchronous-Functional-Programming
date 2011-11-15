@@ -28,7 +28,13 @@ class ExchangeRequest(_sender: ExchangeSource)
   extends ExchangeMessengerRequest(_sender) {
 
   var fastSend = false
-  var sourceState: ExchangeState = null
+  var _oldRequest: ExchangeRequest = null
+
+  def oldRequest = _oldRequest
+
+  def setOldRequest(oldRequest: ExchangeRequest) {
+    _oldRequest = oldRequest
+  }
 
   override def sender = _sender
 }
