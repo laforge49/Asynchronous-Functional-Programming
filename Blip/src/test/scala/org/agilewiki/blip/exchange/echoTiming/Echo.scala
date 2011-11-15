@@ -8,11 +8,11 @@ class Echo(threadManager: ThreadManager)
   extends Exchange(threadManager)
   with ExchangeMessengerActor {
 
-  override def exchange = this
+  override def exchangeMessenger = this
 
   override def processRequest {
     curReq.sender.responseFrom(this, new ExchangeResponse)
   }
 
-  override def processResponse(rsp: ExchangeResponse) {}
+  override def processResponse(rsp: ExchangeMessengerResponse) {}
 }

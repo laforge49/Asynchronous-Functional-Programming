@@ -7,7 +7,7 @@ import java.util.concurrent.Semaphore
 
 class Sender(c: Int, threadManager: ThreadManager)
   extends ExchangeMessenger(threadManager)
-  with ExchangeMessengerSource {
+  with ExchangeMessengerActor {
 
   val done = new Semaphore(0)
   val echo = new Echo(threadManager)
@@ -18,21 +18,21 @@ class Sender(c: Int, threadManager: ThreadManager)
   count = c
   i = c
   t0 = System.currentTimeMillis
-  putTo(echo, new ExchangeMessengerRequest(this))
+  echo.sendReq(echo, new ExchangeMessengerRequest(this), this)
   flushPendingMsgs
 
   def finished {
     done.acquire
   }
 
-  override def messageListDestination: MessageListDestination[ExchangeMessengerMessage] = this
+  override def exchangeMessenger = this
 
-  override def exchangeReq(req: ExchangeMessengerRequest) {}
+  override def processRequest {}
 
-  override def exchangeRsp(rsp: ExchangeMessengerResponse) {
+  override def processResponse(rsp: ExchangeMessengerResponse) {
     if (i > 0) {
       i -= 1
-      putTo(echo, new ExchangeMessengerRequest(this))
+      echo.sendReq(echo, new ExchangeMessengerRequest(this), this)
     } else {
       val t1 = System.currentTimeMillis
       if (t1 != t0) println("msgs per sec = " + (count * 2L * 1000L / (t1 - t0)))

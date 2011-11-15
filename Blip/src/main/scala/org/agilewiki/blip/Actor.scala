@@ -268,5 +268,5 @@ class Actor
 
   def newSyncMailbox = mailboxFactory.newSyncMailbox
 
-  override def exchange = mailbox
+  override def exchangeMessenger = mailbox
 }

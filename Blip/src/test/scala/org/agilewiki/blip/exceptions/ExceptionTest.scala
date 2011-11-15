@@ -45,6 +45,7 @@ class D extends Actor {
   def asyncServerEx(msg: AnyRef, rf: Any => Unit) {
     val s = new S
     s.setMailbox(newAsyncMailbox)
+    println("ase "+mailbox.curReq)
     s(SE())(rsp => rf)
   }
 

@@ -6,14 +6,13 @@ import messenger._
 
 class Echo(threadManager: ThreadManager)
   extends ExchangeMessenger(threadManager)
-  with ExchangeMessengerSource {
+  with ExchangeMessengerActor {
 
-  override def messageListDestination: MessageListDestination[ExchangeMessengerMessage] = this
+  override def exchangeMessenger = this
 
-  override def exchangeReq(req: ExchangeMessengerRequest) {
-    val sender = req.sender
-    putTo(sender.messageListDestination, new ExchangeMessengerResponse)
+  override protected def processRequest {
+    curReq.sender.responseFrom(this, new ExchangeMessengerResponse)
   }
 
-  override def exchangeRsp(rsp: ExchangeMessengerResponse) {}
+  override protected def processResponse(msg: ExchangeMessengerResponse) {}
 }

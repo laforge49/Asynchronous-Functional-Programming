@@ -25,11 +25,11 @@ class Sender(c: Int, threadManager: ThreadManager)
     done.acquire
   }
 
-  override def exchange = this
+  override def exchangeMessenger = this
 
   override def processRequest {}
 
-  override def processResponse(rsp: ExchangeResponse) {
+  override def processResponse(rsp: ExchangeMessengerResponse) {
     if (i > 0) {
       i -= 1
       echo.sendReq(echo, new ExchangeRequest(this), this)

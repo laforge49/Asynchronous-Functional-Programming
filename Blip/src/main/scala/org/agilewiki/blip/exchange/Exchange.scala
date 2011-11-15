@@ -56,19 +56,20 @@ abstract class Exchange(threadManager: ThreadManager,
   }
 
   override def sendReq(targetActor: ExchangeMessengerActor,
-              exchangeRequest: ExchangeRequest,
-              srcExchange: Exchange) {
-    if (async) super.sendReq(targetActor, exchangeRequest, srcExchange)
+              exchangeMessengerRequest: ExchangeMessengerRequest,
+              srcExchange: ExchangeMessenger) {
+    if (async) super.sendReq(targetActor, exchangeMessengerRequest, srcExchange)
     else {
-      val srcControllingExchange = srcExchange.controllingExchange
+      exchangeMessengerRequest.setOldRequest(srcExchange.curReq)
+      val srcControllingExchange = srcExchange.asInstanceOf[Exchange].controllingExchange
       if (controllingExchange == srcControllingExchange) {
-        _sendReq(exchangeRequest)
+        _sendReq(exchangeMessengerRequest)
       } else if (!atomicControl.compareAndSet(null, srcControllingExchange)) {
-        super.sendReq(targetActor, exchangeRequest, srcExchange)
+        super.sendReq(targetActor, exchangeMessengerRequest, srcExchange)
       } else {
         idle.acquire
         try {
-          _sendReq(exchangeRequest)
+          _sendReq(exchangeMessengerRequest)
         } finally {
           atomicControl.set(null)
           idle.release
@@ -77,9 +78,9 @@ abstract class Exchange(threadManager: ThreadManager,
     }
   }
 
-  private def _sendReq(exchangeRequest: ExchangeRequest) {
-    exchangeRequest.fastSend = true
-    exchangeReq(exchangeRequest)
+  private def _sendReq(exchangeMessengerRequest: ExchangeMessengerRequest) {
+    exchangeMessengerRequest.asInstanceOf[ExchangeRequest].fastSend = true
+    exchangeReq(exchangeMessengerRequest)
     poll
   }
 

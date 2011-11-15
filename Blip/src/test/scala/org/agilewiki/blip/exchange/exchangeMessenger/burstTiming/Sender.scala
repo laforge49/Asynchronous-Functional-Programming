@@ -7,7 +7,7 @@ import java.util.concurrent.Semaphore
 
 class Sender(c: Int, b: Int, threadManager: ThreadManager)
   extends ExchangeMessenger(threadManager)
-  with ExchangeMessengerSource {
+  with ExchangeMessengerActor {
 
   val done = new Semaphore(0)
   val echo = new Echo(threadManager)
@@ -23,18 +23,18 @@ class Sender(c: Int, b: Int, threadManager: ThreadManager)
   burst = b
   r = 0
   t0 = System.currentTimeMillis
-  putTo(echo, new ExchangeMessengerRequest(this))
+  echo.sendReq(echo, new ExchangeMessengerRequest(this), this)
   flushPendingMsgs
 
   def finished {
     done.acquire
   }
 
-  override def messageListDestination: MessageListDestination[ExchangeMessengerMessage] = this
+  override def exchangeMessenger = this
 
-  override def exchangeReq(req: ExchangeMessengerRequest) {}
+  override protected def processRequest {}
 
-  override def exchangeRsp(rsp: ExchangeMessengerResponse) {
+  override def processResponse(rsp: ExchangeMessengerResponse) {
     if (r > 1) {
       r -= 1
     } else if (i > 0) {
@@ -43,7 +43,7 @@ class Sender(c: Int, b: Int, threadManager: ThreadManager)
       r = burst
       while (j > 0) {
         j -= 1
-        putTo(echo, new ExchangeMessengerRequest(this))
+        echo.sendReq(echo, new ExchangeMessengerRequest(this), this)
       }
     } else {
       val t1 = System.currentTimeMillis

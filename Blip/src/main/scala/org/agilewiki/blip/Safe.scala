@@ -107,7 +107,9 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
     val responseFunction: Any => Unit = {
       rsp => {
         rsp match {
-          case rsp: Exception => srcMailbox.curReq.exceptionFunction(rsp, srcMailbox)
+          case rsp: Exception => {
+            srcMailbox.curReq.exceptionFunction(rsp, srcMailbox)
+          }
           case rsp => try {
             rf(rsp)
           } catch {

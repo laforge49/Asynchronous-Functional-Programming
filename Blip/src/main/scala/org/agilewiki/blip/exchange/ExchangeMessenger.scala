@@ -101,15 +101,16 @@ abstract class ExchangeMessenger(threadManager: ThreadManager,
   }
 
   def sendReq(targetActor: ExchangeMessengerActor,
-              exchangeRequest: ExchangeRequest,
-              srcExchange: Exchange) {
-    srcExchange.putTo(targetActor.messageListDestination, exchangeRequest)
+              exchangeMessengerRequest: ExchangeMessengerRequest,
+              srcExchange: ExchangeMessenger) {
+    exchangeMessengerRequest.setOldRequest(srcExchange.curReq)
+    srcExchange.putTo(targetActor.messageListDestination, exchangeMessengerRequest)
   }
 
   /**
    * The exchangeReq method is called when there is an incoming request to process.
    */
-  override def exchangeReq(msg: ExchangeMessengerRequest) {
+  def exchangeReq(msg: ExchangeMessengerRequest) {
     setCurrentRequest(msg)
     processRequest
   }
@@ -123,10 +124,9 @@ abstract class ExchangeMessenger(threadManager: ThreadManager,
   /**
    * The exchangeRsp method is called when there is an incoming response to process.
    */
-  override def exchangeRsp(msg: ExchangeMessengerResponse) {
-    val exchangeResponse = msg
-    setCurrentRequest(exchangeResponse.oldRequest)
-    processResponse(exchangeResponse)
+  def exchangeRsp(msg: ExchangeMessengerResponse) {
+    setCurrentRequest(msg.oldRequest)
+    processResponse(msg)
   }
 
   protected def processResponse(msg: ExchangeMessengerResponse)

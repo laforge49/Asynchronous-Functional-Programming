@@ -39,7 +39,7 @@ class Mailbox(_mailboxFactory: MailboxFactory,
     curReq.binding.process(this, curReq)
   }
 
-  override def processResponse(msg: ExchangeResponse) {
+  override def processResponse(msg: ExchangeMessengerResponse) {
     val rsp = msg.asInstanceOf[MailboxRsp]
     rsp.responseFunction(rsp.rsp)
   }
