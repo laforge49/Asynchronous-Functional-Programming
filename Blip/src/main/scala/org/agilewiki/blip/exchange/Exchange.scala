@@ -73,10 +73,10 @@ abstract class Exchange(threadManager: ThreadManager,
     exchangeRequest.sourceState = srcExchange.state
     if (async) srcExchange.putTo(targetActor.messageListDestination, exchangeRequest)
     else {
-      val controllingMailbox = srcExchange.asInstanceOf[Mailbox].controllingExchange
-      if (controllingMailbox == controllingExchange) {
+      val srcControllingExchange = srcExchange.controllingExchange
+      if (controllingExchange == srcControllingExchange) {
         _sendReq(exchangeRequest)
-      } else if (!atomicControl.compareAndSet(null, controllingMailbox)) {
+      } else if (!atomicControl.compareAndSet(null, srcControllingExchange)) {
         srcExchange.putTo(targetActor.messageListDestination, exchangeRequest)
       } else {
         idle.acquire
@@ -90,10 +90,9 @@ abstract class Exchange(threadManager: ThreadManager,
     }
   }
 
-  private def _sendReq(exchangeRequest: ExchangeMessengerRequest) {
-    val req = exchangeRequest.asInstanceOf[MailboxReq]
-    req.fastSend = true
-    exchangeReq(req)
+  private def _sendReq(exchangeRequest: ExchangeRequest) {
+    exchangeRequest.fastSend = true
+    exchangeReq(exchangeRequest)
     poll
   }
 

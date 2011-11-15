@@ -24,8 +24,6 @@
 package org.agilewiki.blip
 package exchange
 
-import messenger.MessageListDestination
-
 trait ExchangeActor extends ExchangeSource {
   def exchange: Exchange
 
