@@ -2,6 +2,7 @@ package org.agilewiki.blip
 package exchange
 package echoTiming
 
+import annotation.tailrec
 import messenger._
 import java.util.concurrent.Semaphore
 
@@ -29,15 +30,33 @@ class Sender(c: Int, threadManager: ThreadManager)
 
   override def processRequest {}
 
-  def processResponse(rsp: Any) {
-    if (i > 0) {
-      i -= 1
-      echo.sendReq(echo, new ExchangeRequest(this, processResponse), this)
-    } else {
+  private def dummy(rsp: Any) {
+    processResponse(rsp)
+  }
+
+  @tailrec private def processResponse(rsp: Any) {
+    if (i < 1) {
       val t1 = System.currentTimeMillis
       if (t1 != t0) println("msgs per sec = " + (count * 2L * 1000L / (t1 - t0)))
       threadManager.close
       done.release
+      return
     }
+    var async = false
+    var sync = false
+    i -= 1
+    var rsp: Any = null
+    echo.sendReq(echo, new ExchangeRequest(this, {
+      msg => {
+        rsp = msg
+        if (async) dummy(rsp)
+        else sync = true
+      }
+    }), this)
+    if (!sync) {
+      async = true
+      return
+    }
+    processResponse(rsp)
   }
 }
