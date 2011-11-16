@@ -24,12 +24,29 @@
 package org.agilewiki.blip
 package exchange
 
-trait ExchangeMessengerActor extends ExchangeMessengerSource {
+/**
+ * Objects which implement ExchangeMessengerActor can send requests and
+ * receive responses.
+ */
+trait ExchangeMessengerActor
+  extends ExchangeMessengerSource {
+
+  /**
+   * The exchangeMessenger method returns the actor's ExchangeMessenger object.
+   */
   def exchangeMessenger: ExchangeMessenger
 
+  /**
+   * Lists of requests and responses are passed
+   * to the actor's exchangeMessenger object.
+   */
   def messageListDestination = exchangeMessenger
 
-  override def responseFrom(respondingExchange: ExchangeMessenger, rsp: ExchangeMessengerResponse) {
+  /**
+   * Enqueue a response for subsequent processing.
+   */
+  override def responseFrom(respondingExchange: ExchangeMessenger,
+                            rsp: ExchangeMessengerResponse) {
     val currentRequest = respondingExchange.curReq
     rsp.setRequest(currentRequest)
     respondingExchange.sendResponse(exchangeMessenger, rsp)

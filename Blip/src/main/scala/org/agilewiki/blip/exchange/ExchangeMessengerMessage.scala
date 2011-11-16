@@ -39,10 +39,19 @@ class ExchangeMessengerRequest(_sender: ExchangeMessengerSource,
                                rf: Any => Unit)
   extends ExchangeMessengerMessage {
 
+  /**
+   * Request messages are linked together using _oldRequest.
+   */
   private var _oldRequest: ExchangeMessengerRequest = null
 
+  /**
+   * Return the old request.
+   */
   def oldRequest = _oldRequest
 
+  /**
+   * Link this request to the old request.
+   */
   def setOldRequest(oldRequest: ExchangeMessengerRequest) {
     _oldRequest = oldRequest
   }
@@ -52,8 +61,14 @@ class ExchangeMessengerRequest(_sender: ExchangeMessengerSource,
    */
   def sender = _sender
 
+  /**
+   * The function to be executed when processing a response.
+   */
   def responseFunction = rf
 
+  /**
+   * Send a response.
+   */
   def reply(exchangeMessenger: ExchangeMessenger, content: Any) {
     val rsp = new ExchangeMessengerResponse(content)
     sender.responseFrom(exchangeMessenger, rsp)
@@ -67,15 +82,32 @@ class ExchangeMessengerRequest(_sender: ExchangeMessengerSource,
 final class ExchangeMessengerResponse(data: Any)
   extends ExchangeMessengerMessage {
 
+  /**
+   * The request for which this is the response.
+   */
   private var _request: ExchangeMessengerRequest = null
 
-  def oldRequest = _request.oldRequest
-
+  /**
+   * Associate this response with the request.
+   */
   def setRequest(request: ExchangeMessengerRequest) {
     _request = request
   }
 
+  /**
+   * Return the previous request.
+   * This method is used to set the current request in the
+   * sending ExchangeMessenger just prior to processing the response.
+   */
+  def oldRequest = _request.oldRequest
+
+  /**
+   * The function to be used to process the response.
+   */
   def responseFunction = _request.responseFunction
 
+  /**
+   * The actual response data.
+   */
   def rsp = data
 }

@@ -44,8 +44,16 @@ abstract class ExchangeMessenger(threadManager: ThreadManager,
 
   bufferedMessenger.setMessageProcessor(this)
 
+  /**
+   * Returns the request being processed.
+   */
   def curReq = _curReq
 
+  /**
+   * Specify a different message that is being processed.
+   * This method is called when a new request is to be processed and
+   * on receipt of a response message.
+   */
   def setCurrentRequest(req: ExchangeMessengerRequest) {
     _curReq = req
   }
@@ -100,6 +108,9 @@ abstract class ExchangeMessenger(threadManager: ThreadManager,
     }
   }
 
+  /**
+   * Enqueue a request for subsequent processing on another thread.
+   */
   def sendReq(targetActor: ExchangeMessengerActor,
               exchangeMessengerRequest: ExchangeMessengerRequest,
               srcExchange: ExchangeMessenger) {
@@ -115,12 +126,21 @@ abstract class ExchangeMessenger(threadManager: ThreadManager,
     processRequest
   }
 
+  /**
+   * Process the curReq message.
+   */
   protected def processRequest
 
+  /**
+   * Send a response to the current message being processed.
+   */
   def reply(content: Any) {
     curReq.reply(this, content)
   }
 
+  /**
+   * Enqueue a response message for subsequent processing on a different thread.
+   */
   def sendResponse(senderExchange: ExchangeMessenger, rsp: ExchangeMessengerResponse) {
     putTo(senderExchange.bufferedMessenger, rsp)
   }
