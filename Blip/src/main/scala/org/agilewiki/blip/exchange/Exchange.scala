@@ -28,25 +28,46 @@ import messenger._
 import java.util.concurrent.atomic.AtomicReference
 import java.util.concurrent.Semaphore
 
+/**
+ * The Exchange class supports synchronous exchanges of messages when the exchange
+ * receiving the request is idle.
+ */
 abstract class Exchange(threadManager: ThreadManager,
                         async: Boolean = false,
                         _bufferedMessenger: BufferedMessenger[ExchangeMessengerMessage] = null)
   extends ExchangeMessenger(threadManager, _bufferedMessenger) {
 
+  /**
+   * Tracks which exchange has control. If an exchange can gain control
+   * over another exchange, it can send requests to it synchronously.
+   */
   val atomicControl = new AtomicReference[Exchange]
-  val idle = new Semaphore(1)
 
+  /**
+   * A control semaphore is released when another exchange releases control.
+   * This semaphore is used to wake up a thread which has been assigned to
+   * the exchange.
+   */
+  val control = new Semaphore(1)
+
+  /**
+   * Recasts ExchangeRequest.curReq as an ExchangeRequest.
+   */
   override def curReq = super.curReq.asInstanceOf[ExchangeRequest]
 
+  /**
+   * Returns the controlling exchange, or null.
+   */
   def controllingExchange = atomicControl.get
 
+  /**
+   * The haveMessage method is called by a thread when the thread is been assigned to
+   * the exchange. A call to haveMessage results a call to poll, but only if
+   * no other exchange is in control.
+   */
   override def haveMessage {
     if (async) poll
-    else {
-      while (!atomicControl.compareAndSet(null, this)) {
-        idle.acquire
-        idle.release
-      }
+    else if (atomicControl.compareAndSet(null, this)) {
       try {
         poll
       } finally {
@@ -67,12 +88,12 @@ abstract class Exchange(threadManager: ThreadManager,
       } else if (!atomicControl.compareAndSet(null, srcControllingExchange)) {
         super.sendReq(targetActor, exchangeMessengerRequest, srcExchange)
       } else {
-        idle.acquire
+        control.acquire
         try {
           _sendReq(exchangeMessengerRequest)
         } finally {
           atomicControl.set(null)
-          idle.release
+          control.release
         }
       }
     }

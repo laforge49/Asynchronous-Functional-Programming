@@ -12,7 +12,7 @@ class BurstTimingTest extends SpecificationWithJUnit {
       val c = 10//000
       val b = 10//000
       val sender = new Sender(c, b, threadManager)
-      sender.finished //about 109 nanoseconds per message
+      sender.finished //about 98 nanoseconds per message
     }
   }
 }

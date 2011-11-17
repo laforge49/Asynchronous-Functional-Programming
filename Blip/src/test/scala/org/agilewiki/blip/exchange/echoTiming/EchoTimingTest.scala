@@ -11,7 +11,7 @@ class EchoTimingTest extends SpecificationWithJUnit {
       val threadManager = new MessengerThreadManager
       val c = 10//0000000
       val sender = new Sender(c, threadManager) //c should be at least 100 million
-      sender.finished //about 102 nanoseconds per message
+      sender.finished //about 94 nanoseconds per message
     }
   }
 }

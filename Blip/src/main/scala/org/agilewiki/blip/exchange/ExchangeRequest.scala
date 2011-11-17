@@ -24,8 +24,14 @@
 package org.agilewiki.blip
 package exchange
 
+/**
+ * ExchangeRequest is used to support synchronous message passing between Exchanges.
+ */
 class ExchangeRequest(_sender: ExchangeMessengerSource, rf: Any => Unit)
   extends ExchangeMessengerRequest(_sender, rf) {
 
+  /**
+   * If a request is sent synchronously, fastSend is set to true.
+   */
   var fastSend = false
 }
