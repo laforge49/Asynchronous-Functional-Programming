@@ -25,8 +25,8 @@ package org.agilewiki.blip
 package exchange
 
 /**
- * Objects which implement ExchangeMessengerActor can send requests and
- * receive responses.
+ * Objects which implement ExchangeMessengerActor can send and receive
+ * both requests and responses.
  */
 trait ExchangeMessengerActor
   extends ExchangeMessengerSource {

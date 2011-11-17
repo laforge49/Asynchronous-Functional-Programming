@@ -28,8 +28,7 @@ import messenger._
 import java.util.ArrayList
 
 /**
- * ExchangeMessenger distinguishes between request and response messages,
- * with a response assured for every request received.
+ * ExchangeMessenger distinguishes between request and response messages.
  */
 abstract class ExchangeMessenger(threadManager: ThreadManager,
                                  _bufferedMessenger: BufferedMessenger[ExchangeMessengerMessage] = null)
