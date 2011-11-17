@@ -48,7 +48,7 @@ class Messenger[T](threadManager: ThreadManager)
    * The isEmpty method returns true when there are no messages to be processed,
    * though the results may not always be correct due to concurrency issues.
    */
-  def isEmpty = queue.size() == 0
+  def isEmpty = queue.peek == null
 
   /**
    * The put method adds a message to the queue of messages to be processed.

@@ -24,6 +24,7 @@
 package org.agilewiki.blip
 package exchange
 
+import annotation.tailrec
 import messenger._
 import java.util.concurrent.atomic.AtomicReference
 import java.util.concurrent.Semaphore
@@ -44,13 +45,6 @@ abstract class Exchange(threadManager: ThreadManager,
   val atomicControl = new AtomicReference[Exchange]
 
   /**
-   * A control semaphore is released when another exchange releases control.
-   * This semaphore is used to wake up a thread which has been assigned to
-   * the exchange.
-   */
-  val control = new Semaphore(1)
-
-  /**
    * Recasts ExchangeRequest.curReq as an ExchangeRequest.
    */
   override def curReq = super.curReq.asInstanceOf[ExchangeRequest]
@@ -66,7 +60,7 @@ abstract class Exchange(threadManager: ThreadManager,
    * no other exchange is in control.
    */
   override def haveMessage {
-    if (async) poll
+    if (async) super.haveMessage
     else if (atomicControl.compareAndSet(null, this)) {
       try {
         poll
@@ -77,14 +71,26 @@ abstract class Exchange(threadManager: ThreadManager,
   }
 
   /**
+   * Process a request synchronously.
+   */
+  private def _sendReq(exchangeMessengerRequest: ExchangeMessengerRequest) {
+    if (exchangeMessengerRequest != null) {
+      exchangeMessengerRequest.asInstanceOf[ExchangeRequest].fastSend = true
+      exchangeReq(exchangeMessengerRequest)
+    }
+    poll
+  }
+
+  /**
    * If control can be gained over the target exchange, process the request synchronously,
    * otherwise enqueue the request for subsequent processing on another thread.
    */
-  override def sendReq(targetActor: ExchangeMessengerActor,
-              exchangeMessengerRequest: ExchangeMessengerRequest,
-              srcExchange: ExchangeMessenger) {
-    if (async) super.sendReq(targetActor, exchangeMessengerRequest, srcExchange)
-    else {
+  final override def sendReq(targetActor: ExchangeMessengerActor,
+                                      exchangeMessengerRequest: ExchangeMessengerRequest,
+                                      srcExchange: ExchangeMessenger) {
+    if (async) {
+      super.sendReq(targetActor, exchangeMessengerRequest, srcExchange)
+    } else {
       exchangeMessengerRequest.setOldRequest(srcExchange.curReq)
       val srcControllingExchange = srcExchange.asInstanceOf[Exchange].controllingExchange
       if (controllingExchange == srcControllingExchange) {
@@ -92,24 +98,32 @@ abstract class Exchange(threadManager: ThreadManager,
       } else if (!atomicControl.compareAndSet(null, srcControllingExchange)) {
         super.sendReq(targetActor, exchangeMessengerRequest, srcExchange)
       } else {
-        control.acquire
         try {
           _sendReq(exchangeMessengerRequest)
         } finally {
           atomicControl.set(null)
-          control.release
         }
       }
+      if (!isEmpty) sendRem(srcExchange)
     }
   }
 
   /**
-   * Process a request synchronously.
+   * Handle a potential race condition.
    */
-  private def _sendReq(exchangeMessengerRequest: ExchangeMessengerRequest) {
-    exchangeMessengerRequest.asInstanceOf[ExchangeRequest].fastSend = true
-    exchangeReq(exchangeMessengerRequest)
-    poll
+  @tailrec final def sendRem(srcExchange: ExchangeMessenger) {
+    val srcControllingExchange = srcExchange.asInstanceOf[Exchange].controllingExchange
+    if (controllingExchange == srcControllingExchange) {
+      poll
+    } else if (atomicControl.compareAndSet(null, srcControllingExchange)) {
+      try {
+        poll
+      } finally {
+        atomicControl.set(null)
+      }
+    } else return
+    if (isEmpty) return
+    sendRem(srcExchange)
   }
 
   /**
