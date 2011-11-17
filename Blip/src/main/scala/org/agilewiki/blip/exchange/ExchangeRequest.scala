@@ -27,7 +27,5 @@ package exchange
 class ExchangeRequest(_sender: ExchangeMessengerSource, rf: Any => Unit)
   extends ExchangeMessengerRequest(_sender, rf) {
 
-var fastSend = false
-
-override def sender = _sender
+  var fastSend = false
 }
