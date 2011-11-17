@@ -76,6 +76,10 @@ abstract class Exchange(threadManager: ThreadManager,
     }
   }
 
+  /**
+   * If control can be gained over the target exchange, process the request synchronously,
+   * otherwise enqueue the request for subsequent processing on another thread.
+   */
   override def sendReq(targetActor: ExchangeMessengerActor,
               exchangeMessengerRequest: ExchangeMessengerRequest,
               srcExchange: ExchangeMessenger) {
@@ -99,12 +103,18 @@ abstract class Exchange(threadManager: ThreadManager,
     }
   }
 
+  /**
+   * Process a request synchronously.
+   */
   private def _sendReq(exchangeMessengerRequest: ExchangeMessengerRequest) {
     exchangeMessengerRequest.asInstanceOf[ExchangeRequest].fastSend = true
     exchangeReq(exchangeMessengerRequest)
     poll
   }
 
+  /**
+   * Return a response the same way the request was sent.
+   */
   override def sendResponse(senderExchange: ExchangeMessenger, rsp: ExchangeMessengerResponse) {
     if (curReq.fastSend) {
       senderExchange.exchangeRsp(rsp)
