@@ -39,8 +39,6 @@ final class MailboxReq(dst: Actor,
     (ex, mailbox) => reply(mailbox, ex)
   }
 
-  override def oldRequest = super.oldRequest.asInstanceOf[MailboxReq]
-
   def target = dst
 
   def req = data

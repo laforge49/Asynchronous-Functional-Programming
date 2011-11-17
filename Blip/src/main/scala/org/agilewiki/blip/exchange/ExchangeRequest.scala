@@ -29,7 +29,5 @@ class ExchangeRequest(_sender: ExchangeMessengerSource, rf: Any => Unit)
 
 var fastSend = false
 
-override def oldRequest = super.oldRequest.asInstanceOf[ExchangeRequest]
-
 override def sender = _sender
 }
