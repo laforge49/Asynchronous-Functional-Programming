@@ -68,7 +68,7 @@ class FactoryRegistryComponent(actor: Actor)
     super.setComponentFactory(componentFactory)
     val cf = componentFactory.asInstanceOf[FactoryRegistryComponentFactory]
     bindSafe(classOf[Instantiate], new SafeInstantiate(cf))
-    bindSafe(classOf[Factories], new SafeConstant(new NavMapSeq(cf.factories)))
+    bindSafe(classOf[Factories], new ConcurentData(new NavMapSeq(cf.factories)))
   }
 
   override def open {

@@ -100,6 +100,6 @@ class PropertiesComponent(actor: Actor)
   override def setComponentFactory(componentFactory: ComponentFactory) {
     super.setComponentFactory(componentFactory)
     val cf = componentFactory.asInstanceOf[PropertiesComponentFactory]
-    bindSafe(classOf[PropertiesSeq], new SafeConstant(new NavMapSeq(cf.properties)))
+    bindSafe(classOf[PropertiesSeq], new ConcurentData(new NavMapSeq(cf.properties)))
   }
 }

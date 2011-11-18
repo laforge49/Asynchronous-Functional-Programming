@@ -25,6 +25,7 @@ package org.agilewiki
 package db
 
 import blip._
+import bind._
 import seq._
 import incDes._
 import records._
@@ -41,7 +42,7 @@ class SmallRecordsInitializationComponent(actor: Actor)
   bind(classOf[GetRecord], getRecord)
   bind(classOf[AssignRecord], assignRecord)
   bind(classOf[MakeRecord], makeRecord)
-  bindSafe(classOf[RecordsPathname], new SafeConstant(recordsPathname))
+  bindSafe(classOf[RecordsPathname], new ConcurentData(recordsPathname))
 
   protected def recordsPathname = "$/"
 

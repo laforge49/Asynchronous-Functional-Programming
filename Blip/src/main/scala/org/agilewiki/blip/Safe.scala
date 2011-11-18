@@ -27,13 +27,6 @@ package blip
 import bind._
 import exchange._
 
-class SafeConstant(any: Any)
-  extends MessageLogic {
-  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
-    rf(any)
-  }
-}
-
 class SafeForward(actor: Actor)
   extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
