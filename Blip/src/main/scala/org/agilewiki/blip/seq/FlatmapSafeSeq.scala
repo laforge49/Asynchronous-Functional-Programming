@@ -26,8 +26,9 @@ package blip
 package seq
 
 import annotation.tailrec
+import bind._
 
-class FlatmapSafeSeq[K, V, V1](seq: Sequence[K, V], safe: Safe)
+class FlatmapSafeSeq[K, V, V1](seq: Sequence[K, V], safe: MessageLogic)
   extends Sequence[K, V1] {
   setMailbox(seq.mailbox)
   setSystemServices(seq.systemServices)

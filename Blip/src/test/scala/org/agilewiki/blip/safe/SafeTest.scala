@@ -23,7 +23,7 @@ class Driver extends AsyncActor {
 }
 
 case class SafePrintEven(safeActor: SafeActor)
-  extends Safe {
+  extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val printEven = msg.asInstanceOf[PrintEven]
     val value = printEven.value

@@ -113,7 +113,7 @@ class SmallDataStoreRecoveryComponent(actor: Actor)
   }
 }
 
-object JnlFilesSafe extends Safe {
+object JnlFilesSafe extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
                    (implicit sender: ActiveActor) {
     val nvPair = msg.asInstanceOf[KVPair[String, String]]

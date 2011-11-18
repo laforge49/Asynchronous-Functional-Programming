@@ -24,4 +24,6 @@
 package org.agilewiki.blip.bind
 
 abstract class MessageLogic {
+  def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
+          (implicit srcActor: ActiveActor)
 }

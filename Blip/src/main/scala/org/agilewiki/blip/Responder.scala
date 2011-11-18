@@ -35,7 +35,7 @@ trait Responder extends SystemServicesGetter {
   }
 
   protected def bindSafe(reqClass: Class[_ <: AnyRef],
-                         safe: Safe) {
+                         safe: MessageLogic) {
     if (activeActor.bindActor.asInstanceOf[Actor].opened) throw new IllegalStateException
     messageLogics.put(reqClass, safe)
   }

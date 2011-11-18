@@ -5,7 +5,7 @@ package flatmapSafeSeq
 import bind._
 import org.specs.SpecificationWithJUnit
 
-class MapSafe extends Safe {
+class MapSafe extends MessageLogic {
   val alphabet = new java.util.HashMap[Int, String]
   alphabet.put(8, "Apple")
   alphabet.put(22, "Boy")

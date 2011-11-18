@@ -27,7 +27,7 @@ package seq
 
 import bind._
 
-class ExcludeSafe[K, V1](exclude: Sequence[K, V1]) extends Safe {
+class ExcludeSafe[K, V1](exclude: Sequence[K, V1]) extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val kvPair = msg.asInstanceOf[KVPair[Int, Int]]
     exclude(ContainsKey(kvPair.key)) {rsp => rf(!rsp.asInstanceOf[Boolean])}

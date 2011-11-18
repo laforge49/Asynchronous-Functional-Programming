@@ -26,26 +26,22 @@ package blip
 
 import bind._
 
-abstract class Safe extends MessageLogic {
-  def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit srcActor: ActiveActor)
-}
-
 class SafeConstant(any: Any)
-  extends Safe {
+  extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     rf(any)
   }
 }
 
 class SafeForward(actor: Actor)
-  extends Safe {
+  extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     actor(msg)(rf)
   }
 }
 
 class ChainFactory(chainFunction: (AnyRef, Chain) => Unit)
-  extends Safe {
+  extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
                    (implicit srcActor: ActiveActor) {
     val chain = new Chain
@@ -54,7 +50,7 @@ class ChainFactory(chainFunction: (AnyRef, Chain) => Unit)
   }
 }
 
-abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Safe {
+abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends MessageLogic {
 
   def reqFunction = messageFunction
 

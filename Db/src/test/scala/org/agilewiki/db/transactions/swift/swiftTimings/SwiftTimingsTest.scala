@@ -26,7 +26,7 @@ class Driver extends Actor {
   }
 }
 
-case class Looper() extends Safe {
+case class Looper() extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val systemServices = target.asInstanceOf[Actor].systemServices
     val batch = Batch(systemServices)

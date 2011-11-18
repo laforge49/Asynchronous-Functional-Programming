@@ -26,8 +26,9 @@ package blip
 package seq
 
 import annotation.tailrec
+import bind._
 
-class FilterSafeSeq[K, V](seq: Sequence[K, V], safe: Safe)
+class FilterSafeSeq[K, V](seq: Sequence[K, V], safe: MessageLogic)
   extends Sequence[K, V] {
   setMailbox(seq.mailbox)
   setSystemServices(seq.systemServices)

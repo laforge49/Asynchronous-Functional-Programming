@@ -25,7 +25,9 @@ package org.agilewiki
 package blip
 package seq
 
-class MapSafeSeq[K, V, V1](seq: Sequence[K, V], safe: Safe)
+import bind._
+
+class MapSafeSeq[K, V, V1](seq: Sequence[K, V], safe: MessageLogic)
   extends Sequence[K, V1] {
   setMailbox(seq.mailbox)
   setSystemServices(seq.systemServices)

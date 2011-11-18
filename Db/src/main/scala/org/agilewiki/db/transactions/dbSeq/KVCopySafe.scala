@@ -31,7 +31,7 @@ import bind._
 import seq._
 import incDes._
 
-class KVCopySafe extends Safe {
+class KVCopySafe extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val kvPair = msg.asInstanceOf[KVPair[Any, Any]]
     val value = kvPair.value

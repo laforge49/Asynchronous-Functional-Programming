@@ -117,7 +117,7 @@ class Actor
            (responseFunction: Any => Unit)
            (implicit srcActor: ActiveActor) {
     _open
-    val safe = messageLogics.get(msg.getClass).asInstanceOf[Safe]
+    val safe = messageLogics.get(msg.getClass).asInstanceOf[MessageLogic]
     if (safe != null) safe.func(this, msg, responseFunction)(srcActor)
     else if (superior != null) superior(msg)(responseFunction)(srcActor)
     else {

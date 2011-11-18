@@ -25,6 +25,8 @@ package org.agilewiki
 package blip
 package seq
 
+import bind._
+
 case class First()
 
 case class Current[K](key: K)
@@ -35,7 +37,7 @@ case class KVPair[K, V](key: K, value: V)
 
 case class Loop[K, V](f: (K, V) => Unit)
 
-case class LoopSafe(safe: Safe)
+case class LoopSafe(safe: MessageLogic)
 
 case class Fold[V](seed: V, f: (V, V) => V)
 

@@ -5,7 +5,7 @@ package loopSafe
 import bind._
 import org.specs.SpecificationWithJUnit
 
-class SumSafe extends Safe {
+class SumSafe extends MessageLogic {
   var sum = 0
 
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {

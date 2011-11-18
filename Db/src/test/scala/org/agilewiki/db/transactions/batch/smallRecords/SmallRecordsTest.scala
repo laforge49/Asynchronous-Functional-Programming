@@ -229,7 +229,7 @@ class SmallRecordsTest extends SpecificationWithJUnit {
   }
 }
 
-case class PrintIntStringMap() extends Safe {
+case class PrintIntStringMap() extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val nvPair = msg.asInstanceOf[KVPair[Int, IncDesIncDes]]
     nvPair.value(Value()) {

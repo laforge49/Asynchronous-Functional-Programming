@@ -87,7 +87,7 @@ class ValidateTimestampsComponent(actor: Actor)
   }
 }
 
-case class ValidateSafe() extends Safe {
+case class ValidateSafe() extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val kvPair = msg.asInstanceOf[KVPair[String, Long]]
     val key = kvPair.key

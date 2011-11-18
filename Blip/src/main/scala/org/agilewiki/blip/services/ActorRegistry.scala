@@ -34,7 +34,7 @@ class ActorRegistryComponentFactory extends ComponentFactory {
 }
 
 object SafeResolveName
-  extends Safe {
+  extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val req = msg.asInstanceOf[ResolveName]
     req.name match {

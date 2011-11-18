@@ -27,6 +27,7 @@ package seq
 
 import annotation.tailrec
 import java.util.Comparator
+import bind.MessageLogic
 
 abstract class Sequence[K, V]
   extends Actor {
@@ -82,11 +83,11 @@ abstract class Sequence[K, V]
     first(First(), r => _loopSafe(r.asInstanceOf[KVPair[K, V]], safe, rf))
   }
 
-  private def aloopSafe(rsp: KVPair[K, V], safe: Safe, rf: Any => Unit) {
+  private def aloopSafe(rsp: KVPair[K, V], safe: MessageLogic, rf: Any => Unit) {
     _loopSafe(rsp, safe, rf)
   }
 
-  @tailrec private def _loopSafe(rsp: KVPair[K, V], safe: Safe, rf: Any => Unit) {
+  @tailrec private def _loopSafe(rsp: KVPair[K, V], safe: MessageLogic, rf: Any => Unit) {
     if (rsp == null) {
       rf(null)
       return

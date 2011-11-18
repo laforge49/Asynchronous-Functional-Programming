@@ -44,7 +44,7 @@ class FactoryRegistryComponentFactory extends ComponentFactory {
 }
 
 class SafeInstantiate(factoryRegistryComponentFactory: FactoryRegistryComponentFactory)
-  extends Safe {
+  extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val factoryId = msg.asInstanceOf[Instantiate].factoryId
     val factory = factoryRegistryComponentFactory.getFactory(factoryId)

@@ -5,7 +5,7 @@ package mapSafeSeq
 import bind._
 import org.specs.SpecificationWithJUnit
 
-class MapSafe extends Safe {
+class MapSafe extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val kvPair = msg.asInstanceOf[KVPair[Int, Int]]
     rf(kvPair.value * 2)

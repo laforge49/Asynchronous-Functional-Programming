@@ -99,7 +99,7 @@ class BatchComponent(actor: Actor)
   }
 }
 
-class BatchSafe(tc: TransactionContext) extends Safe {
+class BatchSafe(tc: TransactionContext) extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val kvPair = msg.asInstanceOf[KVPair[Int, IncDes]]
     kvPair.value(Process(tc)) {
