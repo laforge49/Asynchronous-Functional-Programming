@@ -21,30 +21,21 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki
-package blip
+package org.agilewiki.blip
+package bind
 
-import bind._
 import exchange._
 
-final class MailboxReq(dst: Actor,
-                       rf: Any => Unit,
-                       data: AnyRef,
-                       bound: Bound,
-                       src: ExchangeMessengerSource)
-  extends BindRequest(dst, rf, data, bound, src) {
+class BindRequest(dst: BindActor,
+                  rf: Any => Unit,
+                  data: AnyRef,
+                  bound: Bound,
+                  src: ExchangeMessengerSource)
+  extends ExchangeRequest(src, rf) {
 
-  var active = true
-  var transactionContext: TransactionContext = null
-  var exceptionFunction: (Exception, Mailbox) => Unit = {
-    (ex, mailbox) => reply(mailbox, ex)
-  }
+  def target = dst
 
-  override def reply(exchangeMessenger: ExchangeMessenger, content: Any) {
-    if (!active) {
-      return
-    }
-    active = false
-    super.reply(exchangeMessenger, content)
-  }
+  def req = data
+
+  def binding = bound
 }

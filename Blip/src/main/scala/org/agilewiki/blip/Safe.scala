@@ -162,7 +162,7 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
   }
 
   override def process(mailbox: Mailbox, mailboxReq: MailboxReq) {
-    val transactionProcessor = mailboxReq.target
+    val transactionProcessor = mailboxReq.target.asInstanceOf[Actor]
     transactionProcessor.addPendingTransaction(mailboxReq)
   }
 
@@ -171,7 +171,7 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
   def processTransaction(mailbox: Mailbox,
                          mailboxReq: MailboxReq,
                          transactionContext: TransactionContext) {
-    val transactionProcessor = mailboxReq.target
+    val transactionProcessor = mailboxReq.target.asInstanceOf[Actor]
     mailbox.setCurrentRequest(mailboxReq)
     mailboxReq.transactionContext = transactionContext
     try {
