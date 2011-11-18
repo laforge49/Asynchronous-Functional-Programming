@@ -21,30 +21,38 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki
-package blip
+package org.agilewiki.blip
+package bind
 
-import bind._
 import exchange._
 
-final class MailboxReq(dst: Actor,
-                       rf: Any => Unit,
-                       data: AnyRef,
-                       bound: QueuedLogic,
-                       src: ExchangeMessengerSource)
-  extends BindRequest(dst, rf, data, bound, src) {
+abstract class QueuedLogic(messageFunction: (AnyRef, Any => Unit) => Unit) extends MessageLogic {
 
-  var active = true
-  var transactionContext: TransactionContext = null
-  var exceptionFunction: (Exception, Mailbox) => Unit = {
-    (ex, mailbox) => reply(mailbox, ex)
+  def reqFunction = messageFunction
+
+  def process(exchange: Exchange, mailboxReq: MailboxReq) {
+    try {
+      messageFunction(mailboxReq.req, exchange.reply)
+    } catch {
+      case ex: Exception => {
+        exchange.reply(ex)
+      }
+    }
   }
 
-  override def reply(exchangeMessenger: ExchangeMessenger, content: Any) {
-    if (!active) {
-      return
-    }
-    active = false
-    super.reply(exchangeMessenger, content)
+  def asyncSendReq(srcExchange: Exchange,
+                   targetActor: BindActor,
+                   content: AnyRef,
+                   responseFunction: Any => Unit) {
+    val oldReq = srcExchange.curReq.asInstanceOf[BindRequest]
+    val sender = oldReq.target
+    val req = new BindRequest(
+      targetActor,
+      responseFunction,
+      content,
+      this,
+      sender)
+    req.setOldRequest(oldReq)
+    targetActor.mailbox.sendReq(targetActor, req, srcExchange)
   }
 }

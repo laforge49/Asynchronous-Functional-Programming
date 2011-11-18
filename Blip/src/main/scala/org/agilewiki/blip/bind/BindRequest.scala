@@ -29,7 +29,7 @@ import exchange._
 class BindRequest(dst: BindActor,
                   rf: Any => Unit,
                   data: AnyRef,
-                  bound: Bound,
+                  bound: QueuedLogic,
                   src: ExchangeMessengerSource)
   extends ExchangeRequest(src, rf) {
 

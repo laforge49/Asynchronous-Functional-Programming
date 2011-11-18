@@ -36,7 +36,7 @@ class Interop[T >: AnyRef](reactor: Reactor[T])
 
   def afpSend(dst: Actor, msg: AnyRef)(rf: Any => Unit) {
     val safe = dst.messageLogics.get(msg.getClass)
-    if (!safe.isInstanceOf[Bound]) throw
+    if (!safe.isInstanceOf[QueuedLogic]) throw
       new IllegalArgumentException(msg.getClass.getName + "can not be sent asynchronously to " + dst)
     dst._open
     val mailbox = dst.mailbox
@@ -44,7 +44,7 @@ class Interop[T >: AnyRef](reactor: Reactor[T])
       val boundFunction = safe.asInstanceOf[BoundFunction]
       boundFunction.reqFunction(msg, rf) //todo very weak
     } else {
-      val bound = safe.asInstanceOf[Bound]
+      val bound = safe.asInstanceOf[QueuedLogic]
       val req = new MailboxReq(dst, rf, msg, bound, this)
       val blkmsg = new java.util.ArrayList[ExchangeMessengerMessage]
       blkmsg.add(req)

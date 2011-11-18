@@ -37,7 +37,7 @@ class Future
 
   def send(dst: Actor, msg: AnyRef) {
     val safe = dst.messageLogics.get(msg.getClass)
-    if (!safe.isInstanceOf[Bound]) throw
+    if (!safe.isInstanceOf[QueuedLogic]) throw
       new IllegalArgumentException(msg.getClass.getName + "can not be sent asynchronously to " + dst)
     dst._open
     val mailbox = dst.mailbox
@@ -45,7 +45,7 @@ class Future
       val boundFunction = safe.asInstanceOf[BoundFunction]
       boundFunction.reqFunction(msg, synchronousResponse)
     } else {
-      val bound = safe.asInstanceOf[Bound]
+      val bound = safe.asInstanceOf[QueuedLogic]
       val req = new MailboxReq(dst, Unit => {}, msg, bound, this)
       val blkmsg = new ArrayList[ExchangeMessengerMessage]
       blkmsg.add(req)

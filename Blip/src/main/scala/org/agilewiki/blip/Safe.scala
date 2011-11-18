@@ -50,39 +50,8 @@ class ChainFactory(chainFunction: (AnyRef, Chain) => Unit)
   }
 }
 
-abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends MessageLogic {
-
-  def reqFunction = messageFunction
-
-  def process(mailbox: Mailbox, mailboxReq: MailboxReq) {
-    try {
-      messageFunction(mailboxReq.req, mailbox.reply)
-    } catch {
-      case ex: Exception => {
-        mailbox.reply(ex)
-      }
-    }
-  }
-
-  def asyncSendReq(srcMailbox: Mailbox,
-                   targetActor: Actor,
-                   content: AnyRef,
-                   responseFunction: Any => Unit) {
-    val oldReq = srcMailbox.curReq
-    val sender = oldReq.target
-    val req = new MailboxReq(
-      targetActor,
-      responseFunction,
-      content,
-      this,
-      sender)
-    req.setOldRequest(oldReq)
-    targetActor.mailbox.sendReq(targetActor, req, srcMailbox)
-  }
-}
-
 class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
-  extends Bound(messageFunction) {
+  extends QueuedLogic(messageFunction) {
 
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
                    (implicit srcActor: ActiveActor) {
@@ -128,7 +97,7 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
 }
 
 abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
-  extends Bound(messageFunction) {
+  extends QueuedLogic(messageFunction) {
   def level: Int
 
   def maxCompatibleLevel: Int
