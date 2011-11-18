@@ -41,13 +41,13 @@ class TimestampComponent(actor: Actor)
 
   override def open {
     super.open
-    var s = actor.superior
+    var s = actor.superior.asInstanceOf[Actor]
     while (s != null) {
       if (s.components.get(classOf[TimestampComponentFactory]) != null) {
         master = s
         return
       }
-      s = s.superior
+      s = s.superior.asInstanceOf[Actor]
     }
   }
 

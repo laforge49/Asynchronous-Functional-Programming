@@ -57,7 +57,7 @@ class SafeInstantiate(factoryRegistryComponentFactory: FactoryRegistryComponentF
     }
     val superior = target.asInstanceOf[Actor].superior
     if (superior == null) throw new IllegalArgumentException("Unknown factory id: "+factoryId.value)
-    superior(msg)(rf)
+    superior.asInstanceOf[Actor](msg)(rf)
   }
 }
 

@@ -29,6 +29,17 @@ trait BindActor
   extends ExchangeMessengerActor
   with Bindings {
 
+  private var _superior: BindActor = null
+  private val _activeActor = ActiveActor(this)
+
+  implicit def activeActor: ActiveActor = _activeActor
+
+  def setSuperior(superior: BindActor) {
+    _superior = superior
+  }
+
+  def superior = _superior
+
   def newRequest(rf: Any => Unit,
                  data: AnyRef,
                  bound: QueuedLogic,

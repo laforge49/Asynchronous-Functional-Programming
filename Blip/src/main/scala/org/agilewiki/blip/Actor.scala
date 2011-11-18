@@ -38,13 +38,9 @@ class Actor
   val components = new java.util.LinkedHashMap[Class[_ <: ComponentFactory], Component]
   private var componentList: java.util.ArrayList[Component] = null
   var opened = false
-  private var _superior: Actor = null
   private var transactionActivityLevel = 0
   private lazy val pendingTransactions = new java.util.ArrayDeque[MailboxReq]
   private lazy val activeTransactions = new java.util.HashSet[MailboxReq]
-  private val _activeActor = ActiveActor(this)
-
-  override implicit def activeActor: ActiveActor = _activeActor
 
   bind(classOf[Chain], eval)
   bind(classOf[SelfReq], self)
@@ -76,12 +72,10 @@ class Actor
     }
   }
 
-  def setSuperior(superior: Actor) {
+  override def setSuperior(superior: BindActor) {
     if (opened) throw new IllegalStateException
-    _superior = superior
+    super.setSuperior(superior)
   }
-
-  def superior = _superior
 
   def setFactory(factory: Factory) {
     if (opened) throw new IllegalStateException
@@ -119,7 +113,7 @@ class Actor
     _open
     val safe = messageLogics.get(msg.getClass).asInstanceOf[MessageLogic]
     if (safe != null) safe.func(this, msg, responseFunction)(srcActor)
-    else if (superior != null) superior(msg)(responseFunction)(srcActor)
+    else if (superior != null) superior.asInstanceOf[Actor](msg)(responseFunction)(srcActor)
     else {
       System.err.println("bindActor = " + this.getClass.getName)
       throw new IllegalArgumentException("Unknown type of message: " + msg.getClass.getName)
@@ -148,7 +142,7 @@ class Actor
 
   def requiredService(reqClass: Class[_ <: AnyRef]) {
     if (opened) throw new IllegalStateException
-    var actor = this
+    var actor: BindActor = this
     while (!actor.messageLogics.containsKey(reqClass)) {
       if (superior == null)
         throw new UnsupportedOperationException("service missing for " + reqClass.getName)
