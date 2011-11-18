@@ -25,6 +25,7 @@ package org.agilewiki
 package blip
 
 import bind._
+import exchange._
 
 trait Responder extends SystemServicesGetter {
   def messageLogics: java.util.HashMap[Class[_ <: AnyRef], MessageLogic]
@@ -49,33 +50,5 @@ trait Responder extends SystemServicesGetter {
   def factoryId = {
     if (factory == null) null
     else factory.id
-  }
-
-  def exceptionHandler(msg: AnyRef,
-                       responseFunction: Any => Unit,
-                       messageFunction: (AnyRef, Any => Unit) => Unit)
-                      (exceptionFunction: (Exception, Mailbox) => Unit) {
-    if (mailbox == null) throw
-      new UnsupportedOperationException("Immutable actors can not use excepton handlers")
-    val oldExceptionFunction = mailbox.curReq.exceptionFunction
-    mailbox.curReq.exceptionFunction = exceptionFunction
-    try {
-      messageFunction(msg, rsp => {
-        mailbox.curReq.exceptionFunction = oldExceptionFunction
-        try {
-          responseFunction(rsp)
-        } catch {
-          case ex: Exception => throw new TransparentException(ex)
-        }
-      })
-    } catch {
-      case ex: TransparentException => {
-        exceptionFunction(ex.getCause.asInstanceOf[Exception], mailbox)
-      }
-      case ex: Exception => {
-        mailbox.curReq.exceptionFunction = oldExceptionFunction
-        exceptionFunction(ex, mailbox)
-      }
-    }
   }
 }

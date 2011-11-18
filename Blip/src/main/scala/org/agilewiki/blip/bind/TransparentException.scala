@@ -22,7 +22,7 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki
-package blip
+package blip.bind
 
 class TransparentException(ex: Exception) extends Exception(ex) {
   override def fillInStackTrace(): Throwable =

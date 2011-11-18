@@ -41,6 +41,8 @@ class Component(_actor: Actor) extends Responder with Bindings {
 
   override def mailbox = actor.mailbox
 
+  override def exchangeMessenger = actor.exchangeMessenger
+
   override def factory = actor.factory
 
   override def systemServices = actor.systemServices

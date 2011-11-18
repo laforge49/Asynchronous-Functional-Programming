@@ -34,17 +34,5 @@ final class MailboxReq(dst: Actor,
                        src: ExchangeMessengerSource)
   extends BindRequest(dst, rf, data, bound, src) {
 
-  var active = true
   var transactionContext: TransactionContext = null
-  var exceptionFunction: (Exception, Mailbox) => Unit = {
-    (ex, mailbox) => reply(mailbox, ex)
-  }
-
-  override def reply(exchangeMessenger: ExchangeMessenger, content: Any) {
-    if (!active) {
-      return
-    }
-    active = false
-    super.reply(exchangeMessenger, content)
-  }
 }

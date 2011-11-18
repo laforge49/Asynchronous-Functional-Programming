@@ -33,9 +33,22 @@ class BindRequest(dst: BindActor,
                   src: ExchangeMessengerSource)
   extends ExchangeRequest(src, rf) {
 
+  var active = true
+  var exceptionFunction: (Exception, ExchangeMessenger) => Unit = {
+    (ex, exchange) => reply(exchange, ex)
+  }
+
   def target = dst
 
   def req = data
 
   def binding = bound
+
+  override def reply(exchangeMessenger: ExchangeMessenger, content: Any) {
+    if (!active) {
+      return
+    }
+    active = false
+    super.reply(exchangeMessenger, content)
+  }
 }

@@ -21,9 +21,45 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki.blip.bind
+package org.agilewiki.blip
+package bind
+
+import exchange._
 
 trait Bindings {
   val messageLogics =
     new java.util.HashMap[Class[_ <: AnyRef], MessageLogic]
+
+  def exchangeMessenger: ExchangeMessenger
+
+  def exceptionHandler(msg: AnyRef,
+                       responseFunction: Any => Unit,
+                       messageFunction: (AnyRef, Any => Unit) => Unit)
+                      (exceptionFunction: (Exception, ExchangeMessenger) => Unit) {
+    if (exchangeMessenger == null) throw
+      new UnsupportedOperationException("Immutable actors can not use excepton handlers")
+    val oldExceptionFunction = exchangeMessenger.curReq.asInstanceOf[BindRequest].
+      exceptionFunction
+    exchangeMessenger.curReq.asInstanceOf[BindRequest].exceptionFunction = exceptionFunction
+    try {
+      messageFunction(msg, rsp => {
+        exchangeMessenger.curReq.asInstanceOf[BindRequest].exceptionFunction =
+          oldExceptionFunction
+        try {
+          responseFunction(rsp)
+        } catch {
+          case ex: Exception => throw new TransparentException(ex)
+        }
+      })
+    } catch {
+      case ex: TransparentException => {
+        exceptionFunction(ex.getCause.asInstanceOf[Exception], exchangeMessenger)
+      }
+      case ex: Exception => {
+        exchangeMessenger.curReq.asInstanceOf[BindRequest].exceptionFunction =
+          oldExceptionFunction
+        exceptionFunction(ex, exchangeMessenger)
+      }
+    }
+  }
 }

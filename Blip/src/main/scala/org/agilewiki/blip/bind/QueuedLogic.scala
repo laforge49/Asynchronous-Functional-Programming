@@ -40,7 +40,7 @@ abstract class QueuedLogic(messageFunction: (AnyRef, Any => Unit) => Unit) exten
     }
   }
 
-  def asyncSendReq(srcExchange: Exchange,
+  def enqueueRequest(srcExchange: Exchange,
                    targetActor: BindActor,
                    content: AnyRef,
                    responseFunction: Any => Unit) {

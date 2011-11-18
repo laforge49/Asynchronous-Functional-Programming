@@ -86,7 +86,7 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
     if (targetExchangeMessenger == null || targetExchangeMessenger == srcExchangeMessenger) {
       if (responseFunction == null) messageFunction(msg, AnyRef => {})
       else messageFunction(msg, responseFunction)
-    } else asyncSendReq(srcExchangeMessenger.asInstanceOf[Mailbox], target.asInstanceOf[Actor], msg, responseFunction)
+    } else enqueueRequest(srcExchangeMessenger.asInstanceOf[Mailbox], target.asInstanceOf[Actor], msg, responseFunction)
   }
 }
 
@@ -121,7 +121,7 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
         }
       }
     }
-    asyncSendReq(srcExchangeMessenger.asInstanceOf[Mailbox], target.asInstanceOf[Actor], msg, responseFunction)
+    enqueueRequest(srcExchangeMessenger.asInstanceOf[Mailbox], target.asInstanceOf[Actor], msg, responseFunction)
   }
 
   override def process(exchange: Exchange, bindRequest: BindRequest) {
