@@ -27,6 +27,7 @@ package transactions
 package batch
 
 import blip._
+import bind._
 import incDes._
 import blocks._
 import seq._
@@ -87,14 +88,14 @@ class ValidateTimestampsComponent(actor: Actor)
 }
 
 case class ValidateSafe() extends Safe {
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val kvPair = msg.asInstanceOf[KVPair[String, Long]]
     val key = kvPair.key
     val ts1 = kvPair.value
     val chain = new Chain
-    chain.op(target.systemServices, GetRecord(key), "record")
+    chain.op(target.asInstanceOf[Actor].systemServices, GetRecord(key), "record")
     chain.op(Unit => chain("record"), GetTimestamp())
-    target(chain) {
+    target.asInstanceOf[Actor](chain) {
       rsp => {
         var ts2 = rsp.asInstanceOf[Long]
         if (ts2 == 0L) ts2 = -1L

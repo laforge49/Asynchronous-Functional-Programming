@@ -5,6 +5,7 @@ package swift
 package noFlushSwiftTimings
 
 import blip._
+import bind._
 import seq._
 import services._
 import log._
@@ -26,13 +27,13 @@ class Driver extends Actor {
 }
 
 case class Looper() extends Safe {
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
-    val systemServices = target.systemServices
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+    val systemServices = target.asInstanceOf[Actor].systemServices
     val batch = Batch(systemServices)
     val chain = new Chain
     chain.op(systemServices, Unit => RecordUpdate(batch, "r1", "$", IncDesInt(null)))
     chain.op(systemServices, TransactionRequest(batch))
-    target(chain) {
+    target.asInstanceOf[Actor](chain) {
       rsp => rf(true)
     }
   }

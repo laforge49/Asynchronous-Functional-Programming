@@ -2,6 +2,7 @@ package org.agilewiki.blip
 package seq
 package flatmapSafeSeq
 
+import bind._
 import org.specs.SpecificationWithJUnit
 
 class MapSafe extends Safe {
@@ -10,7 +11,7 @@ class MapSafe extends Safe {
   alphabet.put(22, "Boy")
   alphabet.put(5, "Cat")
 
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val kvPair = msg.asInstanceOf[KVPair[Int, Int]]
     rf(alphabet.get(kvPair.value))
   }

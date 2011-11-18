@@ -5,6 +5,7 @@ package batch
 package smallRecords
 
 import blip._
+import bind._
 import services._
 import seq._
 import incDes._
@@ -229,7 +230,7 @@ class SmallRecordsTest extends SpecificationWithJUnit {
 }
 
 case class PrintIntStringMap() extends Safe {
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val nvPair = msg.asInstanceOf[KVPair[Int, IncDesIncDes]]
     nvPair.value(Value()) {
       rsp => {

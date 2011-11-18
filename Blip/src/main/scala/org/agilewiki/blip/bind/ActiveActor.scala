@@ -21,24 +21,6 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki
-package db
-package transactions
-package dbSeq
+package org.agilewiki.blip.bind
 
-import blip._
-import bind._
-import seq._
-import incDes._
-
-class KVCopySafe extends Safe {
-  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
-    val kvPair = msg.asInstanceOf[KVPair[Any, Any]]
-    val value = kvPair.value
-    if (!value.isInstanceOf[IncDes]) {
-      rf(value)
-      return
-    }
-    value.asInstanceOf[IncDes](Copy(target.exchangeMessenger.asInstanceOf[Mailbox]))(rf)
-  }
-}
+case class ActiveActor(bindActor: BindActor)

@@ -24,13 +24,14 @@
 package org.agilewiki
 package blip
 
+import bind._
 import exchange._
 import seq.NavSetSeq
 import annotation.tailrec
 
 class Actor
   extends Responder
-  with ExchangeMessengerActor {
+  with BindActor {
 
   private var _mailbox: Mailbox = null
   private var _factory: Factory = null
@@ -116,11 +117,11 @@ class Actor
            (responseFunction: Any => Unit)
            (implicit srcActor: ActiveActor) {
     _open
-    val safe = messageFunctions.get(msg.getClass)
+    val safe = messageLogics.get(msg.getClass).asInstanceOf[Safe]
     if (safe != null) safe.func(this, msg, responseFunction)(srcActor)
     else if (superior != null) superior(msg)(responseFunction)(srcActor)
     else {
-      System.err.println("actor = "+this.getClass.getName)
+      System.err.println("bindActor = "+this.getClass.getName)
       throw new IllegalArgumentException("Unknown type of message: " + msg.getClass.getName)
     }
   }
@@ -129,7 +130,7 @@ class Actor
     val smf = new java.util.TreeSet[Class[_ <: AnyRef]](
       new ClassComparator
     )
-    smf.addAll(messageFunctions.keySet)
+    smf.addAll(messageLogics.keySet)
     val seq = new NavSetSeq(smf)
     seq.setMailbox(_mailbox)
     seq
@@ -148,7 +149,7 @@ class Actor
   def requiredService(reqClass: Class[_ <: AnyRef]) {
     if (opened) throw new IllegalStateException
     var actor = this
-    while (!actor.messageFunctions.containsKey(reqClass)) {
+    while (!actor.messageLogics.containsKey(reqClass)) {
       if (superior == null)
         throw new UnsupportedOperationException("service missing for " + reqClass.getName)
       actor = superior

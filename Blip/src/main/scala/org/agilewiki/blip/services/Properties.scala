@@ -25,6 +25,7 @@ package org.agilewiki
 package blip
 package services
 
+import bind._
 import seq.NavMapSeq
 import annotation.tailrec
 
@@ -47,8 +48,8 @@ object SetProperties {
 
 object GetProperty {
   @tailrec def apply(name: String)(implicit activeActor: ActiveActor): String = {
-    val actor = activeActor.actor
-    val systemServices = actor.systemServices
+    val bindActor = activeActor.bindActor
+    val systemServices = bindActor.asInstanceOf[Actor].systemServices
     if (systemServices == null) return null
     val factory = systemServices.factory
     val propertiesComponentFactory = factory.componentFactory(classOf[PropertiesComponentFactory]).

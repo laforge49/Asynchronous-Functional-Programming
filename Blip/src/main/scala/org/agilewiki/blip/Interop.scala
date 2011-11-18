@@ -35,7 +35,7 @@ class Interop[T >: AnyRef](reactor: Reactor[T])
   override def messageListDestination = this
 
   def afpSend(dst: Actor, msg: AnyRef)(rf: Any => Unit) {
-    val safe = dst.messageFunctions.get(msg.getClass)
+    val safe = dst.messageLogics.get(msg.getClass)
     if (!safe.isInstanceOf[Bound]) throw
       new IllegalArgumentException(msg.getClass.getName + "can not be sent asynchronously to " + dst)
     dst._open

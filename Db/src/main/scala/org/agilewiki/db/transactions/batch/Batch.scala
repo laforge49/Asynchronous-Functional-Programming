@@ -27,6 +27,7 @@ package transactions
 package batch
 
 import blip._
+import bind._
 import seq._
 import incDes._
 import blocks._
@@ -99,7 +100,7 @@ class BatchComponent(actor: Actor)
 }
 
 class BatchSafe(tc: TransactionContext) extends Safe {
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val kvPair = msg.asInstanceOf[KVPair[Int, IncDes]]
     kvPair.value(Process(tc)) {
       rsp => rf(true)

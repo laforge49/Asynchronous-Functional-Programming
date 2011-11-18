@@ -25,6 +25,7 @@ package org.agilewiki
 package blip
 package services
 
+import bind._
 import seq.NavMapSeq
 
 class FactoryRegistryComponentFactory extends ComponentFactory {
@@ -44,17 +45,17 @@ class FactoryRegistryComponentFactory extends ComponentFactory {
 
 class SafeInstantiate(factoryRegistryComponentFactory: FactoryRegistryComponentFactory)
   extends Safe {
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val factoryId = msg.asInstanceOf[Instantiate].factoryId
     val factory = factoryRegistryComponentFactory.getFactory(factoryId)
     if (factory != null) {
       val mailbox = msg.asInstanceOf[Instantiate].mailbox
       val actor = factory.newActor(mailbox)
-      actor.setSystemServices(target.systemServices)
+      actor.setSystemServices(target.asInstanceOf[Actor].systemServices)
       rf(actor)
       return
     }
-    val superior = target.superior
+    val superior = target.asInstanceOf[Actor].superior
     if (superior == null) throw new IllegalArgumentException("Unknown factory id: "+factoryId.value)
     superior(msg)(rf)
   }

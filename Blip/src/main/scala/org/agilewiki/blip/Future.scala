@@ -36,7 +36,7 @@ class Future
   @volatile private[this] var satisfied = false
 
   def send(dst: Actor, msg: AnyRef) {
-    val safe = dst.messageFunctions.get(msg.getClass)
+    val safe = dst.messageLogics.get(msg.getClass)
     if (!safe.isInstanceOf[Bound]) throw
       new IllegalArgumentException(msg.getClass.getName + "can not be sent asynchronously to " + dst)
     dst._open

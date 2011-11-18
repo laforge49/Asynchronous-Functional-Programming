@@ -25,6 +25,7 @@ package org.agilewiki
 package blip
 package services
 
+import bind._
 import seq.NavMapSeq
 import java.util.TreeMap
 
@@ -34,11 +35,11 @@ class ActorRegistryComponentFactory extends ComponentFactory {
 
 object SafeResolveName
   extends Safe {
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val req = msg.asInstanceOf[ResolveName]
     req.name match {
-      case factoryId: FactoryId => target(Instantiate(factoryId, req.mailbox))(rf)
-      case actorId: ActorId => target(GetActor(actorId))(rf)
+      case factoryId: FactoryId => target.asInstanceOf[Actor](Instantiate(factoryId, req.mailbox))(rf)
+      case actorId: ActorId => target.asInstanceOf[Actor](GetActor(actorId))(rf)
     }
   }
 }
@@ -73,7 +74,7 @@ class ActorRegistryComponent(actor: Actor)
     val actor = msg.asInstanceOf[Register].actor
     val actorId = actor.id
     if (actorId == null)
-      throw new IllegalArgumentException("actor has no id")
+      throw new IllegalArgumentException("bindActor has no id")
     val key = actorId.value
     if (actors.containsKey(key))
       throw new IllegalArgumentException("already registered: " + key)

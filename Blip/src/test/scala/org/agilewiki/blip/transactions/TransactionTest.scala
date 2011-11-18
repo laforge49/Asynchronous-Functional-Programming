@@ -1,6 +1,7 @@
 package org.agilewiki.blip
 package transactions
 
+import bind._
 import org.specs.SpecificationWithJUnit
 
 case class Pause()

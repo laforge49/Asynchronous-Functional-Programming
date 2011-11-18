@@ -32,13 +32,13 @@ trait ExchangeMessengerActor
   extends ExchangeMessengerSource {
 
   /**
-   * The exchangeMessenger method returns the actor's ExchangeMessenger object.
+   * The exchangeMessenger method returns the bindActor's ExchangeMessenger object.
    */
   def exchangeMessenger: ExchangeMessenger
 
   /**
    * Lists of requests and responses are passed
-   * to the actor's exchangeMessenger object.
+   * to the bindActor's exchangeMessenger object.
    */
   def messageListDestination = exchangeMessenger
 

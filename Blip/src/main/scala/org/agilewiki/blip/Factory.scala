@@ -52,13 +52,13 @@ abstract class Factory(_id: FactoryId) {
   def addComponent(component: Component) {
     val actor = component.actor
     if (actor.opened) throw new IllegalStateException("already opened")
-    val actorMsgFunctions = actor.messageFunctions
-    val componentMsgFunctions = component.messageFunctions
+    val actorMsgFunctions = actor.messageLogics
+    val componentMsgFunctions = component.messageLogics
     var it = componentMsgFunctions.keySet.iterator
     while (it.hasNext) {
       val k = it.next
       if (actorMsgFunctions.containsKey(k)) {
-        throw new IllegalArgumentException("bind conflict on actor " +
+        throw new IllegalArgumentException("bind conflict on bindActor " +
           getClass.getName +
           "message " +
           k.getName)

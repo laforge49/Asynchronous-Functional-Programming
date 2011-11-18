@@ -25,12 +25,13 @@ package org.agilewiki
 package db
 
 import blip._
+import bind._
 import seq._
 import incDes._
 import blocks._
 
 object JnlsSafe extends Safe {
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
                    (implicit sender: ActiveActor) {
     val nvPair = msg.asInstanceOf[KVPair[Long, Block]]
     val timestamp = nvPair.key

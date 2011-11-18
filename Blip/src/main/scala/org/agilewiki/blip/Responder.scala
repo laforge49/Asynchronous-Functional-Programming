@@ -24,21 +24,20 @@
 package org.agilewiki
 package blip
 
-import messenger._
+import bind._
 
 trait Responder extends SystemServicesGetter {
-  val messageFunctions =
-    new java.util.HashMap[Class[_ <: AnyRef], Safe]
+  def messageLogics: java.util.HashMap[Class[_ <: AnyRef], MessageLogic]
 
   protected def bind(reqClass: Class[_ <: AnyRef], messageFunction: (AnyRef, Any => Unit) => Unit) {
-    if (activeActor.actor.opened) throw new IllegalStateException
-    messageFunctions.put(reqClass, new BoundFunction(messageFunction))
+    if (activeActor.bindActor.asInstanceOf[Actor].opened) throw new IllegalStateException
+    messageLogics.put(reqClass, new BoundFunction(messageFunction))
   }
 
   protected def bindSafe(reqClass: Class[_ <: AnyRef],
                          safe: Safe) {
-    if (activeActor.actor.opened) throw new IllegalStateException
-    messageFunctions.put(reqClass, safe)
+    if (activeActor.bindActor.asInstanceOf[Actor].opened) throw new IllegalStateException
+    messageLogics.put(reqClass, safe)
   }
 
   def mailbox: Mailbox

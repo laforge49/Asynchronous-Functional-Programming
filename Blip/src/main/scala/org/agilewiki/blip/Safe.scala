@@ -24,30 +24,33 @@
 package org.agilewiki
 package blip
 
-abstract class Safe {
-  def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit srcActor: ActiveActor)
+import bind._
+
+abstract class Safe extends MessageLogic {
+  def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit srcActor: ActiveActor)
 }
 
 class SafeConstant(any: Any)
   extends Safe {
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     rf(any)
   }
 }
 
 class SafeForward(actor: Actor)
   extends Safe {
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     actor(msg)(rf)
   }
 }
 
 class ChainFactory(chainFunction: (AnyRef, Chain) => Unit)
   extends Safe {
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit srcActor: ActiveActor) {
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
+                   (implicit srcActor: ActiveActor) {
     val chain = new Chain
     chainFunction(msg, chain)
-    target(chain)(rf)
+    target.asInstanceOf[Actor](chain)(rf)
   }
 }
 
@@ -85,22 +88,22 @@ abstract class Bound(messageFunction: (AnyRef, Any => Unit) => Unit) extends Saf
 class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
   extends Bound(messageFunction) {
 
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
                    (implicit srcActor: ActiveActor) {
-    val srcMailbox = {
+    val srcExchangeMessenger = {
       if (srcActor == null) null
       else {
-        srcActor.actor.mailbox
+        srcActor.bindActor.exchangeMessenger
       }
     }
-    if (srcMailbox == null) {
-      if (target.mailbox != null) {
+    if (srcExchangeMessenger == null) {
+      if (target.exchangeMessenger != null) {
         println("srcActor = " + srcActor)
-        println("srcMailbox = " + srcMailbox)
+        println("srcMailbox = " + srcExchangeMessenger)
         println("target = " + target)
-        println("targetMailbox = " + target.mailbox)
+        println("targetMailbox = " + target.exchangeMessenger)
         throw new UnsupportedOperationException(
-          "An immutable actor can only send to another immutable actor."
+          "An immutable bindActor can only send to another immutable bindActor."
         )
       }
     }
@@ -108,21 +111,23 @@ class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
       rsp => {
         rsp match {
           case rsp: Exception => {
-            srcMailbox.curReq.exceptionFunction(rsp, srcMailbox)
+            srcExchangeMessenger.curReq.asInstanceOf[MailboxReq].
+              exceptionFunction(rsp, srcExchangeMessenger.asInstanceOf[Mailbox])
           }
           case rsp => try {
             rf(rsp)
           } catch {
-            case ex: Exception => srcMailbox.curReq.exceptionFunction(ex, srcMailbox)
+            case ex: Exception => srcExchangeMessenger.curReq.asInstanceOf[MailboxReq].
+              exceptionFunction(ex, srcExchangeMessenger.asInstanceOf[Mailbox])
           }
         }
       }
     }
-    val targetMailbox = target.mailbox
-    if (targetMailbox == null || targetMailbox == srcMailbox) {
+    val targetExchangeMessenger = target.exchangeMessenger
+    if (targetExchangeMessenger == null || targetExchangeMessenger == srcExchangeMessenger) {
       if (responseFunction == null) messageFunction(msg, AnyRef => {})
       else messageFunction(msg, responseFunction)
-    } else asyncSendReq(srcMailbox, target, msg, responseFunction)
+    } else asyncSendReq(srcExchangeMessenger.asInstanceOf[Mailbox], target.asInstanceOf[Actor], msg, responseFunction)
   }
 }
 
@@ -132,30 +137,32 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
 
   def maxCompatibleLevel: Int
 
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
                    (implicit srcActor: ActiveActor) {
     if (rf == null) throw new IllegalArgumentException("transaction requests require a response function")
-    val srcMailbox = {
+    val srcExchangeMessenger = {
       if (srcActor == null) null
-      else srcActor.actor.mailbox
+      else srcActor.bindActor.exchangeMessenger
     }
-    val targetMailbox = target.mailbox
-    if (srcMailbox == null || targetMailbox == null) throw new UnsupportedOperationException(
+    val targetExchangeMessenger = target.exchangeMessenger
+    if (srcExchangeMessenger == null || targetExchangeMessenger == null) throw new UnsupportedOperationException(
       "Transactions require that both the requesting and target actors have mailboxes."
     )
     val responseFunction: Any => Unit = {
       rsp => {
         rsp match {
-          case rsp: Exception => srcMailbox.curReq.exceptionFunction(rsp, srcMailbox)
+          case rsp: Exception => srcExchangeMessenger.curReq.asInstanceOf[MailboxReq].
+            exceptionFunction(rsp, srcExchangeMessenger.asInstanceOf[Mailbox])
           case rsp => try {
             rf(rsp)
           } catch {
-            case ex: Exception => srcMailbox.curReq.exceptionFunction(ex, srcMailbox)
+            case ex: Exception => srcExchangeMessenger.curReq.asInstanceOf[MailboxReq].
+              exceptionFunction(ex, srcExchangeMessenger.asInstanceOf[Mailbox])
           }
         }
       }
     }
-    asyncSendReq(srcMailbox, target, msg, responseFunction)
+    asyncSendReq(srcExchangeMessenger.asInstanceOf[Mailbox], target.asInstanceOf[Actor], msg, responseFunction)
   }
 
   override def process(mailbox: Mailbox, mailboxReq: MailboxReq) {

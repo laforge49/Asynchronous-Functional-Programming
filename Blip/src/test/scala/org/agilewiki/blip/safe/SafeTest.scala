@@ -1,6 +1,7 @@
 package org.agilewiki.blip
 package safe
 
+import bind._
 import org.specs.SpecificationWithJUnit
 
 case class Print(value: Any)
@@ -23,7 +24,7 @@ class Driver extends AsyncActor {
 
 case class SafePrintEven(safeActor: SafeActor)
   extends Safe {
-  override def func(target: Actor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val printEven = msg.asInstanceOf[PrintEven]
     val value = printEven.value
     if (value % 2 == 0) safeActor(Print(value))(rf)
