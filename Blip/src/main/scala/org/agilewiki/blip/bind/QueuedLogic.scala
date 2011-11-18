@@ -30,9 +30,9 @@ abstract class QueuedLogic(messageFunction: (AnyRef, Any => Unit) => Unit) exten
 
   def reqFunction = messageFunction
 
-  def process(exchange: Exchange, mailboxReq: MailboxReq) {
+  def process(exchange: Exchange, bindRequest: BindRequest) {
     try {
-      messageFunction(mailboxReq.req, exchange.reply)
+      messageFunction(bindRequest.req, exchange.reply)
     } catch {
       case ex: Exception => {
         exchange.reply(ex)
@@ -46,13 +46,12 @@ abstract class QueuedLogic(messageFunction: (AnyRef, Any => Unit) => Unit) exten
                    responseFunction: Any => Unit) {
     val oldReq = srcExchange.curReq.asInstanceOf[BindRequest]
     val sender = oldReq.target
-    val req = new BindRequest(
-      targetActor,
+    val req = targetActor.newRequest(
       responseFunction,
       content,
       this,
       sender)
     req.setOldRequest(oldReq)
-    targetActor.mailbox.sendReq(targetActor, req, srcExchange)
+    targetActor.exchangeMessenger.sendReq(targetActor, req, srcExchange)
   }
 }

@@ -25,6 +25,13 @@ package org.agilewiki.blip.bind
 
 import org.agilewiki.blip.exchange._
 
-trait BindActor extends ExchangeMessengerActor with Bindings {
+trait BindActor
+  extends ExchangeMessengerActor
+  with Bindings {
 
+  def newRequest(rf: Any => Unit,
+                 data: AnyRef,
+                 bound: QueuedLogic,
+                 src: ExchangeMessengerSource) =
+    new BindRequest(this, rf, data, bound, src)
 }

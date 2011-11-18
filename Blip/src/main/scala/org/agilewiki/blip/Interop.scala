@@ -24,6 +24,7 @@
 package org.agilewiki
 package blip
 
+import bind._
 import messenger._
 import exchange._
 import scala.actors.Reactor

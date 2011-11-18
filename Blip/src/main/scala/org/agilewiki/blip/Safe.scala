@@ -25,6 +25,7 @@ package org.agilewiki
 package blip
 
 import bind._
+import exchange._
 
 class SafeConstant(any: Any)
   extends MessageLogic {
@@ -130,9 +131,9 @@ abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
     asyncSendReq(srcExchangeMessenger.asInstanceOf[Mailbox], target.asInstanceOf[Actor], msg, responseFunction)
   }
 
-  override def process(mailbox: Mailbox, mailboxReq: MailboxReq) {
-    val transactionProcessor = mailboxReq.target.asInstanceOf[Actor]
-    transactionProcessor.addPendingTransaction(mailboxReq)
+  override def process(exchange: Exchange, bindRequest: BindRequest) {
+    val transactionProcessor = bindRequest.target.asInstanceOf[Actor]
+    transactionProcessor.addPendingTransaction(bindRequest.asInstanceOf[MailboxReq])
   }
 
   def processTransaction(mailbox: Mailbox, mailboxReq: MailboxReq)

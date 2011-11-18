@@ -121,7 +121,7 @@ class Actor
     if (safe != null) safe.func(this, msg, responseFunction)(srcActor)
     else if (superior != null) superior(msg)(responseFunction)(srcActor)
     else {
-      System.err.println("bindActor = "+this.getClass.getName)
+      System.err.println("bindActor = " + this.getClass.getName)
       throw new IllegalArgumentException("Unknown type of message: " + msg.getClass.getName)
     }
   }
@@ -270,4 +270,10 @@ class Actor
   def newSyncMailbox = mailboxFactory.newSyncMailbox
 
   override def exchangeMessenger = mailbox
+
+  override def newRequest(rf: Any => Unit,
+                          data: AnyRef,
+                          bound: QueuedLogic,
+                          src: ExchangeMessengerSource) =
+    new MailboxReq(this, rf, data, bound, src)
 }

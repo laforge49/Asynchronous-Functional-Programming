@@ -24,6 +24,7 @@
 package org.agilewiki
 package blip
 
+import bind._
 import annotation.tailrec
 import java.util.ArrayList
 import messenger._
