@@ -42,7 +42,7 @@ class SmallRecordsInitializationComponent(actor: Actor)
   bind(classOf[GetRecord], getRecord)
   bind(classOf[AssignRecord], assignRecord)
   bind(classOf[MakeRecord], makeRecord)
-  bindSafe(classOf[RecordsPathname], new ConcurentData(recordsPathname))
+  bindSafe(classOf[RecordsPathname], new ConcurrentData(recordsPathname))
 
   protected def recordsPathname = "$/"
 

@@ -24,7 +24,7 @@
 package org.agilewiki.blip
 package bind
 
-class ConcurentData(any: Any)
+class ConcurrentData(any: Any)
   extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     rf(any)
