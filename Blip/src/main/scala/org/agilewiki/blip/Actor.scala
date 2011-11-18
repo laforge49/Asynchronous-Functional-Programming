@@ -107,17 +107,11 @@ class Actor
 
   override def systemServices: SystemServices = _systemServices
 
-  def apply(msg: AnyRef)
+  override def apply(msg: AnyRef)
            (responseFunction: Any => Unit)
            (implicit srcActor: ActiveActor) {
     _open
-    val safe = messageLogics.get(msg.getClass).asInstanceOf[MessageLogic]
-    if (safe != null) safe.func(this, msg, responseFunction)(srcActor)
-    else if (superior != null) superior.asInstanceOf[Actor](msg)(responseFunction)(srcActor)
-    else {
-      System.err.println("bindActor = " + this.getClass.getName)
-      throw new IllegalArgumentException("Unknown type of message: " + msg.getClass.getName)
-    }
+    super.apply(msg)(responseFunction)(srcActor)
   }
 
   lazy val messageClasses = {

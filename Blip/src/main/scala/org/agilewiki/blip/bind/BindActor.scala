@@ -45,4 +45,16 @@ trait BindActor
                  bound: QueuedLogic,
                  src: ExchangeMessengerSource) =
     new BindRequest(this, rf, data, bound, src)
+
+  def apply(msg: AnyRef)
+           (responseFunction: Any => Unit)
+           (implicit srcActor: ActiveActor) {
+    val messageLogic = messageLogics.get(msg.getClass)
+    if (messageLogic != null) messageLogic.func(this, msg, responseFunction)(srcActor)
+    else if (superior != null) superior(msg)(responseFunction)(srcActor)
+    else {
+      System.err.println("bindActor = " + this.getClass.getName)
+      throw new IllegalArgumentException("Unknown type of message: " + msg.getClass.getName)
+    }
+  }
 }
