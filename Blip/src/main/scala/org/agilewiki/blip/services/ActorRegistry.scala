@@ -50,8 +50,8 @@ class ActorRegistryComponent(actor: Actor)
   bind(classOf[Register], register)
   bind(classOf[Unregister], unregister)
   bind(classOf[GetActor], getActor)
-  bindSafe(classOf[ResolveName], SafeResolveName)
-  bindSafe(classOf[Actors],
+  bindMessageLogic(classOf[ResolveName], SafeResolveName)
+  bindMessageLogic(classOf[Actors],
     new ConcurrentData(new NavMapSeq(actors)))
 
   override def open {

@@ -55,7 +55,7 @@ class DeleteRecordFactory
 
 class DeleteRecordComponent(actor: Actor)
   extends Component(actor) {
-  bindSafe(classOf[Process], new ChainFactory(process))
+  bindMessageLogic(classOf[Process], new ChainFactory(process))
 
   private def process(msg: AnyRef, chain: Chain) {
     val tc = msg.asInstanceOf[Process].transactionContext.asInstanceOf[UpdateContext]

@@ -42,8 +42,8 @@ class TransactionProcessorComponent(actor: Actor)
   extends Component(actor) {
 
   bind(classOf[TransactionRequest], transactionRequest)
-  bindSafe(classOf[QueryTransaction], new Query(process))
-  bindSafe(classOf[UpdateTransaction], new Update({
+  bindMessageLogic(classOf[QueryTransaction], new Query(process))
+  bindMessageLogic(classOf[UpdateTransaction], new Update({
     (msg, rf) => exceptionHandler(msg, rf, process) {
       (ex, mailbox) => {
         systemServices(Abort(ex))(rf)

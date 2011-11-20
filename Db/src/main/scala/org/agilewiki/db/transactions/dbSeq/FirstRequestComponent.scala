@@ -33,7 +33,7 @@ import blocks._
 
 class FirstRequestComponent(actor: Actor)
   extends Component(actor) {
-  bindSafe(classOf[Process], new ChainFactory(process))
+  bindMessageLogic(classOf[Process], new ChainFactory(process))
 
   private def process(msg: AnyRef, chain: Chain) {
     chain.op(actor, Value(), "pathname")

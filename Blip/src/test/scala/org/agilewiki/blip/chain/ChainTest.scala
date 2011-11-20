@@ -15,7 +15,7 @@ case class UltimateAnswer()
 class SimpleActor extends Actor {
   bind(classOf[Prnt], prnt)
   bind(classOf[DoIt], doIt)
-  bindSafe(classOf[PrntChain], new ChainFactory(chainFunction))
+  bindMessageLogic(classOf[PrntChain], new ChainFactory(chainFunction))
   bind(classOf[UltimateAnswer], ultimateAnswer)
 
   private def prnt(msg: AnyRef, rf: Any => Unit) {

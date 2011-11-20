@@ -13,7 +13,7 @@ case class Ex()
 
 class SimpleActor extends Actor {
   bind(classOf[SimpleEcho], simpleEcho)
-  bindSafe(classOf[QueryEcho], new Query(queryEcho))
+  bindMessageLogic(classOf[QueryEcho], new Query(queryEcho))
   bind(classOf[Ex], ex)
 
   private def simpleEcho(msg: AnyRef, rf: Any => Unit) {

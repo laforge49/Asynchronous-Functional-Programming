@@ -30,8 +30,8 @@ case class SimpleQuery(name: String)
 case class SimpleUpdate(name: String)
 
 class SimpleTransactionProcessor extends AsyncActor {
-  bindSafe(classOf[SimpleQuery], new Query(query))
-  bindSafe(classOf[SimpleUpdate], new Update(update))
+  bindMessageLogic(classOf[SimpleQuery], new Query(query))
+  bindMessageLogic(classOf[SimpleUpdate], new Update(update))
 
   def query(msg: AnyRef, rf: Any => Unit) {
     val name = msg.asInstanceOf[SimpleQuery].name

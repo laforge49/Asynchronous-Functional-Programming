@@ -26,7 +26,10 @@ package blip
 
 import bind._
 
-class Component(_actor: Actor) extends Responder with Bindings {
+class Component(_actor: Actor)
+  extends SystemServicesGetter
+  with Bindings {
+
   val actor = _actor
   var _componentFactory: ComponentFactory = null
 
@@ -39,15 +42,17 @@ class Component(_actor: Actor) extends Responder with Bindings {
 
   override implicit def activeActor = actor.activeActor
 
-  override def mailbox = actor.mailbox
+  def mailbox = actor.mailbox
 
   override def exchangeMessenger = actor.exchangeMessenger
 
-  override def factory = actor.factory
+  def factory = actor.factory
 
   override def systemServices = actor.systemServices
 
   def open {}
 
   def close {}
+
+  def factoryId = actor.factoryId
 }

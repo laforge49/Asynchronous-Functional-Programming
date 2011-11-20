@@ -30,6 +30,8 @@ trait Bindings {
   val messageLogics =
     new java.util.HashMap[Class[_ <: AnyRef], MessageLogic]
 
+  implicit def activeActor: ActiveActor
+
   def exchangeMessenger: ExchangeMessenger
 
   def exceptionHandler(msg: AnyRef,
@@ -61,5 +63,16 @@ trait Bindings {
         exceptionFunction(ex, exchangeMessenger)
       }
     }
+  }
+
+  protected def bind(reqClass: Class[_ <: AnyRef], messageFunction: (AnyRef, Any => Unit) => Unit) {
+    if (activeActor.bindActor.opened) throw new IllegalStateException
+    messageLogics.put(reqClass, new BoundFunction(messageFunction))
+  }
+
+  protected def bindMessageLogic(reqClass: Class[_ <: AnyRef],
+                         safe: MessageLogic) {
+    if (activeActor.bindActor.opened) throw new IllegalStateException
+    messageLogics.put(reqClass, safe)
   }
 }

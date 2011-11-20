@@ -40,7 +40,7 @@ class SafeActor extends AsyncActor {
     rf(null)
   }
 
-  bindSafe(classOf[PrintEven], SafePrintEven(this))
+  bindMessageLogic(classOf[PrintEven], SafePrintEven(this))
 }
 
 class SafeTest extends SpecificationWithJUnit {

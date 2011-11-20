@@ -45,7 +45,7 @@ class FileLoader
 class FileLoaderComponent(actor: Actor)
   extends Component(actor) {
   val fileLoader = new FileLoader
-  bindSafe(classOf[LoadFile], new SafeForward(fileLoader))
+  bindMessageLogic(classOf[LoadFile], new SafeForward(fileLoader))
 
   override def open {
     super.open

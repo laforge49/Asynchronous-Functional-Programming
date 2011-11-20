@@ -44,7 +44,7 @@ class RootBlockComponent(actor: Actor)
   private var currentRootOffset = 0
 
   bind(classOf[ReadRootBlock], readRootBlock)
-  bindSafe(classOf[WriteRootBlock], new ChainFactory(writeRootBlock))
+  bindMessageLogic(classOf[WriteRootBlock], new ChainFactory(writeRootBlock))
 
   override def open {
     super.open

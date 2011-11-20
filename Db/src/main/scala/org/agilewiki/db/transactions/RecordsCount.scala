@@ -49,7 +49,7 @@ class RecordsCountFactory extends IncDesFactory(DBT_RECORDS_COUNT) {
 
 class RecordsCountComponent(actor: Actor)
   extends Component(actor) {
-  bindSafe(classOf[Process], new ChainFactory(process))
+  bindMessageLogic(classOf[Process], new ChainFactory(process))
 
   private def process(msg: AnyRef, chain: Chain) {
     chain.op(systemServices, Records(), "records")

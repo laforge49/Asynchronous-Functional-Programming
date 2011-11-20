@@ -30,7 +30,7 @@ import seq.NavSetSeq
 import annotation.tailrec
 
 class Actor
-  extends Responder
+  extends SystemServicesGetter
   with BindActor {
 
   private var _mailbox: Mailbox = null
@@ -84,9 +84,9 @@ class Actor
     c
   }
 
-  override def mailbox = _mailbox
+  def mailbox = _mailbox
 
-  override def factory = _factory
+  def factory = _factory
 
   protected var _systemServices: SystemServices = null
 
@@ -103,7 +103,7 @@ class Actor
     )
     smf.addAll(messageLogics.keySet)
     val seq = new NavSetSeq(smf)
-    seq.setMailbox(_mailbox)
+    seq.setMailbox(mailbox)
     seq
   }
 
@@ -113,7 +113,7 @@ class Actor
     )
     smf.addAll(components.keySet)
     val seq = new NavSetSeq(smf)
-    seq.setMailbox(_mailbox)
+    seq.setMailbox(mailbox)
     seq
   }
 
@@ -237,4 +237,9 @@ class Actor
                           bound: QueuedLogic,
                           src: ExchangeMessengerSource) =
     new MailboxReq(this, rf, data, bound, src)
+
+  def factoryId = {
+    if (factory == null) null
+    else factory.id
+  }
 }
