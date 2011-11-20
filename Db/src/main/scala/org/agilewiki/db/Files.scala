@@ -43,7 +43,7 @@ class Files extends AsyncActor {
       i += 1
     }
     val seq = new NavSetSeq(set)
-    seq.setMailbox(systemServices.mailbox)
+    seq.setMailbox(systemServices.exchangeMessenger)
     seq.setSystemServices(systemServices)
     rf(seq)
   }

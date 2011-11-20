@@ -45,7 +45,7 @@ class D extends Actor {
   def asyncServerEx(msg: AnyRef, rf: Any => Unit) {
     val s = new S
     s.setMailbox(newAsyncMailbox)
-    println("ase "+mailbox.curReq)
+    println("ase "+exchangeMessenger.curReq)
     s(SE())(rsp => rf)
   }
 
@@ -60,7 +60,7 @@ class D extends Actor {
 
   def syncServerEx(msg: AnyRef, rf: Any => Unit) {
     val s = new S
-    s.setMailbox(mailbox)
+    s.setMailbox(exchangeMessenger)
     s(SE())(rsp => rf)
   }
 
@@ -92,7 +92,7 @@ class D extends Actor {
 
   def syncRspEx(msg: AnyRef, rf: Any => Unit) {
     val s = new S
-    s.setMailbox(mailbox)
+    s.setMailbox(exchangeMessenger)
     s(SNE()) {
       rsp => throw new IllegalAccessException
     }

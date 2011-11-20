@@ -20,7 +20,7 @@ class Driver extends Actor {
 
   def doit(msg: AnyRef, rf: Any => Unit) {
     val range = new Range(0, 10)
-    range.setMailbox(mailbox)
+    range.setMailbox(exchangeMessenger)
     range.setSystemServices(systemServices)
     range(LoopSafe(Looper()))(rf)
   }
@@ -58,7 +58,7 @@ class SwiftTimingsTest extends SpecificationWithJUnit {
         properties = properties,
         actorId = ActorId("db"))
       val driver = new Driver
-      driver.setMailbox(db.mailbox)
+      driver.setMailbox(db.exchangeMessenger)
       driver.setSystemServices(db)
       val batch = Batch(db)
       val chain = new Chain

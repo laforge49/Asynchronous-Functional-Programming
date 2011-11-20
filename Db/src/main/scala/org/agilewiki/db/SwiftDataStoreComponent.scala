@@ -157,7 +157,7 @@ class SwiftDataStoreComponent(actor: Actor)
     val fileChannel = inputStream.getChannel
     fileChannel.position(logFilePosition)
     val reader = new java.io.DataInputStream(inputStream)
-    val seq = new TransactionsSeq(reader, mailbox)
+    val seq = new TransactionsSeq(reader, exchangeMessenger)
     seq.setSystemServices(systemServices)
     seq(LoopSafe(JnlsSafe)) {
       rsp => initialize(rootMap, rf)

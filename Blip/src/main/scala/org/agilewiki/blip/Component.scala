@@ -42,8 +42,6 @@ class Component(_actor: Actor)
 
   override implicit def activeActor = actor.activeActor
 
-  def mailbox = actor.mailbox
-
   override def exchangeMessenger = actor.exchangeMessenger
 
   def factory = actor.factory

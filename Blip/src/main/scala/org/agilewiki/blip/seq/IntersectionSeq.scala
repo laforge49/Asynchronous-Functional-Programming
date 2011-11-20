@@ -49,7 +49,7 @@ class IntersectionSeq[K, V](seqList: java.util.List[Sequence[K, V]])
     val sit = seqList.iterator
     while (sit.hasNext) {
       val cursor = new Cursor(sit.next)
-      cursor.setMailbox(mailbox)
+      cursor.setMailbox(exchangeMessenger)
       seqs.add(cursor)
     }
     val processed = new java.util.ArrayList[Cursor[K, V]]

@@ -77,7 +77,7 @@ class Record extends IncDesIncDes {
       return
     }
     val incDesFactoryId = FactoryId(m.readString)
-    systemServices(Instantiate(incDesFactoryId, mailbox)) {
+    systemServices(Instantiate(incDesFactoryId, exchangeMessenger)) {
       rsp => {
         i = rsp.asInstanceOf[IncDes]
         i.load(m)

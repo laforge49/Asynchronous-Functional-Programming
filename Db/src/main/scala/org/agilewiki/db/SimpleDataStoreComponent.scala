@@ -113,7 +113,7 @@ class SimpleDataStoreComponent(actor: Actor)
       rsp => {
         if (block == null) {
           val bytes = results("bytes").asInstanceOf[Array[Byte]]
-          block = Block(mailbox)
+          block = Block(exchangeMessenger)
           block.setSystemServices(systemServices)
           block.load(bytes)
         }
@@ -123,7 +123,7 @@ class SimpleDataStoreComponent(actor: Actor)
   }
 
   private def init(rf: Any => Unit) {
-    block = Block(mailbox)
+    block = Block(exchangeMessenger)
     block.setSystemServices(systemServices)
     rf(block)
   }

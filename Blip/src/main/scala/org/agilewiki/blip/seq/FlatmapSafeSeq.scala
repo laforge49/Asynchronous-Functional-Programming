@@ -30,7 +30,7 @@ import bind._
 
 class FlatmapSafeSeq[K, V, V1](seq: Sequence[K, V], safe: MessageLogic)
   extends Sequence[K, V1] {
-  setMailbox(seq.mailbox)
+  setMailbox(seq.exchangeMessenger)
   setSystemServices(seq.systemServices)
 
   override def first(msg: AnyRef, rf: Any => Unit) {

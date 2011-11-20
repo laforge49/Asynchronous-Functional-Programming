@@ -102,7 +102,7 @@ class IncDesIncDes extends IncDesItem[IncDes] {
       return
     }
     val incDesFactoryId = FactoryId(m.readString)
-    systemServices(Instantiate(incDesFactoryId, mailbox)) {
+    systemServices(Instantiate(incDesFactoryId, exchangeMessenger)) {
       rsp => {
         i = rsp.asInstanceOf[IncDes]
         i.load(m)
@@ -161,7 +161,7 @@ class IncDesIncDes extends IncDesItem[IncDes] {
     val fid = s.factoryId
     writable(tc) {
       r1 => {
-        systemServices(Instantiate(fid, mailbox)) {
+        systemServices(Instantiate(fid, exchangeMessenger)) {
           r2 => {
             i = r2.asInstanceOf[IncDes]
             i.partness(this, key, this)
@@ -194,8 +194,8 @@ class IncDesIncDes extends IncDesItem[IncDes] {
         throw new IllegalStateException("SystemServices does not contain FactoryRegistryComponentFactory")
       if (factoryRegistryComponentFactory.getFactory(fid) == null)
         throw new IllegalArgumentException("unregistered factory id: " + fid)
-      if (mailbox != v.mailbox) {
-        if (v.mailbox == null && !v.opened) v.setMailbox(mailbox)
+      if (exchangeMessenger != v.exchangeMessenger) {
+        if (v.exchangeMessenger == null && !v.opened) v.setMailbox(exchangeMessenger)
         else throw new IllegalStateException("uses a different mailbox")
       }
       if (v.systemServices == null && !v.opened) v.setSystemServices(systemServices)

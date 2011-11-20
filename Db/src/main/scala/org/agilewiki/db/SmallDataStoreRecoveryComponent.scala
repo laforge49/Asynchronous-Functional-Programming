@@ -72,7 +72,7 @@ class SmallDataStoreRecoveryComponent(actor: Actor)
     val jnlPathname = msg.asInstanceOf[ProcessFile].jnlPathname
     println("recovering " + jnlPathname)
     val reader = new java.io.DataInputStream(new java.io.FileInputStream(jnlPathname))
-    val seq = new TransactionsSeq(reader, mailbox)
+    val seq = new TransactionsSeq(reader, exchangeMessenger)
     seq.setSystemServices(systemServices)
     seq(LoopSafe(JnlsSafe)) {
       rsp => {

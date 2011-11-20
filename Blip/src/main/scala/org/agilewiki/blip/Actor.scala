@@ -84,7 +84,7 @@ class Actor
     c
   }
 
-  def mailbox = _mailbox
+  override def exchangeMessenger = _mailbox
 
   def factory = _factory
 
@@ -103,7 +103,7 @@ class Actor
     )
     smf.addAll(messageLogics.keySet)
     val seq = new NavSetSeq(smf)
-    seq.setMailbox(mailbox)
+    seq.setMailbox(exchangeMessenger)
     seq
   }
 
@@ -113,7 +113,7 @@ class Actor
     )
     smf.addAll(components.keySet)
     val seq = new NavSetSeq(smf)
-    seq.setMailbox(mailbox)
+    seq.setMailbox(exchangeMessenger)
     seq
   }
 
@@ -146,7 +146,7 @@ class Actor
     pendingTransactions.removeFirst
     addActiveTransaction(mailboxReq)
     val transaction = mailboxReq.binding.asInstanceOf[BoundTransaction]
-    transaction.processTransaction(mailbox, mailboxReq)
+    transaction.processTransaction(exchangeMessenger, mailboxReq)
     runPendingTransaction
   }
 
@@ -161,7 +161,7 @@ class Actor
   }
 
   def removeActiveTransaction {
-    val mailboxReq = mailbox.curReq
+    val mailboxReq = exchangeMessenger.curReq
     val l = mailboxReq.binding.asInstanceOf[BoundTransaction].level
     activeTransactions.remove(mailboxReq)
     if (l == transactionActivityLevel) {
@@ -224,13 +224,11 @@ class Actor
     rf(r)
   }
 
-  def mailboxFactory = mailbox.mailboxFactory
+  def mailboxFactory = exchangeMessenger.mailboxFactory
 
   def newAsyncMailbox = mailboxFactory.newAsyncMailbox
 
   def newSyncMailbox = mailboxFactory.newSyncMailbox
-
-  override def exchangeMessenger = mailbox
 
   override def newRequest(rf: Any => Unit,
                           data: AnyRef,

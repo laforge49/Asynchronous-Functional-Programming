@@ -58,7 +58,7 @@ class RootBlockComponent(actor: Actor)
     val fileLength = file.length
     if (fileLength == 0L) {
       currentRootOffset = maxBlockSize
-      val block = Block(mailbox)
+      val block = Block(exchangeMessenger)
       block.setSystemServices(systemServices)
       actor(InitDb(block))(rf)
     } else {
@@ -125,7 +125,7 @@ class RootBlockComponent(actor: Actor)
                         val cs = rsp4.asInstanceOf[Long]
                         if (cs != newcs) rf(null)
                         else {
-                          val rootBlock = Block(mailbox)
+                          val rootBlock = Block(exchangeMessenger)
                           rootBlock.setSystemServices(systemServices)
                           rootBlock.load(blockBytes)
                           timestamp(Value()) {

@@ -27,7 +27,7 @@ package seq
 
 class TailSeq[K, V](seq: Sequence[K, V], start: K)
   extends Sequence[K, V] {
-  setMailbox(seq.mailbox)
+  setMailbox(seq.exchangeMessenger)
   setSystemServices(seq.systemServices)
 
   override def first(msg: AnyRef, rf: Any => Unit) {

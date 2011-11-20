@@ -31,7 +31,7 @@ class SystemServices extends Actor
 class RootSystemServices extends SystemServices {
   override def close {
     super.close
-    mailbox.mailboxFactory.close
+    exchangeMessenger.mailboxFactory.close
   }
 }
 
@@ -60,7 +60,7 @@ object Subsystem {
             actorId: ActorId = null) = {
     val subSystemFactory = new CompositeFactory(factoryId, rootComponentFactory, classOf[Subsystem])
     SetProperties(subSystemFactory, properties)
-    val _mailbox = if (mailbox == null) systemServices.mailbox else mailbox
+    val _mailbox = if (mailbox == null) systemServices.exchangeMessenger else mailbox
     val subSystem = subSystemFactory.newActor(_mailbox).asInstanceOf[Subsystem]
     if (actorId != null) {
       subSystem.id(actorId)

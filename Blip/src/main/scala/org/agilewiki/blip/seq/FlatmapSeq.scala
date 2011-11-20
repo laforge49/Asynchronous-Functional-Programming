@@ -27,7 +27,7 @@ package seq
 
 class FlatmapSeq[K, V, V1](seq: Sequence[K, V], f: V => V1)
   extends Sequence[K, V1] {
-  setMailbox(seq.mailbox)
+  setMailbox(seq.exchangeMessenger)
   setSystemServices(seq.systemServices)
 
   override def first(msg: AnyRef, rf: Any => Unit) {r(msg, rf)}
