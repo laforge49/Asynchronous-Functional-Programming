@@ -29,7 +29,8 @@ import exchange._
 
 class SafeForward(actor: Actor)
   extends MessageLogic {
-  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
+                   (implicit sender: ActiveActor) {
     actor(msg)(rf)
   }
 }
@@ -41,52 +42,6 @@ class ChainFactory(chainFunction: (AnyRef, Chain) => Unit)
     val chain = new Chain
     chainFunction(msg, chain)
     target.asInstanceOf[Actor](chain)(rf)
-  }
-}
-
-class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
-  extends QueuedLogic(messageFunction) {
-
-  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
-                   (implicit srcActor: ActiveActor) {
-    val srcExchangeMessenger = {
-      if (srcActor == null) null
-      else {
-        srcActor.bindActor.exchangeMessenger
-      }
-    }
-    if (srcExchangeMessenger == null) {
-      if (target.exchangeMessenger != null) {
-        println("srcActor = " + srcActor)
-        println("srcMailbox = " + srcExchangeMessenger)
-        println("target = " + target)
-        println("targetMailbox = " + target.exchangeMessenger)
-        throw new UnsupportedOperationException(
-          "An immutable bindActor can only send to another immutable bindActor."
-        )
-      }
-    }
-    val responseFunction: Any => Unit = {
-      rsp => {
-        rsp match {
-          case rsp: Exception => {
-            srcExchangeMessenger.curReq.asInstanceOf[MailboxReq].
-              exceptionFunction(rsp, srcExchangeMessenger.asInstanceOf[Mailbox])
-          }
-          case rsp => try {
-            rf(rsp)
-          } catch {
-            case ex: Exception => srcExchangeMessenger.curReq.asInstanceOf[MailboxReq].
-              exceptionFunction(ex, srcExchangeMessenger.asInstanceOf[Mailbox])
-          }
-        }
-      }
-    }
-    val targetExchangeMessenger = target.exchangeMessenger
-    if (targetExchangeMessenger == null || targetExchangeMessenger == srcExchangeMessenger) {
-      if (responseFunction == null) messageFunction(msg, AnyRef => {})
-      else messageFunction(msg, responseFunction)
-    } else enqueueRequest(srcExchangeMessenger.asInstanceOf[Mailbox], target.asInstanceOf[Actor], msg, responseFunction)
   }
 }
 

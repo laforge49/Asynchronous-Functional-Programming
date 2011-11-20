@@ -26,7 +26,8 @@ package bind
 
 import exchange._
 
-abstract class QueuedLogic(messageFunction: (AnyRef, Any => Unit) => Unit) extends MessageLogic {
+abstract class QueuedLogic(messageFunction: (AnyRef, Any => Unit) => Unit)
+  extends MessageLogic {
 
   def reqFunction = messageFunction
 
