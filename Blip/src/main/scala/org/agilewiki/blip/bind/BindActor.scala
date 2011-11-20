@@ -31,10 +31,25 @@ trait BindActor
 
   private var _superior: BindActor = null
   private val _activeActor = ActiveActor(this)
+  private var _opened = false
 
   implicit def activeActor: ActiveActor = _activeActor
 
+  def opened = _opened
+
+  def _open {
+    if (!opened) opener
+  }
+
+  protected def opener {
+    open
+    _opened = true
+  }
+
+  protected def open {}
+
   def setSuperior(superior: BindActor) {
+    if (opened) throw new IllegalStateException
     _superior = superior
   }
 
@@ -49,12 +64,23 @@ trait BindActor
   def apply(msg: AnyRef)
            (responseFunction: Any => Unit)
            (implicit srcActor: ActiveActor) {
+    _open
     val messageLogic = messageLogics.get(msg.getClass)
     if (messageLogic != null) messageLogic.func(this, msg, responseFunction)(srcActor)
     else if (superior != null) superior(msg)(responseFunction)(srcActor)
     else {
       System.err.println("bindActor = " + this.getClass.getName)
       throw new IllegalArgumentException("Unknown type of message: " + msg.getClass.getName)
+    }
+  }
+
+  def requiredService(reqClass: Class[_ <: AnyRef]) {
+    if (opened) throw new IllegalStateException
+    var actor: BindActor = this
+    while (!actor.messageLogics.containsKey(reqClass)) {
+      if (superior == null)
+        throw new UnsupportedOperationException("service missing for " + reqClass.getName)
+      actor = superior
     }
   }
 }

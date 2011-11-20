@@ -37,7 +37,6 @@ class Actor
   private var _factory: Factory = null
   val components = new java.util.LinkedHashMap[Class[_ <: ComponentFactory], Component]
   private var componentList: java.util.ArrayList[Component] = null
-  var opened = false
   private var transactionActivityLevel = 0
   private lazy val pendingTransactions = new java.util.ArrayDeque[MailboxReq]
   private lazy val activeTransactions = new java.util.HashSet[MailboxReq]
@@ -47,7 +46,7 @@ class Actor
   bind(classOf[LeftReq], left)
   bind(classOf[RightReq], right)
 
-  lazy val _open = {
+  override protected def opener = {
     if (!components.isEmpty) {
       componentList = new java.util.ArrayList[Component](components.values)
       var i = 0
@@ -56,12 +55,8 @@ class Actor
         i += 1
       }
     }
-    open
-    opened = true
-    true
+    super.opener
   }
-
-  def open {}
 
   def close {
     if (componentList == null) return
@@ -70,11 +65,6 @@ class Actor
       i -= 1
       componentList.get(i).close
     }
-  }
-
-  override def setSuperior(superior: BindActor) {
-    if (opened) throw new IllegalStateException
-    super.setSuperior(superior)
   }
 
   def setFactory(factory: Factory) {
@@ -107,13 +97,6 @@ class Actor
 
   override def systemServices: SystemServices = _systemServices
 
-  override def apply(msg: AnyRef)
-           (responseFunction: Any => Unit)
-           (implicit srcActor: ActiveActor) {
-    _open
-    super.apply(msg)(responseFunction)(srcActor)
-  }
-
   lazy val messageClasses = {
     val smf = new java.util.TreeSet[Class[_ <: AnyRef]](
       new ClassComparator
@@ -132,16 +115,6 @@ class Actor
     val seq = new NavSetSeq(smf)
     seq.setMailbox(_mailbox)
     seq
-  }
-
-  def requiredService(reqClass: Class[_ <: AnyRef]) {
-    if (opened) throw new IllegalStateException
-    var actor: BindActor = this
-    while (!actor.messageLogics.containsKey(reqClass)) {
-      if (superior == null)
-        throw new UnsupportedOperationException("service missing for " + reqClass.getName)
-      actor = superior
-    }
   }
 
   def isInvalid = transactionActivityLevel < 0
