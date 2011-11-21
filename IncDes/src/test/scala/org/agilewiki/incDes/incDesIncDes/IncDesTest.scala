@@ -73,7 +73,7 @@ class IncDesTest extends SpecificationWithJUnit {
 
         val driver = new Driver
         driver.setSystemServices(systemServices)
-        driver.setMailbox(systemServices.newSyncMailbox)
+        driver.setExchangeMessenger(systemServices.newSyncMailbox)
         Future(Future(driver, DoIt()).asInstanceOf[Actor], Value()) must be equalTo (123456789987654321L)
       } finally {
         systemServices.close

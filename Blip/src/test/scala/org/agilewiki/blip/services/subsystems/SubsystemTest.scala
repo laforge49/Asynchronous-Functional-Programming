@@ -55,7 +55,7 @@ class SubsystemTest extends SpecificationWithJUnit {
         val aSubsystem = Subsystem(systemServices, new FactoryRegistryComponentFactory)
         val driver = new Driver
         driver.setSystemServices(aSubsystem)
-        driver.setMailbox(systemServices.newSyncMailbox)
+        driver.setExchangeMessenger(systemServices.newSyncMailbox)
         Future(driver, DoIt())
       } finally {
         systemServices.close

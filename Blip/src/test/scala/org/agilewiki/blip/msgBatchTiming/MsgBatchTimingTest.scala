@@ -38,14 +38,14 @@ class MsgBatchTimingTest extends SpecificationWithJUnit {
         var i = 0
         while (i < b) {
           val echo = new Echo
-          echo.setMailbox(systemServices.newSyncMailbox)
+          echo.setExchangeMessenger(systemServices.newSyncMailbox)
           val batcher = new Batcher(echo, e)
-          batcher.setMailbox(systemServices.newSyncMailbox)
+          batcher.setExchangeMessenger(systemServices.newSyncMailbox)
           batchers(i) = batcher
           i += 1
         }
         val driver = new Driver(batchers)
-        driver.setMailbox(systemServices.newSyncMailbox)
+        driver.setExchangeMessenger(systemServices.newSyncMailbox)
         Future(driver, TimingReq())
         val t0 = System.currentTimeMillis
         Future(driver, TimingReq())

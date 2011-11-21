@@ -214,7 +214,7 @@ class IncDesList[V <: IncDesItem[V1], V1]
     }
     deserialize
     listSeq = new ListSeq[V](i)
-    listSeq.setMailbox(exchangeMessenger)
+    listSeq.setExchangeMessenger(exchangeMessenger)
     listSeq.setSystemServices(systemServices)
     rf(listSeq)
   }

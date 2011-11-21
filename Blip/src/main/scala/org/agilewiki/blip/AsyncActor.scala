@@ -30,6 +30,6 @@ class AsyncActor extends Actor {
       println("AsyncActor has no system services: class = "+this.getClass.getName)
     }
     super.open
-    setMailbox(systemServices.newAsyncMailbox)
+    setExchangeMessenger(systemServices.newAsyncMailbox)
   }
 }

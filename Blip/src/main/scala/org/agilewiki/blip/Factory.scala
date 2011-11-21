@@ -37,7 +37,7 @@ abstract class Factory(_id: FactoryId) {
 
   def newActor(mailbox: Mailbox) = {
     val actor = instantiate
-    actor.setMailbox(mailbox)
+    actor.setExchangeMessenger(mailbox)
     actor.setFactory(this)
     val fit = componentFactories.keySet.iterator
     while (fit.hasNext) {

@@ -45,14 +45,14 @@ class LoopTest extends SpecificationWithJUnit {
       try {
         val mb = mailboxFactory.newAsyncMailbox
         val p = new P
-        p.setMailbox(mb)
+        p.setExchangeMessenger(mb)
         println("synchronous test")
         val sl = new L(p)
-        sl.setMailbox(mb)
+        sl.setExchangeMessenger(mb)
         Future(sl, Loop(3))
         println("asynchronous test")
         val al = new L(p)
-        al.setMailbox(mailboxFactory.newAsyncMailbox)
+        al.setExchangeMessenger(mailboxFactory.newAsyncMailbox)
         Future(al, Loop(3))
       } finally {
         mailboxFactory.close

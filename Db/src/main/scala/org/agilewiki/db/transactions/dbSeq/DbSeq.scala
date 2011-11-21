@@ -35,7 +35,7 @@ class DbStringSeq[V](db: SystemServices, _pathname: String)
 
   bind(classOf[Pathname], pathname)
   setSystemServices(db)
-  setMailbox(db.exchangeMessenger)
+  setExchangeMessenger(db.exchangeMessenger)
 
   protected def pathname(msg: AnyRef, rf: Any => Unit) = {
     var v = _pathname
@@ -87,7 +87,7 @@ class DbLongSeq[V](db: SystemServices, _pathname: String)
 
   bind(classOf[Pathname], pathname)
   setSystemServices(db)
-  setMailbox(db.exchangeMessenger)
+  setExchangeMessenger(db.exchangeMessenger)
 
   protected def pathname(msg: AnyRef, rf: Any => Unit) = {
     var v = _pathname
@@ -139,7 +139,7 @@ class DbIntSeq[V](db: SystemServices, _pathname: String)
 
   bind(classOf[Pathname], pathname)
   setSystemServices(db)
-  setMailbox(db.exchangeMessenger)
+  setExchangeMessenger(db.exchangeMessenger)
 
   protected def pathname(msg: AnyRef, rf: Any => Unit) = {
     var v = _pathname

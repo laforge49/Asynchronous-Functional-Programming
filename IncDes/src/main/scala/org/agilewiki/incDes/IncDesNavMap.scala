@@ -253,7 +253,7 @@ class IncDesNavMap[K, V <: IncDesItem[V1], V1]
     }
     deserialize
     navMapSeq = new NavMapSeq[K, V](i)
-    navMapSeq.setMailbox(exchangeMessenger)
+    navMapSeq.setExchangeMessenger(exchangeMessenger)
     navMapSeq.setSystemServices(systemServices)
     rf(navMapSeq)
   }

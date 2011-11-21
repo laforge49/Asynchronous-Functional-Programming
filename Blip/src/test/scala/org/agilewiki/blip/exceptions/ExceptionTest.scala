@@ -44,7 +44,7 @@ class D extends Actor {
 
   def asyncServerEx(msg: AnyRef, rf: Any => Unit) {
     val s = new S
-    s.setMailbox(newAsyncMailbox)
+    s.setExchangeMessenger(newAsyncMailbox)
     println("ase "+exchangeMessenger.curReq)
     s(SE())(rsp => rf)
   }
@@ -60,7 +60,7 @@ class D extends Actor {
 
   def syncServerEx(msg: AnyRef, rf: Any => Unit) {
     val s = new S
-    s.setMailbox(exchangeMessenger)
+    s.setExchangeMessenger(exchangeMessenger)
     s(SE())(rsp => rf)
   }
 
@@ -75,7 +75,7 @@ class D extends Actor {
 
   def asyncRspEx(msg: AnyRef, rf: Any => Unit) {
     val s = new S
-    s.setMailbox(newAsyncMailbox)
+    s.setExchangeMessenger(newAsyncMailbox)
     s(SNE()) {
       rsp => throw new IllegalAccessException
     }
@@ -92,7 +92,7 @@ class D extends Actor {
 
   def syncRspEx(msg: AnyRef, rf: Any => Unit) {
     val s = new S
-    s.setMailbox(exchangeMessenger)
+    s.setExchangeMessenger(exchangeMessenger)
     s(SNE()) {
       rsp => throw new IllegalAccessException
     }
@@ -105,7 +105,7 @@ class ExceptionTest extends SpecificationWithJUnit {
       val systemServices = SystemServices()
       try {
         val d = new D
-        d.setMailbox(systemServices.newSyncMailbox)
+        d.setExchangeMessenger(systemServices.newSyncMailbox)
         println("--server exception async test")
         Future(d, AsyncServerEx())
         println("--server exception sync test")

@@ -29,7 +29,7 @@ class ListTest extends SpecificationWithJUnit {
         fact.add(6)
         fact.add(24)
         val factSeq = new ListSeq(fact)
-        factSeq.setMailbox(systemServices.newAsyncMailbox)
+        factSeq.setExchangeMessenger(systemServices.newAsyncMailbox)
         println(Future(factSeq, Next(4)))
         fact.add(120)
         println(Future(factSeq, Next(4)))

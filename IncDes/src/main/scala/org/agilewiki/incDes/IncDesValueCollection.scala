@@ -67,7 +67,7 @@ abstract class IncDesValueCollection[K, V <: IncDesItem[V1], V1]
 
   def newValue = {
     val v = valueFactory.newActor(exchangeMessenger).asInstanceOf[V]
-    v.setMailbox(exchangeMessenger)
+    v.setExchangeMessenger(exchangeMessenger)
     v.setSystemServices(systemServices)
     v
   }
@@ -82,7 +82,7 @@ abstract class IncDesValueCollection[K, V <: IncDesItem[V1], V1]
     if (fid.value != valueFactory.id.value)
       throw new IllegalArgumentException("incorrect factory id: " + fid.value)
     if (exchangeMessenger != v.exchangeMessenger) {
-      if (v.exchangeMessenger == null && !v.opened) v.setMailbox(exchangeMessenger)
+      if (v.exchangeMessenger == null && !v.opened) v.setExchangeMessenger(exchangeMessenger)
       else throw new IllegalStateException("uses a different mailbox")
     }
     if (v.systemServices == null) v.setSystemServices(systemServices)

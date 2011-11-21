@@ -82,7 +82,7 @@ class ActorRegistryTest extends SpecificationWithJUnit {
       try {
         val driver = new Driver
         driver.setSystemServices(systemServices)
-        driver.setMailbox(systemServices.newSyncMailbox)
+        driver.setExchangeMessenger(systemServices.newSyncMailbox)
         Future(driver, DoIt1())
         Future(driver, DoIt2())
       } finally {

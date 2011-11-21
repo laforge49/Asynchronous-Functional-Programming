@@ -57,7 +57,7 @@ class BooleanTest extends SpecificationWithJUnit {
       try {
         val driver = new Driver
         driver.setSystemServices(systemServices)
-        driver.setMailbox(systemServices.newSyncMailbox)
+        driver.setExchangeMessenger(systemServices.newSyncMailbox)
         Future(driver, DoIt()) must be equalTo (true)
       } finally {
         systemServices.close

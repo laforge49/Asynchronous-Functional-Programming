@@ -27,7 +27,7 @@ package seq
 
 class HeadSeq[K, V](seq: Sequence[K, V], limit: K)
   extends Sequence[K, V] {
-  setMailbox(seq.exchangeMessenger)
+  setExchangeMessenger(seq.exchangeMessenger)
   setSystemServices(seq.systemServices)
 
   override def first(msg: AnyRef, rf: Any => Unit) {

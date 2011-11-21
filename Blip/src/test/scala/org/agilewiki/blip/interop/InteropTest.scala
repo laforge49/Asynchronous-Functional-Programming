@@ -40,7 +40,7 @@ case class T4()
 class SimpleReactor(systemServices: SystemServices) extends Reactor[Any] {
   val interop = new Interop(this)
   val simpleActor = new SimpleActor
-  simpleActor.setMailbox(systemServices.newSyncMailbox)
+  simpleActor.setExchangeMessenger(systemServices.newSyncMailbox)
 
   start
 

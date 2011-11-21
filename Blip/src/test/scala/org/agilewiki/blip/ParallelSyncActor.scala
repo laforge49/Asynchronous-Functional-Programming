@@ -31,9 +31,9 @@ class ParallelSyncActor(count: Int) extends Actor {
     var i = 4
     var m1 = newSyncMailbox
     var a1 = new TimingActor(null)
-    a1.setMailbox(m1)
+    a1.setExchangeMessenger(m1)
     var a2 = new RepeatingActor(a1, count)
-    a2.setMailbox(m1)
+    a2.setExchangeMessenger(m1)
     a2(msg) {
       r =>
         i -= 1
@@ -41,9 +41,9 @@ class ParallelSyncActor(count: Int) extends Actor {
     }
     m1 = newSyncMailbox
     a1 = new TimingActor(null)
-    a1.setMailbox(m1)
+    a1.setExchangeMessenger(m1)
     a2 = new RepeatingActor(a1, count)
-    a2.setMailbox(m1)
+    a2.setExchangeMessenger(m1)
     a2(msg) {
       r =>
         i -= 1
@@ -51,9 +51,9 @@ class ParallelSyncActor(count: Int) extends Actor {
     }
     m1 = newSyncMailbox
     a1 = new TimingActor(null)
-    a1.setMailbox(m1)
+    a1.setExchangeMessenger(m1)
     a2 = new RepeatingActor(a1, count)
-    a2.setMailbox(m1)
+    a2.setExchangeMessenger(m1)
     a2(msg) {
       r =>
         i -= 1
@@ -61,9 +61,9 @@ class ParallelSyncActor(count: Int) extends Actor {
     }
     m1 = newSyncMailbox
     a1 = new TimingActor(null)
-    a1.setMailbox(m1)
+    a1.setExchangeMessenger(m1)
     a2 = new RepeatingActor(a1, count)
-    a2.setMailbox(m1)
+    a2.setExchangeMessenger(m1)
     a2(msg) {
       r =>
         i -= 1

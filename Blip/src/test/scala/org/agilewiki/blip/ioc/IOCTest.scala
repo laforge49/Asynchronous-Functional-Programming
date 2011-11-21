@@ -34,7 +34,7 @@ class IOCTest extends SpecificationWithJUnit {
       try {
         val sayIt = new SayIt
         sayIt.setSystemServices(systemServices)
-        sayIt.setMailbox(systemServices.newSyncMailbox)
+        sayIt.setExchangeMessenger(systemServices.newSyncMailbox)
         println(Future(sayIt, SaySomething()))
       } finally {
         systemServices.close

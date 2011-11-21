@@ -54,7 +54,7 @@ class FactoryRegistryTest extends SpecificationWithJUnit {
       try {
         val driver = new Driver
         driver.setSystemServices(systemServices)
-        driver.setMailbox(systemServices.newSyncMailbox)
+        driver.setExchangeMessenger(systemServices.newSyncMailbox)
         Future(driver, DoIt())
       } finally {
         systemServices.close

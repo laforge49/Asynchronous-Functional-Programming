@@ -33,7 +33,6 @@ class Actor
   extends SystemServicesGetter
   with BindActor {
 
-  private var _mailbox: Mailbox = null
   private var _factory: Factory = null
   val components = new java.util.LinkedHashMap[Class[_ <: ComponentFactory], Component]
   private var componentList: java.util.ArrayList[Component] = null
@@ -72,10 +71,7 @@ class Actor
     _factory = factory
   }
 
-  def setMailbox(mailbox: Mailbox) {
-    if (opened) throw new IllegalStateException
-    _mailbox = mailbox
-  }
+  override def exchangeMessenger = super.exchangeMessenger.asInstanceOf[Mailbox]
 
   def component(componentFactoryClass: Class[_ <: ComponentFactory]) = {
     val c = components.get(componentFactoryClass)
@@ -83,8 +79,6 @@ class Actor
       componentFactoryClass.getName)
     c
   }
-
-  override def exchangeMessenger = _mailbox
 
   def factory = _factory
 
@@ -103,7 +97,7 @@ class Actor
     )
     smf.addAll(messageLogics.keySet)
     val seq = new NavSetSeq(smf)
-    seq.setMailbox(exchangeMessenger)
+    seq.setExchangeMessenger(exchangeMessenger)
     seq
   }
 
@@ -113,7 +107,7 @@ class Actor
     )
     smf.addAll(components.keySet)
     val seq = new NavSetSeq(smf)
-    seq.setMailbox(exchangeMessenger)
+    seq.setExchangeMessenger(exchangeMessenger)
     seq
   }
 

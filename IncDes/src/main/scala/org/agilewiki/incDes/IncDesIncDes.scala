@@ -195,7 +195,7 @@ class IncDesIncDes extends IncDesItem[IncDes] {
       if (factoryRegistryComponentFactory.getFactory(fid) == null)
         throw new IllegalArgumentException("unregistered factory id: " + fid)
       if (exchangeMessenger != v.exchangeMessenger) {
-        if (v.exchangeMessenger == null && !v.opened) v.setMailbox(exchangeMessenger)
+        if (v.exchangeMessenger == null && !v.opened) v.setExchangeMessenger(exchangeMessenger)
         else throw new IllegalStateException("uses a different mailbox")
       }
       if (v.systemServices == null && !v.opened) v.setSystemServices(systemServices)

@@ -58,7 +58,7 @@ class BytesTest extends SpecificationWithJUnit {
       val systemServices = SystemServices(new IncDesComponentFactory)
       try {
         val driver = new Driver
-        driver.setMailbox(systemServices.newSyncMailbox)
+        driver.setExchangeMessenger(systemServices.newSyncMailbox)
         driver.setSystemServices(systemServices)
         Future(driver, DoIt()).asInstanceOf[Array[Byte]].length must be equalTo (3)
       } finally {

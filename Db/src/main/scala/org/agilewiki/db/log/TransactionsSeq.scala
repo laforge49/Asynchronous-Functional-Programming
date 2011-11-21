@@ -36,7 +36,7 @@ class TransactionsSeq(reader: java.io.DataInputStream, jeMailbox: Mailbox)
 
   override def open {
     super.open
-    setMailbox(systemServices.newAsyncMailbox)
+    setExchangeMessenger(systemServices.newAsyncMailbox)
   }
 
   private def read {

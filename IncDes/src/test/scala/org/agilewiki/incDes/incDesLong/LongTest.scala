@@ -58,7 +58,7 @@ class LongTest extends SpecificationWithJUnit {
       try {
         val driver = new Driver
         driver.setSystemServices(systemServices)
-        driver.setMailbox(systemServices.newSyncMailbox)
+        driver.setExchangeMessenger(systemServices.newSyncMailbox)
         Future(driver, DoIt()) must be equalTo (987654321987654321L)
       } finally {
         systemServices.close

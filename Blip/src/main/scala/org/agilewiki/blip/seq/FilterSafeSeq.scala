@@ -30,7 +30,7 @@ import bind._
 
 class FilterSafeSeq[K, V](seq: Sequence[K, V], safe: MessageLogic)
   extends Sequence[K, V] {
-  setMailbox(seq.exchangeMessenger)
+  setExchangeMessenger(seq.exchangeMessenger)
   setSystemServices(seq.systemServices)
 
   override def first(msg: AnyRef, rf: Any => Unit) {
