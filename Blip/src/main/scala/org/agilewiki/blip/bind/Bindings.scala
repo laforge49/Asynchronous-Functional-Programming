@@ -65,7 +65,8 @@ trait Bindings {
     }
   }
 
-  protected def bind(reqClass: Class[_ <: AnyRef], messageFunction: (AnyRef, Any => Unit) => Unit) {
+  protected def bind(reqClass: Class[_ <: AnyRef],
+                     messageFunction: (AnyRef, Any => Unit) => Unit) {
     if (activeActor.bindActor.opened) throw new IllegalStateException
     messageLogics.put(reqClass, new BoundFunction(messageFunction))
   }

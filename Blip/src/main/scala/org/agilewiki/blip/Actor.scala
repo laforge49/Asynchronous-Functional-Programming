@@ -218,12 +218,6 @@ class Actor
     rf(r)
   }
 
-  def mailboxFactory = exchangeMessenger.mailboxFactory
-
-  def newAsyncMailbox = mailboxFactory.newAsyncMailbox
-
-  def newSyncMailbox = mailboxFactory.newSyncMailbox
-
   override def newRequest(rf: Any => Unit,
                           data: AnyRef,
                           bound: QueuedLogic,

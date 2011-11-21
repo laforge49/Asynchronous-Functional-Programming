@@ -43,6 +43,12 @@ trait BindActor
     _mailbox = mailbox
   }
 
+  def mailboxFactory = exchangeMessenger.mailboxFactory
+
+  def newAsyncMailbox = mailboxFactory.newAsyncMailbox
+
+  def newSyncMailbox = mailboxFactory.newSyncMailbox
+
   def opened = _opened
 
   def _open {
