@@ -32,7 +32,7 @@ trait Bindings {
 
   implicit def activeActor: ActiveActor
 
-  def exchangeMessenger: ExchangeMessenger
+  def exchangeMessenger: Mailbox
 
   def exceptionHandler(msg: AnyRef,
                        responseFunction: Any => Unit,

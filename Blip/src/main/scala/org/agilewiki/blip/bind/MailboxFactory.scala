@@ -21,12 +21,9 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki
-package blip
+package org.agilewiki.blip
+package bind
 
-import java.util.ArrayList
-import java.util.concurrent.Semaphore
-import java.util.concurrent.atomic.AtomicReference
 import messenger._
 
 /**
@@ -43,7 +40,9 @@ class MailboxFactory(_threadManager: ThreadManager = new MessengerThreadManager)
   /**
    * Stops all the threads of the ThreadManager as they become idle.
    */
-  def close {threadManager.close}
+  def close {
+    threadManager.close
+  }
 
   /**
    * Creates an asynchronous mailbox.

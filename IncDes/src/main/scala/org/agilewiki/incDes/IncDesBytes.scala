@@ -25,6 +25,7 @@ package org.agilewiki
 package incDes
 
 import blip._
+import bind._
 
 class IncDesBytesFactory(id: FactoryId)
   extends IncDesFactory(id) {

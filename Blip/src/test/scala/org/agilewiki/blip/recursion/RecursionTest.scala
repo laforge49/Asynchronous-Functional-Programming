@@ -3,6 +3,7 @@ package recursion
 
 import org.specs.SpecificationWithJUnit
 import annotation.tailrec
+import bind._
 
 case class Loop(n: Int)
 

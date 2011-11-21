@@ -26,6 +26,7 @@ package incDes
 package records
 
 import blip._
+import bind._
 
 class IncDesStringRecordMapFactory(id: FactoryId)
   extends IncDesNavMapFactory[String, Record, IncDes](

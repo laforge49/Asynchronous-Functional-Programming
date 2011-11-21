@@ -25,6 +25,7 @@ package org.agilewiki
 package incDes
 
 import blip._
+import bind._
 import services._
 
 class IncDesIntSetFactory(id: FactoryId)

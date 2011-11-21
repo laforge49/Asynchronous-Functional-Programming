@@ -24,7 +24,8 @@
 package org.agilewiki
 package blip
 
-import services.FactoryRegistryComponentFactory
+import services._
+import bind._
 
 abstract class Factory(_id: FactoryId) {
 

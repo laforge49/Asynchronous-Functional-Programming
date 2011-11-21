@@ -2,6 +2,7 @@ package org.agilewiki.blip
 package loops
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 case class Loop(n: Int)
 

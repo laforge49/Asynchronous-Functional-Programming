@@ -29,18 +29,18 @@ trait BindActor
   extends ExchangeMessengerActor
   with Bindings {
 
-  private var _exchange: Exchange = null
+  private var _mailbox: Mailbox = null
   private var _superior: BindActor = null
   private val _activeActor = ActiveActor(this)
   private var _opened = false
 
   implicit def activeActor: ActiveActor = _activeActor
 
-  override def exchangeMessenger = _exchange
+  override def exchangeMessenger = _mailbox
 
-  def setExchangeMessenger(exchange: Exchange) {
+  def setExchangeMessenger(mailbox: Mailbox) {
     if (opened) throw new IllegalStateException
-    _exchange = exchange
+    _mailbox = mailbox
   }
 
   def opened = _opened

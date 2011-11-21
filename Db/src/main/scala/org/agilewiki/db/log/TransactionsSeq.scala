@@ -26,6 +26,7 @@ package db
 package log
 
 import blip._
+import bind._
 import seq._
 import incDes._
 import blocks._

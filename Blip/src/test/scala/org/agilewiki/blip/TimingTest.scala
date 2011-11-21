@@ -25,6 +25,7 @@ package org.agilewiki
 package blip
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class TimingTest extends SpecificationWithJUnit {
   "TimingTest" should {

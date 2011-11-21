@@ -24,6 +24,7 @@
 package org.agilewiki
 package blip
 
+import bind._
 import services._
 
 class SystemServices extends Actor

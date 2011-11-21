@@ -26,6 +26,7 @@ package incDes
 package records
 
 import blip._
+import bind._
 import services._
 
 class RecordFactory(id: FactoryId)

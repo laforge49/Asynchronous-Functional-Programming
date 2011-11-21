@@ -22,19 +22,23 @@
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
 package org.agilewiki.blip
+package bind
 
 import exchange._
 import messenger._
 
 class Mailbox(_mailboxFactory: MailboxFactory,
-              async: Boolean,
+              async: Boolean = false,
               _bufferedMessenger: BufferedMessenger[ExchangeMessengerMessage] = null)
   extends Exchange(_mailboxFactory.threadManager, async, _bufferedMessenger) {
 
-  override def curReq = super.curReq.asInstanceOf[MailboxReq]
-
   def mailboxFactory: MailboxFactory = _mailboxFactory
 
+  override def curReq = super.curReq.asInstanceOf[BindRequest]
+
+  /**
+   * Process the curReq message.
+   */
   override protected def processRequest {
     curReq.binding.process(this, curReq)
   }

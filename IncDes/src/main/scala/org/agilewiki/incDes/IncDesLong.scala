@@ -25,6 +25,7 @@ package org.agilewiki
 package incDes
 
 import blip._
+import bind._
 
 class IncDesLongFactory(id: FactoryId)
   extends IncDesKeyFactory[Long](id) {

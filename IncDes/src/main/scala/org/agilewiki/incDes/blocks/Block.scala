@@ -26,6 +26,7 @@ package incDes
 package blocks
 
 import blip._
+import bind._
 
 class BlockFactory(id: FactoryId)
   extends IncDesFactory(id) {

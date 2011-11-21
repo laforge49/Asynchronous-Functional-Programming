@@ -26,6 +26,7 @@ package blip
 package services
 
 import java.io.File
+import bind._
 
 case class LoadFile(file: File)
 
