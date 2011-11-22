@@ -48,7 +48,7 @@ class Sender(c: Int, b: Int, threadManager: ThreadManager)
       done.release
       return
     }
-    else if (r > 1 && j < 1) {
+    if (r > 1 && j < 1) {
       r -= 1
       return
     }

@@ -2,7 +2,6 @@ package org.agilewiki.blip
 package bind
 package echoTiming
 
-import messenger._
 import org.specs.SpecificationWithJUnit
 
 class EchoTimingTest extends SpecificationWithJUnit {
