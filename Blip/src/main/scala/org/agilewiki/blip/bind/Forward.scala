@@ -21,39 +21,12 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki
-package blip
-package services
+package org.agilewiki.blip.bind
 
-import java.io.{DataInputStream, FileInputStream}
-import bind._
-
-class FileLoader
-  extends AsyncActor {
-  bind(classOf[LoadFile], loadFile)
-
-  def loadFile(msg: AnyRef, rf: Any => Unit) {
-    val file = msg.asInstanceOf[LoadFile].file
-    val size = file.length
-    val fis = new FileInputStream(file)
-    val dis = new DataInputStream(fis)
-    val bytes = new Array[Byte](size.asInstanceOf[Int])
-    dis.readFully(bytes)
-    rf(bytes)
+class Forward(actor: BindActor)
+  extends MessageLogic {
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
+                   (implicit sender: ActiveActor) {
+    actor(msg)(rf)
   }
-}
-
-class FileLoaderComponent(actor: Actor)
-  extends Component(actor) {
-  val fileLoader = new FileLoader
-  bindMessageLogic(classOf[LoadFile], new Forward(fileLoader))
-
-  override def open {
-    super.open
-    fileLoader.setSystemServices(systemServices)
-  }
-}
-
-class FileLoaderComponentFactory extends ComponentFactory {
-  override def instantiate(actor: Actor) = new FileLoaderComponent(actor)
 }

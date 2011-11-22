@@ -38,8 +38,8 @@ class RandomIOComponent(actor: Actor)
   extends Component(actor) {
   private val randomIO = new RandomIO
 
-  bindMessageLogic(classOf[ReadBytes], new SafeForward(randomIO))
-  bindMessageLogic(classOf[WriteBytes], new SafeForward(randomIO))
+  bindMessageLogic(classOf[ReadBytes], new Forward(randomIO))
+  bindMessageLogic(classOf[WriteBytes], new Forward(randomIO))
   bind(classOf[ReadBytesOrNull], {
     (msg, rf) => exceptionHandler(msg, rf, readBytes) {
       (ex, mailbox) => {

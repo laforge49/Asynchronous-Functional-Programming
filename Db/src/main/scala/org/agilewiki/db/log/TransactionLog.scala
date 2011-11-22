@@ -38,8 +38,8 @@ class TransactionLogComponent(actor: Actor)
   private var transactionLog: TransactionLog = null
 
   transactionLog = new TransactionLog
-  bindMessageLogic(classOf[LogTransaction], new SafeForward(transactionLog))
-  bindMessageLogic(classOf[LogInfo], new SafeForward(transactionLog))
+  bindMessageLogic(classOf[LogTransaction], new Forward(transactionLog))
+  bindMessageLogic(classOf[LogInfo], new Forward(transactionLog))
 
   override def open {
     super.open
