@@ -25,6 +25,7 @@ package org.agilewiki
 package db
 
 import blip._
+import bind._
 import services._
 
 class RandomIOComponentFactory extends ComponentFactory {

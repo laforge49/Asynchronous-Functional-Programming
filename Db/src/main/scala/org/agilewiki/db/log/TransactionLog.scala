@@ -26,6 +26,7 @@ package db
 package log
 
 import blip._
+import bind._
 import services._
 import java.nio.channels._
 
