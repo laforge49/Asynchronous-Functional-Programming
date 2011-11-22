@@ -5,6 +5,7 @@ package batch
 package recordLock
 
 import blip._
+import bind._
 import services._
 import log._
 import incDes._

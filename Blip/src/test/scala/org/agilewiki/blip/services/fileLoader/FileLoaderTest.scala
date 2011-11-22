@@ -4,6 +4,7 @@ package fileLoader
 
 import org.specs.SpecificationWithJUnit
 import java.io.{BufferedReader, InputStreamReader, ByteArrayInputStream, File}
+import bind._
 
 case class DoIt()
 

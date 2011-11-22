@@ -3,6 +3,7 @@ package seq
 package get
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class GetTest extends SpecificationWithJUnit {
   "GetTest" should {

@@ -3,6 +3,7 @@ package seq
 package excludeSeq
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class ExcludeSeqTest extends SpecificationWithJUnit {
   "ExcludeSeqTest" should {

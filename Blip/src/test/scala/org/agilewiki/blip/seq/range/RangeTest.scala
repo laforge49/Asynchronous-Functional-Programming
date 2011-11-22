@@ -3,6 +3,7 @@ package seq
 package range
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class RangeTest extends SpecificationWithJUnit {
   "Range" should {

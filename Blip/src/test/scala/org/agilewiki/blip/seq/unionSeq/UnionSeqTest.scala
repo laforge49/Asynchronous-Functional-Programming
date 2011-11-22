@@ -3,6 +3,7 @@ package seq
 package unionSeq
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class UnionSeqTest extends SpecificationWithJUnit {
   "UnionSeqTest" should {

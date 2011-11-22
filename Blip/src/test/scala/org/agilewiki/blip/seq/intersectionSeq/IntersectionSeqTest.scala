@@ -3,6 +3,7 @@ package seq
 package intersectionSeq
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class IntersectionSeqTest extends SpecificationWithJUnit {
   "IntersectionSeqTest" should {

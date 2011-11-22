@@ -3,6 +3,7 @@ package seq
 package fold
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class FoldTest extends SpecificationWithJUnit {
   "FoldTest" should {

@@ -2,6 +2,7 @@ package org.agilewiki.blip
 package components
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 case class Set(value: Int)
 

@@ -3,6 +3,7 @@ package services
 package subsystems
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 case class Greet()
 

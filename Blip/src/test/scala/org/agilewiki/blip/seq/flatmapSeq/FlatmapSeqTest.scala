@@ -3,6 +3,7 @@ package seq
 package flatmapSeq
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class FlatmapSeqTest extends SpecificationWithJUnit {
   "FlatmapSeqTest" should {

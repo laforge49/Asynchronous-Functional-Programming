@@ -3,6 +3,7 @@ package seq
 package find
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class FindTest extends SpecificationWithJUnit {
   "FindTest" should {

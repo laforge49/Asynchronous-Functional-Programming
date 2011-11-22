@@ -3,6 +3,7 @@ package seq
 package mapSeq
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class MapSeqTest extends SpecificationWithJUnit {
   "MapSeqTest" should {

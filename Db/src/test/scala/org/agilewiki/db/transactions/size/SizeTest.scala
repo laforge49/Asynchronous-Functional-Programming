@@ -4,6 +4,7 @@ package transactions
 package size
 
 import blip._
+import bind._
 import services._
 import incDes._
 import org.specs.SpecificationWithJUnit

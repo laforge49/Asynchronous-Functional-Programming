@@ -2,6 +2,7 @@ package org.agilewiki.blip
 package dependencies
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 case class DoIt()
 

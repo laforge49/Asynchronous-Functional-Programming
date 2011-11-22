@@ -3,6 +3,7 @@ package seq
 package factories
 
 import org.specs.SpecificationWithJUnit
+import bind._
 import services._
 
 case class Greet()

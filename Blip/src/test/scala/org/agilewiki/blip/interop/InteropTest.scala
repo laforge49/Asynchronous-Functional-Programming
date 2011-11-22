@@ -2,6 +2,7 @@ package org.agilewiki.blip
 package interop
 
 import org.specs.SpecificationWithJUnit
+import bind._
 import actors.{ReplyReactor, Reactor}
 import exchange._
 

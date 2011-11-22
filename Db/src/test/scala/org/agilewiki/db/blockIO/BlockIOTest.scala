@@ -3,6 +3,7 @@ package db
 package blockIO
 
 import blip._
+import bind._
 import services._
 import incDes._
 import blocks._

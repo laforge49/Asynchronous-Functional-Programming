@@ -4,6 +4,7 @@ package properties
 
 import services._
 import org.specs.SpecificationWithJUnit
+import bind._
 
 case class DoIt()
 

@@ -3,6 +3,7 @@ package services
 package actorRegistry
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 case class Greet()
 

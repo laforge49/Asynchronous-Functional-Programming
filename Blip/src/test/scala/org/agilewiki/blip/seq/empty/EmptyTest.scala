@@ -3,6 +3,7 @@ package seq
 package empty
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class EmptyTest extends SpecificationWithJUnit {
   "EmptySeq" should {

@@ -3,6 +3,7 @@ package seq
 package tailSeq
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class TailSeqTest extends SpecificationWithJUnit {
   "TailSeqTest" should {

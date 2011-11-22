@@ -21,10 +21,9 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki
-package blip
+package org.agilewiki.blip
+package bind
 
-import bind._
 import annotation.tailrec
 import java.util.ArrayList
 import messenger._
@@ -47,7 +46,7 @@ class Future
       boundFunction.reqFunction(msg, synchronousResponse)
     } else {
       val bound = safe.asInstanceOf[QueuedLogic]
-      val req = new MailboxReq(dst, Unit => {}, msg, bound, this)
+      val req = dst.newRequest(Unit => {}, msg, bound, this)
       val blkmsg = new ArrayList[ExchangeMessengerMessage]
       blkmsg.add(req)
       dst.messageListDestination.incomingMessageList(blkmsg)
@@ -72,7 +71,7 @@ class Future
   }
 
   @tailrec final def get: Any = {
-    synchronized{
+    synchronized {
       if (satisfied) return rsp
       this.wait()
       if (satisfied) return rsp

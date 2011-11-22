@@ -2,6 +2,7 @@ package org.agilewiki.blip
 package superior
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 case class Times2(value: Int)
 case class Add(value1: Int, value2: Int)

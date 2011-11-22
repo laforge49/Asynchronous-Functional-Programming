@@ -3,6 +3,7 @@ package seq
 package loop
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class LoopTest extends SpecificationWithJUnit {
   "Loop" should {

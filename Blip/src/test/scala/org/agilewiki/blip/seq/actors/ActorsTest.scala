@@ -3,6 +3,7 @@ package seq
 package actors
 
 import org.specs.SpecificationWithJUnit
+import bind._
 import services.{ActorRegistryComponentFactory, FactoryRegistryComponentFactory}
 import services._
 

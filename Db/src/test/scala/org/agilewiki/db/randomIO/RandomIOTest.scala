@@ -3,6 +3,7 @@ package db
 package randomIO
 
 import blip._
+import bind._
 import services._
 import org.specs.SpecificationWithJUnit
 

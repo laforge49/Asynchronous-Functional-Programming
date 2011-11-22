@@ -3,6 +3,7 @@ package seq
 package navSet
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class NavSetTest extends SpecificationWithJUnit {
   "NavSetSeq" should {

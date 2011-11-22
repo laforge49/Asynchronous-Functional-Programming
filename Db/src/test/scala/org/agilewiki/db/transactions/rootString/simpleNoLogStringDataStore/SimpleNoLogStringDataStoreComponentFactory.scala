@@ -28,6 +28,7 @@ package rootString
 package simpleNoLogStringDataStore
 
 import blip._
+import bind._
 import services._
 import log._
 

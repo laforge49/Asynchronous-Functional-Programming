@@ -3,6 +3,7 @@ package seq
 package headSeq
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class HeadSeqTest extends SpecificationWithJUnit {
   "HeadSeqTest" should {

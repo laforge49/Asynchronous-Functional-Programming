@@ -3,6 +3,7 @@ package seq
 package containsKey
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class ContainsKeyTest extends SpecificationWithJUnit {
   "ContainsKeyTest" should {

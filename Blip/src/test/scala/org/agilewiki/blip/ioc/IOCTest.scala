@@ -2,6 +2,7 @@ package org.agilewiki.blip
 package ioc
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 case class Today()
 

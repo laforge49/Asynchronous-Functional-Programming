@@ -5,6 +5,7 @@ package blockCache
 
 import blip._
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class BlockCacheTest extends SpecificationWithJUnit {
   "BlockCacheTest" should {

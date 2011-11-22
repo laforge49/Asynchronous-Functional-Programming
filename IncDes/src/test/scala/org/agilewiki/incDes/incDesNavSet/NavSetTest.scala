@@ -27,6 +27,7 @@ package incDesNavSet
 
 import org.specs.SpecificationWithJUnit
 import blip._
+import bind._
 import seq._
 
 class NavSetTest extends SpecificationWithJUnit {

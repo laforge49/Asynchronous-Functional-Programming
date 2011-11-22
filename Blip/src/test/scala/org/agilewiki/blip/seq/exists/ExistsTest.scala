@@ -3,6 +3,7 @@ package seq
 package exists
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class ExistsTest extends SpecificationWithJUnit {
   "ExistsTest" should {

@@ -3,6 +3,7 @@ package seq
 package messageClasses
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 case class Set(value: Int)
 

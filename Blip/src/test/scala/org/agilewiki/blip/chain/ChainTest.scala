@@ -3,6 +3,7 @@ package blip
 package chain
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 case class Prnt(value: Any)
 

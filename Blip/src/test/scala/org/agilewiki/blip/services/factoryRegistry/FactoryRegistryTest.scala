@@ -3,6 +3,7 @@ package services
 package factoryRegistry
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 case class Greet()
 

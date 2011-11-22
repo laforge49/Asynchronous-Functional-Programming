@@ -27,6 +27,7 @@ package incDesBoolean
 
 import org.specs.SpecificationWithJUnit
 import blip._
+import bind._
 import blip.services._
 
 class BooleanTest extends SpecificationWithJUnit {

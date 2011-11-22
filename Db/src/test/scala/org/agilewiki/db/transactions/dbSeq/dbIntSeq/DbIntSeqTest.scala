@@ -5,6 +5,7 @@ package dbSeq
 package dbIntSeq
 
 import blip._
+import bind._
 import services._
 import seq._
 import incDes._

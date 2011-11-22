@@ -28,6 +28,7 @@ package hit
 
 import org.specs.SpecificationWithJUnit
 import blip._
+import bind._
 
 case class Hit()
 

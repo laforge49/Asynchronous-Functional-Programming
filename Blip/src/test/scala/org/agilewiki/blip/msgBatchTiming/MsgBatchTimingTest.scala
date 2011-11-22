@@ -26,6 +26,7 @@ package blip
 package msgBatchTiming
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class MsgBatchTimingTest extends SpecificationWithJUnit {
   "MsgBatchTimingTest" should {

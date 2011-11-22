@@ -3,6 +3,7 @@ package seq
 package filterSeq
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class FilterSeqTest extends SpecificationWithJUnit {
   "FilterSeqTest" should {

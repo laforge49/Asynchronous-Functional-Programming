@@ -27,6 +27,7 @@ package incDesNavMap
 
 import org.specs.SpecificationWithJUnit
 import blip._
+import bind._
 import seq._
 
 class NavMapTest extends SpecificationWithJUnit {

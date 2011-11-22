@@ -4,6 +4,7 @@ package log
 package recovery
 
 import blip._
+import bind._
 import services._
 import incDes._
 import db.transactions._

@@ -2,6 +2,7 @@ package org.agilewiki.blip
 package factories
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 abstract class UserFactory(id: FactoryId) extends Factory(id) {
   def accountName: String

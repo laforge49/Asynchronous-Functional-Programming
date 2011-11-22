@@ -3,6 +3,7 @@ package seq
 package list
 
 import org.specs.SpecificationWithJUnit
+import bind._
 
 class ListTest extends SpecificationWithJUnit {
   "ListSeq" should {

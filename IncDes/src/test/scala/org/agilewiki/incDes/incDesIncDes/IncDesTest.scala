@@ -27,6 +27,7 @@ package incDesIncDes
 
 import org.specs.SpecificationWithJUnit
 import blip._
+import bind._
 import blip.services._
 
 class IncDesTest extends SpecificationWithJUnit {
