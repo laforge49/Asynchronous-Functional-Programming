@@ -35,7 +35,7 @@ class Future
   @volatile private[this] var rsp: Any = _
   @volatile private[this] var satisfied = false
 
-  def send(dst: Actor, msg: AnyRef) {
+  def send(dst: BindActor, msg: AnyRef) {
     val safe = dst.messageLogics.get(msg.getClass)
     if (!safe.isInstanceOf[QueuedLogic]) throw
       new IllegalArgumentException(msg.getClass.getName + "can not be sent asynchronously to " + dst)
@@ -81,7 +81,7 @@ class Future
 }
 
 object Future {
-  def apply(actor: Actor, msg: AnyRef) = {
+  def apply(actor: BindActor, msg: AnyRef) = {
     val future = new Future
     future.send(actor, msg)
     val rv = future.get
