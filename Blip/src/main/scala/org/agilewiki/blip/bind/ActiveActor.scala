@@ -23,4 +23,8 @@
  */
 package org.agilewiki.blip.bind
 
+/**
+ * The ActiveActor class is used in implicits to
+ * designate "this" actor.
+ */
 case class ActiveActor(bindActor: BindActor)

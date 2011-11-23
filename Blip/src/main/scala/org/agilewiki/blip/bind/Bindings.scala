@@ -26,14 +26,31 @@ package bind
 
 import exchange._
 
+/**
+ * Bindings is a trait common to actors and components of actors.
+ */
 trait Bindings {
+
+  /**
+   * The binding of an application request class to a MessageLogic
+   * object is stored in messageLogics.
+   */
   val messageLogics =
     new java.util.HashMap[Class[_ <: AnyRef], MessageLogic]
 
+  /**
+   * "This" actor is implicit.
+   */
   implicit def activeActor: ActiveActor
 
+  /**
+   * Returns the exchange messenger object used by the actor.
+   */
   def exchangeMessenger: Mailbox
 
+  /**
+   * Wraps a message processing function with an exception handling function.
+   */
   def exceptionHandler(msg: AnyRef,
                        responseFunction: Any => Unit,
                        messageFunction: (AnyRef, Any => Unit) => Unit)
@@ -65,12 +82,18 @@ trait Bindings {
     }
   }
 
+  /**
+   * Bind a class of application request to a message processing function.
+   */
   protected def bind(reqClass: Class[_ <: AnyRef],
                      messageFunction: (AnyRef, Any => Unit) => Unit) {
     if (activeActor.bindActor.opened) throw new IllegalStateException
     messageLogics.put(reqClass, new BoundFunction(messageFunction))
   }
 
+  /**
+   * Bind a class of application request to a MessageLogic object.
+   */
   protected def bindMessageLogic(reqClass: Class[_ <: AnyRef],
                          safe: MessageLogic) {
     if (activeActor.bindActor.opened) throw new IllegalStateException

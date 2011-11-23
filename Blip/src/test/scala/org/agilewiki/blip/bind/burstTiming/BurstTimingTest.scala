@@ -7,8 +7,8 @@ import org.specs.SpecificationWithJUnit
 class BurstTimingTest extends SpecificationWithJUnit {
   "BurstTimingTest" should {
     "time messages" in {
-      val c = 10000
-      val b = 10000
+      val c = 10//000
+      val b = 10//000
       val echo = new Echo
       val sender = new Sender(echo)
       val doIt = new DoIt(c, b)

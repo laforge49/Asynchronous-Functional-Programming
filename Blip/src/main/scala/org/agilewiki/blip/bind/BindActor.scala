@@ -25,28 +25,67 @@ package org.agilewiki.blip.bind
 
 import org.agilewiki.blip.exchange._
 
+/**
+ * Objects which implement BindActor support message binding,
+ * default message processing via a hierarchy of actors and
+ * can share a common exchange messenger.
+ */
 trait BindActor
   extends ExchangeMessengerActor
   with Bindings {
 
-  private var _mailbox: Mailbox = null
+  /**
+   * The exchange messenger for this actor.
+   */
+  private var _exchangeMessenger: Mailbox = null
+
+  /**
+   * The actor which processes any messages not bound to this actor.
+   */
   private var _superior: BindActor = null
+
+  /**
+   * "This" actor.
+   */
   private val _activeActor = ActiveActor(this)
+
+  /**
+   * Set to true when initialization is complete.
+   */
   private var _opened = false
 
+  /**
+   * "This" actor is implicit.
+   */
   implicit def activeActor: ActiveActor = _activeActor
 
-  override def exchangeMessenger = _mailbox
+  /**
+   * Returns the exchange messenger object used by the actor.
+   */
+  override def exchangeMessenger = _exchangeMessenger
 
-  def setExchangeMessenger(mailbox: Mailbox) {
+  /**
+   * Set the exchange messenger for this actor.
+   * (Valid only during actor initialization.)
+   */
+  def setExchangeMessenger(exchangeMessenger: Mailbox) {
     if (opened) throw new IllegalStateException
-    _mailbox = mailbox
+    _exchangeMessenger = exchangeMessenger
   }
 
+  /**
+   * Returns the mailboxFactory/threadManager.
+   */
   def mailboxFactory = exchangeMessenger.mailboxFactory
 
+  /**
+   * Returns an asynchronous exchange.
+   */
   def newAsyncMailbox = mailboxFactory.newAsyncMailbox
 
+  /**
+   * Returns a synchronous exchange.
+   */
   def newSyncMailbox = mailboxFactory.newSyncMailbox
 
   def opened = _opened
