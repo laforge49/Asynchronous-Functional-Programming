@@ -52,7 +52,7 @@ class Block extends IncDesIncDes {
   override def length = if (len == -1) 0 else len
 
   def setHandle(handle: Handle) {
-    if (opened) throw new IllegalStateException
+    if (isOpen) throw new IllegalStateException
     _handle = handle
   }
 
@@ -73,7 +73,7 @@ class Block extends IncDesIncDes {
   }
 
   def setReadOnly {
-    if (opened) throw new IllegalStateException
+    if (isOpen) throw new IllegalStateException
     readOnly = true
   }
 

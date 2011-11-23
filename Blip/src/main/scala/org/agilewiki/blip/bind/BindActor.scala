@@ -69,7 +69,7 @@ trait BindActor
    * (Valid only during actor initialization.)
    */
   def setExchangeMessenger(exchangeMessenger: Mailbox) {
-    if (opened) throw new IllegalStateException
+    if (isOpen) throw new IllegalStateException
     _exchangeMessenger = exchangeMessenger
   }
 
@@ -88,10 +88,10 @@ trait BindActor
    */
   def newSyncMailbox = mailboxFactory.newSyncMailbox
 
-  def opened = _opened
+  def isOpen = _opened
 
   def _open {
-    if (!opened) opener
+    if (!isOpen) opener
   }
 
   protected def opener {
@@ -102,7 +102,7 @@ trait BindActor
   protected def open {}
 
   def setSuperior(superior: BindActor) {
-    if (opened) throw new IllegalStateException
+    if (isOpen) throw new IllegalStateException
     _superior = superior
   }
 
@@ -128,7 +128,7 @@ trait BindActor
   }
 
   def requiredService(reqClass: Class[_ <: AnyRef]) {
-    if (opened) throw new IllegalStateException
+    if (isOpen) throw new IllegalStateException
     var actor: BindActor = this
     while (!actor.messageLogics.containsKey(reqClass)) {
       if (superior == null)

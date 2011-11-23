@@ -65,7 +65,7 @@ trait IdActor {
 
   def id(_id: ActorId) {
     if (actorId != null) throw new UnsupportedOperationException
-    if (opened) throw new IllegalStateException
+    if (isOpen) throw new IllegalStateException
     actorId = _id
   }
 }

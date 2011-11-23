@@ -82,7 +82,7 @@ abstract class IncDesValueCollection[K, V <: IncDesItem[V1], V1]
     if (fid.value != valueFactory.id.value)
       throw new IllegalArgumentException("incorrect factory id: " + fid.value)
     if (exchangeMessenger != v.exchangeMessenger) {
-      if (v.exchangeMessenger == null && !v.opened) v.setExchangeMessenger(exchangeMessenger)
+      if (v.exchangeMessenger == null && !v.isOpen) v.setExchangeMessenger(exchangeMessenger)
       else throw new IllegalStateException("uses a different mailbox")
     }
     if (v.systemServices == null) v.setSystemServices(systemServices)

@@ -67,7 +67,7 @@ class Actor
   }
 
   def setFactory(factory: Factory) {
-    if (opened) throw new IllegalStateException
+    if (isOpen) throw new IllegalStateException
     _factory = factory
   }
 
@@ -85,7 +85,7 @@ class Actor
   protected var _systemServices: SystemServices = null
 
   def setSystemServices(systemServices: SystemServices) {
-    if (opened) throw new IllegalStateException
+    if (isOpen) throw new IllegalStateException
     _systemServices = systemServices
   }
 

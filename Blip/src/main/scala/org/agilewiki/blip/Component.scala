@@ -36,7 +36,7 @@ class Component(_actor: Actor)
   def componentFactory = _componentFactory
 
   def setComponentFactory(componentFactory: ComponentFactory) {
-    if (actor.opened) throw new IllegalStateException
+    if (actor.isOpen) throw new IllegalStateException
     _componentFactory = componentFactory
   }
 

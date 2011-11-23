@@ -52,7 +52,7 @@ abstract class Factory(_id: FactoryId) {
 
   def addComponent(component: Component) {
     val actor = component.actor
-    if (actor.opened) throw new IllegalStateException("already opened")
+    if (actor.isOpen) throw new IllegalStateException("already opened")
     val actorMsgFunctions = actor.messageLogics
     val componentMsgFunctions = component.messageLogics
     var it = componentMsgFunctions.keySet.iterator

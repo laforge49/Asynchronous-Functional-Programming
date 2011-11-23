@@ -37,7 +37,7 @@ class IncDes extends Actor {
   bind(classOf[Resolve], resolve)
 
   def load(_data: MutableData) {
-    if (opened) throw new IllegalStateException
+    if (isOpen) throw new IllegalStateException
     data = _data.immutable
   }
 
