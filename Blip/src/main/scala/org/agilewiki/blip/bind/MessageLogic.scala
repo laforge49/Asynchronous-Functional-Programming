@@ -24,6 +24,10 @@
 package org.agilewiki.blip.bind
 
 abstract class MessageLogic {
+  /**
+   * The func method is used to determine how an application request
+   * is to be processed.
+   */
   def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
           (implicit srcActor: ActiveActor)
 }

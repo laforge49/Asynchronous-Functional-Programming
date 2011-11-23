@@ -88,32 +88,58 @@ trait BindActor
    */
   def newSyncMailbox = mailboxFactory.newSyncMailbox
 
+  /**
+   * Returns true when initialization is complete.
+   */
   def isOpen = _opened
 
+  /**
+   * Complete actor initialization if it is not already complete.
+   */
   def _open {
     if (!isOpen) opener
   }
 
+  /**
+   * Complete actor initialization.
+   */
   protected def opener {
     open
     _opened = true
   }
 
+  /**
+   * Perform application-specific actor initialization.
+   */
   protected def open {}
 
+  /**
+   * Specify the actor to process messages not bound by this actor.
+   * (Not valid once initialization is complete.)
+   */
   def setSuperior(superior: BindActor) {
     if (isOpen) throw new IllegalStateException
     _superior = superior
   }
 
+  /**
+   * Returns the actor which processes messages not bound by this actor.
+   */
   def superior = _superior
 
+  /**
+   * Create a new BindRequest.
+   */
   def newRequest(rf: Any => Unit,
                  data: AnyRef,
                  bound: QueuedLogic,
                  src: ExchangeMessengerSource) =
     new BindRequest(this, rf, data, bound, src)
 
+  /**
+   * If initialization is not complete, then complete it.
+   * Once complete, process the application request.
+   */
   def apply(msg: AnyRef)
            (responseFunction: Any => Unit)
            (implicit srcActor: ActiveActor) {
@@ -127,6 +153,11 @@ trait BindActor
     }
   }
 
+  /**
+   * Check that this actor, or one of its superiors, can process a given
+   * class of application request.
+   * (To be called from within an application-specific open method.)
+   */
   def requiredService(reqClass: Class[_ <: AnyRef]) {
     if (isOpen) throw new IllegalStateException
     var actor: BindActor = this

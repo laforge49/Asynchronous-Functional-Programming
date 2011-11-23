@@ -26,9 +26,22 @@ package bind
 
 import exchange._
 
+/**
+ * The message logic object which wraps a function for processing
+ * an application request.
+ */
 class BoundFunction(messageFunction: (AnyRef, Any => Unit) => Unit)
   extends QueuedLogic(messageFunction) {
 
+  /**
+   * The func method determines how an application request is to be processed.
+   * In the case of a BoundFunction, the request is processed immediately if
+   * the same mailbox is used by both the target and the source actors or if the
+   * target actor has no mailbox. Otherwise a BindRequest object is created which
+   * is then sent to Exchange.sendReq.
+   * (A request is invalid if the target actor has a mailbox but the source actor
+   * does not.)
+   */
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
                    (implicit srcActor: ActiveActor) {
     val srcExchangeMessenger = {

@@ -26,11 +26,22 @@ package bind
 
 import exchange._
 
+/**
+ * The QueuedLogic class supports requests that are to be added to an actor's
+ * incoming message queue.
+ */
 abstract class QueuedLogic(messageFunction: (AnyRef, Any => Unit) => Unit)
   extends MessageLogic {
 
+  /**
+   * Returns the function which will eventually be used to process the request.
+   */
   def reqFunction = messageFunction
 
+  /**
+   * Process the request. Any exceptions raised durring request processing are
+   * returned as a response.
+   */
   def process(exchange: Exchange, bindRequest: BindRequest) {
     try {
       messageFunction(bindRequest.req, exchange.reply)
@@ -41,6 +52,10 @@ abstract class QueuedLogic(messageFunction: (AnyRef, Any => Unit) => Unit)
     }
   }
 
+  /**
+   * Create a BindRequest wrapping the application request and
+   * add it to the actor's incoming message queue.
+   */
   def enqueueRequest(srcExchange: Exchange,
                    targetActor: BindActor,
                    content: AnyRef,

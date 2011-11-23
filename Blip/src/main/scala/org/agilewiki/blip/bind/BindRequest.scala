@@ -26,6 +26,9 @@ package bind
 
 import exchange._
 
+/**
+ * BindActor and Mailbox support only BindRequests and its subclasses.
+ */
 class BindRequest(dst: BindActor,
                   rf: Any => Unit,
                   data: AnyRef,
@@ -33,17 +36,41 @@ class BindRequest(dst: BindActor,
                   src: ExchangeMessengerSource)
   extends ExchangeRequest(src, rf) {
 
+  /**
+   * Set to false when a response is returned or an exception is raised,
+   * active is used to ensure that there is only one response or exception
+   * for each request.
+   */
   var active = true
+
+  /**
+   * Default logic when no other exception handler is used.
+   * (Each application request class can have its own logic for
+   * handling exceptions.)
+   */
   var exceptionFunction: (Exception, ExchangeMessenger) => Unit = {
     (ex, exchange) => reply(exchange, ex)
   }
 
+  /**
+   * The actor which is to process the request.
+   */
   def target = dst
 
+  /**
+   * The application-specific request.
+   */
   def req = data
 
+  /**
+   * The message logic object used to process the request.
+   */
   def binding = bound
 
+  /**
+   * If the request is still active, mark the request as inactive and send
+   * the response.
+   */
   override def reply(exchangeMessenger: ExchangeMessenger, content: Any) {
     if (!active) {
       return

@@ -28,12 +28,22 @@ import messenger._
 import exchange._
 import scala.actors.Reactor
 
+/**
+ * A helper class for Scala Reactors which send requests to a BindActor and receive the response.
+ */
 class Interop[T >: AnyRef](reactor: Reactor[T])
   extends ExchangeMessengerSource
   with MessageListDestination[ExchangeMessengerMessage] {
 
+  /**
+   * Returns the MessageListDestination, this.
+   */
   override def messageListDestination = this
 
+  /**
+   * The afpSend method sends a message to a BindActor and provides a response function
+   * for processing the response.
+   */
   def afpSend(dst: Actor, msg: AnyRef)(rf: Any => Unit) {
     val safe = dst.messageLogics.get(msg.getClass)
     if (!safe.isInstanceOf[QueuedLogic]) throw
@@ -52,6 +62,9 @@ class Interop[T >: AnyRef](reactor: Reactor[T])
     }
   }
 
+  /**
+   * The logic for processing an asynchronous response.
+   */
   override def incomingMessageList(blkmsg: java.util.ArrayList[ExchangeMessengerMessage]) {
     var i = 0
     while (i < blkmsg.size) {
@@ -61,6 +74,10 @@ class Interop[T >: AnyRef](reactor: Reactor[T])
     }
   }
 
+  /**
+   * The afpResponse method should be called when the Reactor receives
+   * an ExchangeMessengerResponse object.
+   */
   def afpResponse(mailboxRsp: ExchangeMessengerResponse) {
     mailboxRsp.responseFunction(mailboxRsp.rsp)
   }

@@ -23,8 +23,15 @@
  */
 package org.agilewiki.blip.bind
 
+/**
+ * Forward is a subclass of MessageLogic which handles request forwarding.
+ */
 class Forward(actor: BindActor)
   extends MessageLogic {
+
+  /**
+   * The request is immediately forwarded to another actor.
+   */
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
                    (implicit sender: ActiveActor) {
     actor(msg)(rf)

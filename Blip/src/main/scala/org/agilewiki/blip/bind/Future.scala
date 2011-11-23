@@ -29,12 +29,18 @@ import java.util.ArrayList
 import messenger._
 import exchange._
 
+/**
+ * The Future class for sending a request and waiting for a response.
+ */
 class Future
   extends ExchangeMessengerSource
   with MessageListDestination[ExchangeMessengerMessage] {
   @volatile private[this] var rsp: Any = _
   @volatile private[this] var satisfied = false
 
+  /**
+   * Sends an application request to a given actor.
+   */
   def send(dst: BindActor, msg: AnyRef) {
     val safe = dst.messageLogics.get(msg.getClass)
     if (!safe.isInstanceOf[QueuedLogic]) throw
@@ -53,13 +59,22 @@ class Future
     }
   }
 
-  def synchronousResponse(_rsp: Any) {
+  /**
+   * The logic for processing a synchronous response.
+   */
+  private def synchronousResponse(_rsp: Any) {
     rsp = _rsp
     satisfied = true
   }
 
+  /**
+   * Returns the MessageListDestination, this.
+   */
   override def messageListDestination = this
 
+  /**
+   * The logic for processing an asynchronous response.
+   */
   override def incomingMessageList(blkmsg: ArrayList[ExchangeMessengerMessage]) {
     synchronized {
       if (!satisfied) {
@@ -70,6 +85,9 @@ class Future
     }
   }
 
+  /**
+   * The get method waits for a response.
+   */
   @tailrec final def get: Any = {
     synchronized {
       if (satisfied) return rsp
@@ -80,6 +98,14 @@ class Future
   }
 }
 
+/**
+ * Sends a response and waits for a request.
+ * This companion object is used mostly by test code, as it blocks the current thread
+ * until a response is received.
+ * Use of this companion object is further constrained, as it does not support application request
+ * classes bound to a ConcurrentData objects nor application request classes bound to
+ * a Forward object.
+ */
 object Future {
   def apply(actor: BindActor, msg: AnyRef) = {
     val future = new Future

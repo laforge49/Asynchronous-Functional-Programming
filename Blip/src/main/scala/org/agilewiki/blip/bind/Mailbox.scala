@@ -27,13 +27,23 @@ package bind
 import exchange._
 import messenger._
 
+/**
+ * A subclass of Exchange that supports BindActor.
+ * Mailbox objects are created by the MailboxFactory.
+ */
 class Mailbox(_mailboxFactory: MailboxFactory,
               async: Boolean = false,
               _bufferedMessenger: BufferedMessenger[ExchangeMessengerMessage] = null)
   extends Exchange(_mailboxFactory.threadManager, async, _bufferedMessenger) {
 
+  /**
+   * Returns the MailboxFactory which created this Mailbox.
+   */
   def mailboxFactory: MailboxFactory = _mailboxFactory
 
+  /**
+   * Returns the current request as an instance of BindRequest.
+   */
   override def curReq = super.curReq.asInstanceOf[BindRequest]
 
   /**

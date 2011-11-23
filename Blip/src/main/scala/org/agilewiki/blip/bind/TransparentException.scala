@@ -24,7 +24,18 @@
 package org.agilewiki
 package blip.bind
 
+/**
+ * A TransparentException wraps another exception.
+ * Transparent exceptions are created when an exception occurs while
+ * processing a synchronous response, as a means of ensuring that an
+ * exception handler of the actor which sourced the request is invoked
+ * instead of an exception handler of the target actor.
+ */
 class TransparentException(ex: Exception) extends Exception(ex) {
+
+  /**
+   * Disable the stack trace for faster execution.
+   */
   override def fillInStackTrace(): Throwable =
     if (sys.SystemProperties.noTraceSupression) super.fillInStackTrace()
     else this

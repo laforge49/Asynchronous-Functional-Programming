@@ -24,9 +24,18 @@
 package org.agilewiki.blip
 package bind
 
+/**
+ * ConcurrentData is a subclass of MessageLogic for handling immutable or cuncurrent,
+ * e.g. thread safe, data.
+ */
 class ConcurrentData(any: Any)
   extends MessageLogic {
-  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+
+  /**
+   * The data is immediately returned as a response.
+   */
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
+                   (implicit sender: ActiveActor) {
     rf(any)
   }
 }
