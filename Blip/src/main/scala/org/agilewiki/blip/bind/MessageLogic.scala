@@ -23,6 +23,11 @@
  */
 package org.agilewiki.blip.bind
 
+/**
+ * Actors bind application request classes to MessageLogic objects.
+ * When a request is sent to an actor, it uses the MessageLogic object
+ * to determine how the request is to be processed.
+ */
 abstract class MessageLogic {
   /**
    * The func method is used to determine how an application request
