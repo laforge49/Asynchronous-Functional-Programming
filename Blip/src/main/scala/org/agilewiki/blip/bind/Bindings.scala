@@ -56,7 +56,7 @@ trait Bindings {
                        messageFunction: (AnyRef, Any => Unit) => Unit)
                       (exceptionFunction: (Exception, ExchangeMessenger) => Unit) {
     if (exchangeMessenger == null) throw
-      new UnsupportedOperationException("Immutable actors can not use excepton handlers")
+      new UnsupportedOperationException("Actors without mailboxes can not use excepton handlers")
     val oldExceptionFunction = exchangeMessenger.curReq.asInstanceOf[BindRequest].
       exceptionFunction
     exchangeMessenger.curReq.asInstanceOf[BindRequest].exceptionFunction = exceptionFunction
