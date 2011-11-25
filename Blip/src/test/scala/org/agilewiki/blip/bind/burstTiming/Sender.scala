@@ -27,8 +27,6 @@ class Sender(echo: Echo)
     echo(Ping()) {
       rsp => processResponse(rf)
     }
-
-    rf(null)
   }
 
   private def dummy(rf: Any => Unit) {

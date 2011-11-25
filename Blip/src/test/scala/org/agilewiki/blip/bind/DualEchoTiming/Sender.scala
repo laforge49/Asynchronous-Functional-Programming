@@ -1,25 +1,23 @@
 package org.agilewiki.blip
 package bind
-package echoTiming
+package dualEchoTiming
 
 import annotation.tailrec
 
-case class DoIt(c: Int)
+case class Batch(c: Int)
 
 class Sender(echo: Echo)
   extends BindActor {
 
   var count = 0
   var i = 0
-  var t0 = 0L
 
-  bind(classOf[DoIt], doIt)
+  bind(classOf[Batch], batch)
 
-  def doIt(msg: AnyRef, rf: Any => Unit) {
-    val req = msg.asInstanceOf[DoIt]
+  def batch(msg: AnyRef, rf: Any => Unit) {
+    val req = msg.asInstanceOf[Batch]
     count = req.c
-    i = req.c
-    t0 = System.currentTimeMillis
+    i = req.c -1
     echo(Ping()) {
       rsp => processResponse(rf)
     }
@@ -31,8 +29,6 @@ class Sender(echo: Echo)
 
   @tailrec private def processResponse(rf: Any => Unit) {
     if (i < 1) {
-      val t1 = System.currentTimeMillis
-      if (t1 != t0) println("msgs per sec = " + (count * 2L * 1000L / (t1 - t0)))
       rf(null)
       return
     }
