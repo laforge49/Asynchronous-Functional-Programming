@@ -7,8 +7,8 @@ import org.specs.SpecificationWithJUnit
 class DualEchoTimingTest extends SpecificationWithJUnit {
   "DualEchoTimingTest" should {
     "time messages" in {
-      val c = 20000
-      val b = 20000
+      val c = 20//000
+      val b = 20//000
       val echo1 = new Echo
       val echo2 = new Echo
       val sender1 = new Sender(echo1)

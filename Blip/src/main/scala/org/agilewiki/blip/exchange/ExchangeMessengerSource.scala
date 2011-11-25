@@ -42,6 +42,8 @@ trait ExchangeMessengerSource {
    * that was sent to an ExchangeMessenger.
    */
   def responseFrom(respondingExchange: ExchangeMessenger, rsp: ExchangeMessengerResponse) {
+    val currentRequest = respondingExchange.curReq
+    rsp.setRequest(currentRequest)
     respondingExchange.putTo(messageListDestination, rsp)
   }
 }
