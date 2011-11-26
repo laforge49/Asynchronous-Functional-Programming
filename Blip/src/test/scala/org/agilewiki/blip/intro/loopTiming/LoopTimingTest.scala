@@ -5,6 +5,10 @@ import org.specs.SpecificationWithJUnit
 import bind._
 import seq._
 
+/**
+ * Suggested by Alex Cruise
+ * See also http://www.krazykoding.com/2011/07/scala-actor-v-erlang-genserver.html
+ */
 class LoopTimingTest extends SpecificationWithJUnit {
   "LoopTimingTest" should {
     "time CounterActor" in {
