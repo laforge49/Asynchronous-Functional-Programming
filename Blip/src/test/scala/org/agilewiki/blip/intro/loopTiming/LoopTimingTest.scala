@@ -12,7 +12,7 @@ import seq._
 class LoopTimingTest extends SpecificationWithJUnit {
   "LoopTimingTest" should {
     "time CounterActor" in {
-      val msgCount = 100000000
+      val msgCount = 100//000000
       val increment = 100
       val counterActor = new CounterActor
       val countSafe = new MessageLogic {
