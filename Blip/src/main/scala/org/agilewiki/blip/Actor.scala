@@ -46,6 +46,8 @@ class Actor
   bind(classOf[RightReq], right)
 
   override protected def opener = {
+    if (systemServices == null && exchangeMessenger != null)
+      setSystemServices(mailboxFactory.asInstanceOf[BlipMailboxFactory].systemServices)
     if (!components.isEmpty) {
       componentList = new java.util.ArrayList[Component](components.values)
       var i = 0

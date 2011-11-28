@@ -34,20 +34,20 @@ class TimingTest extends SpecificationWithJUnit {
       println(Future(a, TimingReq("synchronous hello world")))
     }
     "asynchronous hello world" in {
-      val mailboxFactory = new MailboxFactory
+      val systemServices = SystemServices()
       try {
         val a = new TimingActor(null)
-        a.setExchangeMessenger(mailboxFactory.newSyncMailbox)
+        a.setExchangeMessenger(systemServices.newSyncMailbox)
         println(Future(a, TimingReq("asynchronous hello world")))
       } finally {
-        mailboxFactory.close
+        systemServices.close
       }
     }
     "synchronous timing" in {
       val c = 10 //00000 //00
-      val mailboxFactory = new MailboxFactory
+      val systemServices = SystemServices()
       try {
-        val m = mailboxFactory.newSyncMailbox
+        val m = systemServices.newSyncMailbox
         val a1 = new TimingActor(null)
         a1.setExchangeMessenger(m)
         val a = new RepeatingActor(a1, c)
@@ -58,14 +58,14 @@ class TimingTest extends SpecificationWithJUnit {
         val t1 = System.currentTimeMillis
         if (t1 != t0) println("sync msgs per sec = " + (c * 2L * 1000L / (t1 - t0)))
       } finally {
-        mailboxFactory.close
+        systemServices.close
       }
     }
     "quad-synchronous timing" in {
       val c = 10 //00000 //00
-      val mailboxFactory = new MailboxFactory
+      val systemServices = SystemServices()
       try {
-        val m = mailboxFactory.newSyncMailbox
+        val m = systemServices.newSyncMailbox
         val a = new ParallelSyncActor(c)
         a.setExchangeMessenger(m)
         Future(a, TimingReq("hello world"))
@@ -74,7 +74,7 @@ class TimingTest extends SpecificationWithJUnit {
         val t1 = System.currentTimeMillis
         if (t1 != t0) println("quad sync msgs per sec = " + (c * 4L * 2L * 1000L / (t1 - t0)))
       } finally {
-        mailboxFactory.close
+        systemServices.close
       }
     }
     "asynchronous timing" in {

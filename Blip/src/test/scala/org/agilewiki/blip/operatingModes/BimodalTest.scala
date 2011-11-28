@@ -32,10 +32,10 @@ class B extends Actor {
 class BimodalTest extends SpecificationWithJUnit {
   "Bimodal" should {
     "print differently" in {
-      val mailboxFactory = new MailboxFactory
+      val systemServices = SystemServices()
       try {
-        val mb1 = mailboxFactory.newAsyncMailbox
-        val mb2 = mailboxFactory.newAsyncMailbox
+        val mb1 = systemServices.newAsyncMailbox
+        val mb2 = systemServices.newAsyncMailbox
         println("test 1 --synchronous")
         val b1 = new B
         b1.setExchangeMessenger(mb1)
@@ -48,7 +48,7 @@ class BimodalTest extends SpecificationWithJUnit {
         val a2 = new A(b2)
         a2.setExchangeMessenger(mb2)
         Future(a2, AMessage())
-        val mb3 = mailboxFactory.newSyncMailbox
+        val mb3 = systemServices.newSyncMailbox
         println("test 3 --synchronous")
         val b3 = new B
         b3.setExchangeMessenger(mb3)
@@ -56,7 +56,7 @@ class BimodalTest extends SpecificationWithJUnit {
         a3.setExchangeMessenger(mb1)
         Future(a3, AMessage())
       } finally {
-        mailboxFactory.close
+        systemServices.close
       }
     }
   }

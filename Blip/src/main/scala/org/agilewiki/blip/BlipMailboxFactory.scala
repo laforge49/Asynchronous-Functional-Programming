@@ -21,15 +21,13 @@
  * A copy of this license is also included and can be
  * found as well at http://www.opensource.org/licenses/cpl1.0.txt
  */
-package org.agilewiki
-package blip
+package org.agilewiki.blip
 
-class AsyncActor extends Actor {
-  override def opener {
-    if (systemServices == null) {
-      println("AsyncActor has no system services: class = "+this.getClass.getName)
-    }
-    setExchangeMessenger(systemServices.newAsyncMailbox)
-    super.opener
-  }
+import bind._
+import messenger._
+
+class BlipMailboxFactory(_threadManager: ThreadManager = new MessengerThreadManager)
+  extends MailboxFactory {
+
+  var systemServices: SystemServices = null
 }

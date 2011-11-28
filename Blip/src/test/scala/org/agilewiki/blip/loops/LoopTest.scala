@@ -42,9 +42,9 @@ class L(a: Actor) extends Actor {
 class LoopTest extends SpecificationWithJUnit {
   "LoopTest" should {
     "print 1, 2, 3 twice" in {
-      val mailboxFactory = new MailboxFactory
+      val systemServices = SystemServices()
       try {
-        val mb = mailboxFactory.newAsyncMailbox
+        val mb = systemServices.newAsyncMailbox
         val p = new P
         p.setExchangeMessenger(mb)
         println("synchronous test")
@@ -53,10 +53,10 @@ class LoopTest extends SpecificationWithJUnit {
         Future(sl, Loop(3))
         println("asynchronous test")
         val al = new L(p)
-        al.setExchangeMessenger(mailboxFactory.newAsyncMailbox)
+        al.setExchangeMessenger(systemServices.newAsyncMailbox)
         Future(al, Loop(3))
       } finally {
-        mailboxFactory.close
+        systemServices.close
       }
     }
   }

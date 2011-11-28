@@ -27,7 +27,7 @@ package blip
 import bind._
 import services._
 
-class SystemServices extends Actor
+abstract class SystemServices extends Actor
 
 class RootSystemServices extends SystemServices {
   override def close {
@@ -44,8 +44,9 @@ object SystemServices {
             properties: Properties = null) = {
     val systemServicesFactory = new CompositeFactory(factoryId, rootComponentFactory, classOf[RootSystemServices])
     SetProperties(systemServicesFactory, properties)
-    val mailboxFactory = new MailboxFactory
+    val mailboxFactory = new BlipMailboxFactory
     val systemServices = systemServicesFactory.newActor(mailboxFactory.newSyncMailbox).asInstanceOf[RootSystemServices]
+    mailboxFactory.systemServices = systemServices
     systemServices.setSystemServices(systemServices)
     systemServices._open
     systemServices
