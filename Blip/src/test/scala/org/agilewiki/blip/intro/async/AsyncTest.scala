@@ -71,6 +71,7 @@ class AsyncTest extends SpecificationWithJUnit {
     /*
     Output:
     total time for 10 messages = 208 milliseconds
-    total time for 20 messages = 401 milliseconds     */
+    total time for 20 messages = 401 milliseconds
+     */
   }
 }
