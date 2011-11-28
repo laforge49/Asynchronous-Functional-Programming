@@ -37,7 +37,6 @@ class RandomIOTest extends SpecificationWithJUnit {
       try {
         val driver = new Driver
         driver.setExchangeMessenger(systemServices.newSyncMailbox)
-        driver.setSystemServices(systemServices)
         val bytes = Future(driver, DoIt()).asInstanceOf[Array[Byte]]
         bytes.length must be equalTo (5000)
         systemServices.close

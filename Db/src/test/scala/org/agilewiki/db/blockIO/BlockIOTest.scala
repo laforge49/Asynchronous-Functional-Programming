@@ -83,7 +83,6 @@ class BlockIOTest extends SpecificationWithJUnit {
       val systemServices = SystemServices(new BlockIOComponentFactory, properties = properties)
       val driver = new Driver
       driver.setExchangeMessenger(systemServices.exchangeMessenger)
-      driver.setSystemServices(systemServices)
       Future(driver, Writeit())
       systemServices.close
     }
@@ -94,7 +93,6 @@ class BlockIOTest extends SpecificationWithJUnit {
       val systemServices = SystemServices(new BlockIOComponentFactory, properties = properties)
       val driver = new Driver
       driver.setExchangeMessenger(systemServices.exchangeMessenger)
-      driver.setSystemServices(systemServices)
       Future(driver, Readit()) must be equalTo("abc")
       systemServices.close
     }
