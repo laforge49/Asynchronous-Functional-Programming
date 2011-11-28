@@ -10,12 +10,12 @@ case class PrintEven(value: Int)
 
 case class AMsg()
 
-class Driver extends AsyncActor {
+class Driver extends Actor {
   bind(classOf[AMsg], aMsgFunc)
 
   private def aMsgFunc(msg: AnyRef, rf: Any => Unit) {
     val safeActor = new SafeActor
-    safeActor.setSystemServices(systemServices)
+    safeActor.setExchangeMessenger(systemServices.newSyncMailbox)
     safeActor(PrintEven(1)){rsp =>
       safeActor(PrintEven(2)){rsp => rf(null)}
     }
@@ -32,7 +32,7 @@ case class SafePrintEven(safeActor: SafeActor)
   }
 }
 
-class SafeActor extends AsyncActor {
+class SafeActor extends Actor {
   bind(classOf[Print], printFunc)
 
   private def printFunc(msg: AnyRef, rf: Any => Unit) {
@@ -49,7 +49,7 @@ class SafeTest extends SpecificationWithJUnit {
       val systemServices = SystemServices()
       try {
         val driver = new Driver
-        driver.setSystemServices(systemServices)
+        driver.setExchangeMessenger(systemServices.newAsyncMailbox)
         Future(driver, AMsg())
       } finally {
         systemServices.close

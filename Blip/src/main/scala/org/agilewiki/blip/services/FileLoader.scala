@@ -29,7 +29,7 @@ import java.io.{DataInputStream, FileInputStream}
 import bind._
 
 class FileLoader
-  extends AsyncActor {
+  extends Actor {
   bind(classOf[LoadFile], loadFile)
 
   def loadFile(msg: AnyRef, rf: Any => Unit) {
@@ -50,7 +50,7 @@ class FileLoaderComponent(actor: Actor)
 
   override def open {
     super.open
-    fileLoader.setSystemServices(systemServices)
+    fileLoader.setExchangeMessenger(systemServices.newAsyncMailbox)
   }
 }
 

@@ -6,7 +6,7 @@ import org.specs.SpecificationWithJUnit
 
 case class Pause()
 
-class Worker extends AsyncActor {
+class Worker extends Actor {
   bind(classOf[Pause], pause)
 
   def pause(msg: AnyRef, rf: Any => Unit) {
@@ -16,11 +16,10 @@ class Worker extends AsyncActor {
 }
 
 object Pause {
-  def apply(systemServices: SystemServices)
-           (rf: Any => Unit)
+  def apply(rf: Any => Unit)
            (implicit srcActor: ActiveActor) {
     val worker = new Worker
-    worker.setSystemServices(systemServices)
+    worker.setExchangeMessenger(srcActor.bindActor.newAsyncMailbox)
     worker(Pause())(rf)
   }
 }
@@ -29,14 +28,14 @@ case class SimpleQuery(name: String)
 
 case class SimpleUpdate(name: String)
 
-class SimpleTransactionProcessor extends AsyncActor {
+class SimpleTransactionProcessor extends Actor {
   bindMessageLogic(classOf[SimpleQuery], new Query(query))
   bindMessageLogic(classOf[SimpleUpdate], new Update(update))
 
   def query(msg: AnyRef, rf: Any => Unit) {
     val name = msg.asInstanceOf[SimpleQuery].name
     println("start query " + name)
-    Pause(systemServices) {
+    Pause {
       rsp => {
         println("  end query " + name)
         rf(null)
@@ -47,7 +46,7 @@ class SimpleTransactionProcessor extends AsyncActor {
   def update(msg: AnyRef, rf: Any => Unit) {
     val name = msg.asInstanceOf[SimpleUpdate].name
     println("start update " + name)
-    Pause(systemServices) {
+    Pause {
       rsp => {
         println("  end update " + name)
         rf(null)
@@ -58,12 +57,12 @@ class SimpleTransactionProcessor extends AsyncActor {
 
 case class Doit()
 
-class Driver extends AsyncActor {
+class Driver extends Actor {
   bind(classOf[Doit], doit)
 
   lazy val simpleTransactionProcessor = {
     val stp = new SimpleTransactionProcessor
-    stp.setSystemServices(systemServices)
+    stp.setExchangeMessenger(newAsyncMailbox)
     stp
   }
 
@@ -114,7 +113,7 @@ class TransactionTest extends SpecificationWithJUnit {
       val systemServices = SystemServices()
       try {
         val driver = new Driver
-        driver.setSystemServices(systemServices)
+        driver.setExchangeMessenger(systemServices.newAsyncMailbox)
         Future(driver, Doit())
       } finally {
         systemServices.close

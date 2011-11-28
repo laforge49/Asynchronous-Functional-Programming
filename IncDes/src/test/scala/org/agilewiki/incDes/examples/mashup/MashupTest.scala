@@ -114,7 +114,6 @@ class MashupTest extends SpecificationWithJUnit {
         mashupFactory.configure(systemServices)
 
         val mashup1 = mashupFactory.newActor(systemServices.newSyncMailbox)
-        mashup1.setSystemServices(systemServices)
         Future(mashup1, Title()) must beNull
         Future(mashup1, SetTitle(null, "123"))
         Future(mashup1, Title()) must be equalTo ("123")
@@ -125,7 +124,6 @@ class MashupTest extends SpecificationWithJUnit {
         val bs1 = Future(mashup1, Bytes()).asInstanceOf[Array[Byte]]
 
         val mashup2 = mashupFactory.newActor(systemServices.newSyncMailbox).asInstanceOf[IncDes]
-        mashup2.setSystemServices(systemServices)
         mashup2.load(bs1)
         Future(mashup2, Title()) must be equalTo ("123")
         Future(mashup2, SetTitle(null, "42"))
@@ -138,7 +136,6 @@ class MashupTest extends SpecificationWithJUnit {
         val bs2 = Future(mashup2, Bytes()).asInstanceOf[Array[Byte]]
 
         val mashup3 = mashupFactory.newActor(systemServices.newSyncMailbox).asInstanceOf[IncDes]
-        mashup3.setSystemServices(systemServices)
         mashup3.load(bs2)
         Future(mashup3, Title()) must be equalTo ("42")
         Future(mashup3, GetString(2)) must be equalTo ("Dishes")

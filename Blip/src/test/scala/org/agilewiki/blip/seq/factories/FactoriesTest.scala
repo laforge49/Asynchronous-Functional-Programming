@@ -58,7 +58,6 @@ class FactoriesTest extends SpecificationWithJUnit {
       val systemServices = SystemServices(new SomeComponentFactory)
       try {
         val driver = new Driver
-        driver.setSystemServices(systemServices)
         driver.setExchangeMessenger(systemServices.newSyncMailbox)
         Future(driver, DoIt())
       } finally {

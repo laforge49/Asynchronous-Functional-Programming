@@ -8,7 +8,7 @@ import bind._
 
 case class DoIt()
 
-class ShortFileLoader extends AsyncActor {
+class ShortFileLoader extends Actor {
   bind(classOf[DoIt], doit)
 
   def doit(msg: AnyRef, rf: Any => Unit) {
@@ -26,7 +26,7 @@ class FileLoaderTest extends SpecificationWithJUnit {
       val systemServices = SystemServices(new FileLoaderComponentFactory)
       try {
         val shortFileLoader = new ShortFileLoader
-        shortFileLoader.setSystemServices(systemServices)
+        shortFileLoader.setExchangeMessenger(systemServices.newAsyncMailbox)
         val bytes = Future(shortFileLoader, DoIt()).asInstanceOf[Array[Byte]]
         val bais = new ByteArrayInputStream(bytes)
         val isr = new InputStreamReader(bais)

@@ -50,7 +50,6 @@ class IncDesTest extends SpecificationWithJUnit {
         var bs = Future(j1, Bytes()).asInstanceOf[Array[Byte]]
 
         val j2 = IncDesIncDes(systemServices.newSyncMailbox)
-        j2.setSystemServices(systemServices)
         j2.load(bs)
         Future(j2, Length()) must be equalTo (20)
         Future(Future(j2, Value()).asInstanceOf[Actor], Value()) must be equalTo ("!")
@@ -68,12 +67,10 @@ class IncDesTest extends SpecificationWithJUnit {
         bs = Future(j4, Bytes()).asInstanceOf[Array[Byte]]
 
         val j5 = IncDesIncDes(systemServices.newSyncMailbox)
-        j5.setSystemServices(systemServices)
         j5.load(bs)
         Future(Future(j5, Value()).asInstanceOf[Actor], Value()) must be equalTo (42)
 
         val driver = new Driver
-        driver.setSystemServices(systemServices)
         driver.setExchangeMessenger(systemServices.newSyncMailbox)
         Future(Future(driver, DoIt()).asInstanceOf[Actor], Value()) must be equalTo (123456789987654321L)
       } finally {
