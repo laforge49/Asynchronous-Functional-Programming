@@ -119,5 +119,19 @@ class TransactionTest extends SpecificationWithJUnit {
         systemServices.close
       }
     }
+    /*
+      Output:
+    start query 1
+    start query 2
+      end query 2
+      end query 1
+    start update 3
+      end update 3
+    start update 4
+      end update 4
+    start query 5
+    start query 6
+      end query 5
+      end query 6     */
   }
 }
