@@ -66,44 +66,23 @@ class Driver extends Actor {
     stp
   }
 
-  def doit(msg: AnyRef, rf: Any => Unit) {
-    var rem = 6
-    simpleTransactionProcessor(SimpleQuery("1")) {
-      rsp1 => {
-        rem -= 1
-        if (rem == 0) rf(null)
-      }
-    }
-    simpleTransactionProcessor(SimpleQuery("2")) {
-      rsp1 => {
-        rem -= 1
-        if (rem == 0) rf(null)
-      }
-    }
-    simpleTransactionProcessor(SimpleUpdate("3")) {
-      rsp1 => {
-        rem -= 1
-        if (rem == 0) rf(null)
-      }
-    }
-    simpleTransactionProcessor(SimpleUpdate("4")) {
-      rsp1 => {
-        rem -= 1
-        if (rem == 0) rf(null)
-      }
-    }
-    simpleTransactionProcessor(SimpleQuery("5")) {
-      rsp1 => {
-        rem -= 1
-        if (rem == 0) rf(null)
-      }
-    }
-    simpleTransactionProcessor(SimpleQuery("6")) {
-      rsp1 => {
-        rem -= 1
-        if (rem == 0) rf(null)
-      }
-    }
+  var rem = 0
+  var rf: Any => Unit = null
+
+  def r(rsp: Any) {
+    rem -= 1
+    if (rem == 0) rf(null)
+  }
+
+  def doit(msg: AnyRef, _rf: Any => Unit) {
+    rf = _rf
+    rem = 6
+    simpleTransactionProcessor(SimpleQuery("1"))(r)
+    simpleTransactionProcessor(SimpleQuery("2"))(r)
+    simpleTransactionProcessor(SimpleUpdate("3"))(r)
+    simpleTransactionProcessor(SimpleUpdate("4"))(r)
+    simpleTransactionProcessor(SimpleQuery("5"))(r)
+    simpleTransactionProcessor(SimpleQuery("6"))(r)
   }
 }
 
