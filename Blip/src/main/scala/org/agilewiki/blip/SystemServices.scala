@@ -25,7 +25,7 @@ package org.agilewiki
 package blip
 
 import bind._
-import messenger.{MessengerThreadManager, ThreadManager}
+import messenger._
 import services._
 
 abstract class SystemServices extends Actor
