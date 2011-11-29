@@ -111,6 +111,7 @@ class TransactionTest extends SpecificationWithJUnit {
     start query 5
     start query 6
       end query 5
-      end query 6     */
+      end query 6
+     */
   }
 }

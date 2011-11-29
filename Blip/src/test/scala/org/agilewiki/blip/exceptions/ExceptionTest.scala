@@ -15,14 +15,15 @@ class S extends Actor {
     throw new IllegalStateException
   }
 
-  bind(classOf[SNE], {
-    (msg, rf) =>
-      exceptionHandler(msg, rf, se) {
-        (ex, mailbox) =>
-          println("S got exception " + ex.toString)
-          rf(null)
-      }
-  })
+  bind(classOf[SNE], exh(se))
+
+  def exh(mf: (AnyRef, Any => Unit) => Unit)(msg: AnyRef, rf: Any => Unit) {
+    exceptionHandler(msg, rf, mf) {
+      (ex, mailbox) =>
+        println("S got exception " + ex.toString)
+        rf(null)
+    }
+  }
 }
 
 case class AsyncServerEx()
