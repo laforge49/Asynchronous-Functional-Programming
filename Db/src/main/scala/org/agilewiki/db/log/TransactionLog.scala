@@ -45,6 +45,7 @@ class TransactionLogComponent(actor: Actor)
   override def open {
     super.open
     transactionLog.setSystemServices(systemServices)
+    transactionLog.setExchangeMessenger(newAsyncMailbox)
     transactionLog.logDirPathname = GetProperty.required("logDirPathname")
     transactionLog.flushLog = GetProperty.boolean("flushLog", true)
     transactionLog.blockSize = GetProperty.int("logBlockSize", 8 * 1024)
@@ -56,7 +57,7 @@ class TransactionLogComponent(actor: Actor)
   }
 }
 
-class TransactionLog extends AsyncActor {
+class TransactionLog extends Actor {
   var logDirPathname: String = null
   var flushLog = true
   var blockSize = 8 * 1024

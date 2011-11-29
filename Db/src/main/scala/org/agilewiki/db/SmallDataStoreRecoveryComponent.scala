@@ -61,6 +61,7 @@ class SmallDataStoreRecoveryComponent(actor: Actor)
     val logDirPathname = GetProperty.required("logDirPathname")
     val files = new Files
     files.setSystemServices(systemServices)
+    files.setExchangeMessenger(newAsyncMailbox)
     (files)(FilesSeq(logDirPathname)) {
       rsp => {
         rsp.asInstanceOf[Actor](LoopSafe(JnlFilesSafe))(rf)

@@ -26,46 +26,12 @@ package blip
 
 import bind._
 
-class Component(_actor: Actor)
-  extends SystemServicesGetter
-  with Bindings {
-
-  val actor = _actor
-  var _componentFactory: ComponentFactory = null
-
-  def componentFactory = _componentFactory
-
-  def setComponentFactory(componentFactory: ComponentFactory) {
-    if (actor.isOpen) throw new IllegalStateException
-    _componentFactory = componentFactory
+class ChainFactory(chainFunction: (AnyRef, Chain) => Unit)
+  extends MessageLogic {
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
+                   (implicit srcActor: ActiveActor) {
+    val chain = new Chain
+    chainFunction(msg, chain)
+    target.asInstanceOf[Actor](chain)(rf)
   }
-
-  override implicit def activeActor = actor.activeActor
-
-  override def exchangeMessenger = actor.exchangeMessenger
-
-  def factory = actor.factory
-
-  override def systemServices = actor.systemServices
-
-  def open {}
-
-  def close {}
-
-  def factoryId = actor.factoryId
-
-  /**
-   * Returns the mailboxFactory/threadManager.
-   */
-  def mailboxFactory = exchangeMessenger.mailboxFactory
-
-  /**
-   * Returns an asynchronous exchange.
-   */
-  def newAsyncMailbox = mailboxFactory.newAsyncMailbox
-
-  /**
-   * Returns a synchronous exchange.
-   */
-  def newSyncMailbox = mailboxFactory.newSyncMailbox
 }

@@ -57,6 +57,7 @@ class RandomIOComponent(actor: Actor)
   override def open {
     super.open
     randomIO.setSystemServices(systemServices)
+    randomIO.setExchangeMessenger(newAsyncMailbox)
     randomIO._open
   }
 
@@ -66,7 +67,7 @@ class RandomIOComponent(actor: Actor)
   }
 }
 
-class RandomIO extends AsyncActor {
+class RandomIO extends Actor {
   var pathname: String = null
   var accessMode: String = null
   var file: java.io.File = null

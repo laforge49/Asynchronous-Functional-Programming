@@ -27,7 +27,7 @@ package db
 import blip._
 import seq._
 
-class Files extends AsyncActor {
+class Files extends Actor {
   bind(classOf[FilesSeq], filesSeq)
 
   private def filesSeq(msg: AnyRef, rf: Any => Unit) {

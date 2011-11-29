@@ -27,16 +27,6 @@ package blip
 import bind._
 import exchange._
 
-class ChainFactory(chainFunction: (AnyRef, Chain) => Unit)
-  extends MessageLogic {
-  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
-                   (implicit srcActor: ActiveActor) {
-    val chain = new Chain
-    chainFunction(msg, chain)
-    target.asInstanceOf[Actor](chain)(rf)
-  }
-}
-
 abstract class BoundTransaction(messageFunction: (AnyRef, Any => Unit) => Unit)
   extends QueuedLogic(messageFunction) {
   def level: Int
