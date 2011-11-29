@@ -25,6 +25,7 @@ package org.agilewiki
 package blip
 
 import bind._
+import messenger.{MessengerThreadManager, ThreadManager}
 import services._
 
 abstract class SystemServices extends Actor
@@ -41,11 +42,14 @@ class Subsystem extends SystemServices with IdActor
 object SystemServices {
   def apply(rootComponentFactory: ComponentFactory = null,
             factoryId: FactoryId = new FactoryId("System"),
-            properties: Properties = null) = {
-    val systemServicesFactory = new CompositeFactory(factoryId, rootComponentFactory, classOf[RootSystemServices])
+            properties: Properties = null,
+            _threadManager: ThreadManager = new MessengerThreadManager) = {
+    val systemServicesFactory =
+      new CompositeFactory(factoryId, rootComponentFactory, classOf[RootSystemServices])
     SetProperties(systemServicesFactory, properties)
-    val mailboxFactory = new BlipMailboxFactory
-    val systemServices = systemServicesFactory.newActor(mailboxFactory.newSyncMailbox).asInstanceOf[RootSystemServices]
+    val mailboxFactory = new BlipMailboxFactory(_threadManager)
+    val systemServices = systemServicesFactory.newActor(mailboxFactory.newSyncMailbox).
+      asInstanceOf[RootSystemServices]
     mailboxFactory.systemServices = systemServices
     systemServices.setSystemServices(systemServices)
     systemServices._open
