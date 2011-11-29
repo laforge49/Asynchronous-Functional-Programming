@@ -120,5 +120,21 @@ class ExceptionTest extends SpecificationWithJUnit {
         systemServices.close
       }
     }
+    /*
+    Output:
+
+    --server exception async test
+    ase org.agilewiki.blip.MailboxReq@b29b4a
+    D got exception java.lang.IllegalStateException
+    --server exception sync test
+    D got exception java.lang.IllegalStateException
+    --response exception async test
+    S got exception java.lang.IllegalStateException
+    D got exception java.lang.IllegalAccessException
+    --response exception sync test
+    S got exception java.lang.IllegalStateException
+    D got exception java.lang.IllegalAccessException
+
+     */
   }
 }
