@@ -28,7 +28,7 @@ package bind
  * ConcurrentData is a subclass of MessageLogic for handling immutable or cuncurrent,
  * e.g. thread safe, data.
  */
-class ConcurrentData(any: Any)
+class ConcurrentData(anyFunc: Unit => Any)
   extends MessageLogic {
 
   /**
@@ -36,6 +36,6 @@ class ConcurrentData(any: Any)
    */
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)
                    (implicit sender: ActiveActor) {
-    rf(any)
+    rf(anyFunc())
   }
 }
