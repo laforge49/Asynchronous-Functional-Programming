@@ -19,7 +19,7 @@ class ConstantActor
 
   bindMessageLogic(classOf[Constant], new ConcurrentData(
     Unit => {
-      //factory is not initialized when the actor is constructed.
+      //factory is not initialized until after the actor is constructed.
       factory.asInstanceOf[ConstantFactory].constant
     }
   ))
