@@ -97,9 +97,10 @@ class PropertiesComponentFactory extends ComponentFactory {
 class PropertiesComponent(actor: Actor)
   extends Component(actor) {
 
-  override def setComponentFactory(componentFactory: ComponentFactory) {
-    super.setComponentFactory(componentFactory)
-    val cf = componentFactory.asInstanceOf[PropertiesComponentFactory]
-    bindMessageLogic(classOf[PropertiesSeq], new ConcurrentData(new NavMapSeq(cf.properties)))
-  }
+  bindMessageLogic(classOf[PropertiesSeq], new ConcurrentData(
+    Unit => {
+      val cf = componentFactory.asInstanceOf[PropertiesComponentFactory]
+      new NavMapSeq(cf.properties)
+    }
+  ))
 }
