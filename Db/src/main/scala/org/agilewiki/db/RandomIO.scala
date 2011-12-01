@@ -58,7 +58,7 @@ class RandomIOComponent(actor: Actor)
     super.open
     randomIO.setSystemServices(systemServices)
     randomIO.setExchangeMessenger(newAsyncMailbox)
-    randomIO._open
+    randomIO.initialize
   }
 
   override def close {

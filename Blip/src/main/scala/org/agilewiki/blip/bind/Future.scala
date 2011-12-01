@@ -45,7 +45,7 @@ class Future
     val safe = dst.messageLogics.get(msg.getClass)
     if (!safe.isInstanceOf[QueuedLogic]) throw
       new IllegalArgumentException(msg.getClass.getName + "can not be sent asynchronously to " + dst)
-    dst._open
+    dst.initialize
     val mailbox = dst.exchangeMessenger
     if (mailbox == null) {
       val boundFunction = safe.asInstanceOf[BoundFunction]

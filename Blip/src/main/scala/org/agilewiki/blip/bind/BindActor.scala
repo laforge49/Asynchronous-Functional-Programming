@@ -96,7 +96,7 @@ trait BindActor
   /**
    * Complete actor initialization if it is not already complete.
    */
-  def _open {
+  def initialize {
     if (!isOpen) opener
   }
 
@@ -143,7 +143,7 @@ trait BindActor
   def apply(msg: AnyRef)
            (responseFunction: Any => Unit)
            (implicit srcActor: ActiveActor) {
-    _open
+    initialize
     val messageLogic = messageLogics.get(msg.getClass)
     if (messageLogic != null) messageLogic.func(this, msg, responseFunction)(srcActor)
     else if (superior != null) superior(msg)(responseFunction)(srcActor)

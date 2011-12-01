@@ -76,7 +76,7 @@ class TransactionLog extends Actor {
   }
 
   private def logTransaction(msg: AnyRef, rf: Any => Unit) {
-    initialize
+    initializeLog
     val logTransaction = msg.asInstanceOf[LogTransaction]
     val timestamp = logTransaction.timestamp
     val bytes = logTransaction.bytes
@@ -90,7 +90,7 @@ class TransactionLog extends Actor {
     rf(null)
   }
 
-  def initialize {
+  def initializeLog {
     if (writer != null) return
     val dir = new java.io.File(logDirPathname)
     if (!dir.exists) dir.mkdirs

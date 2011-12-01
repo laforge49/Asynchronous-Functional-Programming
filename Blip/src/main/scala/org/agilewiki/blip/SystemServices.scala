@@ -52,7 +52,7 @@ object SystemServices {
       asInstanceOf[RootSystemServices]
     mailboxFactory.systemServices = systemServices
     systemServices.setSystemServices(systemServices)
-    systemServices._open
+    systemServices.initialize
     systemServices
   }
 }
@@ -73,7 +73,7 @@ object Subsystem {
     }
     subSystem.setSystemServices(subSystem)
     subSystem.setSuperior(systemServices)
-    subSystem._open
+    subSystem.initialize
     subSystem
   }
 }
