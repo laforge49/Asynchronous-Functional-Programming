@@ -29,7 +29,7 @@ import bind._
 import seq.NavMapSeq
 import annotation.tailrec
 
-class Properties extends java.util.TreeMap[String, String]
+class Properties extends java.util.concurrent.ConcurrentSkipListMap[String, String]
 
 object SetProperties {
   def apply(systemServicesFactory: Factory, properties: Properties) {
