@@ -28,13 +28,26 @@ class PropertiesTest extends SpecificationWithJUnit {
       p1.put("b", "2")
       p1.put("c", "3")
       val systemServices = SystemServices(new PropertiesComponentFactory, properties = p1)
-      val p2 = new Properties
-      p2.put("c", "11")
-      p2.put("d", "12")
-      val aSubsystem = Subsystem(systemServices, new PropertiesComponentFactory, properties = p2)
-      val driver = new Driver
-      driver.setSystemServices(aSubsystem)
-      Future(driver, DoIt())
+      try {
+        val p2 = new Properties
+        p2.put("c", "11")
+        p2.put("d", "12")
+        val aSubsystem = Subsystem(systemServices, new PropertiesComponentFactory, properties = p2)
+        val driver = new Driver
+        driver.setSystemServices(aSubsystem)
+        Future(driver, DoIt())
+      } finally {
+        systemServices.close
+      }
     }
+    /*
+    Output:
+    
+    a = 1
+    b = 2
+    c = 11
+    d = 12
+    e = null
+     */
   }
 }
