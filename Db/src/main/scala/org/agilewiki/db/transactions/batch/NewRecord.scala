@@ -63,7 +63,9 @@ class NewRecordComponent(actor: Actor)
     val record = Record(null)
     chain.op(actor, Value(), "recordKey")
     chain.op(systemServices,
-      Unit => AssignRecord(tc, chain("recordKey").asInstanceOf[String], record))
+      Unit => {
+        AssignRecord(tc, chain("recordKey").asInstanceOf[String], record)
+      })
     chain.op(record, SetTimestamp(tc, ts))
   }
 }

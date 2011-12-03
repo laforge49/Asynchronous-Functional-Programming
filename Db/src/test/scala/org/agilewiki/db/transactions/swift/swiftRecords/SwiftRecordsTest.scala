@@ -124,7 +124,9 @@ class SwiftRecordsTest extends SpecificationWithJUnit {
         new SwiftComponentFactory,
         properties = properties,
         actorId = ActorId("db"))
-      Future(systemServices, Register(db))
+      val chain = new Chain
+      chain.op(systemServices, Register(db))
+      Future(systemServices, chain)
       val recordsSeq = new RecordsSeq(db)
       Future(recordsSeq, Loop((key: String, value: Record) => println(key + "->" + value)))
       systemServices.close

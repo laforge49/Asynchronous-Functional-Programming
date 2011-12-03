@@ -61,7 +61,9 @@ class SmallRecordsInitializationComponent(actor: Actor)
   protected def records(msg: AnyRef, rf: Any => Unit) {
     val chain = new Chain
     chain.op(actor, DbRoot(), "root")
-    chain.op(Unit => chain("root"), Value())
+    chain.op(Unit => {
+      chain("root")
+    }, Value())
     actor(chain)(rf)
   }
 
@@ -106,10 +108,14 @@ class SmallRecordsInitializationComponent(actor: Actor)
     }, Assign(tc, recordKey, record))
     actor(chain) {
       rsp1 => {
-        if (record == null) rf(rsp1)
+        if (record == null) {
+          rf(rsp1)
+        }
         else {
           record(SetTimestamp(tc, ts)) {
-            rsp2 => rf(rsp1)
+            rsp2 => {
+              rf(rsp1)
+            }
           }
         }
       }

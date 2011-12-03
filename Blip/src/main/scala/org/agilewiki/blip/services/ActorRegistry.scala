@@ -27,7 +27,6 @@ package services
 
 import bind._
 import seq.NavMapSeq
-import java.util.TreeMap
 
 class ActorRegistryComponentFactory extends ComponentFactory {
   override def instantiate(actor: Actor) = new ActorRegistryComponent(actor)
@@ -44,12 +43,67 @@ object SafeResolveName
   }
 }
 
+object SafeRegister
+  extends MessageLogic {
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+    val req = msg.asInstanceOf[Register]
+    val actor = req.actor
+    val targetActor = target.asInstanceOf[Actor]
+    val component = targetActor.component(classOf[ActorRegistryComponentFactory]).asInstanceOf[ActorRegistryComponent]
+    val actors = component.asInstanceOf[ActorRegistryComponent].actors
+    val actorId = actor.id
+    if (actorId == null)
+      throw new IllegalArgumentException("IdActor has no id")
+    val key = actorId.value
+    if (actors.containsKey(key))
+      throw new IllegalArgumentException("already registered: " + key)
+    actors.put(key, actor)
+    rf(null)
+  }
+}
+
+object SafeUnregister
+  extends MessageLogic {
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+    val targetActor = target.asInstanceOf[Actor]
+    val component = targetActor.component(classOf[ActorRegistryComponentFactory]).asInstanceOf[ActorRegistryComponent]
+    val actors = component.asInstanceOf[ActorRegistryComponent].actors
+    val actorId = msg.asInstanceOf[Unregister].actorId
+    val key = actorId.value
+    if (!actors.containsKey(key))
+      throw new IllegalArgumentException("not registered: " + key)
+    actors.remove(key)
+    rf(null)
+  }
+}
+
+object SafeGetActor
+  extends MessageLogic {
+  override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+    val targetActor = target.asInstanceOf[Actor]
+    val component = targetActor.component(classOf[ActorRegistryComponentFactory]).asInstanceOf[ActorRegistryComponent]
+    val actors = component.asInstanceOf[ActorRegistryComponent].actors
+    val actorId = msg.asInstanceOf[GetActor].actorId
+    val key = actorId.value
+    val a = actors.get(key)
+    if (a != null) {
+      rf(actors.get(key))
+      return
+    }
+    if (target.superior == null) {
+      rf(null)
+      return
+    }
+    target.superior(msg)(rf)
+  }
+}
+
 class ActorRegistryComponent(actor: Actor)
   extends Component(actor) {
-  val actors = new TreeMap[String, IdActor]
-  bind(classOf[Register], register)
-  bind(classOf[Unregister], unregister)
-  bind(classOf[GetActor], getActor)
+  val actors = new java.util.concurrent.ConcurrentSkipListMap[String, IdActor]
+  bindMessageLogic(classOf[Register], SafeRegister)
+  bindMessageLogic(classOf[Unregister], SafeUnregister)
+  bindMessageLogic(classOf[GetActor], SafeGetActor)
   bindMessageLogic(classOf[ResolveName], SafeResolveName)
   bindMessageLogic(classOf[Actors],
     new ConcurrentData(new NavMapSeq(actors)))
@@ -68,41 +122,5 @@ class ActorRegistryComponent(actor: Actor)
     } catch {
       case _ =>
     }
-  }
-
-  private def register(msg: Any, rf: Any => Unit) {
-    val actor = msg.asInstanceOf[Register].actor
-    val actorId = actor.id
-    if (actorId == null)
-      throw new IllegalArgumentException("bindActor has no id")
-    val key = actorId.value
-    if (actors.containsKey(key))
-      throw new IllegalArgumentException("already registered: " + key)
-    actors.put(key, actor)
-    rf(null)
-  }
-
-  private def unregister(msg: Any, rf: Any => Unit) {
-    val actorId = msg.asInstanceOf[Unregister].actorId
-    val key = actorId.value
-    if (!actors.containsKey(key))
-      throw new IllegalArgumentException("not registered: " + key)
-    actors.remove(key)
-    rf(null)
-  }
-
-  private def getActor(msg: AnyRef, rf: Any => Unit) {
-    val actorId = msg.asInstanceOf[GetActor].actorId
-    val key = actorId.value
-    val a = actors.get(key)
-    if (a != null) {
-      rf(actors.get(key))
-      return
-    }
-    if (actor.superior == null) {
-      rf(null)
-      return
-    }
-    actor.superior(msg)(rf)
   }
 }

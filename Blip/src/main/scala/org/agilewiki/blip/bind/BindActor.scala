@@ -145,7 +145,9 @@ trait BindActor
            (implicit srcActor: ActiveActor) {
     initialize
     val messageLogic = messageLogics.get(msg.getClass)
-    if (messageLogic != null) messageLogic.func(this, msg, responseFunction)(srcActor)
+    if (messageLogic != null) {
+      messageLogic.func(this, msg, responseFunction)(srcActor)
+    }
     else if (superior != null) superior(msg)(responseFunction)(srcActor)
     else {
       System.err.println("bindActor = " + this.getClass.getName)

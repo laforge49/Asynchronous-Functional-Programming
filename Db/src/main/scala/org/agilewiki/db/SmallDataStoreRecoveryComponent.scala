@@ -99,7 +99,9 @@ class SmallDataStoreRecoveryComponent(actor: Actor)
   }
 
   private def dbRoot(msg: AnyRef, rf: Any => Unit) {
-    if (block != null) rf(block)
+    if (block != null) {
+      rf(block)
+    }
     else systemServices(ReadRootBlock()) {
       rsp => {
         block = rsp.asInstanceOf[Block]
@@ -124,7 +126,9 @@ object JnlFilesSafe extends MessageLogic {
       return
     }
     target.asInstanceOf[Actor].systemServices(ProcessFile(pathname)) {
-      rsp => rf(true)
+      rsp => {
+        rf(true)
+      }
     }
   }
 }
