@@ -29,7 +29,7 @@ import bind._
 import seq.NavMapSeq
 
 class FactoryRegistryComponentFactory extends ComponentFactory {
-  val factories = new java.util.TreeMap[String, Factory]
+  val factories = new java.util.concurrent.ConcurrentSkipListMap[String, Factory]
 
   def registerFactory(factory: Factory) {
     factories.put(factory.id.value, factory)
@@ -51,7 +51,7 @@ class SafeInstantiate(factoryRegistryComponentFactory: FactoryRegistryComponentF
     if (factory != null) {
       val mailbox = msg.asInstanceOf[Instantiate].mailbox
       val actor = factory.newActor(mailbox)
-      actor.setSystemServices(target.asInstanceOf[Actor].systemServices)
+      actor.setSystemServices(sender.bindActor.asInstanceOf[Actor].systemServices)
       rf(actor)
       return
     }
