@@ -28,6 +28,15 @@ package services
 import bind._
 import seq.NavMapSeq
 
+object FactoryRegistryComponentFactory {
+  def register(compositeFactory: Factory, newFactory: Factory) {
+    val factoryRegistryComponentFactory =
+      compositeFactory.componentFactory(classOf[FactoryRegistryComponentFactory]).
+        asInstanceOf[FactoryRegistryComponentFactory]
+    factoryRegistryComponentFactory.registerFactory(newFactory)
+  }
+}
+
 class FactoryRegistryComponentFactory extends ComponentFactory {
   val factories = new java.util.concurrent.ConcurrentSkipListMap[String, Factory]
 
