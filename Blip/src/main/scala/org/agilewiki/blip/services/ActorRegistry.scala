@@ -46,11 +46,9 @@ object SafeResolveName
 object SafeRegister
   extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
+    val actors = ActorRegistryComponent.actors(target)
     val req = msg.asInstanceOf[Register]
     val actor = req.actor
-    val targetActor = target.asInstanceOf[Actor]
-    val component = targetActor.component(classOf[ActorRegistryComponentFactory]).asInstanceOf[ActorRegistryComponent]
-    val actors = component.asInstanceOf[ActorRegistryComponent].actors
     val actorId = actor.id
     if (actorId == null)
       throw new IllegalArgumentException("IdActor has no id")
@@ -65,9 +63,7 @@ object SafeRegister
 object SafeUnregister
   extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
-    val targetActor = target.asInstanceOf[Actor]
-    val component = targetActor.component(classOf[ActorRegistryComponentFactory]).asInstanceOf[ActorRegistryComponent]
-    val actors = component.asInstanceOf[ActorRegistryComponent].actors
+    val actors = ActorRegistryComponent.actors(target)
     val actorId = msg.asInstanceOf[Unregister].actorId
     val key = actorId.value
     if (!actors.containsKey(key))
@@ -80,9 +76,7 @@ object SafeUnregister
 object SafeGetActor
   extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
-    val targetActor = target.asInstanceOf[Actor]
-    val component = targetActor.component(classOf[ActorRegistryComponentFactory]).asInstanceOf[ActorRegistryComponent]
-    val actors = component.asInstanceOf[ActorRegistryComponent].actors
+    val actors = ActorRegistryComponent.actors(target)
     val actorId = msg.asInstanceOf[GetActor].actorId
     val key = actorId.value
     val a = actors.get(key)
@@ -95,6 +89,14 @@ object SafeGetActor
       return
     }
     target.superior(msg)(rf)
+  }
+}
+
+object ActorRegistryComponent {
+  def actors(target: BindActor) = {
+    val targetActor = target.asInstanceOf[Actor]
+    val component = targetActor.component(classOf[ActorRegistryComponentFactory]).asInstanceOf[ActorRegistryComponent]
+    component.asInstanceOf[ActorRegistryComponent].actors
   }
 }
 
