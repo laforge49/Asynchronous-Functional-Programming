@@ -29,10 +29,7 @@ class SomeComponentFactory
   addDependency(classOf[ActorRegistryComponentFactory])
 
   override def configure(compositeFactory: Factory) {
-    val factoryRegistryComponentFactory =
-      compositeFactory.componentFactory(classOf[FactoryRegistryComponentFactory]).
-        asInstanceOf[FactoryRegistryComponentFactory]
-    factoryRegistryComponentFactory.registerFactory(new GreeterFactory)
+    FactoryRegistryComponentFactory.register(compositeFactory, new GreeterFactory)
   }
 }
 
