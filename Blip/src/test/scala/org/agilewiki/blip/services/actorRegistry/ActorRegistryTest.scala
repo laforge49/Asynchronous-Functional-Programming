@@ -8,8 +8,7 @@ import bind._
 case class Greet()
 
 class Greeter
-  extends Actor
-  with IdActor {
+  extends Id_Actor {
   bind(classOf[Greet], greet)
 
   def greet(msg: AnyRef, rf: Any => Unit) {
