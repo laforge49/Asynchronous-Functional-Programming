@@ -40,7 +40,7 @@ case class Unregister(actorId: ActorId)
 
 case class GetActor(actorId: ActorId)
 
-case class ResolveName(name: Name, mailbox: Mailbox)
+case class ResolveName(actorId: ActorId, mailbox: Mailbox)
 
 case class Actors()
 

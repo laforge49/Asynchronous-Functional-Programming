@@ -36,10 +36,7 @@ object SafeResolveName
   extends MessageLogic {
   override def func(target: BindActor, msg: AnyRef, rf: Any => Unit)(implicit sender: ActiveActor) {
     val req = msg.asInstanceOf[ResolveName]
-    req.name match {
-      case factoryId: FactoryId => target.asInstanceOf[Actor](Instantiate(factoryId, req.mailbox))(rf)
-      case actorId: ActorId => target.asInstanceOf[Actor](GetActor(actorId))(rf)
-    }
+    target.asInstanceOf[Actor](GetActor(req.actorId))(rf)
   }
 }
 

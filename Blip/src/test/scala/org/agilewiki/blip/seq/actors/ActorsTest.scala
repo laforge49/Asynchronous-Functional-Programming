@@ -54,7 +54,7 @@ class Driver extends Actor {
           rsp => {}
         }
     }
-    systemServices(ResolveName(FactoryId("greeter"), null)) {
+    systemServices(Instantiate(FactoryId("greeter"), null)) {
       rsp =>
         val greeter = rsp.asInstanceOf[IdActor]
         greeter.id(ActorId("b"))
