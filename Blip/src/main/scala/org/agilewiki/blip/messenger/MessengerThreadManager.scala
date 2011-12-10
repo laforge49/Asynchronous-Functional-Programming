@@ -25,6 +25,7 @@ package org.agilewiki.blip.messenger
 
 import java.util.concurrent.{ConcurrentLinkedQueue, Semaphore, ThreadFactory}
 import annotation.tailrec
+import java.util.ArrayList
 
 /**
  * The MessengerThreadManager starts a number of threads (12 by default)
@@ -39,6 +40,7 @@ class MessengerThreadManager(threadCount: Int = 12,
   val taskRequest = new Semaphore(0)
   val tasks = new ConcurrentLinkedQueue[Runnable]
   var closing = false
+  val threads = new java.util.ArrayList[Thread]()
 
   init
 
@@ -49,7 +51,9 @@ class MessengerThreadManager(threadCount: Int = 12,
     var c = 0
     while (c < threadCount) {
       c += 1
-      threadFactory.newThread(this).start
+      val t = threadFactory.newThread(this)
+      threads.add(t)
+      t.start
     }
   }
 
@@ -83,7 +87,7 @@ class MessengerThreadManager(threadCount: Int = 12,
   /**
    * The close method is used to stop all the threads as they become idle.
    * This method sets a flag to indicate that the threads should stop
-   * and then wakes up all the threads.
+   * and then wakes up all the threads. Then it waits for all the threads to die.
    */
   def close {
     closing = true
@@ -91,6 +95,13 @@ class MessengerThreadManager(threadCount: Int = 12,
     while (c < threadCount) {
       c += 1
       taskRequest.release
+    }
+    c = 0
+    val ct = Thread.currentThread()
+    while (c < threadCount) {
+      val t = threads.get(c)
+      if (ct != t) t.join()
+      c += 1
     }
   }
 }

@@ -9,7 +9,9 @@ class Echo(threadManager: ThreadManager)
 
   override def processMessage(message: Any) {
     message match {
-      case msg: MessageListDestination[Any] => messenger.putTo(msg, messenger)
+      case msg: MessageListDestination[Any] => {
+        messenger.putTo(msg, messenger)
+      }
     }
   }
 
